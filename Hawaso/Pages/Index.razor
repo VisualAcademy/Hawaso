@@ -1,3 +1,10 @@
 ﻿@page "/"
 
-<h1>안녕하세요.</h1>
+@inject NavigationManager NavigationManagerInjector
+
+@code {
+    protected override void OnInitialized()
+    {
+        NavigationManagerInjector.NavigateTo("/Home", true);
+    }
+}
