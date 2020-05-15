@@ -199,10 +199,8 @@ namespace Hawaso.Controllers
             note.Content  = model.Content;
             note.FileName = fileName;
             note.FileSize = fileSize;
-            note.Password = 
-                Common.CryptorEngine.EncryptPassword(model.Password);
-            note.PostIp =
-                HttpContext.Connection.RemoteIpAddress.ToString(); // IP 주소
+            note.Password = (new Dul.Security.CryptorEngine()).EncryptPassword(model.Password);
+            note.PostIp = HttpContext.Connection.RemoteIpAddress.ToString(); // IP 주소
             note.Encoding = model.Encoding;
 
             _repository.Add(note); // 데이터 저장
@@ -319,8 +317,7 @@ namespace Hawaso.Controllers
         public IActionResult Delete(int id, string Password)
         {
             //if (_repository.DeleteNote(id, Password) > 0)
-            if (_repository.DeleteNote(id, 
-                Common.CryptorEngine.EncryptPassword(Password)) > 0)
+            if (_repository.DeleteNote(id, (new Dul.Security.CryptorEngine()).EncryptPassword(Password)) > 0)
             {
                 TempData["Message"] = "데이터가 삭제되었습니다.";
 
@@ -436,8 +433,7 @@ namespace Hawaso.Controllers
             note.Content  = model.Content;
             note.FileName = fileName;
             note.FileSize = fileSize;
-            note.Password = 
-                Common.CryptorEngine.EncryptPassword(model.Password);
+            note.Password = (new Dul.Security.CryptorEngine()).EncryptPassword(model.Password);
             note.ModifyIp = 
                 HttpContext.Connection.RemoteIpAddress.ToString(); // IP 주소
             note.Encoding = model.Encoding;
@@ -526,8 +522,7 @@ namespace Hawaso.Controllers
             note.Content  = model.Content;
             note.FileName = fileName;
             note.FileSize = fileSize;
-            note.Password = 
-                Common.CryptorEngine.EncryptPassword(model.Password);
+            note.Password = (new Dul.Security.CryptorEngine()).EncryptPassword(model.Password);
             note.PostIp   = HttpContext.Connection.RemoteIpAddress.ToString();
             note.Encoding = model.Encoding;
 
@@ -606,8 +601,7 @@ namespace Hawaso.Controllers
             NoteComment comment = new NoteComment();
             comment.BoardId = BoardId;
             comment.Name = txtName;
-            comment.Password = 
-                Common.CryptorEngine.EncryptPassword(txtPassword);
+            comment.Password = (new Dul.Security.CryptorEngine()).EncryptPassword(txtPassword);
             comment.Opinion = txtOpinion;
 
             // 댓글 데이터 저장
@@ -636,7 +630,7 @@ namespace Hawaso.Controllers
         public IActionResult CommentDelete(
             string BoardId, string Id, string txtPassword)
         {
-            txtPassword = Common.CryptorEngine.EncryptPassword(txtPassword);
+            txtPassword = (new Dul.Security.CryptorEngine()).EncryptPassword(txtPassword);
             // 현재 삭제하려는 댓글의 암호가 맞으면, 삭제 진행
             if (_commentRepository.GetCountBy(Convert.ToInt32(BoardId)
                 , Convert.ToInt32(Id), txtPassword) > 0)
