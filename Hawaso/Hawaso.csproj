@@ -6,16 +6,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommonMark.NET" Version="0.15.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="wwwroot\templates\dashboard\" />
     <Folder Include="wwwroot\templates\landing\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hawaso.Models\Hawaso.Models.csproj" />
   </ItemGroup>
 
 </Project>

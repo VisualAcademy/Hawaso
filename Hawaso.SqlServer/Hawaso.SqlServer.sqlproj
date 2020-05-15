@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>Hawaso.SqlServer</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{6a12f9df-7fcc-4eb0-8fff-609a4157b88f}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.SqlAzureV12DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>Hawaso.SqlServer</RootNamespace>
+    <AssemblyName>Hawaso.SqlServer</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="DotNetNote" />
+    <Folder Include="DotNetNote\Stored Procedures" />
+    <Folder Include="Identity" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
+    <Build Include="DotNetNote\Stored Procedures\DNN_GetCountNotes.sql" />
+    <Build Include="DotNetNote\Stored Procedures\DNN_ListNotes.sql" />
+    <Build Include="DotNetNote\Stored Procedures\DNN_ModifyNote.sql" />
+    <Build Include="DotNetNote\Stored Procedures\DNN_ReplyNote.sql" />
+    <Build Include="DotNetNote\Stored Procedures\DNN_SearchNoteCount.sql" />
+    <Build Include="DotNetNote\Stored Procedures\DNN_SearchNotes.sql" />
+    <Build Include="DotNetNote\Stored Procedures\DNN_ViewNote.sql" />
+    <Build Include="DotNetNote\Stored Procedures\DNN_WriteNote.sql" />
+    <Build Include="DotNetNote\Stored Procedures\NotesList.sql" />
+    <Build Include="DotNetNote\Stored Procedures\NotesSearchList.sql" />
+    <Build Include="DotNetNote\NoteComments.sql" />
+    <Build Include="DotNetNote\Notes.sql" />
+    <Build Include="Identity\__EFMigrationsHistory.sql" />
+    <Build Include="Identity\AspNetRoleClaims.sql" />
+    <Build Include="Identity\AspNetRoles.sql" />
+    <Build Include="Identity\AspNetUserClaims.sql" />
+    <Build Include="Identity\AspNetUserLogins.sql" />
+    <Build Include="Identity\AspNetUserRoles.sql" />
+    <Build Include="Identity\AspNetUsers.sql" />
+    <Build Include="Identity\AspNetUserTokens.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Hawaso.SqlServer.publish.xml" />
+  </ItemGroup>
+</Project>

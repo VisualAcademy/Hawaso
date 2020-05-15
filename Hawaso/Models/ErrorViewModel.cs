@@ -1,6 +1,6 @@
 using System;
 
-namespace Hawaso.Web.Models
+namespace Hawaso.Models
 {
     public class ErrorViewModel
     {
