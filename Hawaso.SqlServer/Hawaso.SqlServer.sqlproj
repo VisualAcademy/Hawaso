@@ -59,6 +59,8 @@
     <Folder Include="DotNetNote" />
     <Folder Include="DotNetNote\Stored Procedures" />
     <Folder Include="Identity" />
+    <Folder Include="dbo" />
+    <Folder Include="dbo\Tables" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -82,6 +84,7 @@
     <Build Include="Identity\AspNetUserRoles.sql" />
     <Build Include="Identity\AspNetUsers.sql" />
     <Build Include="Identity\AspNetUserTokens.sql" />
+    <Build Include="dbo\Tables\00_CommonValues.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Hawaso.SqlServer.publish.xml" />
