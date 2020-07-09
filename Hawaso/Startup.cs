@@ -137,7 +137,7 @@ namespace Hawaso
             // 기본 내장 사용자 및 역할이 하나도 없으면(즉, 처음 데이터베이스 생성이라면)
             if (!dbContext.Users.Any() && !dbContext.Roles.Any())
             {
-                string domainName = "a.com";
+                string domainName = "hawaso.com";
 
                 //[1] Groups(Roles)
                 var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
