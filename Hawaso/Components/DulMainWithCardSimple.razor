@@ -1,0 +1,15 @@
+﻿<div class="container-fluid">
+    <div class="animated fadeIn">
+        <div class="card">
+            <div class="card-body">
+
+                @ChildContent
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
