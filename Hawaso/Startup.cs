@@ -4,6 +4,7 @@ using DotNetNote.Settings;
 using Hawaso.Areas.Identity;
 using Hawaso.Data;
 using Hawaso.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -40,6 +41,38 @@ namespace Hawaso
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            //// Identity 옵션 설정
+            //services.Configure<IdentityOptions>(options =>
+            //{
+            //    // 암호 설정
+            //    options.Password.RequiredLength = 8;
+            //    options.Password.RequireDigit = true;
+            //    options.Password.RequireLowercase = true;
+
+            //    // 잠금 설정
+            //    options.Lockout.MaxFailedAccessAttempts = 5;
+            //    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+
+            //    // 사용자 설정
+            //    options.User.RequireUniqueEmail = true;
+            //});
+
+
+            // 로그인 페이지 경로 재 설정 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                //options.Cookie.Name = "YourAppCookieName";
+                //options.Cookie.HttpOnly = true;
+                //options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.LoginPath = "/Identity/Account/Login";
+                // ReturnUrlParameter requires 
+                //using Microsoft.AspNetCore.Authentication.Cookies;
+                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                options.SlidingExpiration = true;
+            });
+
 
             services.AddControllersWithViews();
 
@@ -120,12 +153,13 @@ namespace Hawaso
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapBlazorHub();
-                endpoints.MapFallbackToPage("/_Host");
-
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapBlazorHub();
+                endpoints.MapFallbackToPage("/_Host");
+
                 endpoints.MapRazorPages();
             });
 
