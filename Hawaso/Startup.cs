@@ -4,6 +4,7 @@ using DotNetNote.Settings;
 using Hawaso.Areas.Identity;
 using Hawaso.Data;
 using Hawaso.Models;
+using Hawaso.Models.CommonValues;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -126,6 +127,14 @@ namespace Hawaso
             //        Configuration["ConnectionStrings:DefaultConnection"]));
             //[b] 위 코드를 아래 코드로 변경
             services.AddTransient<INoteCommentRepository, NoteCommentRepository>();
+
+            // HawasoDbContext 주입
+            services
+                .AddEntityFrameworkSqlServer()
+                .AddDbContext<HawasoDbContext>(options => 
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), 
+                        ServiceLifetime.Transient);
+            services.AddTransient<ICommonValueRepository, CommonValueRepository>(); // CommonValues
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
