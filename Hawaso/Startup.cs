@@ -131,9 +131,13 @@ namespace Hawaso
             // HawasoDbContext 주입
             services
                 .AddEntityFrameworkSqlServer()
-                .AddDbContext<HawasoDbContext>(options => 
-                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), 
-                        ServiceLifetime.Transient);
+                .AddDbContext<HawasoDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+                        , ServiceLifetime.Transient);
+            services
+                .AddEntityFrameworkSqlServer()
+                .AddDbContext<CommonValueDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<ICommonValueRepository, CommonValueRepository>(); // CommonValues
         }
 
