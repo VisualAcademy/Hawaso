@@ -61,6 +61,7 @@
     <Folder Include="Identity" />
     <Folder Include="dbo" />
     <Folder Include="dbo\Tables" />
+    <Folder Include="dbo\Tables\Customers" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -85,6 +86,7 @@
     <Build Include="Identity\AspNetUsers.sql" />
     <Build Include="Identity\AspNetUserTokens.sql" />
     <Build Include="dbo\Tables\00_CommonValues.sql" />
+    <Build Include="dbo\Tables\Customers\00_Customers.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Hawaso.SqlServer.publish.xml" />

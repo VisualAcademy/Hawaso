@@ -1,0 +1,39 @@
+﻿@page "/Customers/Edit/{CustomerId:int}"
+
+<h3>Edit</h3>
+
+<div class="row">
+    <div class="col-md-12">
+        <EditForm Model="customer" OnValidSubmit="btnEdit_Click">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <ValidationSummary></ValidationSummary>
+            <div class="form-group">
+                <label for="txtName">Name</label>
+                <InputText id="txtName" class="form-control" placeholder="Enter Name"
+                           @bind-Value="@customer.CustomerName"></InputText>
+                <ValidationMessage For="@(() => customer.CustomerName)" class="form-text text-muted"></ValidationMessage>
+            </div>
+            <div class="form-group">
+                <label for="txtEmail">Email</label>
+                <InputText id="txtEmail" class="form-control" placeholder="Enter Content" rows="5"
+                           @bind-Value="@customer.EmailAddress"></InputText>
+                <ValidationMessage For="@(() => customer.EmailAddress)" class="form-text text-muted"></ValidationMessage>
+            </div>
+            <div class="form-group">
+                <label for="txtEmail">Gender</label>
+                <InputSelect @bind-Value="@customer.Gender" class="form-control">
+                    <option value="">--Select Gender--</option>
+                    @foreach (var gender in genders)
+                    {
+                        <option value="@gender">@gender</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => customer.Gender)" class="form-text text-muted"></ValidationMessage>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Edit</button>
+                <a href="/Customers/Details/@customer.CustomerId" class="btn btn-secondary">Cancel</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
