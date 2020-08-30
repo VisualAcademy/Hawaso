@@ -187,11 +187,16 @@ namespace Hawaso
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
-
                 endpoints.MapRazorPages();
+
+                // 루트 페이지 로드하자마자 특정 URL로 이동하고자 할 때 
+                endpoints.MapGet("/", context =>
+                {
+                    context.Response.Redirect("/Home");
+                    return Task.CompletedTask;
+                });
             });
 
             CreateBuiltInUsersAndRoles(serviceProvider).Wait();
