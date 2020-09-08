@@ -61,7 +61,12 @@
     <Folder Include="Identity" />
     <Folder Include="dbo" />
     <Folder Include="dbo\Tables" />
-    <Folder Include="dbo\Tables\Customers" />
+    <Folder Include="dbo\Tables\03_Customers" />
+    <Folder Include="dbo\Tables\01_Categories" />
+    <Folder Include="dbo\Tables\02_Products" />
+    <Folder Include="dbo\Tables\01_Categories\00_Bases" />
+    <Folder Include="dbo\Stored Procedures" />
+    <Folder Include="dbo\Stored Procedures\01_Categories" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -86,7 +91,11 @@
     <Build Include="Identity\AspNetUsers.sql" />
     <Build Include="Identity\AspNetUserTokens.sql" />
     <Build Include="dbo\Tables\00_CommonValues.sql" />
-    <Build Include="dbo\Tables\Customers\00_Customers.sql" />
+    <Build Include="dbo\Tables\03_Customers\03_Customers.sql" />
+    <Build Include="dbo\Tables\01_Categories\00_Bases\CategoriesBases.sql" />
+    <Build Include="dbo\Tables\01_Categories\01_Categories.sql" />
+    <Build Include="dbo\Tables\02_Products\02_Products.sql" />
+    <Build Include="dbo\Stored Procedures\01_Categories\01_GetSubCategories.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Hawaso.SqlServer.publish.xml" />
