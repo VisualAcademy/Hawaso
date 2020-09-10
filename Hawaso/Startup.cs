@@ -112,8 +112,8 @@ namespace Hawaso
 
             // ICustomerRepositoryAsync.cs Inject: DI Container에 서비스(리포지토리) 등록
             services.AddTransient<ICustomerRepository, CustomerRepository>();
-            //services.AddTransient<ICategoryRepository, CategoryRepository>(); //[1]
-            //services.AddTransient<IProductRepositoryAsync, ProductRepositoryAsync>(); //[2]
+            services.AddTransient<ICategoryRepository, CategoryRepository>(); //[1]
+            services.AddTransient<IProductRepositoryAsync, ProductRepositoryAsync>(); //[2]
         }
 
         /// <summary>

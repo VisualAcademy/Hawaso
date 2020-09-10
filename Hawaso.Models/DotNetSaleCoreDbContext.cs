@@ -38,15 +38,15 @@ namespace DotNetSaleCore.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Customers 테이블의 Created 열은 자동으로 GetDate() 제약 조건을 부여하기 
+            modelBuilder.Entity<Category>().HasMany(c => c.Products).WithOne(a => a.Category).HasForeignKey(a => a.CategoryId);
             modelBuilder.Entity<Customer>().Property(m => m.Created).HasDefaultValueSql("GetDate()");
-            //modelBuilder.Entity<Product>().Property(m => m.RegistDate).HasDefaultValueSql("GetDate()");
-            //modelBuilder.Entity<Category>().HasMany(c => c.Products).WithOne(a => a.Category).HasForeignKey(a => a.CategoryId);
+            modelBuilder.Entity<Product>().Property(m => m.RegistDate).HasDefaultValueSql("GetDate()");
         }
 
         //[!] DotNetSaleCore 솔루션 관련 모든 테이블에 대한 참조
+        public DbSet<Category> Categories { get; set; }
         public DbSet<Customer> Customers { get; set; }
-        //public DbSet<Category> Categories { get; set; }
-        //public DbSet<Product> Products { get; set; }
+        public DbSet<Product> Products { get; set; }
         //public DbSet<Order> Orders { get; set; }
     }
 }
