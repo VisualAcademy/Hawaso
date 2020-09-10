@@ -1,0 +1,65 @@
+﻿@page "/Categories"
+@page "/Categories/Manage"
+
+@using Hawaso.Pages.Categories.Components
+
+<h3>Manage</h3>
+
+<div>
+    <input type="button" value="Create(Modal)" class="btn btn-primary" data-toggle="modal"
+           data-target="#customerEditDialog" @onclick="btnCreate_Click" />
+</div>
+
+@if (customers == null)
+{
+    <div>
+        <p>
+            <MatProgressBar Indeterminate="true"></MatProgressBar>
+        </p>
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <AuthorizeView>
+                    <NotAuthorized>
+                        <th colspan="3">Admin</th>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in customers)
+            {
+                <tr>
+                    <td>@customer.CategoryId</td>
+                    <td>@customer.CategoryName</td>
+                    <AuthorizeView>
+                        <NotAuthorized>
+                            <td>
+                                <input type="button" value="Edit(Modal)" class="btn btn-primary" data-toggle="modal"
+                                       data-target="#customerEditDialog" @onclick="@(() => EditBy(customer))" />
+                            </td>
+                            <td>
+                                <input type="button" value="Delete(Modal)" class="btn btn-primary" data-toggle="modal"
+                                       data-target="#customerDeleteDialog" @onclick="@(() => DeleteBy(customer))" />
+                            </td>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPagerComponent>
+
+<CategoryEditorForm @ref="CategoryEditorForm" Model="Category" SaveOrUpdated="SaveOrUpdated" ChangeCallback="SaveOrUpdated">
+    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+</CategoryEditorForm>
+
+<CategoryDeleteDialog @ref="CategoryDeleteDialog" OnClick="btnDelete_Click"></CategoryDeleteDialog>

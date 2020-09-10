@@ -1,0 +1,50 @@
+﻿@if (IsShow)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" id="ProductEditDialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@EditorFormTitle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="Model" OnValidSubmit="btnSaveOrUpdate_Click">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+                        <ValidationSummary></ValidationSummary>
+                        <input type="hidden" @bind-value="@Model.ProductId" />
+                        <div class="form-group">
+                            <label for="txtName">Product Name</label>
+                            <InputText id="txtName" class="form-control" placeholder="Enter Product Name"
+                                       @bind-Value="@Model.ModelName"></InputText>
+                            <ValidationMessage For="@(() => Model.ModelName)" class="form-text text-muted"></ValidationMessage>
+                        </div>
+                        <div class="form-group">
+                            <label for="txtModelNumber">Model Number</label>
+                            <InputText id="txtModelNumber" class="form-control" placeholder="Enter Model Number" rows="5"
+                                       @bind-Value="@Model.ModelNumber"></InputText>
+                            <ValidationMessage For="@(() => Model.ModelNumber)" class="form-text text-muted"></ValidationMessage>
+                        </div>
+                        <div class="form-group">
+                            <label for="lstCategory">Category</label>
+                            <InputSelect @bind-Value="@CategoryId" class="form-control" id="lstCategory">
+                                <option value="">--Select Category--</option>
+                                @foreach (var category in Categories)
+                                    {
+                                    <option value="@category.CategoryId">@category.CategoryName</option>
+                                    }
+                                /**/
+                            </InputSelect>
+                            <ValidationMessage For="@(() => CategoryId)" class="form-text text-muted"></ValidationMessage>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Cancel</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}

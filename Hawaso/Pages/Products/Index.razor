@@ -1,0 +1,64 @@
+﻿@page "/Products"
+@page "/Products/Index"
+
+<h3>Index</h3>
+
+<div class="row">
+    <div class="col-md-12">
+        <a href="/Products/Create" class="btn btn-primary">Create</a>
+        <AuthorizeView>
+            <Authorized>
+            </Authorized>
+            <NotAuthorized>
+                <a href="/Products/Manage" class="btn btn-primary">Manage</a>
+            </NotAuthorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Administrators, Managers">
+            <a href="/Products/Manage" class="btn btn-primary">Manage</a>
+        </AuthorizeView>
+    </div>
+</div>
+
+@if (Products == null)
+{
+    <div>
+        <p>
+            <MatProgressBar Indeterminate="true"></MatProgressBar>
+        </p>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Id</th>
+                    <th>Product Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var Product in Products)
+                {
+                    <tr>
+                        <td>@Product.ProductId</td>
+                        <td>
+                            <a href="/Products/Details/@Product.ProductId">
+                                @Product.ModelName
+                            </a>
+                        </td>
+                        @*<td>@Product.Created?.ToShortTimeString()</td>*@
+                        <td>
+                            <a href="/Products/Details/@Product.ProductId" class="btn btn-light">Details</a>
+                            <a href="/Products/Edit/@Product.ProductId" class="btn btn-light">Edit</a>
+                            <a href="/Products/Delete/@Product.ProductId" class="btn btn-light">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPagerComponent>

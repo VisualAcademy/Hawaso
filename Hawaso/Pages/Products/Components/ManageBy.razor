@@ -1,0 +1,112 @@
+﻿@page "/Products/Components/ManageBy/{CategoryId:int}"
+
+<h3>Manage</h3>
+
+<div>
+    <a href="/Products/Create" class="btn btn-primary">Create</a>
+    <AuthorizeView>
+        <Authorized>
+        </Authorized>
+        <NotAuthorized>
+        </NotAuthorized>
+    </AuthorizeView>
+    <AuthorizeView Roles="Administrators, Managers">
+    </AuthorizeView>
+    <input type="button" value="Create(Modal)" class="btn btn-primary" data-toggle="modal"
+           data-target="#ProductEditDialog" @onclick="btnCreate_Click" />
+</div>
+
+@if (Products == null)
+{
+    <div>
+        <p>
+            <MatProgressBar Indeterminate="true"></MatProgressBar>
+        </p>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>품절</th>
+                    <th>Action</th>
+                    <AuthorizeView>
+                        <NotAuthorized>
+                            <th colspan="3">Admin</th>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Products)
+                {
+                    <tr>
+                        <td>@product.ProductId</td>
+                        <td @onclick="@(() => btnProductName_Click(product.ProductId))">
+                            <a href="/Products/Details/@product.ProductId">
+                                @product.ModelName
+                            </a>
+                        </td>
+                        <td>@(product?.Absence == 0 ? "사용" : "품절")</td>
+                        <td>
+                            <a href="/Products/Details/@product.ProductId" class="btn btn-light">Details</a>
+                            <a href="/Products/Edit/@product.ProductId" class="btn btn-light">Edit</a>
+                            <a href="/Products/Delete/@product.ProductId" class="btn btn-light">Delete</a>
+                        </td>
+                        <AuthorizeView>
+                            <NotAuthorized>
+                                <td>
+                                    <input type="button" value="Edit(Modal)" class="btn btn-primary" data-toggle="modal"
+                                           data-target="#ProductEditDialog" @onclick="@(() => EditBy(product))" />
+                                </td>
+                                <td>
+                                    <input type="button" value="Delete(Modal)" class="btn btn-primary" data-toggle="modal"
+                                           data-target="#ProductDeleteDialog" @onclick="@(() => DeleteBy(product))" />
+                                </td>
+                                <td>
+                                    <input type="button" value="Toggle(Modal)" class="btn btn-primary" data-toggle="modal"
+                                           data-target="#ProductToggleDialog" @onclick="@(() => ToggleBy(product))" />
+                                </td>
+                            </NotAuthorized>
+                        </AuthorizeView>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPagerComponent>
+
+<ProductEditorForm @ref="ProductEditorForm" Model="Product" SaveOrUpdated="SaveOrUpdated" ChangeCallback="SaveOrUpdated">
+    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+</ProductEditorForm>
+
+<ProductDeleteDialog @ref="ProductDeleteDialog" OnClick="btnDelete_Click"></ProductDeleteDialog>
+
+@if (IsInlineDialogShow)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" id="ProductToggleDialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">품절 설정</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose_Click">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>@(Product.ProductId)번 상품의 품절 상태를 변경할까요?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="btnToggleAbsence_Click">설정</button>
+                    <button type="button" class="btn btn-secondary" @onclick="btnClose_Click">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
