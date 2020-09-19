@@ -1,4 +1,6 @@
 ﻿@page "/Customers/Edit/{CustomerId:int}"
+@*@attribute [AllowAnonymous]*@
+@attribute [Authorize(Roles = "Administrators")]
 
 <h3>Edit</h3>
 

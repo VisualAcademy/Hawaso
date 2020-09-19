@@ -1,5 +1,8 @@
 ﻿@page "/Customers/Delete/{CustomerId:int}"
 
+@*@attribute [AllowAnonymous]*@
+@attribute [Authorize(Roles = "Administrators")]
+
 <h3>Delete</h3>
 
 <div class="row">

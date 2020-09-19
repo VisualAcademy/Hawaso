@@ -1,6 +1,7 @@
 ﻿@page "/Products/Manage"
-
 @using Hawaso.Pages.Products.Components
+@*@attribute [AllowAnonymous]*@
+@attribute [Authorize(Roles = "Administrators")]
 
 <h3>Manage</h3>
 

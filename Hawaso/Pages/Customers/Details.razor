@@ -1,5 +1,9 @@
 ﻿@page "/Customers/Details/{CustomerId:int}"
 
+@*@attribute [AllowAnonymous]*@
+@attribute [Authorize(Roles = "Administrators")]
+
+
 <h3>Details</h3>
 
 <div class="row">

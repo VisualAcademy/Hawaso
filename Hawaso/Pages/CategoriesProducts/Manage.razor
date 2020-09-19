@@ -1,6 +1,8 @@
 ﻿@page "/CategoriesProducts"
 @page "/CategoriesProducts/Manage"
 
+@attribute [Authorize(Roles = "Administrators")]
+
 @using Hawaso.Pages.CategoriesProducts.Components
 
 <h3>Manage</h3>
@@ -38,7 +40,7 @@ else
                 <tr>
                     <td>@customer.CategoryId</td>
                     <td>
-                        <a href="/CategoriesProducts/DetailsWith/@customer.CategoryId">@customer.CategoryName</a>                    
+                        <a href="/CategoriesProducts/DetailsWith/@customer.CategoryId">@customer.CategoryName</a>
                     </td>
                     <AuthorizeView>
                         <NotAuthorized>

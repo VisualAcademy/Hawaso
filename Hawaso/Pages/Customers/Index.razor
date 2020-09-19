@@ -1,5 +1,7 @@
 ﻿@page "/Customers"
 @page "/Customers/Index"
+@*@attribute [AllowAnonymous]*@
+@attribute [Authorize(Roles = "Administrators")]
 
 <h3>Index</h3>
 

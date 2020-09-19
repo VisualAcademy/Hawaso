@@ -1,5 +1,7 @@
 ﻿@page "/CategoriesProducts/DetailsWith/{CategoryId:int}"
 
+@attribute [Authorize(Roles = "Administrators")]
+
 @using Hawaso.Pages.Products.Components
 
 <h3>Details</h3>

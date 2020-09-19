@@ -1,6 +1,10 @@
 ﻿@page "/Categories"
 @page "/Categories/Manage"
 
+@*@attribute [AllowAnonymous]*@
+@*@attribute [Authorize]*@
+@attribute [Authorize(Roles = "Administrators")]
+
 @using Hawaso.Pages.Categories.Components
 
 <h3>Manage</h3>

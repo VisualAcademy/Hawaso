@@ -1,4 +1,6 @@
 ﻿@page "/Products/Create"
+@*@attribute [AllowAnonymous]*@
+@attribute [Authorize(Roles = "Administrators")]
 
 <h3>Create</h3>
 

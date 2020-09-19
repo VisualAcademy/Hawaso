@@ -1,4 +1,6 @@
 ﻿@page "/Products/Edit/{ProductId:int}"
+@*@attribute [AllowAnonymous]*@
+@attribute [Authorize(Roles = "Administrators")]
 
 <h3>Edit</h3>
 
