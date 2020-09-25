@@ -114,6 +114,12 @@ namespace Hawaso
             services.AddTransient<ICustomerRepository, CustomerRepository>();
             services.AddTransient<ICategoryRepository, CategoryRepository>(); //[1]
             services.AddTransient<IProductRepositoryAsync, ProductRepositoryAsync>(); //[2]
+
+            services.AddSingleton<ILoginRepository>(
+                new LoginRepository(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddEntityFrameworkSqlServer().AddDbContext<LoginDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+            services.AddTransient<ILoginRepositoryAsync, LoginRepositoryAsync>(); //[1]
         }
 
         /// <summary>
