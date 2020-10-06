@@ -1,0 +1,70 @@
+﻿@page "/Logins"
+@page "/Logins/Manage"
+@*@attribute [AllowAnonymous]*@
+@*@attribute [Authorize]*@
+@attribute [Authorize(Roles = "Administrators")]
+
+@using Hawaso.Pages.Logins.Components
+
+<h3>Manage</h3>
+
+<div>
+    <input type="button" value="Create(Modal)" class="btn btn-primary" data-toggle="modal"
+           data-target="#loginEditDialog" @onclick="btnCreate_Click" />
+</div>
+
+@if (logins == null)
+{
+    <div>
+        <p>
+            <MatProgressBar Indeterminate="true"></MatProgressBar>
+        </p>
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Date</th>
+                <AuthorizeView>
+                    <NotAuthorized>
+                        <th colspan="3">Admin</th>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var login in logins)
+            {
+                <tr>
+                    <td>@login.LoginId</td>
+                    <td>@login.UserName</td>
+                    <td>@login.LoginDate</td>
+                    <AuthorizeView>
+                        <NotAuthorized>
+                            <td>
+                                <input type="button" value="Edit(Modal)" class="btn btn-primary" data-toggle="modal"
+                                       data-target="#loginEditDialog" @onclick="@(() => EditBy(login))" />
+                            </td>
+                            <td>
+                                <input type="button" value="Delete(Modal)" class="btn btn-primary" data-toggle="modal"
+                                       data-target="#loginDeleteDialog" @onclick="@(() => DeleteBy(login))" />
+                            </td>
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPagerComponent>
+
+<LoginEditorForm @ref="LoginEditorForm" Model="Login" SaveOrUpdated="SaveOrUpdated" ChangeCallback="SaveOrUpdated">
+    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+</LoginEditorForm>
+
+<LoginDeleteDialog @ref="LoginDeleteDialog" OnClick="btnDelete_Click"></LoginDeleteDialog>

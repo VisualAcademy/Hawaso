@@ -67,6 +67,10 @@
     <Folder Include="dbo\Tables\01_Categories\00_Bases" />
     <Folder Include="dbo\Stored Procedures" />
     <Folder Include="dbo\Stored Procedures\01_Categories" />
+    <Folder Include="Logins" />
+    <Folder Include="Logins\dbo" />
+    <Folder Include="Logins\dbo\Stored Procedures" />
+    <Folder Include="Logins\dbo\Tables" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -96,6 +100,14 @@
     <Build Include="dbo\Tables\01_Categories\01_Categories.sql" />
     <Build Include="dbo\Tables\02_Products\02_Products.sql" />
     <Build Include="dbo\Stored Procedures\01_Categories\01_GetSubCategories.sql" />
+    <Build Include="Logins\dbo\Stored Procedures\LoginsCount.sql" />
+    <Build Include="Logins\dbo\Stored Procedures\LoginsList.sql" />
+    <Build Include="Logins\dbo\Stored Procedures\LoginsListAdmin.sql" />
+    <Build Include="Logins\dbo\Stored Procedures\LoginsSearchCount.sql" />
+    <Build Include="Logins\dbo\Stored Procedures\LoginsSearchCountAdmin.sql" />
+    <Build Include="Logins\dbo\Stored Procedures\LoginsSearchList.sql" />
+    <Build Include="Logins\dbo\Stored Procedures\LoginsSearchListAdmin.sql" />
+    <Build Include="Logins\dbo\Tables\Logins.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Hawaso.SqlServer.publish.xml" />

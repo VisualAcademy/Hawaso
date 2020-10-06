@@ -1,0 +1,32 @@
+﻿@if (IsShow)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" id="customerEditDialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@EditorFormTitle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="Model" OnValidSubmit="btnSaveOrUpdate_Click">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+                        <ValidationSummary></ValidationSummary>
+                        <input type="hidden" @bind-value="@Model.LoginId" />
+                        <div class="form-group">
+                            <label for="txtName">Name</label>
+                            <InputText id="txtName" class="form-control" placeholder="Enter Title"
+                                       @bind-Value="@Model.UserName"></InputText>
+                            <ValidationMessage For="@(() => Model.UserName)" class="form-text text-muted"></ValidationMessage>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Cancel</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
