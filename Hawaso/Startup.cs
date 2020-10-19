@@ -246,7 +246,7 @@ namespace Hawaso
                     {
                         UserName = $"administrator@{domainName}",
                         Email = $"administrator@{domainName}",
-                        EmailConfirmed = true,
+                        EmailConfirmed = true, // 기본 템플릿에는 이메일 인증 과정을 거치기때문에 EmailConfirmed 속성을 true로 설정해야 함.
                     };
                     await userManager.CreateAsync(administrator, "Pa$$w0rd");
                 }
