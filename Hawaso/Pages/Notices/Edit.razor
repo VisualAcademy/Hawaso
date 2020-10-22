@@ -1,0 +1,48 @@
+﻿@page "/Notices/Edit/{Id:int}"
+
+<h3>Edit</h3>
+
+<div class="row">
+    <div class="col-md-12">
+        <EditForm Model="model" OnValidSubmit="FormSubmit">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <ValidationSummary></ValidationSummary>
+            <div class="form-group">
+                <label for="id">Id: </label> @model.Id
+            </div>
+            <div class="form-group">
+                <label for="txtName">Name</label>
+                <InputText id="txtName" class="form-control" placeholder="Enter Title"
+                           @bind-Value="@model.Name"></InputText>
+                <ValidationMessage For="@(() => model.Name)" class="form-text text-muted"></ValidationMessage>
+            </div>
+            <div class="form-group">
+                <label for="txtTitle">Title</label>
+                <InputText id="txtTitle" class="form-control" placeholder="Enter Title"
+                           @bind-Value="@model.Title"></InputText>
+                <ValidationMessage For="@(() => model.Title)" class="form-text text-muted"></ValidationMessage>
+            </div>
+            <div class="form-group">
+                <label for="txtContent">Content</label>
+                <InputTextArea id="txtContext" class="form-control" placeholder="Enter Content" rows="5"
+                               @bind-Value="@model.Content"></InputTextArea>
+                <ValidationMessage For="@(() => model.Content)" class="form-text text-muted"></ValidationMessage>
+            </div>
+            <div class="form-group">
+                <label for="lstCategory">Parent</label>
+                <InputSelect @bind-Value="@ParentId" class="form-control" id="lstCategory">
+                    <option value="">--Select Parent--</option>
+                    @foreach (var p in parentIds)
+                    {
+                        <option value="@p">@p</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => ParentId)" class="form-text text-muted"></ValidationMessage>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a href="/Notices" class="btn btn-secondary">List</a>
+            </div>
+        </EditForm>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+﻿@if (IsShow)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@EditorFormTitle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="Hide">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="Model" OnValidSubmit="CreateOrEditClick">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+                        <ValidationSummary></ValidationSummary>
+                        @if (Model.Id != 0)
+                        {
+                            <div class="form-group">
+                                <label for="id">Id: </label> @Model.Id
+                                <input type="hidden" @bind-value="@Model.Id" />
+                            </div>
+                        }
+                        <div class="form-group">
+                            <label for="txtName">Name</label>
+                            <InputText id="txtName" class="form-control" placeholder="Enter Title"
+                                       @bind-Value="@Model.Name"></InputText>
+                            <ValidationMessage For="@(() => Model.Name)" class="form-text text-muted"></ValidationMessage>
+                        </div>
+                        <div class="form-group">
+                            <label for="txtTitle">Title</label>
+                            <InputText id="txtTitle" class="form-control" placeholder="Enter Title"
+                                       @bind-Value="@Model.Title"></InputText>
+                            <ValidationMessage For="@(() => Model.Title)" class="form-text text-muted"></ValidationMessage>
+                        </div>
+                        <div class="form-group">
+                            <label for="txtContent">Content</label>
+                            <InputTextArea id="txtContext" class="form-control" placeholder="Enter Content" rows="5"
+                                           @bind-Value="@Model.Content"></InputTextArea>
+                            <ValidationMessage For="@(() => Model.Content)" class="form-text text-muted"></ValidationMessage>
+                        </div>
+                        <div class="form-group">
+                            <label for="lstCategory">Parent</label>
+                            <InputSelect @bind-Value="@parentId" class="form-control" id="lstCategory">
+                                <option value="">--Select Parent--</option>
+                                @foreach (var p in parentIds)
+                                    {
+                                    <option value="@p">@p</option>
+                                    }
+                                /**/
+                            </InputSelect>
+                            <ValidationMessage For="@(() => parentId)" class="form-text text-muted"></ValidationMessage>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="button" class="btn btn-secondary" @onclick="Hide">Cancel</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}

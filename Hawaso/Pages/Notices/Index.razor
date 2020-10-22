@@ -1,0 +1,83 @@
+﻿@page "/Notices"
+@page "/Notices/Index"
+
+<h3>Index</h3>
+
+<div class="row">
+    <div class="col-md-12">
+        <a href="/Notices/Create" class="btn btn-primary">Create</a>
+        <AuthorizeView>
+            <Authorized>
+            </Authorized>
+            <NotAuthorized>
+                <a href="/Notices/Manage" class="btn btn-primary">Manage</a>
+                <a href="/Notices/Report" class="btn btn-primary">Report</a>
+            </NotAuthorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Administrators, Managers">
+            <a href="/Notices/Manage" class="btn btn-primary">Manage</a>
+        </AuthorizeView>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        @if (models == null)
+        {
+            @*<p><em>Loading...</em></p>*@
+            <div>
+                <p>
+                    <MatProgressBar Indeterminate="true"></MatProgressBar>
+                </p>
+            </div>
+        }
+        else
+        {
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Created</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                @if (models.Count == 0)
+                {
+                    <tbody>
+                        <tr>
+                            <td colspan="4" class="text-center">
+                                <p>데이터가 없습니다.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+                <tbody>
+                    @foreach (var m in models)
+                    {
+                        <tr>
+                            <td>@m.Id</td>
+                            <td @onclick="@(() => NameClick(m.Id))">
+                                <a href="/Notices/Details/@m.Id">
+                                    @m.Name
+                                </a>
+                            </td>
+                            <td>@m.Created?.ToShortTimeString()</td>
+                            <td>
+                                <a href="/Notices/Details/@m.Id" class="btn btn-light">Details</a>
+                                <a href="/Notices/Edit/@m.Id" class="btn btn-light">Edit</a>
+                                <a href="/Notices/Delete/@m.Id" class="btn btn-light">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-12">
+        <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+    </div>
+    <div class="col-md-12">
+        <Hawaso.Pages.Notices.Components.SearchBox placeholder="Search Notices..." SearchQueryChanged="Search"></Hawaso.Pages.Notices.Components.SearchBox>
+    </div>
+</div>

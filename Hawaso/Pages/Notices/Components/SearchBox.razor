@@ -1,0 +1,24 @@
+﻿@*<div class="search">
+    <i class="oi oi-eye"></i>
+    <input placeholder="Search..."
+           @attributes="AdditionalAttributes" @bind="SearchQuery" @bind:event="oninput" />
+    <input type="button" value="Search" @onclick="Search" />
+</div>*@
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card-body row no-gutters align-items-center">
+                <div class="col-auto">
+                    <i class="fas fa-search h4 text-body"></i>&nbsp;
+                </div>
+                <div class="col">
+                    <input class="form-control form-control-sm form-control-borderless" type="search" placeholder="Search topics or keywords"
+                           @attributes="AdditionalAttributes" @bind="SearchQuery" @bind:event="oninput">
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-sm btn-success" type="submit" @onclick="Search">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
