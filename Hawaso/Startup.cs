@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NoticeApp.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -99,6 +100,22 @@ namespace Hawaso
             DependencyInjectionContainer(services);
 
             AddDependencyInjectionContainerForDotNetSaleCore(services);
+
+            AddDependencyInjectionContainerForNoticeApp(services);
+        }
+
+        /// <summary>
+        /// 공지사항(NoticeApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
+        /// </summary>
+        /// <param name="services"></param>
+        private void AddDependencyInjectionContainerForNoticeApp(IServiceCollection services)
+        {
+            // NoticeAppDbContext.cs Inject: New DbContext Add
+            services.AddEntityFrameworkSqlServer().AddDbContext<NoticeAppDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("NoticeApp")), ServiceLifetime.Transient);
+
+            // INoticeRepositoryAsync.cs Inject: DI Container에 서비스(리포지토리) 등록 
+            services.AddTransient<INoticeRepository, NoticeRepository>();
         }
 
         /// <summary>
