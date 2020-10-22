@@ -88,20 +88,20 @@
     <div class="col-md-12">
         <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
     </div>
-    <div>
+    <div class="col-md-12">
         <Hawaso.Pages.Notices.Components.SearchBox placeholder="Search Notices..." SearchQueryChanged="Search"></Hawaso.Pages.Notices.Components.SearchBox>
     </div>
 </div>
 
 <Hawaso.Pages.Notices.Components.EditorForm @ref="EditorFormReference"
-                                               Model="model"
-                                               CreateCallback="CreateOrEdit"
-                                               EditCallback="CreateOrEdit">
+                                            Model="model"
+                                            CreateCallback="CreateOrEdit"
+                                            EditCallback="CreateOrEdit">
     <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
 </Hawaso.Pages.Notices.Components.EditorForm>
 
 <Hawaso.Pages.Notices.Components.DeleteDialog @ref="DeleteDialogReference"
-                                                 OnClick="DeleteClick">
+                                              OnClick="DeleteClick">
 </Hawaso.Pages.Notices.Components.DeleteDialog>
 
 @if (IsInlineDialogShow)
