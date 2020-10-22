@@ -71,6 +71,7 @@
     <Folder Include="Logins\dbo" />
     <Folder Include="Logins\dbo\Stored Procedures" />
     <Folder Include="Logins\dbo\Tables" />
+    <Folder Include="dbo\Tables\Notices" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -108,6 +109,7 @@
     <Build Include="Logins\dbo\Stored Procedures\LoginsSearchList.sql" />
     <Build Include="Logins\dbo\Stored Procedures\LoginsSearchListAdmin.sql" />
     <Build Include="Logins\dbo\Tables\Logins.sql" />
+    <Build Include="dbo\Tables\Notices\00_Notices.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Hawaso.SqlServer.publish.xml" />
