@@ -79,6 +79,33 @@ namespace Hawaso
 
             services.AddControllersWithViews();
 
+
+            #region CORS
+            //[CORS][1] CORS 사용 등록
+            //[CORS][1][1] 기본: 모두 허용
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAnyOrigin",
+                    builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
+            //[CORS][1][2] 참고: 모두 허용
+            services.AddCors(o => o.AddPolicy("AllowAllPolicy", options =>
+            {
+                options.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+            }));
+            //[CORS][1][3] 참고: 특정 도메인만 허용
+            services.AddCors(o => o.AddPolicy("AllowSpecific", options =>
+                    options.WithOrigins("https://localhost:44356")
+                           .WithMethods("GET", "POST", "PUT", "PATCH", "DELETE")
+                           .WithHeaders("accept", "content-type", "origin", "X-TotalRecordCount")));
+            #endregion
+
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
@@ -102,6 +129,8 @@ namespace Hawaso
             AddDependencyInjectionContainerForDotNetSaleCore(services);
 
             AddDependencyInjectionContainerForNoticeApp(services);
+
+
         }
 
         /// <summary>
@@ -204,6 +233,13 @@ namespace Hawaso
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+
+            #region CORS
+            //[CORS][2] CORS 사용 허용
+            app.UseCors("AllowAnyOrigin"); 
+            #endregion
+
 
             app.UseEndpoints(endpoints =>
             {
