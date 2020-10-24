@@ -1,5 +1,8 @@
 ﻿@page "/Notices/Delete/{Id:int}"
 
+@*// 최고 관리자 그룹(역할)에 포함된 사용자만 공지사항 관리*@
+@attribute [Authorize(Roles = "Administrators")] 
+
 <h3>Delete</h3>
 
 <div class="row">

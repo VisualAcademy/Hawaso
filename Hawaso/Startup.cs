@@ -261,6 +261,9 @@ namespace Hawaso
             CreateBuiltInUsersAndRoles(serviceProvider).Wait();
         }
 
+        /// <summary>
+        /// 내장 사용자 및 그룹(역할) 생성
+        /// </summary>
         private async Task CreateBuiltInUsersAndRoles(IServiceProvider serviceProvider)
         {
             //[0] DbContext 개체 생성

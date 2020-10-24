@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NoticeApp.Models;
 using System;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace NoticeApp.Apis.Controllers
 {
+    [Authorize(Roles = "Administrators")] // 최고 관리자 그룹(역할)에 포함된 사용자만 공지사항 관리
     [Produces("application/json")]
     [Route("api/Notices")]
     [ApiController]
