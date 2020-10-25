@@ -19,7 +19,8 @@ namespace Hawaso.Pages.Notices
         protected override async Task OnInitializedAsync()
         {
             model = await NoticeRepositoryAsyncReference.GetByIdAsync(Id);
-            content = Dul.HtmlUtility.EncodeWithTabAndSpace(model.Content);
+            //content = Dul.HtmlUtility.EncodeWithTabAndSpace(model.Content);
+            content = model.Content;
         }
     }
 }
