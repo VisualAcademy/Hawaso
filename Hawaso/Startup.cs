@@ -116,9 +116,8 @@ namespace Hawaso
 
             // ============================================================================== // 
             // 새로운 DbContext 추가
-            services.AddEntityFrameworkSqlServer().AddDbContext<DotNetNoteContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddEntityFrameworkSqlServer().AddDbContext<DotNetNoteContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<DotNetNoteContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             // ============================================================================== // 
 
             services.AddTransient<IEmailSender, EmailSender>();
@@ -140,8 +139,8 @@ namespace Hawaso
         private void AddDependencyInjectionContainerForNoticeApp(IServiceCollection services)
         {
             // NoticeAppDbContext.cs Inject: New DbContext Add
-            services.AddEntityFrameworkSqlServer().AddDbContext<NoticeAppDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("NoticeApp")), ServiceLifetime.Transient);
+            //services.AddEntityFrameworkSqlServer().AddDbContext<NoticeAppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("NoticeApp")), ServiceLifetime.Transient);
+            services.AddDbContext<NoticeAppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("NoticeApp")), ServiceLifetime.Transient);
 
             // INoticeRepositoryAsync.cs Inject: DI Container에 서비스(리포지토리) 등록 
             services.AddTransient<INoticeRepository, NoticeRepository>();
@@ -153,8 +152,8 @@ namespace Hawaso
         private void AddDependencyInjectionContainerForDotNetSaleCore(IServiceCollection services)
         {
             // DotNetSaleCoreDbContext.cs Inject: New DbContext Add
-            services.AddEntityFrameworkSqlServer().AddDbContext<DotNetSaleCoreDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+            //services.AddEntityFrameworkSqlServer().AddDbContext<DotNetSaleCoreDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+            services.AddDbContext<DotNetSaleCoreDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
 
             // ICustomerRepositoryAsync.cs Inject: DI Container에 서비스(리포지토리) 등록
             services.AddTransient<ICustomerRepository, CustomerRepository>();
@@ -163,8 +162,7 @@ namespace Hawaso
 
             services.AddSingleton<ILoginRepository>(
                 new LoginRepository(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddEntityFrameworkSqlServer().AddDbContext<LoginDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+            services.AddDbContext<LoginDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
             services.AddTransient<ILoginRepositoryAsync, LoginRepositoryAsync>(); //[1]
         }
 
@@ -200,12 +198,10 @@ namespace Hawaso
 
             // HawasoDbContext 주입
             services
-                .AddEntityFrameworkSqlServer()
                 .AddDbContext<HawasoDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
                         , ServiceLifetime.Transient);
             services
-                .AddEntityFrameworkSqlServer()
                 .AddDbContext<CommonValueDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<ICommonValueRepository, CommonValueRepository>(); // CommonValues
