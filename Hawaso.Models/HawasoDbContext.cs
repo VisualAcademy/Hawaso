@@ -26,6 +26,7 @@ namespace Hawaso.Models
             : base(options)
         {
             // 공식과 같은 코드
+            // 다음 코드는 현재는 따로 사용하지 않습니다. 
             // ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         }
 

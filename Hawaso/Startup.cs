@@ -197,10 +197,8 @@ namespace Hawaso
             services.AddTransient<INoteCommentRepository, NoteCommentRepository>();
 
             // HawasoDbContext 주입
-            services
-                .AddDbContext<HawasoDbContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-                        , ServiceLifetime.Transient);
+            // DbContext ServiceLifetime 옵션은 모두 Transient를 주었습니다. 
+            services.AddDbContext<HawasoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
             services
                 .AddDbContext<CommonValueDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
