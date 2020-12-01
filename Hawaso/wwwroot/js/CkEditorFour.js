@@ -1,4 +1,5 @@
-﻿window.CkEditorFour = (() => {
+﻿//[1] CKEditor 자바스크립트 인터롭 코드 작성
+window.CkEditorFour = (() => {
     const editors = {};
 
     return {

@@ -20,6 +20,7 @@ namespace Hawaso.Pages.Notices
         {
             model = await NoticeRepositoryAsyncReference.GetByIdAsync(Id);
             //content = Dul.HtmlUtility.EncodeWithTabAndSpace(model.Content);
+            // HTML 태그 실행을 위한 인코딩없이 바로 전달
             content = model.Content;
         }
     }

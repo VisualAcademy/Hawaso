@@ -24,8 +24,11 @@
             </div>
             <div class="form-group">
                 <label for="txtContent">Content</label>
+
+                @*[4] CKEditor 컴포넌트 적용*@
                 @*<InputTextArea id="txtContext" class="form-control" placeholder="Enter Content" rows="5" @bind-Value="@model.Content"></InputTextArea>*@
                 <Hawaso.Components.CkEditorFourComponent @bind-Value="@model.Content"></Hawaso.Components.CkEditorFourComponent>
+
                 <ValidationMessage For="@(() => model.Content)" class="form-text text-muted"></ValidationMessage>
             </div>
             <div class="form-group">
