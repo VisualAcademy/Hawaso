@@ -140,7 +140,7 @@ namespace Hawaso
         {
             // NoticeAppDbContext.cs Inject: New DbContext Add
             //services.AddEntityFrameworkSqlServer().AddDbContext<NoticeAppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("NoticeApp")), ServiceLifetime.Transient);
-            services.AddDbContext<NoticeAppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("NoticeApp")), ServiceLifetime.Transient);
+            services.AddDbContext<NoticeAppDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:NoticeApp"]), ServiceLifetime.Transient); // 또 다른 데이터베이스 연결 문자열 표현법
 
             // INoticeRepositoryAsync.cs Inject: DI Container에 서비스(리포지토리) 등록 
             services.AddTransient<INoticeRepository, NoticeRepository>();
