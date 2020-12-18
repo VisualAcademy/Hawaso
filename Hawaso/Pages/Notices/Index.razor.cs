@@ -57,6 +57,7 @@ namespace Hawaso.Pages.Notices
 
         protected void NameClick(int id)
         {
+            //[?] Id 값을 가지고 상세보기 페이지로 이동
             NavigationManagerReference.NavigateTo($"/Notices/Details/{id}");
         }
 
