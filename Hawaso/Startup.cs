@@ -235,10 +235,12 @@ namespace Hawaso
                 endpoints.MapGet("/", context =>
                 {
                     //[!] "/" 경로 요청 시 MVC Home Controller의 Index 액션 메서드 실행
+                    //____나중에 더 좋은 로직 발견하면 여기 코드 대체 예정
                     context.Response.Redirect("/Home"); 
                     return Task.CompletedTask;
                 });
             });
+
 
             CreateBuiltInUsersAndRoles(serviceProvider).Wait();
         }
