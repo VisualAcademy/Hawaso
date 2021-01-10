@@ -77,6 +77,7 @@ namespace Hawaso
             });
 
 
+            //[!] MVC 사용을 위한 서비스 등록: 가장 기본적인 확장 메서드
             services.AddControllersWithViews();
 
 
