@@ -1,0 +1,65 @@
+﻿@using MachineTypeApp.Models
+@inject IMachineTypeRepository repository
+@inject IJSRuntime JS
+
+<div class="modal" tabindex="-1" role="dialog" id="MachineTypeEditorDialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@EditorFormTitle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <EditForm Model="EditorModel" OnValidSubmit="@FormSubmitProcess">
+                    machineType
+                    <DataAnnotationsValidator></DataAnnotationsValidator>
+                    <ValidationSummary></ValidationSummary>
+                    <input type="hidden" @bind-value="@EditorModel.Id" />
+
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <InputText id="name" class="form-control" @bind-Value="@EditorModel.Name"></InputText>
+                        <ValidationMessage For="@(() => EditorModel.Name)"></ValidationMessage>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </EditForm>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment EditorFormTitle { get; set; }
+
+    [Parameter]
+    public MachineType EditorModel { get; set; }
+
+    [Parameter]
+    public Action SaveOrUpdated { get; set; }
+
+    // 저장 또는 수정 로직
+    private async void FormSubmitProcess()
+    {
+        if (EditorModel.Id == 0)
+        {
+            // 저장
+            await repository.AddMachineTypeAsync(EditorModel);
+        }
+        else
+        {
+            // 수정
+            await repository.EditMachineTypeAsync(EditorModel);
+        }
+
+        await JS.InvokeAsync<object>("closeModal", "MachineTypeEditorDialog"); // 모달 창 닫기
+
+        SaveOrUpdated?.Invoke(); // 넘어온 함수 참조를 실행
+    }
+}

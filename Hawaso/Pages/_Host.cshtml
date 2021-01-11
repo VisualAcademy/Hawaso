@@ -115,6 +115,11 @@
                         </div>
                         <div class="collapse" id="collapseLayoutsAdministrations" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="/MachineTypes">Machine Type</a>
+                            </nav>
+                        </div>
+                        <div class="collapse" id="collapseLayoutsAdministrations" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="/Logins">Logins</a>
                             </nav>
                         </div>
@@ -235,6 +240,22 @@
     @*[3] _Host에 CKEditor CDN 적용*@
     <script src="https://cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
     <script src="~/js/CkEditorFour.js"></script>
+
+    @*<script src="~/lib/jquery.js"></script>
+    <script src="~/lib/dist/js/bootstrap.js"></script>*@
+
+    <script>
+        // 넘어온 ID를 갖는 모달 창 닫기
+        function closeModal(modalId) {
+            //console.log("삭제");
+            $("#" + modalId).modal('hide');
+        }
+
+        // 넘어온 ID를 갖는 모달 창 열기
+        function showModal(modalId) {
+            $("#" + modalId).modal('show');
+        }
+    </script>
 
 </body>
 </html>
