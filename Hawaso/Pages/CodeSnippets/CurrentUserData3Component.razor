@@ -1,0 +1,58 @@
+﻿@*
+    ClaimTypes는 다음 경로 참고
+    https://docs.microsoft.com/en-us/dotnet/api/system.security.claims.claimtypes?view=net-5.0
+*@
+
+@page "/CodeSnippets/CurrentUserData3"
+
+@using Microsoft.AspNetCore.Identity;
+@using Hawaso.Models
+
+<h3>현재 접속자 정보 얻기 코드 샘플 3</h3>
+
+@attribute [Authorize(Roles = "Administrators")]
+
+<text>
+    현재 접속자:<br />
+    UserId: @UserId <br />
+    이름: @(UserName)
+</text>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await GetUserIdAndUserName();
+    }
+
+    #region Get UserId and UserName
+    [Parameter]
+    public string UserId { get; set; } = "";
+
+    [Parameter]
+    public string UserName { get; set; } = "";
+
+    // IdentityUser인지 ApplicationUser인지 확인: Hawaso 프로젝트는 ApplicationUser 사용
+    //[Inject] public UserManager<IdentityUser> UserManagerRef { get; set; }
+    [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; }
+
+    [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; }
+
+    private async Task GetUserIdAndUserName()
+    {
+        var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            var currentUser = await UserManagerRef.GetUserAsync(user);
+            UserId = currentUser.Id;
+            UserName = user.Identity.Name;
+        }
+        else
+        {
+            UserId = "";
+            UserName = "Anonymous";
+        }
+    }
+    #endregion
+}

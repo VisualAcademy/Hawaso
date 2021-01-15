@@ -1,0 +1,36 @@
+﻿@*
+    다음 경로의 소스 참고
+    https://github.com/VisualAcademy/HawasoCookies/blob/master/Hawaso/Pages/FetchData.razor
+*@
+
+@page "/CodeSnippets/CurrentUserData2"
+
+<h3>현재 접속자 정보 얻기 코드 샘플 2</h3>
+
+@attribute [Authorize(Roles = "Administrators")]
+
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<text>현재 접속자의 이름은 @(Name)입니다.</text>
+<br />
+nameidentifier: @NameIdentifier
+
+@code {
+    public string NameIdentifier { get; set; }
+    public string Name { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateRef;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            //[2] Claims에 저장된 값 출력
+            Name = authState.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+            NameIdentifier = authState.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+        }
+    }
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationStateRef { get; set; }
+}
