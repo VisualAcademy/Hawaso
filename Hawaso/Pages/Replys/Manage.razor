@@ -1,0 +1,162 @@
+﻿@page "/Replys"
+@page "/Replys/Manage"
+
+<h3>Reply Manage <a href="/Replys/Create"><span class="oi oi-plus"></span></a></h3>
+
+<div class="row">
+    <div class="col-md-12">
+        <a href="/Replys/Create" class="btn btn-primary">Create</a>
+        <AuthorizeView>
+            <Authorized>
+            </Authorized>
+            <NotAuthorized>
+                <a href="/Replys/Index" class="btn btn-primary">List</a>
+                <input type="button" name="btnCreate" value="Create with Modal"
+                       class="btn btn-primary"
+                       @onclick="ShowEditorForm" />
+            </NotAuthorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Administrators, Managers">
+            <a href="/Replys/Index" class="btn btn-primary">List</a>
+        </AuthorizeView>
+        <input type="button" class="btn btn-primary" value="Excel Export With Web API" @onclick="DownloadExcelWithWebApi" />
+        <input type="button" class="btn btn-primary" value="Excel Export" @onclick="DownloadExcel" />
+        <a href="/ReplyDownload/ExcelDown" class="btn btn-primary">Excel Export</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        @if (models == null)
+        {
+            <div>
+                <p>
+                    <MatProgressBar Indeterminate="true"></MatProgressBar>
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <colgroup>
+                        <col style="width: 50px;" />
+                        <col style="width: 300px;" />
+                        <col style="width: 100px;" />
+                        <col style="width: 100px;" />
+                        <col style="width: 100px;" />
+                        <col style="width: 200px;" />
+                        <col style="width: auto;" />
+                        <col style="width: 200px;" />
+                    </colgroup>
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Hawaso.Pages.Replys.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Hawaso.Pages.Replys.Components.SortOrderArrow></th>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByName())">Name <Hawaso.Pages.Replys.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Pages.Replys.Components.SortOrderArrow></th>
+                            <th class="text-center text-nowrap">Created</th>
+                            <th class="text-center text-nowrap">ReadCount</th>
+                            <th class="text-center text-nowrap">Actions</th>
+                            <th class="text-center text-nowrap">&nbsp;</th>
+                            <th class="text-center text-nowrap">Admin</th>
+                        </tr>
+                    </thead>
+                    @if (models.Count == 0)
+                    {
+                        <tbody>
+                            <tr>
+                                <td colspan="8" class="text-center">
+                                    <p>데이터가 없습니다.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                    <tbody>
+                        @foreach (var m in models)
+                        {
+                            <tr>
+                                <td class="text-center" style="font-size: xx-small;">
+                                    @if (m.Step == 0)
+                                    {
+                                        @m.Id
+                                    }
+                                    else
+                                    {
+                                        <text>&nbsp;</text>
+                                    }
+                                </td>
+                                <td style="cursor: pointer;" @onclick="@(_ => NameClick(m.Id))">
+                                    <span class="btn-link text-nowrap">@m.Title</span>
+                                </td>
+                                <td>
+                                    @m.Name
+                                </td>
+                                <td class="text-center text-nowrap small">
+                                    @(Dul.DateTimeUtility.ShowTimeOrDate(m.Created))
+                                </td>
+                                <td class="text-center small">
+                                    @m.ReadCount
+                                </td>
+                                <td>
+                                    <a href="/Replys/Details/@m.Id" class="btn btn-sm btn-light">Details</a>
+                                    <a href="/Replys/Edit/@m.Id" class="btn btn-sm btn-light">Edit</a>
+                                    <a href="/Replys/Delete/@m.Id" class="btn btn-sm btn-light">Delete</a>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <input type="button" name="btnEdit" value="Edit" class="btn btn-sm btn-primary" @onclick="(() => EditBy(m))" />
+                                    <input type="button" name="btnDelete" value="Delete" class="btn btn-sm btn-danger" @onclick="(() => DeleteBy(m))" />
+                                    <input type="button" name="btnToggle" value="Toggle" class="btn btn-sm btn-primary" @onclick="(() => ToggleBy(m))" />
+                                    @if (m.FileSize > 0)
+                                    {
+                                        @*<input type="button" name="btnDownload" value="Download" class="btn btn-primary" @onclick="(() => DownloadBy(m))" />*@
+                                        <a href="/ReplyDownload/FileDown/@m.Id" class="btn btn-sm btn-primary">Down</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+    <div class="col-md-12">
+        <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+    </div>
+    <div class="col-md-12">
+        <Hawaso.Pages.Replys.Components.SearchBox placeholder="Search Replys..." SearchQueryChanged="Search"></Hawaso.Pages.Replys.Components.SearchBox>
+    </div>
+</div>
+
+@*입력 또는 수정 폼 모달 다이얼로그*@
+<Hawaso.Pages.Replys.Components.EditorForm @ref="EditorFormReference" Model="model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit">
+    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+</Hawaso.Pages.Replys.Components.EditorForm>
+
+@*삭제 폼 모달 다이얼로그*@
+<Hawaso.Pages.Replys.Components.DeleteDialog @ref="DeleteDialogReference" OnClickCallback="DeleteClick">
+</Hawaso.Pages.Replys.Components.DeleteDialog>
+
+@if (IsInlineDialogShow)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">공지글로 올리기</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>@(model.Id)번 글을 공지글로 설정할까요?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="ToggleClick">설정</button>
+                    <button type="button" class="btn btn-secondary" @onclick="ToggleClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}

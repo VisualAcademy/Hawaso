@@ -11,6 +11,10 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Hawaso.SqlServer", "Hawaso.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hawaso.Models.Tests", "Hawaso.Models.Tests\Hawaso.Models.Tests.csproj", "{4359BE4A-FAE0-4B06-8F2A-3A980B3984B9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorInputFile", "BlazorInputFile\BlazorInputFile.csproj", "{010369CD-F104-4214-BFE8-98C8469D026B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorUtils", "BlazorUtils\BlazorUtils.csproj", "{4D729F6D-0EC5-4A8A-AA20-FF2F2AB5BB8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +39,14 @@ Global
 		{4359BE4A-FAE0-4B06-8F2A-3A980B3984B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4359BE4A-FAE0-4B06-8F2A-3A980B3984B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4359BE4A-FAE0-4B06-8F2A-3A980B3984B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{010369CD-F104-4214-BFE8-98C8469D026B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{010369CD-F104-4214-BFE8-98C8469D026B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{010369CD-F104-4214-BFE8-98C8469D026B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{010369CD-F104-4214-BFE8-98C8469D026B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D729F6D-0EC5-4A8A-AA20-FF2F2AB5BB8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D729F6D-0EC5-4A8A-AA20-FF2F2AB5BB8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D729F6D-0EC5-4A8A-AA20-FF2F2AB5BB8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D729F6D-0EC5-4A8A-AA20-FF2F2AB5BB8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

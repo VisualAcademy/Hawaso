@@ -74,6 +74,8 @@
     <Folder Include="dbo\Tables\Notices" />
     <Folder Include="MachineTypes" />
     <Folder Include="Manufacturers" />
+    <Folder Include="dbo\Tables\Uploads" />
+    <Folder Include="dbo\Tables\Replys" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -114,6 +116,8 @@
     <Build Include="dbo\Tables\Notices\00_Notices.sql" />
     <Build Include="MachineTypes\00_MachineTypes.sql" />
     <Build Include="Manufacturers\Manufacturers.sql" />
+    <Build Include="dbo\Tables\Uploads\Uploads.sql" />
+    <Build Include="dbo\Tables\Replys\00_Replys.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Hawaso.SqlServer.publish.xml" />

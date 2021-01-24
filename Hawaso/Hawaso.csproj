@@ -11,6 +11,7 @@
     <PackageReference Include="Dul" Version="1.2.5" />
     <PackageReference Include="Dul.NoticeApp.Models" Version="1.0.2" />
     <PackageReference Include="DulPager" Version="1.0.0" />
+    <PackageReference Include="EPPlus" Version="5.5.2" />
     <PackageReference Include="MatBlazor" Version="2.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.9" />
@@ -31,6 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BlazorInputFile\BlazorInputFile.csproj" />
+    <ProjectReference Include="..\BlazorUtils\BlazorUtils.csproj" />
     <ProjectReference Include="..\Hawaso.Models\Hawaso.Models.csproj" />
   </ItemGroup>
 

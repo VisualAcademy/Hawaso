@@ -21,6 +21,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using MachineTypeApp.Models;
+using ReplyApp.Managers;
+using UploadApp.Models;
+using ReplyApp.Models;
 
 namespace Hawaso
 {
@@ -136,6 +139,25 @@ namespace Hawaso
 
             // MachineTypeApp 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
             services.AddDependencyInjectionContainerForMachineTypeApp(Configuration.GetConnectionString("DefaultConnection"));
+
+            AddDependencyInjectionContainerForUploadApp(services);
+            AddDependencyInjectionContainerForReplyApp(services);
+
+            services.AddTransient<IFileStorageManager, ReplyAppFileStorageManager>(); // Local Upload
+        }
+
+        private void AddDependencyInjectionContainerForUploadApp(IServiceCollection services)
+        {
+            services.AddEntityFrameworkSqlServer().AddDbContext<UploadAppDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+            services.AddTransient<IUploadRepository, UploadRepository>();
+        }
+
+        private void AddDependencyInjectionContainerForReplyApp(IServiceCollection services)
+        {
+            services.AddEntityFrameworkSqlServer().AddDbContext<ReplyAppDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+            services.AddTransient<IReplyRepository, ReplyRepository>();
         }
 
         /// <summary>
