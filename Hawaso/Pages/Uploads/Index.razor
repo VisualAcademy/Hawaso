@@ -1,6 +1,8 @@
 ﻿@page "/Uploads"
 @page "/Uploads/Index"
 
+@attribute [Authorize(Roles = "Administrators")]
+
 <h3>Upload List <a href="/Uploads/Create"><span class="oi oi-plus"></span></a></h3>
 
 <div class="row">
@@ -47,7 +49,7 @@
                 {
                     <tbody>
                         <tr>
-                            <td colspan="4" class="text-center">
+                            <td colspan="5" class="text-center">
                                 <p>데이터가 없습니다.</p>
                             </td>
                         </tr>

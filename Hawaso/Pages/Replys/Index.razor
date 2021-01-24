@@ -1,5 +1,7 @@
 ﻿@page "/Replys/Index"
 
+@attribute [Authorize(Roles = "Administrators")]
+
 <h3>Reply List <a href="/Replys/Create"><span class="oi oi-plus"></span></a></h3>
 
 <div class="row">

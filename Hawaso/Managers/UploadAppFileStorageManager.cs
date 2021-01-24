@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using ReplyApp.Managers;
+using System.Net.Http.Headers;
 
 namespace UploadApp.Managers
 {
@@ -62,6 +63,9 @@ namespace UploadApp.Managers
 
         public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath, bool overwrite)
         {
+            // 파일명 중복 처리
+            fileName = Dul.FileUtility.GetFileNameWithNumbering(Path.Combine(_folderPath, folderPath), fileName);
+
             using (var fileStream = new FileStream(Path.Combine(_folderPath, folderPath, fileName), FileMode.Create))
             {
                 await stream.CopyToAsync(fileStream); 

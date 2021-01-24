@@ -61,6 +61,9 @@ namespace ReplyApp.Managers
 
         public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath, bool overwrite)
         {
+            // 파일명 중복 처리
+            fileName = Dul.FileUtility.GetFileNameWithNumbering(Path.Combine(_folderPath, folderPath), fileName);
+
             using (var fileStream = new FileStream(Path.Combine(_folderPath, folderPath, fileName), FileMode.Create))
             {
                 await stream.CopyToAsync(fileStream); 

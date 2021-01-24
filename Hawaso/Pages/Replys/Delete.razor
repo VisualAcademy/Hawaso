@@ -1,5 +1,7 @@
 ﻿@page "/Replys/Delete/{Id:int}"
 
+@attribute [Authorize(Roles = "Administrators")]
+
 <h3>Delete</h3>
 
 <div class="row">

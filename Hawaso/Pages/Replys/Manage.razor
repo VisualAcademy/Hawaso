@@ -1,6 +1,8 @@
 ﻿@page "/Replys"
 @page "/Replys/Manage"
 
+@attribute [Authorize(Roles = "Administrators")]
+
 <h3>Reply Manage <a href="/Replys/Create"><span class="oi oi-plus"></span></a></h3>
 
 <div class="row">

@@ -1,5 +1,7 @@
 ﻿@page "/Uploads/Import"
 
+@attribute [Authorize(Roles = "Administrators")]
+
 <h3>Create</h3>
 
 <a href="/templates/ExcelImportTemplate.xlsx" class="btn btn-secondary">Template Download</a>

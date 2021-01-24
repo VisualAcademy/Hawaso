@@ -1,6 +1,8 @@
 ﻿@page "/Replys/Create"
 @page "/Replys/Create/{Id:int}"
 
+@attribute [Authorize(Roles = "Administrators")]
+
 <h3>Create</h3>
 
 <div class="row">

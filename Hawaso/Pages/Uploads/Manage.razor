@@ -1,5 +1,7 @@
 ﻿@page "/Uploads/Manage"
 
+@attribute [Authorize(Roles = "Administrators")]
+
 <h3>Upload Manage <a href="/Uploads/Create"><span class="oi oi-plus"></span></a></h3>
 
 <div class="row">
@@ -100,14 +102,14 @@
 </div>
 
 <Hawaso.Pages.Uploads.Components.EditorForm @ref="EditorFormReference"
-                                               Model="model"
-                                               CreateCallback="CreateOrEdit"
-                                               EditCallback="CreateOrEdit">
+                                            Model="model"
+                                            CreateCallback="CreateOrEdit"
+                                            EditCallback="CreateOrEdit">
     <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
 </Hawaso.Pages.Uploads.Components.EditorForm>
 
 <Hawaso.Pages.Uploads.Components.DeleteDialog @ref="DeleteDialogReference"
-                                                 OnClick="DeleteClick">
+                                              OnClick="DeleteClick">
 </Hawaso.Pages.Uploads.Components.DeleteDialog>
 
 @if (IsInlineDialogShow)

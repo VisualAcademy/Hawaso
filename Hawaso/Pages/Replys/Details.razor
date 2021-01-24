@@ -1,5 +1,7 @@
 ﻿@page "/Replys/Details/{Id:int}"
 
+@attribute [Authorize(Roles = "Administrators")]
+
 <h3>Reply Details</h3>
 
 <div class="row">

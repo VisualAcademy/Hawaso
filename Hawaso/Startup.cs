@@ -148,14 +148,14 @@ namespace Hawaso
 
         private void AddDependencyInjectionContainerForUploadApp(IServiceCollection services)
         {
-            services.AddEntityFrameworkSqlServer().AddDbContext<UploadAppDbContext>(options =>
+            services.AddDbContext<UploadAppDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
             services.AddTransient<IUploadRepository, UploadRepository>();
         }
 
         private void AddDependencyInjectionContainerForReplyApp(IServiceCollection services)
         {
-            services.AddEntityFrameworkSqlServer().AddDbContext<ReplyAppDbContext>(options =>
+            services.AddDbContext<ReplyAppDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
             services.AddTransient<IReplyRepository, ReplyRepository>();
         }
