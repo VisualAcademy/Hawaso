@@ -58,6 +58,27 @@ namespace Hawaso.Pages.Replys.Components
         [Parameter]
         public Reply Model { get; set; }
 
+        public Reply ModelEdit { get; set; }
+
+        #region Lifecycle Methods
+        // 넘어온 Model 값을 수정 전용 ModelEdit에 담기 
+        protected override void OnParametersSet()
+        {
+            ModelEdit = new Reply();
+            ModelEdit.Id = Model.Id; 
+            ModelEdit.Name = Model.Name;
+            ModelEdit.Title = Model.Title;
+            ModelEdit.Content = Model.Content;
+
+            // ParentId가 넘어온 값이 있으면... 즉, 0이 아니면 ParentId 드롭다운 리스트 기본값 선택
+            parentId = Model.ParentId.ToString();
+            if (parentId == "0")
+            {
+                parentId = "";
+            }
+        }
+        #endregion
+
         /// <summary>
         /// 부모 컴포넌트에게 생성(Create)이 완료되었다고 보고하는 목적으로 부모 컴포넌트에게 알림
         /// 학습 목적으로 Action 대리자 사용
@@ -87,22 +108,16 @@ namespace Hawaso.Pages.Replys.Components
         public IFileStorageManager FileStorageManagerReference { get; set; }
         #endregion
 
-        #region Lifecycle Methods
-        protected override void OnParametersSet()
-        {
-            // ParentId가 넘어온 값이 있으면... 즉, 0이 아니면 ParentId 드롭다운 리스트 기본값 선택
-            parentId = Model.ParentId.ToString();
-            if (parentId == "0")
-            {
-                parentId = "";
-            }
-        }  
-        #endregion
 
         #region Event Handlers
 
         protected async void CreateOrEditClick()
         {
+            // 변경 내용 저장
+            Model.Name = ModelEdit.Name;
+            Model.Title = ModelEdit.Title;
+            Model.Content = ModelEdit.Content;
+
             #region 파일 업로드 관련 추가 코드 영역
             if (selectedFiles != null && selectedFiles.Length > 0)
             {

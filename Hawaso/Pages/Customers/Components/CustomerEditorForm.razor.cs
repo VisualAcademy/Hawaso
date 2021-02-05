@@ -12,6 +12,17 @@ namespace Hawaso.Pages.Customers.Components
         [Parameter]
         public Customer Model { get; set; }
 
+        public Customer ModelEdit { get; set; }
+
+        // 넘어온 Model 값을 수정 전용 ModelEdit에 담기 
+        protected override void OnParametersSet()
+        {
+            ModelEdit = new Customer(); 
+            ModelEdit.CustomerId = Model.CustomerId;
+            ModelEdit.CustomerName = Model.CustomerName;
+            ModelEdit.EmailAddress = Model.EmailAddress; 
+        }
+
         [Parameter]
         public Action SaveOrUpdated { get; set; } // EventCallback<bool> 
 
@@ -35,6 +46,10 @@ namespace Hawaso.Pages.Customers.Components
 
         protected async void btnSaveOrUpdate_Click()
         {
+            // 변경 내용 저장
+            Model.CustomerName = ModelEdit.CustomerName;
+            Model.EmailAddress = ModelEdit.EmailAddress;
+
             if (Model.CustomerId == 0)
             {
                 await CustomerRepositoryAsync.AddAsync(Model);

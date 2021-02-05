@@ -10,21 +10,21 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <EditForm Model="Model" OnValidSubmit="btnSaveOrUpdate_Click">
+                    <EditForm Model="ModelEdit" OnValidSubmit="btnSaveOrUpdate_Click">
                         <DataAnnotationsValidator></DataAnnotationsValidator>
                         <ValidationSummary></ValidationSummary>
-                        <input type="hidden" @bind-value="@Model.CustomerId" />
+                        <input type="hidden" @bind-value="@ModelEdit.CustomerId" />
                         <div class="form-group">
                             <label for="txtName">Name</label>
                             <InputText id="txtName" class="form-control" placeholder="Enter Title"
-                                       @bind-Value="@Model.CustomerName"></InputText>
-                            <ValidationMessage For="@(() => Model.CustomerName)" class="form-text text-muted"></ValidationMessage>
+                                       @bind-Value="@ModelEdit.CustomerName"></InputText>
+                            <ValidationMessage For="@(() => ModelEdit.CustomerName)" class="form-text text-muted"></ValidationMessage>
                         </div>
                         <div class="form-group">
                             <label for="txtEmail">Email</label>
                             <InputText id="txtEmail" class="form-control" placeholder="Enter Content"
-                                       @bind-Value="@Model.EmailAddress"></InputText>
-                            <ValidationMessage For="@(() => Model.EmailAddress)" class="form-text text-muted"></ValidationMessage>
+                                       @bind-Value="@ModelEdit.EmailAddress"></InputText>
+                            <ValidationMessage For="@(() => ModelEdit.EmailAddress)" class="form-text text-muted"></ValidationMessage>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Submit</button>
