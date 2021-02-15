@@ -1,0 +1,81 @@
+﻿@using Hawaso.Models
+
+@inject IManufacturerRepository repository
+@inject IJSRuntime JS
+
+@inject IToastService toastService
+
+<div class="modal" tabindex="-1" role="dialog" id="manufacturerEditorDialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@EditorFormTitle</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <EditForm Model="EditorModel" OnValidSubmit="@FormSubmitProcess">
+                    <DataAnnotationsValidator></DataAnnotationsValidator>
+                    <ValidationSummary></ValidationSummary>
+                    <input type="hidden" @bind-value="@EditorModel.Id" />
+
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <InputText id="name" class="form-control" @bind-Value="@EditorModel.Name"></InputText>
+                        <ValidationMessage For="@(() => EditorModel.Name)"></ValidationMessage>
+                    </div>
+                    <div class="form-group">
+                        <label for="code">Code</label>
+                        <InputText id="code" class="form-control" @bind-Value="@EditorModel.ManufacturerCode"></InputText>
+                        <ValidationMessage For="@(() => EditorModel.ManufacturerCode)"></ValidationMessage>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">Comment</label>
+                        <InputText id="comment" class="form-control" @bind-Value="@EditorModel.Comment"></InputText>
+                        <ValidationMessage For="@(() => EditorModel.Comment)"></ValidationMessage>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </EditForm>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment EditorFormTitle { get; set; }
+
+    [Parameter]
+    public Manufacturer EditorModel { get; set; }
+
+    [Parameter]
+    public Action SaveOrUpdated { get; set; }
+
+    // 저장 또는 수정 로직
+    private async void FormSubmitProcess()
+    {
+        if (EditorModel.Id == 0)
+        {
+            toastService.ShowInfo("저장되었습니다.", "저장 완료");
+
+            // 저장
+            await repository.AddManufacturerAsync(EditorModel);
+        }
+        else
+        {
+            toastService.ShowInfo("수정되었습니다.", "수정 완료");
+
+            // 수정
+            await repository.EditManufacturerAsync(EditorModel);
+        }
+
+        await JS.InvokeAsync<object>("closeModal", "manufacturerEditorDialog"); // 모달 창 닫기
+
+        SaveOrUpdated?.Invoke(); // 넘어온 함수 참조를 실행
+    }
+}

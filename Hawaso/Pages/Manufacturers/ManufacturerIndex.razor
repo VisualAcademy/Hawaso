@@ -1,0 +1,209 @@
+﻿@page "/Manufacturers"
+@using Hawaso.Models
+@inject IManufacturerRepository repository
+
+@inject IJSRuntime JS
+
+@using Dul.Web
+
+@using System.Drawing
+
+@attribute [AllowAnonymous]
+@attribute [Authorize(Roles = "Administrators")]
+
+@inject IToastService toastService
+@*<DulBreadcrumbsSimple>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active">Manufacturer List</li>
+
+            <LoginDisplay></LoginDisplay>
+        </ol>
+    </DulBreadcrumbsSimple>*@
+
+<div class="container-fluid">
+    <div class="animated fadeIn">
+
+        <div class="card">
+
+            <div class="card-body">
+
+                <h3>Manufacturer List</h3>
+
+                <p>제조사 목록을 관리합니다.</p>
+
+                @if (manufacturers == null)
+                {
+                    <p><em>Loading...</em></p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="text-nowrap text-center">ID</th>
+                                    <th class="text-nowrap text-center">Name</th>
+                                    <th class="text-nowrap text-center">Manufacturer Code</th>
+                                    <th class="text-nowrap text-center">Comment</th>
+                                    <th class="text-nowrap text-center">Edit</th>
+                                    <th class="text-nowrap text-center">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var manufacturer in manufacturers)
+                                {
+                                    <tr>
+                                        <td class="text-nowrap text-center">@manufacturer.Id</td>
+                                        <td class="text-nowrap text-center">@manufacturer.Name</td>
+                                        <td class="text-nowrap text-center">@manufacturer.ManufacturerCode</td>
+                                        <td class="text-nowrap text-center">@manufacturer.Comment</td>
+                                        <td class="text-nowrap text-center">
+                                            <input type="button" value="Edit" class="btn btn-primary"
+                                                   data-toggle="modal" data-target="#manufacturerEditorDialog"
+                                                   @onclick="(() => EditBy(manufacturer))" />
+                                        </td>
+                                        <td class="text-nowrap text-center">
+                                            <input type="button" value="Delete" class="btn btn-danger"
+                                                   @onclick="(() => DeleteBy(manufacturer))"
+                                                   data-toggle="modal" data-target="#manufacturerDeleteDialog" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+
+                <ManufacturerPager Model="pager" PageIndexChanged="PageIndexChanged"></ManufacturerPager>
+
+
+                <div>
+                    <input type="button" value="Add"
+                           data-toggle="modal" data-target="#manufacturerEditorDialog"
+                           class="btn btn-primary" @onclick="(() => btnCreate_Click())" />
+
+                    <button class="btn btn-primary pull-right" @onclick="DownloadFile">Download</button>
+                </div>
+
+                <ManufacturerDeleteDialog OnClick="btnDelete_Click"></ManufacturerDeleteDialog>
+
+                <ManufacturerEditorForm EditorModel="@manufacturer" SaveOrUpdated="@SaveOrUpdated">
+                    <EditorFormTitle>@editorFormTitle</EditorFormTitle>
+                </ManufacturerEditorForm>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private PagerBase pager = new PagerBase()
+    {
+        PageNumber = 1,
+        PageIndex = 0,
+        PageSize = 20,
+        PagerButtonCount = 5
+    };
+
+    private string editorFormTitle = "";
+    private List<Manufacturer> manufacturers;
+    private Manufacturer manufacturer = new Manufacturer(); // 선택한 항목 관리
+
+    protected void btnCreate_Click()
+    {
+        editorFormTitle = "Create";
+        manufacturer = new Manufacturer(); // 모델 클리어
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var pagingData = await repository.GetAllByPageAsync(pager.PageIndex, pager.PageSize);
+        pager.RecordCount = pagingData.TotalRecords;
+        manufacturers = pagingData.Records.ToList();
+    }
+
+    protected async Task btnDelete_Click()
+    {
+        await repository.DeleteManufacturerAsync(manufacturer.Id); // 삭제
+        await JS.InvokeAsync<object>("closeModal", "manufacturerDeleteDialog");
+        var pagingData = await repository.GetAllByPageAsync(pager.PageIndex, pager.PageSize);
+        pager.RecordCount = pagingData.TotalRecords;
+        manufacturers = pagingData.Records.ToList();
+        manufacturer = new Manufacturer(); // 선택 항목 초기화
+
+        toastService.ShowError("삭제되었습니다.", "삭제 완료");
+    }
+
+    private void DeleteBy(Manufacturer manu)
+    {
+        manufacturer = manu;
+    }
+
+    private void EditBy(Manufacturer manu)
+    {
+        editorFormTitle = "Edit";
+        manufacturer = manu;
+    }
+
+    // 등록 또는 수정 후 현재 페이지 다시 로드
+    private async void SaveOrUpdated()
+    {
+        var pagingData = await repository.GetAllByPageAsync(pager.PageIndex, pager.PageSize);
+        pager.RecordCount = pagingData.TotalRecords;
+        manufacturers = pagingData.Records.ToList();
+
+        StateHasChanged();
+    }
+
+    // 페이저 버튼 클릭 콜백 메서드
+    private async void PageIndexChanged(int pageIndex)
+    {
+        pager.PageIndex = pageIndex;
+        pager.PageNumber = (pageIndex + 1);
+
+
+        var pagingData = await repository.GetAllByPageAsync(pager.PageIndex, pager.PageSize);
+        manufacturers = pagingData.Records.ToList();
+
+        StateHasChanged(); // 현재 컴포넌트 재로드
+    }
+
+    private void DownloadFile()
+    {
+        using (var package = new ExcelPackage())
+        {
+            var worksheet = package.Workbook.Worksheets.Add("Manufacturers");
+
+            // Use LINQ to project data into the worksheet
+            var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
+                from project in manufacturers
+                select new { project.Id, project.Name, project.ManufacturerCode, project.Comment }, true);
+
+            // Add conditional formatting based on temperature
+            var temperatureCol = tableBody.Offset(1, 1, manufacturers.Count, 1);
+            var rule = temperatureCol.ConditionalFormatting.AddThreeColorScale();
+            rule.LowValue.Color = Color.SkyBlue;
+            rule.MiddleValue.Color = Color.White;
+            rule.HighValue.Color = Color.Red;
+
+            //// Add Temperature (F) computed via formula
+            //worksheet.Cells[3, 4, projects.Count + 2, 4].Formula = "C3 * 1.8 + 32";
+            //worksheet.Calculate();
+
+            // Formatting
+            var header = worksheet.Cells["B2:E2"];
+            worksheet.DefaultColWidth = 25;
+            //worksheet.Cells[3, 2, manufacturers.Count + 2, 2].Style.Numberformat.Format = "DDD d MMM yyyy";
+            tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+            tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
+            tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
+            tableBody.Style.Border.BorderAround(ExcelBorderStyle.Medium);
+            header.Style.Font.Bold = true;
+            header.Style.Font.Color.SetColor(Color.White);
+            header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
+
+            FileUtil.SaveAs(JS, $"{DateTime.Now.ToString("yyyyMMddhhmmss")}Manufacturers.xlsx", package.GetAsByteArray());
+        }
+    }
+}

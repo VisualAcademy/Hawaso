@@ -36,6 +36,8 @@
     <script src="_content/BlazorInputFile/inputfile.js"></script>
 
     <script src="_content/BlazorUtils/saveAsFile.js"></script>
+
+    <link href="_content/Blazored.Toast/blazored-toast.min.css" rel="stylesheet" />
 </head>
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -101,28 +103,28 @@
 
 
                         @*<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSamples" aria-expanded="false" aria-controls="collapseSnippets">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            데모
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseSamples" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionSamples">
-                                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseSamples" aria-expanded="false" aria-controls="pagesCollapseSamples">
-                                    섹션 1
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseSamples" aria-labelledby="headingOne" data-parent="#sidenavAccordionSamples">
-                                    <nav class="sb-sidenav-menu-nested nav"><a class="nav-link" href="/CodeSnippets/CurrentUserData1">예제 1</a><a class="nav-link" href="/CodeSnippets/CurrentUserData2">예제 2</a><a class="nav-link" href="/CodeSnippets/CurrentUserData3">예제 3</a></nav>
-                                </div>
-                                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseSamples2" aria-expanded="false" aria-controls="pagesCollapseSamples2">
-                                    섹션 2
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-                                <div class="collapse" id="pagesCollapseSamples2" aria-labelledby="headingOne" data-parent="#sidenavAccordionSamples">
-                                    <nav class="sb-sidenav-menu-nested nav"><a class="nav-link" href="/CodeSnippets/CurrentUserData1">예제 1</a><a class="nav-link" href="/CodeSnippets/CurrentUserData2">예제 2</a><a class="nav-link" href="/CodeSnippets/CurrentUserData3">예제 3</a></nav>
-                                </div>
-                            </nav>
-                        </div>*@
+            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+            데모
+            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+        </a>
+        <div class="collapse" id="collapseSamples" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
+            <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionSamples">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseSamples" aria-expanded="false" aria-controls="pagesCollapseSamples">
+                    섹션 1
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="pagesCollapseSamples" aria-labelledby="headingOne" data-parent="#sidenavAccordionSamples">
+                    <nav class="sb-sidenav-menu-nested nav"><a class="nav-link" href="/CodeSnippets/CurrentUserData1">예제 1</a><a class="nav-link" href="/CodeSnippets/CurrentUserData2">예제 2</a><a class="nav-link" href="/CodeSnippets/CurrentUserData3">예제 3</a></nav>
+                </div>
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseSamples2" aria-expanded="false" aria-controls="pagesCollapseSamples2">
+                    섹션 2
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="pagesCollapseSamples2" aria-labelledby="headingOne" data-parent="#sidenavAccordionSamples">
+                    <nav class="sb-sidenav-menu-nested nav"><a class="nav-link" href="/CodeSnippets/CurrentUserData1">예제 1</a><a class="nav-link" href="/CodeSnippets/CurrentUserData2">예제 2</a><a class="nav-link" href="/CodeSnippets/CurrentUserData3">예제 3</a></nav>
+                </div>
+            </nav>
+        </div>*@
 
 
                         <a class="nav-link" href="/Counter">
@@ -159,6 +161,13 @@
                             Admin
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
+
+                        <div class="collapse" id="collapseLayoutsAdministrations" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="/Manufacturers">Manufacturers</a>
+                            </nav>
+                        </div>
+
                         <div class="collapse" id="collapseLayoutsAdministrations" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="/Notices">Notices</a>
