@@ -24,6 +24,7 @@ using MachineTypeApp.Models;
 using ReplyApp.Managers;
 using UploadApp.Models;
 using ReplyApp.Models;
+using 
 
 namespace Hawaso
 {
@@ -217,6 +218,10 @@ namespace Hawaso
                 .AddDbContext<CommonValueDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<ICommonValueRepository, CommonValueRepository>(); // CommonValues
+
+            // 고객사앱(ManufacturerApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리
+            services.AddDependencyInjectionContainerForManufacturer(
+                Configuration.GetConnectionString("DefaultConnection"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
