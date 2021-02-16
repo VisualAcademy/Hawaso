@@ -44,9 +44,17 @@ namespace Hawaso
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+
+            #region 인증과 권한 설정
             //[!] ApplicationUser 클래스로 사용자 관리, ApplicationRole 클래스로 역할 관리
             // ____ (IdentityUser 클래스와 IdentityRole 클래스가 기본값)
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
+            //services.AddIdentity<ApplicationUser, ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+            services.AddIdentity<ApplicationUser, ApplicationRole>(
+                options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -66,7 +74,6 @@ namespace Hawaso
             //    options.User.RequireUniqueEmail = true;
             //});
 
-
             // 로그인 페이지 경로 재 설정 
             services.ConfigureApplicationCookie(options =>
             {
@@ -79,7 +86,8 @@ namespace Hawaso
                 //using Microsoft.AspNetCore.Authentication.Cookies;
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                 options.SlidingExpiration = true;
-            });
+            }); 
+            #endregion
 
 
             //[!] MVC 사용을 위한 서비스 등록: 가장 기본적인 확장 메서드
