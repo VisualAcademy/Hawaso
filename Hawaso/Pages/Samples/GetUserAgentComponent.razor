@@ -1,0 +1,13 @@
+﻿@page "/samples/GetUserAgent"
+
+@*[2]*@
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+<h3>GetUserAgentComponent</h3>
+
+@*[3]*@
+<div style="text-overflow: ellipsis; overflow: hidden;">@(HttpContextAccessor.HttpContext.Request.Headers["User-Agent"].ToString())</div>
+
+@code {
+
+}
