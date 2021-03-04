@@ -118,6 +118,11 @@
     <Build Include="Manufacturers\Manufacturers.sql" />
     <Build Include="dbo\Tables\Uploads\Uploads.sql" />
     <Build Include="dbo\Tables\Replys\00_Replys.sql" />
+    <Build Include="Department.sql" />
+    <Build Include="Property.sql" />
+    <Build Include="Location.sql" />
+    <Build Include="ReportType.sql" />
+    <Build Include="CaseStatus.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Hawaso.SqlServer.publish.xml" />

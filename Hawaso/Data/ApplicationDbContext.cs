@@ -10,5 +10,7 @@ namespace Hawaso.Data
             : base(options)
         {
         }
+
+        //public virtual DbSet<Department> Departments { get; set; }
     }
 }
