@@ -37,8 +37,8 @@
                     <thead class="thead-light">
                         <tr>
                             <th>ID</th>
-                            <th @onclick="@(() => SortByName())" style="cursor: pointer;">Name <MemoApp.Pages.Memos.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></MemoApp.Pages.Memos.Components.SortOrderArrow></th>
-                            <th @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <MemoApp.Pages.Memos.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></MemoApp.Pages.Memos.Components.SortOrderArrow></th>
+                            <th @onclick="@(() => SortByName())" style="cursor: pointer;">Name <Hawaso.Pages.Memos.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Pages.Memos.Components.SortOrderArrow></th>
+                            <th @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Hawaso.Pages.Memos.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Hawaso.Pages.Memos.Components.SortOrderArrow></th>
                             <th>Created</th>
                             <th>Actions</th>
                         </tr>
@@ -47,7 +47,7 @@
                     {
                         <tbody>
                             <tr>
-                                <td colspan="4" class="text-center">
+                                <td colspan="5" class="text-center">
                                     <p>데이터가 없습니다.</p>
                                 </td>
                             </tr>
@@ -84,6 +84,6 @@
         <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
     </div>
     <div class="col-md-12">
-        <MemoApp.Pages.Memos.Components.SearchBox placeholder="Search Memos..." SearchQueryChanged="Search"></MemoApp.Pages.Memos.Components.SearchBox>
+        <Hawaso.Pages.Memos.Components.SearchBox placeholder="Search Memos..." SearchQueryChanged="Search"></Hawaso.Pages.Memos.Components.SearchBox>
     </div>
 </div>

@@ -14,7 +14,7 @@ namespace MemoApp
         public static void AddDependencyInjectionContainerForMemoApp(this IServiceCollection services, IConfiguration configuration)
         {
             // MemoAppDbContext.cs Inject: New DbContext Add
-            services.AddEntityFrameworkSqlServer().AddDbContext<MemoAppDbContext>(options =>
+            services.AddDbContext<MemoAppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
 
             // IMemoRepository.cs Inject: DI Container에 서비스(리포지토리) 등록 
