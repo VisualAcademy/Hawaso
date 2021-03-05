@@ -9,7 +9,7 @@
     <PackageReference Include="Blazored.Toast" Version="3.1.2" />
     <PackageReference Include="ChartJs.Blazor" Version="1.1.0" />
     <PackageReference Include="CommonMark.NET" Version="0.15.1" />
-    <PackageReference Include="Dul" Version="1.2.5" />
+    <PackageReference Include="Dul" Version="1.2.6" />
     <PackageReference Include="Dul.NoticeApp.Models" Version="1.0.2" />
     <PackageReference Include="DulPager" Version="1.0.0" />
     <PackageReference Include="EPPlus" Version="5.5.2" />
@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="3.1.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.12">

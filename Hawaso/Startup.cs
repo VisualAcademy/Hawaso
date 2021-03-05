@@ -25,6 +25,7 @@ using ReplyApp.Managers;
 using UploadApp.Models;
 using ReplyApp.Models;
 using Blazored.Toast;
+using MemoApp.Models;
 
 namespace Hawaso
 {
@@ -233,6 +234,11 @@ namespace Hawaso
             // 고객사앱(ManufacturerApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리
             services.AddDependencyInjectionContainerForManufacturer(Configuration.GetConnectionString("DefaultConnection"));
             services.AddBlazoredToast(); // Blazored.Toast
+
+            /// <summary>
+            /// 메모앱(MemoApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
+            /// </summary>
+            services.AddDependencyInjectionContainerForMemoApp(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
