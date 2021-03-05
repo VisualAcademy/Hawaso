@@ -1,13 +1,32 @@
 ﻿@implements IDisposable
 @inject IJSRuntime JSRuntime
 
-<div class="input-group mb-3">
+<style>
+    .custom-file-label::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 3;
+        display: block;
+        height: calc(1.5em + 0.75rem);
+        padding: 0.375rem 0.75rem;
+        line-height: 1.5;
+        color: #5c6873;
+        content: "Browse";
+        background-color: #f0f3f5;
+        border-left: inherit;
+        border-radius: 0;
+    }
+</style>
+
+<div class="input-group mb-3" style="border-radius: 0;">
     <div class="input-group-prepend">
-        <span class="input-group-text">Upload</span>
+        @*<span class="input-group-text">Upload</span>*@
     </div>
-    <div class="custom-file">
-        <input type="file" class="custom-file-input" @ref="inputFileElement" @attributes="UnmatchedParameters" />
-        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+    <div class="custom-file" style="border-radius: 0;">
+        <input type="file" class="custom-file-input" @ref="inputFileElement" @attributes="UnmatchedParameters" style="border-radius: 0;" />
+        <label class="custom-file-label" for="inputGroupFile01" style="border-radius: 0;">@FileName</label>
     </div>
 </div>
 
@@ -21,6 +40,9 @@
     ElementReference inputFileElement;
     IDisposable thisReference;
 
+    [Parameter]
+    public string FileName { get; set; } = "Choose file";
+
     [JSInvokable]
     public Task NotifyChange(FileListEntryImpl[] files)
     {
@@ -28,6 +50,8 @@
         {
             // So that method invocations on the file can be dispatched back here
             file.Owner = (InputFile)(object)this;
+
+            FileName = file.Name;
         }
 
         return OnChange.InvokeAsync(files);
