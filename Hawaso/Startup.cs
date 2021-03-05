@@ -26,6 +26,7 @@ using UploadApp.Models;
 using ReplyApp.Models;
 using Blazored.Toast;
 using MemoApp.Models;
+using MemoApp.Memos;
 
 namespace Hawaso
 {
@@ -239,6 +240,8 @@ namespace Hawaso
             /// 메모앱(MemoApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
             /// </summary>
             services.AddDependencyInjectionContainerForMemoApp(Configuration);
+            // 파일 업로드 및 다운로드 서비스(매니저) 등록
+            services.AddTransient<IMemoFileStorageManager, MemoFileStorageManager>(); // Local Upload
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

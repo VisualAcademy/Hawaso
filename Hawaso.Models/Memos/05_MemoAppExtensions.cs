@@ -16,7 +16,6 @@ namespace MemoApp.Models
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
 
             // IMemoRepository.cs Inject: DI Container에 서비스(리포지토리) 등록 
-            services.AddTransient<IMemoRepository, MemoRepository>();
-        }
+            services.AddTransient<IMemoRepository, MemoRepository>();        }
     }
 }
