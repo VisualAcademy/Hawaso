@@ -1,23 +1,23 @@
-﻿@page "/Libraries"
-@page "/Libraries/Index"
+﻿@page "/BriefingLogs"
+@page "/BriefingLogs/Index"
 
 @attribute [Authorize(Roles = "Administrators")]
 
-<h3>Library List <a href="/Libraries/Create"><span class="oi oi-plus"></span></a></h3>
+<h3>BriefingLog List <a href="/BriefingLogs/Create"><span class="oi oi-plus"></span></a></h3>
 
 <div class="row">
     <div class="col-md-12">
-        <a href="/Libraries/Create" class="btn btn-primary">Create</a>
+        <a href="/BriefingLogs/Create" class="btn btn-primary">Create</a>
         <AuthorizeView>
             <Authorized>
             </Authorized>
             <NotAuthorized>
-                <a href="/Libraries/Manage" class="btn btn-primary">Manage</a>
-                <a href="/Libraries/Report" class="btn btn-primary">Report</a>
+                <a href="/BriefingLogs/Manage" class="btn btn-primary">Manage</a>
+                <a href="/BriefingLogs/Report" class="btn btn-primary">Report</a>
             </NotAuthorized>
         </AuthorizeView>
         <AuthorizeView Roles="Administrators, Managers">
-            <a href="/Libraries/Manage" class="btn btn-primary">Manage</a>
+            <a href="/BriefingLogs/Manage" class="btn btn-primary">Manage</a>
         </AuthorizeView>
     </div>
 </div>
@@ -38,9 +38,9 @@
                 <thead class="thead-light">
                     <tr>
                         <th>ID</th>
-                        <th @onclick="@(() => SortByName())" style="cursor: pointer;">Name <Hawaso.Pages.Uploads.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Pages.Uploads.Components.SortOrderArrow></th>
-                        <th @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Hawaso.Pages.Uploads.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Hawaso.Pages.Uploads.Components.SortOrderArrow></th>
-                        <th>Created</th>
+                        <th @onclick="@(() => SortByName())" style="cursor: pointer;">Name <Hawaso.Pages.BriefingLogs.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Pages.BriefingLogs.Components.SortOrderArrow></th>
+                        <th @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Hawaso.Pages.BriefingLogs.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Hawaso.Pages.BriefingLogs.Components.SortOrderArrow></th>
+                        <th>D/T Start</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -62,19 +62,19 @@
                             <tr>
                                 <td>@m.Id</td>
                                 <td @onclick="@(() => NameClick(m.Id))" style="cursor: pointer;">
-                                    <a href="/Libraries/Details/@m.Id">
+                                    <a href="/BriefingLogs/Details/@m.Id">
                                         @m.Name
                                     </a>
                                 </td>
                                 <td>@m.Title</td>
-                                <td>@m.Created?.ToShortTimeString()</td>
+                                <td>@m.DateTimeStarted</td>
                                 <td>
-                                    <a href="/Libraries/Details/@m.Id" class="btn btn-light">Details</a>
-                                    <a href="/Libraries/Edit/@m.Id" class="btn btn-light">Edit</a>
-                                    <a href="/Libraries/Delete/@m.Id" class="btn btn-light">Delete</a>
+                                    <a href="/BriefingLogs/Details/@m.Id" class="btn btn-light">Details</a>
+                                    <a href="/BriefingLogs/Edit/@m.Id" class="btn btn-light">Edit</a>
+                                    <a href="/BriefingLogs/Delete/@m.Id" class="btn btn-light">Delete</a>
                                     @if (m.FileName != null && !String.IsNullOrEmpty(m.FileName))
                                     {
-                                        <a href="/LibraryDownload/FileDown/@m.Id" class="btn btn-primary">Down</a>
+                                        <a href="/BriefingLogDownload/FileDown/@m.Id" class="btn btn-primary">Down</a>
                                     }
                                 </td>
                             </tr>
@@ -88,6 +88,6 @@
         <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
     </div>
     <div class="col-md-12">
-        <Hawaso.Pages.Uploads.Components.SearchBox placeholder="Search Uploads..." SearchQueryChanged="Search"></Hawaso.Pages.Uploads.Components.SearchBox>
+        <Hawaso.Pages.BriefingLogs.Components.SearchBox placeholder="Search Uploads..." SearchQueryChanged="Search"></Hawaso.Pages.BriefingLogs.Components.SearchBox>
     </div>
 </div>

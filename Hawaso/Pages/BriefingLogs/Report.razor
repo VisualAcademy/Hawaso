@@ -1,0 +1,12 @@
+﻿@page "/BriefingLogs/Report"
+
+@attribute [Authorize(Roles = "Administrators")]
+
+<h3>BriefingLog Report</h3>
+
+<div class="card">
+    <div class="card-body">
+        <ChartJs.Blazor.Charts.ChartJsBarChart Config="@_barChartConfig" Width="600" Height="300">
+        </ChartJs.Blazor.Charts.ChartJsBarChart>
+    </div>
+</div>

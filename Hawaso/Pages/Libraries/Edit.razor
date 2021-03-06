@@ -30,7 +30,7 @@
                                @bind-Value="@model.Content"></InputTextArea>
                 <ValidationMessage For="@(() => model.Content)" class="form-text text-muted"></ValidationMessage>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="display: none;">
                 <label for="lstCategory">Parent</label>
                 <InputSelect @bind-Value="@ParentId" class="form-control" id="lstCategory">
                     <option value="">--Select Parent--</option>

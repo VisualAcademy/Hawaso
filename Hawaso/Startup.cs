@@ -244,8 +244,9 @@ namespace Hawaso
             // 파일 업로드 및 다운로드 서비스(매니저) 등록
             services.AddTransient<IMemoFileStorageManager, MemoFileStorageManager>(); // Local Upload
 
-            // Libries Feature
-            services.AddDiForLibries(Configuration.GetConnectionString("DefaultConnection"));
+            // Upload Feature
+            services.AddDiForLibries(Configuration.GetConnectionString("DefaultConnection"));            
+            services.AddDiForBriefingLogs(Configuration.GetConnectionString("DefaultConnection"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
