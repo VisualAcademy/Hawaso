@@ -47,14 +47,11 @@ namespace Hawaso
             //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddHttpContextAccessor(); //[1]
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), options => options.EnableRetryOnFailure()));
 
             #region 인증과 권한 설정
             //[!] ApplicationUser 클래스로 사용자 관리, ApplicationRole 클래스로 역할 관리
             // ____ (IdentityUser 클래스와 IdentityRole 클래스가 기본값)
-            //services.AddIdentity<ApplicationUser, ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
             services.AddIdentity<ApplicationUser, ApplicationRole>(
                 options =>
                 {
@@ -64,21 +61,21 @@ namespace Hawaso
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            //// Identity 옵션 설정
-            //services.Configure<IdentityOptions>(options =>
-            //{
-            //    // 암호 설정
-            //    options.Password.RequiredLength = 8;
-            //    options.Password.RequireDigit = true;
-            //    options.Password.RequireLowercase = true;
+            // Identity 옵션 설정
+            services.Configure<IdentityOptions>(options =>
+            {
+                // 암호 설정
+                options.Password.RequiredLength = 4;
+                //options.Password.RequireDigit = true;
+                //options.Password.RequireLowercase = true;
 
-            //    // 잠금 설정
-            //    options.Lockout.MaxFailedAccessAttempts = 5;
-            //    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+                //// 잠금 설정
+                //options.Lockout.MaxFailedAccessAttempts = 5;
+                //options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
 
-            //    // 사용자 설정
-            //    options.User.RequireUniqueEmail = true;
-            //});
+                //// 사용자 설정
+                //options.User.RequireUniqueEmail = true;
+            });
 
             // 로그인 페이지 경로 재 설정 
             services.ConfigureApplicationCookie(options =>
@@ -86,8 +83,9 @@ namespace Hawaso
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 //options.Cookie.Name = "YourAppCookieName";
                 //options.Cookie.HttpOnly = true;
-                //options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
                 options.LoginPath = "/Identity/Account/Login";
+                //options.LogoutPath = "/Account/LogOff";
                 // ReturnUrlParameter requires 
                 //using Microsoft.AspNetCore.Authentication.Cookies;
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
@@ -127,7 +125,7 @@ namespace Hawaso
 
 
             services.AddRazorPages();
-            services.AddServerSideBlazor();
+            services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; }); // 자세한 에러
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
             services.AddSingleton<WeatherForecastService>();
 
