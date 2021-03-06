@@ -78,6 +78,7 @@
     <Folder Include="dbo\Tables\Replys" />
     <Folder Include="Memos" />
     <Folder Include="dbo\Tables\Uploads\Libraries" />
+    <Folder Include="dbo\Tables\Uploads\BriefingLogs" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -127,6 +128,7 @@
     <Build Include="CaseStatus.sql" />
     <Build Include="Memos\Memos.sql" />
     <Build Include="dbo\Tables\Uploads\Libraries\Libraries.sql" />
+    <Build Include="dbo\Tables\Uploads\BriefingLogs\BriefingLogs.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Hawaso.SqlServer.publish.xml" />
