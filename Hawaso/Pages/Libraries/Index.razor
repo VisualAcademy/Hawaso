@@ -38,8 +38,8 @@
                 <thead class="thead-light">
                     <tr>
                         <th>ID</th>
-                        <th @onclick="@(() => SortByName())" style="cursor: pointer;">Name <Hawaso.Pages.Uploads.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Pages.Uploads.Components.SortOrderArrow></th>
-                        <th @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Hawaso.Pages.Uploads.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Hawaso.Pages.Uploads.Components.SortOrderArrow></th>
+                        <th @onclick="@(() => SortByName())" style="cursor: pointer;">Name <Hawaso.Pages.Libraries.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Pages.Libraries.Components.SortOrderArrow></th>
+                        <th @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Hawaso.Pages.Libraries.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Hawaso.Pages.Libraries.Components.SortOrderArrow></th>
                         <th>Created</th>
                         <th>Actions</th>
                     </tr>
@@ -88,6 +88,6 @@
         <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
     </div>
     <div class="col-md-12">
-        <Hawaso.Pages.Uploads.Components.SearchBox placeholder="Search Uploads..." SearchQueryChanged="Search"></Hawaso.Pages.Uploads.Components.SearchBox>
+        <Hawaso.Pages.Libraries.Components.SearchBox placeholder="Search Uploads..." SearchQueryChanged="Search"></Hawaso.Pages.Libraries.Components.SearchBox>
     </div>
 </div>
