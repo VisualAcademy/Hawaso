@@ -1,0 +1,7 @@
+﻿<div class="input-group mb-3">
+    <input class="form-control form-control-sm form-control-borderless" type="search" placeholder="Search topics or keywords"  aria-describedby="btnSearch"
+           @attributes="AdditionalAttributes" @bind="SearchQuery" @bind:event="oninput">
+    <div class="input-group-append">
+        <button class="btn btn-sm btn-success" type="submit" @onclick="Search" id="btnSearch">Search</button>
+    </div>
+</div>

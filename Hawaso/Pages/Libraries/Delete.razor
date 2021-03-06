@@ -1,0 +1,38 @@
+﻿@page "/Libraries/Delete/{Id:int}"
+
+@attribute [Authorize(Roles = "Administrators")]
+
+<h3>Library Delete</h3>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group row">
+            <label for="id" class="col-sm-2 col-form-label">Id: </label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control-plaintext" id="id" value="@model.Id" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="lblName" class="col-sm-2 col-form-label">Name: </label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control-plaintext" id="lblName" value="@model.Name" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="lblTitle" class="col-sm-2 col-form-label">Title: </label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control-plaintext" id="lblTitle" value="@model.Title" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-12">
+                @((MarkupString)content)
+            </div>
+        </div>
+        <div class="form-group">
+            <a class="btn btn-danger" @onclick="DeleteClick">Delete</a>
+            <a href="/Libraries/Details/@model.Id" class="btn btn-primary">Cancel</a>
+            <a href="/Libraries" class="btn btn-secondary">List</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,135 @@
+﻿@page "/Libraries/Manage"
+
+@attribute [Authorize(Roles = "Administrators")]
+
+<h3>Library Manage <a href="/Libraries/Create"><span class="oi oi-plus"></span></a></h3>
+
+<div class="row">
+    <div class="col-md-12">
+        <a href="/Libraries/Create" class="btn btn-primary">Create</a>
+        <AuthorizeView>
+            <Authorized>
+            </Authorized>
+            <NotAuthorized>
+                <a href="/Libraries/Index" class="btn btn-primary">List</a>
+                <input type="button" name="btnCreate" value="Create with Modal"
+                       class="btn btn-primary"
+                       @onclick="ShowEditorForm" />
+            </NotAuthorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Administrators, Managers">
+            <a href="/Libraries/Index" class="btn btn-primary">List</a>
+        </AuthorizeView>
+        <input type="button" class="btn btn-primary" value="Excel Export" @onclick="DownloadExcel" />
+        <a href="/LibraryDownload/ExcelDown" class="btn btn-primary">Excel Export</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        @if (models == null)
+        {
+            <div>
+                <p>
+                    <MatProgressBar Indeterminate="true"></MatProgressBar>
+                </p>
+            </div>
+        }
+        else
+        {
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        <th>ID</th>
+                        <th @onclick="@(() => SortByName())" style="cursor: pointer;">Name <Hawaso.Pages.Uploads.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Pages.Uploads.Components.SortOrderArrow></th>
+                        <th @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Hawaso.Pages.Uploads.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Hawaso.Pages.Uploads.Components.SortOrderArrow></th>
+                        <th>Created</th>
+                        <th>IsPinned</th>
+                        <th>Actions</th>
+                        <th>Admin</th>
+                    </tr>
+                </thead>
+                @if (models.Count == 0)
+                {
+                    <tbody>
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <p>데이터가 없습니다.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+                <tbody>
+                    @foreach (var m in models)
+                    {
+                        <tr>
+                            <td>@m.Id</td>
+                            <td @onclick="@(() => NameClick(m.Id))">
+                                <a href="/Libraries/Details/@m.Id">
+                                    @m.Name
+                                </a>
+                            </td>
+                            <td>@m.Title</td>
+                            <td>@m.Created?.ToShortTimeString()</td>
+                            <td>
+                                @(m.IsPinned == true ? "공지" : "")
+                            </td>
+                            <td>
+                                <a href="/Libraries/Details/@m.Id" class="btn btn-light">Details</a>
+                                <a href="/Libraries/Edit/@m.Id" class="btn btn-light">Edit</a>
+                                <a href="/Libraries/Delete/@m.Id" class="btn btn-light">Delete</a>
+                            </td>
+                            <td>
+                                <input type="button" name="btnEdit" value="Edit with Modal" class="btn btn-primary" @onclick="(() => EditBy(m))" />
+                                <input type="button" name="btnDelete" value="Delete with Modal" class="btn btn-primary" @onclick="(() => DeleteBy(m))" />
+                                <input type="button" name="btnToggle" value="Toggle with Modal" class="btn btn-primary" @onclick="(() => ToggleBy(m))" />
+                                @*<input type="button" name="btnDownload" value="Download" class="btn btn-primary" @onclick="(() => DownloadBy(m))" />*@
+                                <a href="/LibraryDownload/FileDown/@m.Id" class="btn btn-primary">다운로드</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+    <div class="col-md-12">
+        <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+    </div>
+    <div class="col-md-12">
+        <Hawaso.Pages.Uploads.Components.SearchBox placeholder="Search Uploads..." SearchQueryChanged="Search"></Hawaso.Pages.Uploads.Components.SearchBox>
+    </div>
+</div>
+
+<Hawaso.Pages.Libraries.Components.EditorForm @ref="EditorFormReference"
+                                            Model="model"
+                                            CreateCallback="CreateOrEdit"
+                                            EditCallback="CreateOrEdit">
+    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+</Hawaso.Pages.Libraries.Components.EditorForm>
+
+<Hawaso.Pages.Libraries.Components.DeleteDialog @ref="DeleteDialogReference"
+                                              OnClick="DeleteClick">
+</Hawaso.Pages.Libraries.Components.DeleteDialog>
+
+@if (IsInlineDialogShow)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">공지글로 올리기</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>@(model.Id)번 글을 공지글로 설정할까요?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="ToggleClick">설정</button>
+                    <button type="button" class="btn btn-secondary" @onclick="ToggleClose">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
