@@ -1,0 +1,54 @@
+﻿@page "/Administrations/Roles"
+@page "/Administrations/Roles/RoleList"
+
+@attribute [Authorize(Roles = "Administrators")]
+
+<h3>Role List <a href="/Administrations/Roles/RoleCreate"><span class="oi oi-plus"></span></a></h3>
+
+<div class="row">
+    <div class="col-md-12">
+        @if (models == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            <table class="table table-bordered table-hover">
+                <thead class="thead-light">
+                    <tr>
+                        @*<th>ID</th>*@
+                        <th>Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                @if (models.Count == 0)
+                {
+                    <tbody>
+                        <tr>
+                            <td colspan="2" class="text-center">
+                                <p>데이터가 없습니다.</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                }
+                else
+                {
+                    <tbody>
+                        @foreach (var m in models)
+                        {
+                            <tr>
+                                @*<td>@m.Id</td>*@
+                                <td>@m.Name</td>
+                                <td>
+                                    <a href="/Administrations/Roles/RoleDetails/@m.Id" class="btn btn-light">Details</a>
+                                    <a href="/Administrations/Roles/RoleEdit/@m.Id" class="btn btn-light">Edit</a>
+                                    <a href="/Administrations/Roles/RoleDelete/@m.Id" class="btn btn-light">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                }
+            </table>
+        }
+    </div>
+</div>
