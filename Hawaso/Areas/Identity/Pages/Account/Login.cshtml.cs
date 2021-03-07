@@ -18,7 +18,7 @@ namespace Hawaso.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
-        private readonly ILoginRepository _repository;
+        private readonly ILoginRepository _repository; // Hawaso Only
 
         public LoginModel(SignInManager<ApplicationUser> signInManager,
             ILogger<LoginModel> logger,
