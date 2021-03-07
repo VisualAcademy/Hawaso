@@ -1,0 +1,35 @@
+﻿@page "/Administrations/Roles/RoleCreate"
+
+@attribute [Authorize(Roles = "Administrators")]
+
+<h3>Role Create</h3>
+
+<div class="row">
+    <div class="col-md-8">
+        <EditForm Model="ViewModel" OnValidSubmit="HandleCreation">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <ValidationSummary></ValidationSummary>
+            <div class="form-group">
+                <label for="txtRoleName">Role Name: </label>
+                <InputText @bind-Value="ViewModel.RoleName"
+                           class="form-control"
+                           id="txtRoleName"></InputText>
+                <ValidationMessage For="@(() => ViewModel.RoleName)"></ValidationMessage>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a href="/Administrations/Roles" class="btn btn-secondary">Cancel</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@if (ErrorMessages?.Count > 0)
+{
+    <ul>
+        @foreach (var error in ErrorMessages)
+        {
+            <li>@error</li>
+        }
+    </ul>
+}
