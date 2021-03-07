@@ -129,5 +129,8 @@
     <Build Include="01_Identity\AspNetUserRoles.sql" />
     <Build Include="01_Identity\AspNetUsers.sql" />
     <Build Include="01_Identity\AspNetUserTokens.sql" />
+    <Build Include="ReportSpecific.sql" />
+    <Build Include="Sublocation.sql" />
+    <Build Include="Incidents.sql" />
   </ItemGroup>
 </Project>

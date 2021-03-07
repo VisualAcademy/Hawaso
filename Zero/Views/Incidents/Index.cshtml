@@ -1,0 +1,652 @@
+﻿@model IEnumerable<Zero.Models.Incident>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Incident List</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table table-responsive">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CaseNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DailyLogNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OpenedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Occurred)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Closed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Properties)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Active)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.Property)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportTypes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReportSpecific)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Specific)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SpecificId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CaseStatuses)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Locations)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Location)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sublocations)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sublocation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Departments)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Department)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Summary)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Details)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Resolution)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Reference)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SecondaryOperatorId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SecondaryOperator)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Custodial)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UseForce)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Medical)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RiskManagement)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Priority)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AgentName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SupervisorName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ManagerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DirectorName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AgentSignature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SupervisorSignature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ManagerSignature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DirectorSignature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AgentTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SupervisorTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ManagerTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DirectorTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CaseTypeId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InvestigatorId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShiftId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ImmediateSupervisorId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GamingClassId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SurveillanceNotified)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SurveillanceObserverId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InitialContact)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InspectorSig)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DeputyDirectorSig)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DirectorSig)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SupervisorSig)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CompletionDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TgaforwardDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TgoreturnDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Citation)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ViolationNature)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Variance)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Employee)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ManagerId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TapeIdentification)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ActionTaken)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SuspectPhoto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExclusionInfo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Notification)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PoliceContacted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PoliceContact)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InvestigatorSigTs)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SupervisorSigTs)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DeputyDirectorSigTs)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DirectorSigTs)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Tgoresponse)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ClosedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ModifiedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ModifiedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DispatchCallId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AuditId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SavingsOrLosses)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DirectorOnly)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CaseType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Agent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AgentSigFile)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SupervisorSigFile)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ManagerSigFile)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DirectorSigFile)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AgentImage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SupervisorImage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ManagerImage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DirectorImage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RemarksTitle1)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RemarksMemos1)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RemarksTitle2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RemarksMemos2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RemarksTitle3)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RemarksMemos3)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RemarksTitle4)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RemarksMemos4)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RemarksTitle5)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RemarksMemos5)
+            </th>*@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CaseNumber)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.DailyLogId)
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.DailyLogNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OpenedDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Occurred)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Closed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Properties.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Active)
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.Property)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReportTypes.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReportSpecific.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Specific)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SpecificId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CaseStatuses.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Locations.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Sublocations.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Sublocation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Departments.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Department)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Summary)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Details)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Resolution)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Reference)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SecondaryOperatorId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SecondaryOperator)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Custodial)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UseForce)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Medical)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RiskManagement)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Priority)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AgentName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SupervisorName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ManagerName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DirectorName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AgentSignature)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SupervisorSignature)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ManagerSignature)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DirectorSignature)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AgentTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SupervisorTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ManagerTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DirectorTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CaseTypeId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InvestigatorId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShiftId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ImmediateSupervisorId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GamingClassId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SurveillanceNotified)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SurveillanceObserverId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InitialContact)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InspectorSig)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeputyDirectorSig)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DirectorSig)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SupervisorSig)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CompletionDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TgaforwardDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TgoreturnDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Citation)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ViolationNature)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Variance)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Employee)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ManagerId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TapeIdentification)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ActionTaken)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SuspectPhoto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExclusionInfo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Notification)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PoliceContacted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PoliceContact)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InvestigatorSigTs)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SupervisorSigTs)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DeputyDirectorSigTs)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DirectorSigTs)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tgoresponse)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ClosedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ModifiedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ModifiedDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DispatchCallId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AuditId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SavingsOrLosses)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DirectorOnly)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CaseType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Agent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AgentSigFile)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SupervisorSigFile)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ManagerSigFile)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DirectorSigFile)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AgentImage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SupervisorImage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ManagerImage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DirectorImage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RemarksTitle1)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RemarksMemos1)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RemarksTitle2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RemarksMemos2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RemarksTitle3)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RemarksMemos3)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RemarksTitle4)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RemarksMemos4)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RemarksTitle5)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RemarksMemos5)
+            </td>*@
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Details</a> |
+                @*<a asp-action="Details" asp-route-id="@item.Id">Details</a> |*@
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

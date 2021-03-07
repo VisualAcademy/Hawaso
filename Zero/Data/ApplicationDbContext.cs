@@ -15,5 +15,8 @@ namespace Zero.Data
         public DbSet<Location> Locations { get; set; }
         public DbSet<ReportType> ReportTypes { get; set; }
         public virtual DbSet<CaseStatus> CaseStatuses { get; set; }
+        public virtual DbSet<ReportSpecific> ReportSpecifics { get; set; }
+        public virtual DbSet<Sublocation> Sublocations { get; set; }
+        public virtual DbSet<Incident> Incidents { get; set; }
     }
 }
