@@ -18,7 +18,6 @@
             <div class="form-group">
                 <label for="txtTitle">Email</label>
                 <InputText id="txtEmail" class="form-control" placeholder="Enter Email" @bind-Value="@Model.Email"></InputText>
-                <InputText id="txtPassword" class="form-control" placeholder="Enter Password" @bind-Value="@Model.Password"></InputText>
                 <ValidationMessage For="@(() => Model.Email)" class="form-text text-muted"></ValidationMessage>
             </div>
             <div class="form-group">
@@ -32,7 +31,7 @@
                 <ValidationMessage For="@(() => Model.Content)" class="form-text text-muted"></ValidationMessage>
             </div>
             <div class="form-group">
-                <label for="txtTitle">Password</label>
+                <label for="txtPassword">Password</label>
                 <InputText id="txtPassword" class="form-control" placeholder="Enter Password" @bind-Value="@Model.Password"></InputText>
                 <ValidationMessage For="@(() => Model.Password)" class="form-text text-muted"></ValidationMessage>
             </div>

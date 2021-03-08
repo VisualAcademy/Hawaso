@@ -68,6 +68,7 @@ namespace Hawaso.Pages.Memos.Components
             ModelEdit.Name = Model.Name;
             ModelEdit.Title = Model.Title;
             ModelEdit.Content = Model.Content;
+            ModelEdit.Password = Model.Password;
 
             // ParentId가 넘어온 값이 있으면... 즉, 0이 아니면 ParentId 드롭다운 리스트 기본값 선택
             parentId = Model.ParentId.ToString();
@@ -116,6 +117,7 @@ namespace Hawaso.Pages.Memos.Components
             Model.Name = ModelEdit.Name;
             Model.Title = ModelEdit.Title;
             Model.Content = ModelEdit.Content;
+            Model.Password = ModelEdit.Password; 
 
             #region 파일 업로드 관련 추가 코드 영역
             if (selectedFiles != null && selectedFiles.Length > 0)

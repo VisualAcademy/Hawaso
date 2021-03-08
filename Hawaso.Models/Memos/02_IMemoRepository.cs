@@ -10,7 +10,7 @@ namespace Hawaso.Models
     /// [!] Generic Repository Interface => ICrudRepositoryBase.cs 
     /// </summary>
     //public interface IMemoCrudRepository<T> : IRepositoryBase<Memo, long, long>
-    public interface IMemoCrudRepository<T> : ICrudRepositoryBase<Memo, int>
+    public interface IMemoCrudRepository<T> : ICrudRepositoryBase<Memo, long>
     {
         // PM> Install-Package Dul
 

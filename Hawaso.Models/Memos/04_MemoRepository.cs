@@ -70,7 +70,7 @@ namespace Hawaso.Models
 
         #region [4][3] 상세: GetByIdAsync
         //[4][3] 상세: GetByIdAsync
-        public async Task<Memo> GetByIdAsync(int id)
+        public async Task<Memo> GetByIdAsync(long id)
         {
             var model = await _context.Memos
                 //.Include(m => m.MemosComments)
@@ -126,7 +126,7 @@ namespace Hawaso.Models
 
         #region [4][5] 삭제: DeleteAsync
         //[4][5] 삭제
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(long id)
         {
             //var model = await _context.Memos.SingleOrDefaultAsync(m => m.Id == id);
             try
