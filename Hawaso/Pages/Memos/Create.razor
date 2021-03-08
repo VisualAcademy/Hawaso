@@ -1,6 +1,8 @@
 ﻿@page "/Memos/Create"
 @page "/Memos/Create/{Id:int}"
 
+@*@attribute [Authorize(Roles = "Administrators")]*@
+
 <h3>Create</h3>
 
 <div class="row">
@@ -10,25 +12,29 @@
             <ValidationSummary></ValidationSummary>
             <div class="form-group">
                 <label for="txtName">Name</label>
-                <InputText id="txtName" class="form-control" placeholder="Enter Title"
-                           @bind-Value="@Model.Name"></InputText>
+                <InputText id="txtName" class="form-control" placeholder="Enter Name" @bind-Value="@Model.Name"></InputText>
                 <ValidationMessage For="@(() => Model.Name)" class="form-text text-muted"></ValidationMessage>
             </div>
             <div class="form-group">
+                <label for="txtTitle">Email</label>
+                <InputText id="txtEmail" class="form-control" placeholder="Enter Email" @bind-Value="@Model.Email"></InputText>
+                <InputText id="txtPassword" class="form-control" placeholder="Enter Password" @bind-Value="@Model.Password"></InputText>
+                <ValidationMessage For="@(() => Model.Email)" class="form-text text-muted"></ValidationMessage>
+            </div>
+            <div class="form-group">
                 <label for="txtTitle">Title</label>
-                <InputText id="txtTitle" class="form-control" placeholder="Enter Title"
-                           @bind-Value="@Model.Title"></InputText>
-                <InputText id="txtEmail" class="form-control" placeholder="Enter Email"
-                           @bind-Value="@Model.Email"></InputText>
-                <InputText id="txtPassword" class="form-control" placeholder="Enter Password"
-                           @bind-Value="@Model.Password"></InputText>
+                <InputText id="txtTitle" class="form-control" placeholder="Enter Title" @bind-Value="@Model.Title"></InputText>
                 <ValidationMessage For="@(() => Model.Title)" class="form-text text-muted"></ValidationMessage>
             </div>
             <div class="form-group">
                 <label for="txtContent">Content</label>
-                <InputTextArea id="txtContext" class="form-control" placeholder="Enter Content" rows="5"
-                               @bind-Value="@Model.Content"></InputTextArea>
+                <InputTextArea id="txtContext" class="form-control" placeholder="Enter Content" rows="5" @bind-Value="@Model.Content"></InputTextArea>
                 <ValidationMessage For="@(() => Model.Content)" class="form-text text-muted"></ValidationMessage>
+            </div>
+            <div class="form-group">
+                <label for="txtTitle">Password</label>
+                <InputText id="txtPassword" class="form-control" placeholder="Enter Password" @bind-Value="@Model.Password"></InputText>
+                <ValidationMessage For="@(() => Model.Password)" class="form-text text-muted"></ValidationMessage>
             </div>
             <div class="form-group">
                 <label for="lstCategory">Parent</label>
@@ -43,8 +49,7 @@
             </div>
             <div class="form-group">
                 <label for="txtTitle">File</label>
-                <BlazorInputFile.InputFile OnChange="HandleSelection">
-                </BlazorInputFile.InputFile>
+                <BlazorInputFile.InputFile OnChange="HandleSelection"></BlazorInputFile.InputFile>
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Submit</button>
