@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MemoApp.Models
+namespace Hawaso.Models
 {
     /// <summary>
     /// [!] Generic Repository Interface => ICrudRepositoryBase.cs 

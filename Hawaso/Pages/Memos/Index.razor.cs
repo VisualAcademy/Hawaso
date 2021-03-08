@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
-using MemoApp.Models;
+﻿using Hawaso.Models;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,8 +16,8 @@ namespace Hawaso.Pages.Memos
 
         protected List<Memo> models;
 
-        protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase() 
-        { 
+        protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase()
+        {
             PageNumber = 1,
             PageIndex = 0,
             PageSize = 10,
@@ -31,7 +31,7 @@ namespace Hawaso.Pages.Memos
         protected override async Task OnInitializedAsync()
         {
             await DisplayData();
-        } 
+        }
         #endregion
 
         private async Task DisplayData()
@@ -70,7 +70,7 @@ namespace Hawaso.Pages.Memos
             await DisplayData();
 
             StateHasChanged();
-        } 
+        }
         #endregion
 
         #region Sorting
@@ -110,7 +110,7 @@ namespace Hawaso.Pages.Memos
             }
 
             await DisplayData();
-        } 
+        }
         #endregion
     }
 }

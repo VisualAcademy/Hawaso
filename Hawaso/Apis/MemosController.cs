@@ -1,4 +1,4 @@
-﻿using MemoApp.Models;
+﻿using Hawaso.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -141,7 +141,7 @@ namespace MemoApp.Apis.Controllers
         {
             if (id is null)
             {
-                return NotFound(); 
+                return NotFound();
             }
 
             if (dto == null)

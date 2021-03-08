@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace MemoApp.Models
+namespace Hawaso.Models
 {
     public interface IMemoFileStorageManager
     {
@@ -9,20 +9,20 @@ namespace MemoApp.Models
         /// File(Blob) Upload
         /// </summary>
         /// <returns>New FileName</returns>
-        Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath, bool overwrite);
-        Task<string> UploadAsync(Stream stream, string fileName, string folderPath, bool overwrite);
+        Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = "Memos", bool overwrite = false);
+        Task<string> UploadAsync(Stream stream, string fileName, string folderPath = "Memos", bool overwrite = false);
 
         /// <summary>
         /// File(Blob) Download
         /// </summary>
         /// <returns>File(Blob)</returns>
-        Task<byte[]> DownloadAsync(string fileName, string folderPath);
+        Task<byte[]> DownloadAsync(string fileName, string folderPath = "Memos");
 
         /// <summary>
         /// File(Blob) Delete
         /// </summary>
         /// <returns>true or false</returns>
-        Task<bool> DeleteAsync(string fileName, string folderPath);
+        Task<bool> DeleteAsync(string fileName, string folderPath = "Memos");
 
         /// <summary>
         /// Get Sub Folder with string

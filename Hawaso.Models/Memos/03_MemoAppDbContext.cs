@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 
-namespace MemoApp.Models
+namespace Hawaso.Models
 {
     /// <summary>
     /// [3] DbContext Class

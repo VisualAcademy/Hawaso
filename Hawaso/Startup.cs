@@ -1,4 +1,5 @@
-﻿using DotNetNote.Models;
+﻿using Blazored.Toast;
+using DotNetNote.Models;
 using DotNetNote.Services;
 using DotNetNote.Settings;
 using DotNetSaleCore.Models;
@@ -6,6 +7,7 @@ using Hawaso.Areas.Identity;
 using Hawaso.Data;
 using Hawaso.Models;
 using Hawaso.Models.CommonValues;
+using MachineTypeApp.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -17,16 +19,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NoticeApp.Models;
+using ReplyApp.Managers;
+using ReplyApp.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using MachineTypeApp.Models;
-using ReplyApp.Managers;
 using UploadApp.Models;
-using ReplyApp.Models;
-using Blazored.Toast;
-using MemoApp.Models;
-using MemoApp.Memos;
 using Zero.Models;
 
 namespace Hawaso
@@ -90,7 +88,7 @@ namespace Hawaso
                 //using Microsoft.AspNetCore.Authentication.Cookies;
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                 options.SlidingExpiration = true;
-            }); 
+            });
             #endregion
 
 
@@ -238,12 +236,13 @@ namespace Hawaso
             /// <summary>
             /// 메모앱(MemoApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
             /// </summary>
-            services.AddDependencyInjectionContainerForMemoApp(Configuration);
+            services.AddDependencyInjectionContainerForMemoApp(Configuration.GetConnectionString("DefaultConnection"));
+
             // 파일 업로드 및 다운로드 서비스(매니저) 등록
-            services.AddTransient<IMemoFileStorageManager, MemoFileStorageManager>(); // Local Upload
+            //services.AddTransient<IMemoFileStorageManager, MemoFileStorageManager>(); // Local Upload
 
             // Upload Feature
-            services.AddDiForLibries(Configuration.GetConnectionString("DefaultConnection"));            
+            services.AddDiForLibries(Configuration.GetConnectionString("DefaultConnection"));
             services.AddDiForBriefingLogs(Configuration.GetConnectionString("DefaultConnection"));
         }
 
@@ -273,7 +272,7 @@ namespace Hawaso
 
             #region CORS
             //[CORS][2] CORS 사용 허용
-            app.UseCors("AllowAnyOrigin"); 
+            app.UseCors("AllowAnyOrigin");
             #endregion
 
 
