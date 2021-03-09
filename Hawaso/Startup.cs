@@ -238,9 +238,6 @@ namespace Hawaso
             /// </summary>
             services.AddDependencyInjectionContainerForMemoApp(Configuration.GetConnectionString("DefaultConnection"));
 
-            // 파일 업로드 및 다운로드 서비스(매니저) 등록
-            //services.AddTransient<IMemoFileStorageManager, MemoFileStorageManager>(); // Local Upload
-
             // Upload Feature
             services.AddDiForLibries(Configuration.GetConnectionString("DefaultConnection"));
             services.AddDiForBriefingLogs(Configuration.GetConnectionString("DefaultConnection"));
