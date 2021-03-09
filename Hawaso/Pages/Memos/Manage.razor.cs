@@ -124,6 +124,7 @@ namespace Hawaso.Pages.Memos
         {
             EditorFormTitle = "CREATE";
             this.model = new Memo(); // 모델 초기화
+            this.model.ParentId = ParentId; 
             this.model.ParentKey = ParentKey; // 
             EditorFormReference.Show();
         }
@@ -136,6 +137,7 @@ namespace Hawaso.Pages.Memos
             EditorFormTitle = "EDIT";
             this.model = new Memo(); // 모델 초기화
             this.model = model;
+            this.model.ParentId = ParentId;
             this.model.ParentKey = ParentKey; // 
             EditorFormReference.Show();
         }
