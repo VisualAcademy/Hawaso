@@ -99,7 +99,7 @@ namespace Hawaso.Models
         /// <summary>
         /// 작성자 이메일
         /// </summary>
-        [EmailAddress(ErrorMessage = "* 이메일을 정확히 입력하세요.")]
+        //[EmailAddress(ErrorMessage = "* 이메일을 정확히 입력하세요.")]
         public string Email { get; set; }
 
         /// <summary>
