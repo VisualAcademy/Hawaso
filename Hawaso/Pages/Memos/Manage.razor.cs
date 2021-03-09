@@ -184,7 +184,7 @@ namespace Hawaso.Pages.Memos
             if (!string.IsNullOrEmpty(model?.FileName))
             {
                 // 첨부 파일 삭제 
-                await FileStorageManagerReference.DeleteAsync(model.FileName, "");
+                await FileStorageManagerReference.DeleteAsync(model.FileName, "Memos");
             }
 
             await RepositoryReference.DeleteAsync(this.model.Id);

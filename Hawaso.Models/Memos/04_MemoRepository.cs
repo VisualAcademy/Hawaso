@@ -42,6 +42,8 @@ namespace Hawaso.Models
             model.RefOrder = 0; // 참조(그룹) 순서
             #endregion
 
+            model.Created = DateTime.Now;
+
             try
             {
                 _context.Memos.Add(model);
@@ -95,6 +97,8 @@ namespace Hawaso.Models
         {
             try
             {
+                model.ModifyDate = DateTime.Now;
+
                 _context.Memos.Attach(model);
                 _context.Entry(model).State = EntityState.Modified;
                 return (await _context.SaveChangesAsync() > 0 ? true : false);
@@ -428,6 +432,8 @@ namespace Hawaso.Models
             model.RefOrder = parentRefOrder + 1; // 부모글의 바로 다음번 순서로 보여지도록 설정 
             #endregion
 
+            model.Created = DateTime.Now;
+
             try
             {
                 _context.Memos.Add(model);
@@ -505,8 +511,10 @@ namespace Hawaso.Models
             model.RefOrder = (maxRefOrder + maxAnswerNum + 1); // 부모글의 바로 다음번 순서로 보여지도록 설정 
 
             model.ParentNum = parentId;
-            model.AnswerNum = 0; 
+            model.AnswerNum = 0;
             #endregion
+
+            model.Created = DateTime.Now;
 
             try
             {

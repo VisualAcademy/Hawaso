@@ -43,16 +43,16 @@ namespace Hawaso.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                string connectionString = ConfigurationManager.ConnectionStrings[
-                    "ConnectionString"].ConnectionString;
+                string connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
                 optionsBuilder.UseSqlServer(connectionString);
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Memos 테이블의 Created 열은 자동으로 GetDate() 제약 조건을 부여하기 
+            // Memos 테이블의 Created, PostDate 열은 자동으로 GetDate() 제약 조건을 부여하기 
             modelBuilder.Entity<Memo>().Property(m => m.Created).HasDefaultValueSql("GetDate()");
+            modelBuilder.Entity<Memo>().Property(m => m.PostDate).HasDefaultValueSql("GetDate()");
         }
 
         //[!] MemoApp 솔루션 관련 모든 테이블에 대한 참조 

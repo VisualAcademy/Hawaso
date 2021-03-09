@@ -64,7 +64,7 @@ namespace Hawaso.Models
         /// 작성일
         /// </summary>
         [Display(Name = "작성일")]
-        public DateTime PostDate { get; set; }
+        public DateTime? PostDate { get; set; }
 
         /// <summary>
         /// 작성지 IP 주소
@@ -113,7 +113,7 @@ namespace Hawaso.Models
         /// 조회수
         /// </summary>
         [Display(Name = "조회수")]
-        public int ReadCount { get; set; }
+        public int? ReadCount { get; set; }
 
         /// <summary>
         /// 인코딩: Text, HTML, Mixed
@@ -143,7 +143,7 @@ namespace Hawaso.Models
         /// 댓글수 
         /// </summary>
         [Display(Name = "댓글수")]
-        public int CommentCount { get; set; }
+        public int? CommentCount { get; set; }
 
         /// <summary>
         /// 상단 고정: 공지글로 올리기, IsActive
@@ -162,13 +162,13 @@ namespace Hawaso.Models
         /// 파일크기
         /// </summary>
         [Display(Name = "파일크기")]
-        public int FileSize { get; set; }
+        public int? FileSize { get; set; }
 
         /// <summary>
         /// 다운수 
         /// </summary>
         [Display(Name = "다운수")]
-        public int DownCount { get; set; }
+        public int? DownCount { get; set; }
         #endregion
 
         #region 답변형 게시판 관련 주요 속성
