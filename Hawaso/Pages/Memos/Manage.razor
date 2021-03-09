@@ -4,8 +4,8 @@
 @*@attribute [Authorize(Roles = "Administrators")]*@
 
 <h3>Memo Manage <a href="/Memos/Create"><span class="oi oi-plus"></span></a></h3>
-
-<div class="row">
+<input type="button" name="btnCreate" value="Create with Modal" class="btn btn-primary" @onclick="ShowEditorForm" />
+@*<div class="row">
     <div class="col-md-12">
         <a href="/Memos/Create" class="btn btn-primary">Create</a>
         <AuthorizeView>
@@ -23,7 +23,7 @@
             <a href="/MemoDownload/ExcelDown" class="btn btn-primary">Excel Export</a>
         </AuthorizeView>
     </div>
-</div>
+</div>*@
 
 <div class="row">
     <div class="col-md-12">
@@ -129,9 +129,12 @@
 </div>
 
 @*입력 또는 수정 폼 모달 다이얼로그*@
-<Hawaso.Pages.Memos.Components.EditorForm @ref="EditorFormReference" Model="model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit">
+@*<Hawaso.Pages.Memos.Components.EditorForm @ref="EditorFormReference" Model="model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit">
     <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
-</Hawaso.Pages.Memos.Components.EditorForm>
+</Hawaso.Pages.Memos.Components.EditorForm>*@
+<Hawaso.Pages.Memos.Components.ModalForm @ref="EditorFormReference" Model="model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit">
+    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+</Hawaso.Pages.Memos.Components.ModalForm>
 
 @*삭제 폼 모달 다이얼로그*@
 <Hawaso.Pages.Memos.Components.DeleteDialog @ref="DeleteDialogReference" OnClickCallback="DeleteClick">
