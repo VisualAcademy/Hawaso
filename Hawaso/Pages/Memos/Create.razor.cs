@@ -101,7 +101,7 @@ namespace Hawaso.Pages.Memos
                     fileName = file.Name;
                     fileSize = Convert.ToInt32(file.Size);
 
-                    fileName = await FileStorageManagerInjector.UploadAsync(file.Data, file.Name, "", true);
+                    fileName = await FileStorageManagerInjector.UploadAsync(file.Data, file.Name, "Memos", true);
 
                     Model.FileName = fileName;
                     Model.FileSize = fileSize;
@@ -149,7 +149,8 @@ namespace Hawaso.Pages.Memos
                 await RepositoryReference.AddAsync(m);
             }
 
-            NavigationManagerInjector.NavigateTo("/Memos/Index");
+            // Manage 컴포넌트로 이동 
+            NavigationManagerInjector.NavigateTo("/Memos");
         }
 
         /// <summary>

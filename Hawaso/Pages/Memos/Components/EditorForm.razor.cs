@@ -138,7 +138,7 @@ namespace Hawaso.Pages.Memos.Components
                     //await FileStorageManager.ReplyAsync(ms.ToArray(), file.Name, "", true);
                     //[B] Stream 형태
                     //string folderPath = Path.Combine(WebHostEnvironment.WebRootPath, "files");
-                    await FileStorageManagerReference.UploadAsync(file.Data, file.Name, "", true);
+                    await FileStorageManagerReference.UploadAsync(file.Data, file.Name, "Memos", true);
 
                     Model.FileName = fileName;
                     Model.FileSize = fileSize;

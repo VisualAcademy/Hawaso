@@ -39,8 +39,8 @@
                         </div>
                         <div class="form-group">
                             <label for="txtPassword">Password</label>
-                            <InputText id="txtPassword" class="form-control" placeholder="Enter Password" @bind-Value="@Model.Password"></InputText>
-                            <ValidationMessage For="@(() => Model.Password)" class="form-text text-muted"></ValidationMessage>
+                            <InputText id="txtPassword" type="password" class="form-control" placeholder="Enter Password" @bind-Value="@ModelEdit.Password"></InputText>
+                            <ValidationMessage For="@(() => ModelEdit.Password)" class="form-text text-muted"></ValidationMessage>
                         </div>
                         <div class="form-group">
                             <label for="lstCategory">Parent</label>
