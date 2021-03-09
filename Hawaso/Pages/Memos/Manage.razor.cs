@@ -46,7 +46,8 @@ namespace Hawaso.Pages.Memos
         /// <summary>
         /// EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기
         /// </summary>
-        public Components.EditorForm EditorFormReference { get; set; }
+        //public Components.EditorForm EditorFormReference { get; set; }
+        public Components.ModalForm EditorFormReference { get; set; }
 
         /// <summary>
         /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
