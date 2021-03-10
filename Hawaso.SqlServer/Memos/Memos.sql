@@ -41,5 +41,8 @@ CREATE TABLE [dbo].[Memos]
     RefOrder        Int Not Null Default 0,                     -- 답변순서
     AnswerNum       Int Not Null Default 0,                     -- 답변수
     ParentNum       Int Not Null Default 0,                     -- 부모글번호
+
+    --[!] 추가 항목 들어오는 곳...
+
 )
 Go
