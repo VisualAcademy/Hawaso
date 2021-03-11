@@ -47,7 +47,7 @@
                         <col style="width: 100px;" />
                         <col style="width: 200px;" />
                         <col style="width: auto;" />
-                        <col style="width: 280px;" />
+                        <col style="width: 300px;" />
                     </colgroup>
                     <thead class="thead-light">
                         <tr>
@@ -100,17 +100,18 @@
                                 <td>
                                     <a href="/Memos/Details/@m.Id" class="btn btn-sm btn-light">Details</a>
                                     <a href="/Memos/Edit/@m.Id" class="btn btn-sm btn-light">Edit</a>
-                                    <a href="/Memos/Delete/@m.Id" class="btn btn-sm btn-light">Delete</a>
+                                    <a href="/Memos/Delete/@m.Id" class="btn btn-sm btn-light">Del</a>
                                 </td>
                                 <td>&nbsp;</td>
                                 <td>
                                     <input type="button" name="btnEdit" value="Edit" class="btn btn-sm btn-primary" @onclick="(() => EditBy(m))" />
-                                    <input type="button" name="btnDelete" value="Delete" class="btn btn-sm btn-danger" @onclick="(() => DeleteBy(m))" />
+                                    <input type="button" name="btnDelete" value="Del" class="btn btn-sm btn-danger" @onclick="(() => DeleteBy(m))" />
                                     <input type="button" name="btnToggle" value="Toggle" class="btn btn-sm btn-primary" @onclick="(() => ToggleBy(m))" />
                                     @if (m.FileSize > 0)
                                     {
-                                        @*<input type="button" name="btnDownload" value="Download" class="btn btn-primary" @onclick="(() => DownloadBy(m))" />*@
-                                        <a href="/MemoDownload/FileDown/@m.Id" class="btn btn-sm btn-primary ml-1">Down</a>
+                                        <input type="button" name="btnDownload" value="Dn" class="btn btn-sm btn-primary" @onclick="(() => DownloadBy(m))" />
+                                        <a href="/MemoDownload/FileDown/@m.Id" class="btn btn-sm btn-primary" download="@m.FileName">Dn</a>
+                                        <button onclick="location.href = '/MemoDownload/FileDown/@m.Id';" class="btn btn-sm btn-primary">Dn</button>
                                     }
                                 </td>
                             </tr>

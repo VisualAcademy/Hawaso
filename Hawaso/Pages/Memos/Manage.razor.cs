@@ -157,7 +157,7 @@ namespace Hawaso.Pages.Memos
         {
             if (!string.IsNullOrEmpty(model.FileName))
             {
-                byte[] fileBytes = await FileStorageManagerReference.DownloadAsync(model.FileName, "");
+                byte[] fileBytes = await FileStorageManagerReference.DownloadAsync(model.FileName, "Memos");
                 if (fileBytes != null)
                 {
                     // DownCount
