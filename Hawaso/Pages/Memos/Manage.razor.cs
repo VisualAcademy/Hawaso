@@ -54,10 +54,19 @@ namespace Hawaso.Pages.Memos
         /// </summary>
         public Components.DeleteDialog DeleteDialogReference { get; set; }
 
+        /// <summary>
+        /// 현재 페이지에서 리스트로 사용되는 모델 리스트 
+        /// </summary>
         protected List<Memo> models = new List<Memo>();
 
+        /// <summary>
+        /// 현재 페이지에서 선택된 단일 데이터를 나타내는 모델 클래스 
+        /// </summary>
         protected Memo model = new Memo();
 
+        /// <summary>
+        /// 페이저 설정
+        /// </summary>
         protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase()
         {
             PageNumber = 1,

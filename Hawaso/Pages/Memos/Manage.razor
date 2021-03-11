@@ -1,29 +1,30 @@
 ﻿@page "/Memos"
 @page "/Memos/Manage"
-
 @*@attribute [Authorize(Roles = "Administrators")]*@
 
-<h3>Memo Manage <a href="/Memos/Create"><span class="oi oi-plus"></span></a></h3>
-<input type="button" name="btnCreate" value="Create with Modal" class="btn btn-primary" @onclick="ShowEditorForm" />
-@*<div class="row">
+<h3>Memo Manage <a href="/Memos/Create"><span class="oi oi-plus"></span></a>&nbsp; <span class="oi oi-plus" @onclick="ShowEditorForm" style="cursor: pointer;"></span></h3>
+
+<div class="row mb-1">
     <div class="col-md-12">
-        <a href="/Memos/Create" class="btn btn-primary">Create</a>
         <AuthorizeView>
             <Authorized>
             </Authorized>
             <NotAuthorized>
-                <a href="/Memos/Index" class="btn btn-primary">List</a>
-                <input type="button" name="btnCreate" value="Create with Modal" class="btn btn-primary" @onclick="ShowEditorForm" />
+                <a href="/Memos/Create" class="btn btn-sm btn-primary">Create</a>
+                <a href="/Memos/Index" class="btn btn-sm btn-primary">List</a>
+                <input type="button" name="btnCreate" value="Create with Modal" class="btn btn-sm btn-primary" @onclick="ShowEditorForm" />
             </NotAuthorized>
         </AuthorizeView>
         <AuthorizeView Roles="Administrators, Managers">
-            <a href="/Memos/Index" class="btn btn-primary">List</a>
-            <input type="button" class="btn btn-primary" value="Excel Export With Web API" @onclick="DownloadExcelWithWebApi" />
-            <input type="button" class="btn btn-primary" value="Excel Export" @onclick="DownloadExcel" />
-            <a href="/MemoDownload/ExcelDown" class="btn btn-primary">Excel Export</a>
+            <a href="/Memos/Create" class="btn btn-sm btn-primary">Create</a>
+            <input type="button" name="btnCreate" value="Create with Modal" class="btn btn-sm btn-primary" @onclick="ShowEditorForm" />
+            <a href="/Memos/Index" class="btn btn-sm btn-primary">List</a>
+            <input type="button" class="btn btn-sm btn-primary" value="Excel Export With Web API" @onclick="DownloadExcelWithWebApi" />
+            <input type="button" class="btn btn-sm btn-primary" value="Excel Export" @onclick="DownloadExcel" />
+            <button onclick="location.href = '/MemoDownload/ExcelDown';" class="btn btn-sm btn-primary">Excel Export</button>
         </AuthorizeView>
     </div>
-</div>*@
+</div>
 
 <div class="row">
     <div class="col-md-12">
@@ -144,17 +145,17 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">공지글로 올리기</h5>
+                    <h5 class="modal-title">Toggle</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>@(model.Id)번 글을 공지글로 설정할까요?</p>
+                    <p>Do you want to toggle post #@(model.Id)?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @onclick="ToggleClick">설정</button>
-                    <button type="button" class="btn btn-secondary" @onclick="ToggleClose">닫기</button>
+                    <button type="button" class="btn btn-primary" @onclick="ToggleClick">Toggle</button>
+                    <button type="button" class="btn btn-secondary" @onclick="ToggleClose">Close</button>
                 </div>
             </div>
         </div>
