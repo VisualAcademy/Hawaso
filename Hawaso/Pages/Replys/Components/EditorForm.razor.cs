@@ -110,7 +110,6 @@ namespace Hawaso.Pages.Replys.Components
 
 
         #region Event Handlers
-
         protected async void CreateOrEditClick()
         {
             // 변경 내용 저장
@@ -164,7 +163,6 @@ namespace Hawaso.Pages.Replys.Components
                 await RepositoryReference.EditAsync(Model);
                 await EditCallback.InvokeAsync(true);
             }
-            //IsShow = false; // this.Hide()
         }
 
         protected void HandleSelection(IFileListEntry[] files)
