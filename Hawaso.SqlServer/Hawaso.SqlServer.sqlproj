@@ -118,7 +118,7 @@
     <Build Include="Location.sql" />
     <Build Include="ReportType.sql" />
     <Build Include="CaseStatus.sql" />
-    <Build Include="Memos\Memos.sql" />
+    <Build Include="Memos\00_Memos.sql" />
     <Build Include="dbo\Tables\Uploads\Libraries\Libraries.sql" />
     <Build Include="dbo\Tables\Uploads\BriefingLogs\BriefingLogs.sql" />
     <Build Include="01_Identity\__EFMigrationsHistory.sql" />
