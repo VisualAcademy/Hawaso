@@ -21,7 +21,7 @@ namespace Hawaso.Pages.Memos.Components
 
         #region Properties
         /// <summary>
-        /// 모달 다이얼로그를 표시할건지 여부 
+        /// (글쓰기/글수정)모달 다이얼로그를 표시할건지 여부 
         /// </summary>
         public bool IsShow { get; set; } = false;
         #endregion
@@ -69,6 +69,7 @@ namespace Hawaso.Pages.Memos.Components
             ModelEdit.Title = Model.Title;
             ModelEdit.Content = Model.Content;
             ModelEdit.Password = Model.Password;
+            // 더 많은 정보는 여기에서...
 
             // ParentId가 넘어온 값이 있으면... 즉, 0이 아니면 ParentId 드롭다운 리스트 기본값 선택
             parentId = Model.ParentId.ToString();
@@ -122,13 +123,11 @@ namespace Hawaso.Pages.Memos.Components
             {
                 // 파일 업로드
                 var file = selectedFiles.FirstOrDefault();
-                var fileName = "";
-                int fileSize = 0;
                 if (file != null)
                 {
                     //file.Name = $"{DateTime.Now.ToString("yyyyMMddhhmmss")}{file.Name}";
-                    fileName = file.Name;
-                    fileSize = Convert.ToInt32(file.Size);
+                    string fileName = file.Name;
+                    int fileSize = Convert.ToInt32(file.Size);
 
                     //[A] byte[] 형태
                     //var ms = new MemoryStream();
