@@ -421,7 +421,9 @@ namespace Hawaso.Models
         {
             #region 답변 관련 기능 추가된 영역
             // 비집고 들어갈 자리: 부모글 순서보다 큰 글이 있다면(기존 답변 글이 있다면) 해당 글의 순서를 모두 1씩 증가 
-            var replys = await _context.Memos.Where(m => m.Ref == parentRef && m.RefOrder > parentRefOrder).ToListAsync();
+            var replys = await _context.Memos
+                .Where(m => m.Ref == parentRef && m.RefOrder > parentRefOrder)
+                .ToListAsync();
             foreach (var item in replys)
             {
                 item.RefOrder = item.RefOrder + 1;
@@ -569,25 +571,27 @@ namespace Hawaso.Models
                 // Search Mode
                 if (!string.IsNullOrEmpty(options.SearchQuery))
                 {
+                    var searchQuery = options.SearchQuery; // 검색어
+
                     if (options.SearchField == "Name")
                     {
                         // Name
-                        items = items.Where(m => m.Name.Contains(options.SearchQuery));
+                        items = items.Where(m => m.Name.Contains(searchQuery));
                     }
                     else if (options.SearchField == "Title")
                     {
                         // Title
-                        items = items.Where(m => m.Title.Contains(options.SearchQuery));
+                        items = items.Where(m => m.Title.Contains(searchQuery));
                     }
                     else if (options.SearchField == "Content")
                     {
                         // Title
-                        items = items.Where(m => m.Content.Contains(options.SearchQuery));
+                        items = items.Where(m => m.Content.Contains(searchQuery));
                     }
                     else
                     {
                         // All: 기타 더 검색이 필요한 컬럼이 있다면 추가 가능
-                        items = items.Where(m => m.Name.Contains(options.SearchQuery) || m.Title.Contains(options.SearchQuery) || m.Content.Contains(options.SearchQuery));
+                        items = items.Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery));
                     }
                 }
             }
