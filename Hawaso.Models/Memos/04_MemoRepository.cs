@@ -171,7 +171,9 @@ namespace Hawaso.Models
             int pageSize,
             int parentId)
         {
-            var totalRecords = await _context.Memos.Where(m => m.ParentId == parentId).CountAsync();
+            var totalRecords = await _context.Memos
+                .Where(m => m.ParentId == parentId)
+                .CountAsync();
             var models = await _context.Memos
                 .Where(m => m.ParentId == parentId)
                 .OrderByDescending(m => m.Id)
@@ -186,8 +188,12 @@ namespace Hawaso.Models
         //[4][8] 상태
         public async Task<Tuple<int, int>> GetStatus(int parentId)
         {
-            var totalRecords = await _context.Memos.Where(m => m.ParentId == parentId).CountAsync();
-            var pinnedRecords = await _context.Memos.Where(m => m.ParentId == parentId && m.IsPinned == true).CountAsync();
+            var totalRecords = await _context.Memos
+                .Where(m => m.ParentId == parentId)
+                .CountAsync();
+            var pinnedRecords = await _context.Memos
+                .Where(m => m.ParentId == parentId && m.IsPinned == true)
+                .CountAsync();
 
             return new Tuple<int, int>(pinnedRecords, totalRecords); // (2, 10)
         }
@@ -197,7 +203,9 @@ namespace Hawaso.Models
         {
             try
             {
-                var models = await _context.Memos.Where(m => m.ParentId == parentId).ToListAsync();
+                var models = await _context.Memos
+                    .Where(m => m.ParentId == parentId)
+                    .ToListAsync();
 
                 foreach (var model in models)
                 {
@@ -242,10 +250,12 @@ namespace Hawaso.Models
             string searchQuery,
             int parentId)
         {
-            var totalRecords = await _context.Memos.Where(m => m.ParentId == parentId)
+            var totalRecords = await _context.Memos
+                .Where(m => m.ParentId == parentId)
                 .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
                 .CountAsync();
-            var models = await _context.Memos.Where(m => m.ParentId == parentId)
+            var models = await _context.Memos
+                .Where(m => m.ParentId == parentId)
                 .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
                 //.Include(m => m.MemosComments)
