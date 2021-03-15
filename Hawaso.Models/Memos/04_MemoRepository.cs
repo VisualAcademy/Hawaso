@@ -344,7 +344,10 @@ namespace Hawaso.Models
         {
             //var items = from m in _context.Memos select m; // 쿼리 구문(Query Syntax)
             //var items = _context.Memos.Select(m => m); // 메서드 구문(Method Syntax)
-            var items = _context.Memos.AsQueryable();
+            var items = 
+                _context.Memos
+                    //.Include(me => me.Comments)
+                    .AsQueryable();
 
             #region ParentBy: 특정 부모 키 값(int, string)에 해당하는 리스트인지 확인
             // ParentBy 
