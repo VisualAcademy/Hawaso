@@ -55,7 +55,7 @@ namespace Hawaso.Pages.Memos.Components
         /// 넘어온 모델 개체 
         /// </summary>
         [Parameter]
-        public Memo Model { get; set; }
+        public Memo ModelSender { get; set; }
 
         public Memo ModelEdit { get; set; }
 
@@ -64,15 +64,15 @@ namespace Hawaso.Pages.Memos.Components
         protected override void OnParametersSet()
         {
             ModelEdit = new Memo();
-            ModelEdit.Id = Model.Id;
-            ModelEdit.Name = Model.Name;
-            ModelEdit.Title = Model.Title;
-            ModelEdit.Content = Model.Content;
-            ModelEdit.Password = Model.Password;
+            ModelEdit.Id = ModelSender.Id;
+            ModelEdit.Name = ModelSender.Name;
+            ModelEdit.Title = ModelSender.Title;
+            ModelEdit.Content = ModelSender.Content;
+            ModelEdit.Password = ModelSender.Password;
             // 더 많은 정보는 여기에서...
 
             // ParentId가 넘어온 값이 있으면... 즉, 0이 아니면 ParentId 드롭다운 리스트 기본값 선택
-            parentId = Model.ParentId.ToString();
+            parentId = ModelSender.ParentId.ToString();
             if (parentId == "0")
             {
                 parentId = "";
@@ -113,10 +113,10 @@ namespace Hawaso.Pages.Memos.Components
         protected async void CreateOrEditClick()
         {
             // 변경 내용 저장
-            Model.Name = ModelEdit.Name;
-            Model.Title = ModelEdit.Title;
-            Model.Content = ModelEdit.Content;
-            Model.Password = ModelEdit.Password; 
+            ModelSender.Name = ModelEdit.Name;
+            ModelSender.Title = ModelEdit.Title;
+            ModelSender.Content = ModelEdit.Content;
+            ModelSender.Password = ModelEdit.Password; 
 
             #region 파일 업로드 관련 추가 코드 영역
             if (selectedFiles != null && selectedFiles.Length > 0)
@@ -137,8 +137,8 @@ namespace Hawaso.Pages.Memos.Components
                     //string folderPath = Path.Combine(WebHostEnvironment.WebRootPath, "files");
                     await FileStorageManagerReference.UploadAsync(file.Data, file.Name, "Memos", true);
 
-                    Model.FileName = fileName;
-                    Model.FileSize = fileSize;
+                    ModelSender.FileName = fileName;
+                    ModelSender.FileSize = fileSize;
                 }
             }
             #endregion
@@ -147,19 +147,19 @@ namespace Hawaso.Pages.Memos.Components
             {
                 newParentId = 0;
             }
-            Model.ParentId = newParentId;
-            Model.ParentKey = Model.ParentKey;
+            ModelSender.ParentId = newParentId;
+            ModelSender.ParentKey = ModelSender.ParentKey;
 
-            if (Model.Id == 0)
+            if (ModelSender.Id == 0)
             {
                 // Create
-                await RepositoryReference.AddAsync(Model);
+                await RepositoryReference.AddAsync(ModelSender);
                 CreateCallback?.Invoke();
             }
             else
             {
                 // Edit
-                await RepositoryReference.EditAsync(Model);
+                await RepositoryReference.EditAsync(ModelSender);
                 await EditCallback.InvokeAsync(true);
             }
         }

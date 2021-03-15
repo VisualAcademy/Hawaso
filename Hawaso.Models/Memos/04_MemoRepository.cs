@@ -413,7 +413,7 @@ namespace Hawaso.Models
             // Paging
             items = items.Skip(pageIndex * pageSize).Take(pageSize);
 
-            return new ArticleSet<Memo, int>(await items.ToListAsync(), totalCount);
+            return new ArticleSet<Memo, int>(await items.AsNoTracking().ToListAsync(), totalCount);
         }
 
         //[4][16] 답변: ReplyApp
@@ -636,7 +636,7 @@ namespace Hawaso.Models
             // Paging
             items = items.Skip(options.PageIndex * options.PageSize).Take(options.PageSize);
 
-            return new ArticleSet<Memo, long>(await items.ToListAsync(), totalCount);
+            return new ArticleSet<Memo, long>(await items.AsNoTracking().ToListAsync(), totalCount);
         }
         #endregion
 

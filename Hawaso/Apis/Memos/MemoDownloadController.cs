@@ -16,8 +16,8 @@ namespace Hawaso.Controllers
 
         public MemoDownloadController(IMemoRepository repository, IMemoFileStorageManager fileStorageManager)
         {
-            this._repository = repository;
-            this._fileStorageManager = fileStorageManager;
+            _repository = repository;
+            _fileStorageManager = fileStorageManager;
         }
 
         /// <summary>
@@ -38,7 +38,6 @@ namespace Hawaso.Controllers
                     byte[] fileBytes = await _fileStorageManager.DownloadAsync(model.FileName, "Memos");
                     if (fileBytes != null)
                     {
-                        // DownCount
                         model.DownCount = model.DownCount + 1;
                         await _repository.EditAsync(model);
 
@@ -94,7 +93,6 @@ namespace Hawaso.Controllers
 
                     return File(package.GetAsByteArray(), "application/octet-stream", $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_Memos.xlsx");
                 }
-
             }
             return Redirect("/");
         }
