@@ -9,7 +9,7 @@
     <PackageReference Include="Blazored.Toast" Version="3.1.2" />
     <PackageReference Include="ChartJs.Blazor" Version="1.1.0" />
     <PackageReference Include="CommonMark.NET" Version="0.15.1" />
-    <PackageReference Include="Dul" Version="1.2.6" />
+    <PackageReference Include="Dul" Version="1.2.7" />
     <PackageReference Include="Dul.NoticeApp.Models" Version="1.0.2" />
     <PackageReference Include="DulPager" Version="1.0.0" />
     <PackageReference Include="EPPlus" Version="5.5.2" />
