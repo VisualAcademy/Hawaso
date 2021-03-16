@@ -102,7 +102,7 @@ namespace Hawaso.Pages.Memos
             }
             else
             {
-                var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, 0);
+                var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, parentIdentifier: 0);
                 pager.RecordCount = articleSet.TotalCount;
                 models = articleSet.Items.ToList();
             }
