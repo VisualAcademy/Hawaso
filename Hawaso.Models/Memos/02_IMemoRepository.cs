@@ -68,11 +68,12 @@ namespace Hawaso.Models
     public interface IMemoRepository : IMemoCrudRepository<Memo>
     {
         // PM> Install-Package Dul
-
         Task<ArticleSet<Memo, long>> GetByAsync<TParentIdentifier>(FilterOptions<TParentIdentifier> options);
 
         Task<Tuple<int, int>> GetStatus(int parentId);
         Task<bool> DeleteAllByParentId(int parentId);
         Task<SortedList<int, double>> GetMonthlyCreateCountAsync();
+
+        // 강의 이외에 추가적인 API가 필요하다면 이곳에 기록(예를 들어, 시작일부터 종료일까지의 데이터 검색)
     }
 }

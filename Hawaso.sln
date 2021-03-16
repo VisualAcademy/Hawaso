@@ -17,6 +17,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorUtils", "BlazorUtils\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zero", "Zero\Zero.csproj", "{19CCC5D5-540A-4FB4-AF4C-A3B912447C81}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGets", "NuGets", "{512C5432-0775-42CF-9ACF-DD50AD7FD334}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{014A11D8-33E1-4A65-9CA9-3A43D2C273EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +60,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{010369CD-F104-4214-BFE8-98C8469D026B} = {512C5432-0775-42CF-9ACF-DD50AD7FD334}
+		{4D729F6D-0EC5-4A8A-AA20-FF2F2AB5BB8B} = {512C5432-0775-42CF-9ACF-DD50AD7FD334}
+		{19CCC5D5-540A-4FB4-AF4C-A3B912447C81} = {014A11D8-33E1-4A65-9CA9-3A43D2C273EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7F86D6CB-300E-4E37-A365-2AEE99055855}
