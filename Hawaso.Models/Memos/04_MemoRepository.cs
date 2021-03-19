@@ -281,13 +281,15 @@ namespace Hawaso.Models
             {
                 // 현재 달부터 12개월 전까지 반복
                 var current = DateTime.Now.AddMonths(-i);
-                var cnt = _context.Memos.AsEnumerable().Where(
-                    m => m.Created != null
-                    &&
-                    Convert.ToDateTime(m.Created).Month == current.Month
-                    &&
-                    Convert.ToDateTime(m.Created).Year == current.Year
-                ).ToList().Count();
+                var cnt = _context.Memos.AsEnumerable()
+                    .Where(
+                        m => m.Created != null
+                        &&
+                        Convert.ToDateTime(m.Created).Month == current.Month
+                        &&
+                        Convert.ToDateTime(m.Created).Year == current.Year
+                    )
+                    .ToList().Count();
                 createCounts[current.Month] = cnt;
             }
 
@@ -300,7 +302,9 @@ namespace Hawaso.Models
             int pageSize,
             string parentKey)
         {
-            var totalRecords = await _context.Memos.Where(m => m.ParentKey == parentKey).CountAsync();
+            var totalRecords = await _context.Memos
+                .Where(m => m.ParentKey == parentKey)
+                .CountAsync();
             var models = await _context.Memos
                 .Where(m => m.ParentKey == parentKey)
                 .OrderByDescending(m => m.Id)
@@ -319,10 +323,12 @@ namespace Hawaso.Models
             string searchQuery,
             string parentKey)
         {
-            var totalRecords = await _context.Memos.Where(m => m.ParentKey == parentKey)
+            var totalRecords = await _context.Memos
+                .Where(m => m.ParentKey == parentKey)
                 .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
                 .CountAsync();
-            var models = await _context.Memos.Where(m => m.ParentKey == parentKey)
+            var models = await _context.Memos
+                .Where(m => m.ParentKey == parentKey)
                 .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
                 //.Include(m => m.MemosComments)
