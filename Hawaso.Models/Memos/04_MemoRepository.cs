@@ -374,17 +374,20 @@ namespace Hawaso.Models
                 if (searchField == "Name")
                 {
                     // Name
-                    items = items.Where(m => m.Name.Contains(searchQuery));
+                    items = items
+                        .Where(m => m.Name.Contains(searchQuery));
                 }
                 else if (searchField == "Title")
                 {
                     // Title
-                    items = items.Where(m => m.Title.Contains(searchQuery));
+                    items = items
+                        .Where(m => m.Title.Contains(searchQuery));
                 }
                 else
                 {
                     // All: 기타 더 검색이 필요한 컬럼이 있다면 추가 가능
-                    items = items.Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery));
+                    items = items
+                        .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery));
                 }
             } 
             #endregion
@@ -398,23 +401,28 @@ namespace Hawaso.Models
             {
                 case "Name":
                     //items = items.OrderBy(m => m.Name);
-                    items = items.OrderBy(m => m.Name).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    items = items
+                        .OrderBy(m => m.Name).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
                 case "NameDesc":
                     //items = items.OrderByDescending(m => m.Name);
-                    items = items.OrderByDescending(m => m.Name).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    items = items
+                        .OrderByDescending(m => m.Name).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
                 case "Title":
                     //items = items.OrderBy(m => m.Title);
-                    items = items.OrderBy(m => m.Title).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    items = items
+                        .OrderBy(m => m.Title).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
                 case "TitleDesc":
                     //items = items.OrderByDescending(m => m.Title);
-                    items = items.OrderByDescending(m => m.Title).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    items = items
+                        .OrderByDescending(m => m.Title).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
                 default:
                     //items = items.OrderByDescending(m => m.Id); 
-                    items = items.OrderByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    items = items
+                        .OrderByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
             } 
             #endregion
