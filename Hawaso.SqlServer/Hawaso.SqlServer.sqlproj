@@ -79,6 +79,7 @@
     <Folder Include="dbo\Tables\Uploads\Libraries" />
     <Folder Include="dbo\Tables\Uploads\BriefingLogs" />
     <Folder Include="01_Identity" />
+    <Folder Include="Departments" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -132,5 +133,6 @@
     <Build Include="ReportSpecific.sql" />
     <Build Include="Sublocation.sql" />
     <Build Include="Incidents.sql" />
+    <Build Include="Departments\Departments.sql" />
   </ItemGroup>
 </Project>
