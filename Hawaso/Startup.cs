@@ -154,6 +154,7 @@ namespace Hawaso
             AddDependencyInjectionContainerForUploadApp(services);
             AddDependencyInjectionContainerForReplyApp(services);
 
+
             services.AddTransient<IFileStorageManager, ReplyAppFileStorageManager>(); // Local Upload
         }
 
@@ -237,6 +238,8 @@ namespace Hawaso
             /// 메모앱(MemoApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
             /// </summary>
             services.AddDependencyInjectionContainerForMemoApp(Configuration.GetConnectionString("DefaultConnection"));
+
+            services.AddDependencyInjectionContainerForDepartmentApp(Configuration.GetConnectionString("DefaultConnection"));
 
             // Upload Feature
             services.AddDiForLibries(Configuration.GetConnectionString("DefaultConnection"));

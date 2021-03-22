@@ -1,11 +1,14 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Hawaso.Models.Departments
+namespace Hawaso.Models
 {
     [Table("Departments")]
-    public class Department
+    public class DepartmentModel
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
         public bool? Active { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
