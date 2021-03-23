@@ -1,6 +1,8 @@
 ﻿using BlazorUtils;
 using Hawaso.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,6 +76,8 @@ namespace Hawaso.Pages.Departments
         /// </summary>
         protected override async Task OnInitializedAsync()
         {
+            await GetUserIdAndUserName(); 
+
             await DisplayData();
         }
         #endregion
@@ -292,6 +296,36 @@ namespace Hawaso.Pages.Departments
             }
 
             await DisplayData();
+        }
+        #endregion
+
+        #region Get UserId and UserName
+        [Parameter]
+        public string UserId { get; set; } = "";
+
+        [Parameter]
+        public string UserName { get; set; } = "";
+
+        [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; }
+
+        [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; }
+
+        private async Task GetUserIdAndUserName()
+        {
+            var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user.Identity.IsAuthenticated)
+            {
+                var currentUser = await UserManagerRef.GetUserAsync(user);
+                UserId = currentUser.Id;
+                UserName = user.Identity.Name;
+            }
+            else
+            {
+                UserId = "";
+                UserName = "Anonymous";
+            }
         }
         #endregion
     }

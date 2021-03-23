@@ -33,6 +33,9 @@ namespace Hawaso.Pages.Departments.Components
         #endregion
 
         #region Parameters
+        [Parameter]
+        public string UserName { get; set; }
+
         /// <summary>
         /// 폼의 제목 영역
         /// </summary>
@@ -91,7 +94,7 @@ namespace Hawaso.Pages.Departments.Components
             // 변경 내용 저장
             ModelSender.Active = true; 
             ModelSender.Name = ModelEdit.Name;
-            ModelSender.CreatedBy = "Department Test";
+            ModelSender.CreatedBy = UserName ?? "Anonymous";
 
             if (ModelSender.Id == 0)
             {
