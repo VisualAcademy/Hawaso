@@ -282,6 +282,11 @@ namespace Hawaso.Pages.Departments
 
         protected async void SortByName()
         {
+            if (!sortOrder.Contains("Name"))
+            {
+                sortOrder = ""; // 다른 열을 정렬하고 있었다면, 다시 초기화
+            }
+
             if (sortOrder == "")
             {
                 sortOrder = "Name";
