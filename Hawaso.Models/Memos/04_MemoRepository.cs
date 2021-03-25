@@ -114,9 +114,20 @@ namespace Hawaso.Models
         {
             try
             {
-                //_context.Memos.Attach(model);
-                //_context.Entry(model).State = EntityState.Modified;
-                _context.Update(model);
+                var old = _context.Memos.Find(model.Id);
+
+                old.Name = model.Name;
+                old.Email = model.Email;
+                old.Homepage = model.Homepage;
+                old.Title = model.Title;
+                old.Content = model.Content;
+                old.IsPinned = model.IsPinned; 
+
+                // TODO: 더 넣을 항목 처리: 이 부분은 어떻게 처리하는게 가장 좋은지 고민
+
+                old.Modified = DateTimeOffset.UtcNow;
+
+                _context.Update(old);
                 return (await _context.SaveChangesAsync() > 0 ? true : false);
             }
             catch (Exception e)

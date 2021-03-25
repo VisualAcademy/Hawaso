@@ -11,8 +11,6 @@ namespace Hawaso.Pages.Memos.Components
         #region Fields
         private string parentId = "";
 
-        protected int[] parentIds = { 1, 2, 3 };
-
         /// <summary>
         /// 첨부 파일 리스트 보관
         /// </summary>
@@ -159,7 +157,7 @@ namespace Hawaso.Pages.Memos.Components
             else
             {
                 // Edit
-                await RepositoryReference.EditAsync(ModelSender);
+                await RepositoryReference.UpdateAsync(ModelSender);
                 await EditCallback.InvokeAsync(true);
             }
         }

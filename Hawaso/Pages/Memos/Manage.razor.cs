@@ -232,7 +232,7 @@ namespace Hawaso.Pages.Memos
             this.model.IsPinned = (this.model?.IsPinned == true) ? false : true;
 
             // 변경된 내용 업데이트
-            await RepositoryReference.EditAsync(this.model);
+            await RepositoryReference.UpdateAsync(this.model);
 
             IsInlineDialogShow = false; // 표시 속성 초기화
             this.model = new Memo(); // 선택한 모델 초기화 

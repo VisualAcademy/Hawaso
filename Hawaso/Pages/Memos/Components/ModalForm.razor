@@ -34,18 +34,8 @@
                         </div>
                         <div class="form-group">
                             <label for="txtPassword">Password</label>
-                            <input typeof="password" id="txtPassword" class="form-control" placeholder="Enter Password" @bind="@ModelEdit.Password" />
+                            <input type="password" id="txtPassword" class="form-control" placeholder="Enter Password" @bind="@ModelEdit.Password" />
                         </div>
-                        @*<div class="form-group">
-                            <label for="lstCategory">Parent</label>
-                            <select @bind="@parentId" class="form-control" id="lstCategory">
-                                <option value="">--Select Parent--</option>
-                                @foreach (var p in parentIds)
-                                {
-                                    <option value="@p">@p</option>
-                                }
-                            </select>
-                        </div>*@
                         <div class="form-group">
                             <label for="txtTitle">File</label>
                             <BlazorInputFile.InputFile OnChange="HandleSelection"></BlazorInputFile.InputFile>
