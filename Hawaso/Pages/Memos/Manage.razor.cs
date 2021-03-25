@@ -1,6 +1,8 @@
 ﻿using BlazorUtils;
 using Hawaso.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -81,6 +83,8 @@ namespace Hawaso.Pages.Memos
         /// </summary>
         protected override async Task OnInitializedAsync()
         {
+            await GetUserIdAndUserName();
+
             await DisplayData();
         }
         #endregion
@@ -136,6 +140,9 @@ namespace Hawaso.Pages.Memos
             this.model = new Memo(); // 모델 초기화
             this.model.ParentId = ParentId; 
             this.model.ParentKey = ParentKey; // 
+
+            model.Name = UserName; // 로그인 사용자 이름을 기본으로 제공
+
             EditorFormReference.Show();
         }
 
@@ -335,6 +342,36 @@ namespace Hawaso.Pages.Memos
             }
 
             await DisplayData();
+        }
+        #endregion
+
+        #region Get UserId and UserName: Blazor에서 현재 로그인 사용자 이름 획득하기
+        [Parameter]
+        public string UserId { get; set; } = "";
+
+        [Parameter]
+        public string UserName { get; set; } = "";
+
+        [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; }
+
+        [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; }
+
+        private async Task GetUserIdAndUserName()
+        {
+            var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            if (user.Identity.IsAuthenticated)
+            {
+                var currentUser = await UserManagerRef.GetUserAsync(user);
+                UserId = currentUser.Id;
+                UserName = user.Identity.Name;
+            }
+            else
+            {
+                UserId = "";
+                UserName = "Anonymous";
+            }
         }
         #endregion
     }
