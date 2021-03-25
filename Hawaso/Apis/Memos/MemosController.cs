@@ -46,7 +46,7 @@ namespace MemoApp.Apis.Controllers
             temp.Name = dto.Name;
             temp.Title = dto.Title;
             temp.Content = dto.Content;
-            temp.Created = DateTime.Now;
+            temp.Created = DateTime.UtcNow;
             // --TODO-- 
             // </>
 

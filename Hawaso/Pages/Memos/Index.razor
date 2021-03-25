@@ -67,7 +67,12 @@
                                         </a>
                                     </td>
                                     <td>@m.Title</td>
-                                    <td>@m.Created?.ToShortTimeString()</td>
+                                    <td>
+                                        @if (@m.Created != null)
+                                        { 
+                                            @(Dul.DateTimeUtility.ShowTimeOrDate(m.Created))                                        
+                                        }
+                                    </td>
                                     <td>
                                         <a href="/Memos/Details/@m.Id" class="btn btn-light">Details</a>
                                         <a href="/Memos/Edit/@m.Id" class="btn btn-light">Edit</a>

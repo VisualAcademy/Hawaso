@@ -39,7 +39,7 @@ namespace Hawaso.Models
         /// [5] 등록일(생성일): Created
         /// DateTime? 또는 DateTimeOffset? 
         /// </summary>        
-        public DateTime? Created { get; set; }
+        public DateTimeOffset? Created { get; set; }
 
         /// <summary>
         /// 수정자: LastModifiedBy, ModifiedBy
@@ -49,7 +49,7 @@ namespace Hawaso.Models
         /// <summary>
         /// 수정일: LastModified, Modified
         /// </summary>
-        public DateTime? Modified { get; set; } 
+        public DateTimeOffset? Modified { get; set; } 
         #endregion
 
         #region [0] 5W1H: 누가, 언제, 어디서, 무엇을, 어떻게, 왜

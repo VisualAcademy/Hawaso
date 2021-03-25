@@ -42,7 +42,7 @@ namespace Hawaso.Models
             model.RefOrder = 0; // 참조(그룹) 순서
             #endregion
 
-            model.Created = DateTime.Now;
+            model.Created = DateTime.UtcNow;
 
             try
             {
@@ -461,7 +461,7 @@ namespace Hawaso.Models
             model.RefOrder = parentRefOrder + 1; // 부모글의 바로 다음번 순서로 보여지도록 설정 
             #endregion
 
-            model.Created = DateTime.Now;
+            model.Created = DateTime.UtcNow;
 
             try
             {
@@ -543,7 +543,7 @@ namespace Hawaso.Models
             model.AnswerNum = 0;
             #endregion
 
-            model.Created = DateTime.Now;
+            model.Created = DateTime.UtcNow;
 
             try
             {

@@ -123,7 +123,7 @@ namespace Hawaso.Pages.Memos
             m.ParentNum = 0;
             m.AnswerNum = 0;
             m.CommentCount = 0;
-            m.Created = DateTime.Now;
+            m.Created = DateTime.UtcNow;
             m.CreatedBy = "";
             m.Category = "Free";
             m.AnswerNum = 0;
