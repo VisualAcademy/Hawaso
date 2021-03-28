@@ -1,8 +1,10 @@
 ﻿@page "/Memos"
 @page "/Memos/Manage"
-@*@attribute [Authorize(Roles = "Administrators")]*@
 
-<h3>Memo Manage <a href="/Memos/Create"><span class="oi oi-plus"></span></a>&nbsp; <span class="oi oi-plus" @onclick="ShowEditorForm" style="cursor: pointer;"></span></h3>
+@attribute [Authorize(Roles = "Administrators")]
+
+<h3>Memo Manage <a href="/Memos/Create"><span class="oi oi-plus align-baseline"></span></a>&nbsp; 
+    <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;"></span></h3>
 
 <div class="row mb-1">
     <div class="col-md-12">
@@ -46,9 +48,9 @@
                         <col style="width: 100px;" />
                         <col style="width: 100px;" />
                         <col style="width: 100px;" />
-                        <col style="width: 200px;" />
+                        <col style="width: 250px;" />
                         <col style="width: auto;" />
-                        <col style="width: 300px;" />
+                        <col style="width: 250px;" />
                     </colgroup>
                     <thead class="thead-light">
                         <tr>
@@ -90,7 +92,14 @@
                                     <span class="btn-link text-nowrap">@m.Title</span>
                                 </td>
                                 <td>
-                                    @m.Name
+                                    @if (m.Name != null)
+                                    {
+                                        @(Dul.StringLibrary.CutStringUnicode(m.Name, 17))
+                                    }
+                                    else
+                                    {
+                                        <text>(Unknown)</text>
+                                    }
                                 </td>
                                 <td class="text-center text-nowrap small">
                                     @(Dul.DateTimeUtility.ShowTimeOrDate(m.Created))
@@ -98,13 +107,13 @@
                                 <td class="text-center small">
                                     @m.ReadCount
                                 </td>
-                                <td>
+                                <td class="small text-center">
                                     <a href="/Memos/Details/@m.Id" class="btn btn-sm btn-light">Details</a>
                                     <a href="/Memos/Edit/@m.Id" class="btn btn-sm btn-light">Edit</a>
                                     <a href="/Memos/Delete/@m.Id" class="btn btn-sm btn-light">Del</a>
                                 </td>
                                 <td>&nbsp;</td>
-                                <td>
+                                <td class="text-center">
                                     <input type="button" name="btnEdit" value="Edit" class="btn btn-sm btn-primary" @onclick="(() => EditBy(m))" />
                                     <input type="button" name="btnDelete" value="Del" class="btn btn-sm btn-danger" @onclick="(() => DeleteBy(m))" />
                                     <input type="button" name="btnToggle" value="Toggle" class="btn btn-sm btn-primary" @onclick="(() => ToggleBy(m))" />
