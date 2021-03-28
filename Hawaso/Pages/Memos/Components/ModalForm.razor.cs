@@ -57,6 +57,8 @@ namespace Hawaso.Pages.Memos.Components
 
         public Memo ModelEdit { get; set; }
 
+        public string[] Encodings { get; set; } = { "Plain-Text", "Text/HTML", "Mixed-Text" };
+
         #region Lifecycle Methods
         // 넘어온 Model 값을 수정 전용 ModelEdit에 담기 
         protected override void OnParametersSet()
@@ -67,6 +69,16 @@ namespace Hawaso.Pages.Memos.Components
             ModelEdit.Title = ModelSender.Title;
             ModelEdit.Content = ModelSender.Content;
             ModelEdit.Password = ModelSender.Password;
+
+            if (ModelEdit.Encoding != null)
+            {
+                ModelEdit.Encoding = ModelSender.Encoding;
+            }
+            else
+            {
+                ModelEdit.Encoding = "Plain-Text"; // Plain-Text, Text/HTML, Mixed-Text
+            }
+
             // 더 많은 정보는 여기에서...
 
             // ParentId가 넘어온 값이 있으면... 즉, 0이 아니면 ParentId 드롭다운 리스트 기본값 선택
@@ -114,7 +126,8 @@ namespace Hawaso.Pages.Memos.Components
             ModelSender.Name = ModelEdit.Name;
             ModelSender.Title = ModelEdit.Title;
             ModelSender.Content = ModelEdit.Content;
-            ModelSender.Password = ModelEdit.Password; 
+            ModelSender.Password = ModelEdit.Password;
+            ModelSender.Encoding = ModelEdit.Encoding; 
 
             #region 파일 업로드 관련 추가 코드 영역
             if (selectedFiles != null && selectedFiles.Length > 0)

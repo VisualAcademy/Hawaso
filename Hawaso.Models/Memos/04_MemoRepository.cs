@@ -121,7 +121,8 @@ namespace Hawaso.Models
                 old.Homepage = model.Homepage;
                 old.Title = model.Title;
                 old.Content = model.Content;
-                old.IsPinned = model.IsPinned; 
+                old.IsPinned = model.IsPinned;
+                old.Encoding = model.Encoding; 
 
                 // TODO: 더 넣을 항목 처리: 이 부분은 어떻게 처리하는게 가장 좋은지 고민
 
