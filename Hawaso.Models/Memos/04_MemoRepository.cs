@@ -81,7 +81,14 @@ namespace Hawaso.Models
             // ReadCount++
             if (model != null)
             {
-                model.ReadCount = model.ReadCount + 1;
+                if (model.ReadCount != null)
+                {
+                    model.ReadCount = model.ReadCount + 1;
+                }
+                else
+                {
+                    model.ReadCount = 1; 
+                }
                 _context.Memos.Attach(model);
                 _context.Entry(model).State = EntityState.Modified;
                 _context.SaveChanges();
