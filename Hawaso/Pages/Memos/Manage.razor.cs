@@ -94,13 +94,13 @@ namespace Hawaso.Pages.Memos
             // ParentKey와 ParentId를 사용하는 목적은 특정 부모의 Details 페이지에서 리스트로 표현하기 위함
             if (ParentKey != "")
             {
-                var articleSet = await RepositoryReference.GetArticlesAsync<string>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentKey);
+                var articleSet = await RepositoryReference.GetArticlesAsync<string>(pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, ParentKey);
                 pager.RecordCount = articleSet.TotalCount;
                 models = articleSet.Items.ToList();
             }
             else if (ParentId != 0)
             {
-                var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentId);
+                var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, ParentId);
                 pager.RecordCount = articleSet.TotalCount;
                 models = articleSet.Items.ToList();
             }
