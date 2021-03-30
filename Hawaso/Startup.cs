@@ -393,41 +393,11 @@ namespace Hawaso
                     await userManager.CreateAsync(anonymous, "Pa$$w0rd");
                 }
 
-                ////[2][4] User
-                //// ('User', '일반사용자', 'User', '응용 프로그램에 로그인할 수 있는 사용자')
-                //ApplicationUser user = await userManager.FindByEmailAsync($"user@{domainName}");
-                //if (user == null)
-                //{
-                //    user = new ApplicationUser()
-                //    {
-                //        UserName = $"user@{domainName}",
-                //        Email = $"user@{domainName}",
-                //        EmailConfirmed = true,
-                //    };
-                //    await userManager.CreateAsync(user, "Pa$$w0rd");
-                //}
-
-                ////[2][5] Manager
-                //// ('User', '일반사용자', 'User', '응용 프로그램에 로그인할 수 있는 사용자')
-                //ApplicationUser manager = await userManager.FindByEmailAsync($"manager@{domainName}");
-                //if (manager == null)
-                //{
-                //    manager = new ApplicationUser()
-                //    {
-                //        UserName = $"manager@{domainName}",
-                //        Email = $"manager@{domainName}",
-                //        EmailConfirmed = true,
-                //    };
-                //    await userManager.CreateAsync(manager, "Pa$$w0rd");
-                //}
-
                 //[3] UsersInRoles: AspNetUserRoles Table
                 await userManager.AddToRoleAsync(administrator, Dul.Roles.Administrators.ToString());
                 await userManager.AddToRoleAsync(administrator, Dul.Roles.Users.ToString());
                 await userManager.AddToRoleAsync(guest, Dul.Roles.Guests.ToString());
                 await userManager.AddToRoleAsync(anonymous, Dul.Roles.Guests.ToString());
-                //await userManager.AddToRoleAsync(user, "Users");
-                //await userManager.AddToRoleAsync(manager, "Managers");
             }
         }
     }
