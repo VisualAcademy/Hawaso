@@ -177,8 +177,6 @@ namespace Hawaso
         /// </summary>
         private void AddDependencyInjectionContainerForDotNetSaleCore(IServiceCollection services)
         {
-            // DotNetSaleCoreDbContext.cs Inject: New DbContext Add
-            //services.AddEntityFrameworkSqlServer().AddDbContext<DotNetSaleCoreDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
             services.AddDbContext<DotNetSaleCoreDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
 
             // ICustomerRepositoryAsync.cs Inject: DI Container에 서비스(리포지토리) 등록
