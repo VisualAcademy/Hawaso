@@ -1,7 +1,7 @@
 ﻿@page "/Archives"
 @page "/Archives/Manage"
 
-@*@attribute [Authorize(Roles = "Administrators")]*@
+@attribute [Authorize]
 
 <h3>Archive Manage <a href="/Archives/Create"><span class="oi oi-plus align-baseline"></span></a>&nbsp; 
     <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;"></span></h3>
