@@ -1,0 +1,173 @@
+﻿@page "/Archives"
+@page "/Archives/Manage"
+
+@*@attribute [Authorize(Roles = "Administrators")]*@
+
+<h3>Archive Manage <a href="/Archives/Create"><span class="oi oi-plus align-baseline"></span></a>&nbsp; 
+    <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;"></span></h3>
+
+<div class="row mb-1">
+    <div class="col-md-12">
+        <AuthorizeView>
+            <Authorized>
+            </Authorized>
+            <NotAuthorized>
+                <a href="/Archives/Create" class="btn btn-sm btn-primary">Create</a>
+                <a href="/Archives/Index" class="btn btn-sm btn-primary">List</a>
+                <input type="button" name="btnCreate" value="Create with Modal" class="btn btn-sm btn-primary" @onclick="ShowEditorForm" />
+            </NotAuthorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Administrators, Managers">
+            <a href="/Archives/Create" class="btn btn-sm btn-primary">Create</a>
+            <input type="button" name="btnCreate" value="Create with Modal" class="btn btn-sm btn-primary" @onclick="ShowEditorForm" />
+            <a href="/Archives/Index" class="btn btn-sm btn-primary">List</a>
+            <input type="button" class="btn btn-sm btn-primary" value="Excel Export With Web API" @onclick="DownloadExcelWithWebApi" />
+            <input type="button" class="btn btn-sm btn-primary" value="Excel Export" @onclick="DownloadExcel" />
+            <button onclick="location.href = '/ArchiveDownload/ExcelDown';" class="btn btn-sm btn-primary">Excel Export</button>
+        </AuthorizeView>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        @if (models == null)
+        {
+            <div>
+                <p>
+                    <MatProgressBar Indeterminate="true"></MatProgressBar>
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <colgroup>
+                        <col style="width: 50px;" />
+                        <col style="width: 300px;" />
+                        <col style="width: 100px;" />
+                        <col style="width: 100px;" />
+                        <col style="width: 100px;" />
+                        <col style="width: 250px;" />
+                        <col style="width: auto;" />
+                        <col style="width: 250px;" />
+                    </colgroup>
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Hawaso.Pages.Archives.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Hawaso.Pages.Archives.Components.SortOrderArrow></th>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByName())">Name <Hawaso.Pages.Archives.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Pages.Archives.Components.SortOrderArrow></th>
+                            <th class="text-center text-nowrap">Create</th>
+                            <th class="text-center text-nowrap">Read</th>
+                            <th class="text-center text-nowrap">Actions</th>
+                            <th class="text-center text-nowrap">&nbsp;</th>
+                            <th class="text-center text-nowrap">Admin</th>
+                        </tr>
+                    </thead>
+                    @if (models.Count == 0)
+                    {
+                        <tbody>
+                            <tr>
+                                <td colspan="8" class="text-center">
+                                    <p>No Data.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                    <tbody>
+                        @foreach (var m in models)
+                        {
+                            <tr>
+                                <td class="text-center" style="font-size: xx-small;">
+                                    @if (m.Step == 0)
+                                    {
+                                        @m.Id
+                                    }
+                                    else
+                                    {
+                                        <text>&nbsp;</text>
+                                    }
+                                </td>
+                                <td style="cursor: pointer;" @onclick="@(_ => NameClick(m.Id))">
+                                    <span class="btn-link text-nowrap">@m.Title</span>
+                                </td>
+                                <td>
+                                    @if (m.Name != null)
+                                    {
+                                        @(Dul.StringLibrary.CutStringUnicode(m.Name, 17))
+                                    }
+                                    else
+                                    {
+                                        <text>(Unknown)</text>
+                                    }
+                                </td>
+                                <td class="text-center text-nowrap small">
+                                    @(Dul.DateTimeUtility.ShowTimeOrDate(m.Created))
+                                </td>
+                                <td class="text-center small">
+                                    @m.ReadCount
+                                </td>
+                                <td class="small text-center">
+                                    <a href="/Archives/Details/@m.Id" class="btn btn-sm btn-light">Details</a>
+                                    <a href="/Archives/Edit/@m.Id" class="btn btn-sm btn-light">Edit</a>
+                                    <a href="/Archives/Delete/@m.Id" class="btn btn-sm btn-light">Del</a>
+                                </td>
+                                <td>&nbsp;</td>
+                                <td class="text-center">
+                                    <input type="button" name="btnEdit" value="Edit" class="btn btn-sm btn-primary" @onclick="(() => EditBy(m))" />
+                                    <input type="button" name="btnDelete" value="Del" class="btn btn-sm btn-danger" @onclick="(() => DeleteBy(m))" />
+                                    <input type="button" name="btnToggle" value="Toggle" class="btn btn-sm btn-primary" @onclick="(() => ToggleBy(m))" />
+                                    @if (m.FileSize > 0)
+                                    {
+                                        <input type="button" name="btnDownload" value="Dn" class="btn btn-sm btn-primary" @onclick="(() => DownloadBy(m))" />
+                                        <a href="/ArchiveDownload/FileDown/@m.Id" class="btn btn-sm btn-primary" download="@m.FileName">Dn</a>
+                                        <button onclick="location.href = '/ArchiveDownload/FileDown/@m.Id';" class="btn btn-sm btn-primary">Dn</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+    <div class="col-md-12">
+        <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+    </div>
+    <div class="col-md-12">
+        <Hawaso.Pages.Archives.Components.SearchBox placeholder="Search Archives..." SearchQueryChanged="Search"></Hawaso.Pages.Archives.Components.SearchBox>
+    </div>
+</div>
+
+@*입력 또는 수정 폼 모달 다이얼로그*@
+<Hawaso.Pages.Archives.Components.ModalForm @ref="EditorFormReference" ModelSender="model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit">
+    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+</Hawaso.Pages.Archives.Components.ModalForm>
+
+@*삭제 폼 모달 다이얼로그*@
+<Hawaso.Pages.Archives.Components.DeleteDialog @ref="DeleteDialogReference" OnClickCallback="DeleteClick">
+</Hawaso.Pages.Archives.Components.DeleteDialog>
+
+@if (IsInlineDialogShow)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Toggle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Do you want to toggle post #@(model.Id)?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="ToggleClick">Toggle</button>
+                    <button type="button" class="btn btn-secondary" @onclick="ToggleClose">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}

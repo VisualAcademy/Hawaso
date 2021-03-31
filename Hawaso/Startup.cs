@@ -242,6 +242,9 @@ namespace Hawaso
             // Upload Feature
             services.AddDiForLibries(Configuration.GetConnectionString("DefaultConnection"));
             services.AddDiForBriefingLogs(Configuration.GetConnectionString("DefaultConnection"));
+
+            // Memos -> Archives
+            services.AddDependencyInjectionContainerForArchiveApp(Configuration.GetConnectionString("DefaultConnection"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

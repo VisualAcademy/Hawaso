@@ -80,6 +80,7 @@
     <Folder Include="dbo\Tables\Uploads\BriefingLogs" />
     <Folder Include="01_Identity" />
     <Folder Include="Departments" />
+    <Folder Include="Memos\Archives" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -134,5 +135,6 @@
     <Build Include="Sublocation.sql" />
     <Build Include="Incidents.sql" />
     <Build Include="Departments\Departments.sql" />
+    <Build Include="Memos\Archives\Archives.sql" />
   </ItemGroup>
 </Project>
