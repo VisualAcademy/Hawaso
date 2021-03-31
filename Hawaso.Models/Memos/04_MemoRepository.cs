@@ -327,7 +327,6 @@ namespace Hawaso.Models
             var models = await _context.Memos
                 .Where(m => m.ParentKey == parentKey)
                 .OrderByDescending(m => m.Id)
-                //.Include(m => m.MemosComments)
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -350,7 +349,6 @@ namespace Hawaso.Models
                 .Where(m => m.ParentKey == parentKey)
                 .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
-                //.Include(m => m.MemosComments)
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .ToListAsync();

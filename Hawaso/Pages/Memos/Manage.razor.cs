@@ -129,7 +129,6 @@ namespace Hawaso.Pages.Memos
             StateHasChanged();
         }
 
-
         #region Event Handlers
         /// <summary>
         /// 글쓰기 모달 폼 띄우기 
@@ -176,7 +175,6 @@ namespace Hawaso.Pages.Memos
                 byte[] fileBytes = await FileStorageManagerReference.DownloadAsync(model.FileName, "Memos");
                 if (fileBytes != null)
                 {
-                    // DownCount
                     model.DownCount = model.DownCount + 1;
                     await RepositoryReference.EditAsync(model);
 
