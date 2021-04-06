@@ -107,11 +107,6 @@ namespace Hawaso.Pages.Departments
             StateHasChanged(); // Refresh
         }
 
-        protected void NameClick(long id)
-        {
-            //NavigationManagerInjector.NavigateTo($"/Departments/Details/{id}");
-        }
-
         protected async void PageIndexChanged(int pageIndex)
         {
             pager.PageIndex = pageIndex;
@@ -154,11 +149,6 @@ namespace Hawaso.Pages.Departments
             DeleteDialogReference.Show();
         }
         #endregion
-
-        protected void DownloadBy(DepartmentModel model)
-        {
-
-        }
 
         /// <summary>
         /// 모델 초기화 및 모달 폼 닫기
