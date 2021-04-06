@@ -62,10 +62,7 @@ namespace Hawaso.Models
         //[4][2] 출력: GetAllAsync
         public async Task<List<Archive>> GetAllAsync()
         {
-            // 학습 목적으로... InArchivery 데이터베이스에선 사용 금지 
-            //return await _context.Archives.FromSqlRaw<Archive>("Select * From dbo.Archives Order By Id Desc") 
             return await _context.Archives.OrderByDescending(m => m.Id)
-                //.Include(m => m.ArchivesComments)
                 .ToListAsync();
         }
         #endregion
@@ -75,7 +72,6 @@ namespace Hawaso.Models
         public async Task<Archive> GetByIdAsync(long id)
         {
             var model = await _context.Archives
-                //.Include(m => m.ArchivesComments)
                 .SingleOrDefaultAsync(m => m.Id == id);
 
             // ReadCount++
@@ -151,11 +147,9 @@ namespace Hawaso.Models
         //[4][5] 삭제
         public async Task<bool> DeleteAsync(long id)
         {
-            //var model = await _context.Archives.SingleOrDefaultAsync(m => m.Id == id);
             try
             {
                 var model = await _context.Archives.FindAsync(id);
-                //_context.Archives.Remove(model);
                 _context.Remove(model);
                 return await _context.SaveChangesAsync() > 0;
             }
@@ -175,7 +169,6 @@ namespace Hawaso.Models
             var totalRecords = await _context.Archives.CountAsync();
             var models = await _context.Archives
                 .OrderByDescending(m => m.Id)
-                //.Include(m => m.ArchivesComments)
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -196,7 +189,6 @@ namespace Hawaso.Models
             var models = await _context.Archives
                 .Where(m => m.ParentId == parentId)
                 .OrderByDescending(m => m.Id)
-                //.Include(m => m.ArchivesComments)
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -254,7 +246,6 @@ namespace Hawaso.Models
             var models = await _context.Archives
                 .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
-                //.Include(m => m.ArchivesComments)
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -277,7 +268,6 @@ namespace Hawaso.Models
                 .Where(m => m.ParentId == parentId)
                 .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
-                //.Include(m => m.ArchivesComments)
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
