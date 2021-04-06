@@ -355,11 +355,8 @@ namespace Hawaso.Models
             string sortOrder,
             TParentIdentifier parentIdentifier)
         {
-            //var items = from m in _context.Archives select m; // 쿼리 구문(Query Syntax)
-            //var items = _context.Archives.Select(m => m); // 메서드 구문(Method Syntax)
             var items = 
                 _context.Archives
-                    //.Include(me => me.Comments)
                     .AsQueryable();
 
             #region ParentBy: 특정 부모 키 값(int, string)에 해당하는 리스트인지 확인
@@ -407,27 +404,22 @@ namespace Hawaso.Models
             switch (sortOrder)
             {
                 case "Name":
-                    //items = items.OrderBy(m => m.Name);
                     items = items
                         .OrderBy(m => m.Name).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
                 case "NameDesc":
-                    //items = items.OrderByDescending(m => m.Name);
                     items = items
                         .OrderByDescending(m => m.Name).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
                 case "Title":
-                    //items = items.OrderBy(m => m.Title);
                     items = items
                         .OrderBy(m => m.Title).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
                 case "TitleDesc":
-                    //items = items.OrderByDescending(m => m.Title);
                     items = items
                         .OrderByDescending(m => m.Title).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
                 default:
-                    //items = items.OrderByDescending(m => m.Id); 
                     items = items
                         .OrderByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
@@ -531,7 +523,6 @@ namespace Hawaso.Models
                 item.RefOrder = item.RefOrder + 1;
                 try
                 {
-                    //_context.Archives.Attach(item);
                     _context.Entry(item).State = EntityState.Modified;
                     await _context.SaveChangesAsync();
                 }
@@ -570,8 +561,6 @@ namespace Hawaso.Models
         public async Task<ArticleSet<Archive, long>> GetByAsync<TParentIdentifier>(
             FilterOptions<TParentIdentifier> options)
         {
-            //var items = from m in _context.Archives select m; // 쿼리 구문(Query Syntax)
-            //var items = _context.Archives.Select(m => m); // 메서드 구문(Method Syntax)
             var items = _context.Archives.AsQueryable();
 
             #region ParentBy: 특정 부모 키 값(int, string)에 해당하는 리스트인지 확인
