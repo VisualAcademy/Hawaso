@@ -68,9 +68,7 @@ namespace Hawaso.Controllers
                 {
                     var worksheet = package.Workbook.Worksheets.Add("Memos");
 
-                    var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
-                        (from m in models select new { m.Id, Created = m.Created?.LocalDateTime.ToString(), m.Name, m.Title, m.DownCount, m.FileName })
-                        , true);
+                    var tableBody = worksheet.Cells["A1:A1"].LoadFromCollection((from m in models select new { m.Id, Created = m.Created?.LocalDateTime.ToString(), m.Name, m.Title, m.DownCount, m.FileName }), true);
 
                     var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
 
