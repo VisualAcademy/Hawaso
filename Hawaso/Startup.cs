@@ -156,6 +156,12 @@ namespace Hawaso
 
 
             services.AddTransient<IFileStorageManager, ReplyAppFileStorageManager>(); // Local Upload
+
+            //// Blazor Server에서 용량이 큰 파일 업로드 설정
+            //services.AddSignalR(e =>
+            //{
+            //    e.MaximumReceiveMessageSize = 102400000;
+            //});
         }
 
         private void AddDependencyInjectionContainerForUploadApp(IServiceCollection services)
