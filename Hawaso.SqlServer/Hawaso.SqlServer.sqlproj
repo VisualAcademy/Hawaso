@@ -81,6 +81,7 @@
     <Folder Include="01_Identity" />
     <Folder Include="Departments" />
     <Folder Include="Memos\Archives" />
+    <Folder Include="Projects" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -136,5 +137,6 @@
     <Build Include="Incidents.sql" />
     <Build Include="Departments\Departments.sql" />
     <Build Include="Memos\Archives\Archives.sql" />
+    <Build Include="Projects\Projects.sql" />
   </ItemGroup>
 </Project>
