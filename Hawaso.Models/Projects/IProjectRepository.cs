@@ -19,7 +19,17 @@ namespace Hawaso.Models
         Task<PagingResult<Project>> GetAllAsync(
             int pageIndex, int pageSize);                       // 페이징
 
+        // 필터링: 비동기 방식
         Task<ArticleSet<Project, int>> GetArticles<TParentIdentifier>(
+            int pageIndex,
+            int pageSize,
+            string searchField,
+            string searchQuery,
+            string sortOrder,
+            TParentIdentifier parentIdentifier);
+
+        // 필터링: 동기 방식
+        ArticleSet<Project, int> GetArticlesSync<TParentIdentifier>(
             int pageIndex,
             int pageSize,
             string searchField,

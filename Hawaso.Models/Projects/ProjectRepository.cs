@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Hawaso.Models
 {
     /// <summary>
-    /// Repository Class: ADO.NET 또는 Dapper 또는 Entity Framework Core 
+    /// Repository Class: ADO.NET 또는 Dapper 또는 Entity Framework Core(EF Core)
     /// </summary>
     public class ProjectRepository : IProjectRepository
     {
@@ -16,7 +16,7 @@ namespace Hawaso.Models
 
         public ProjectRepository(HawasoDbContext context)
         {
-            this._context = context;
+            _context = context;
         }
 
         // 입력
@@ -36,7 +36,6 @@ namespace Hawaso.Models
         // 상세
         public async Task<Project> GetProjectByIdAsync(int id)
         {
-            //return await _context.Projects.FindAsync(id);
             return await _context.Projects.Where(m => m.Id == id).SingleOrDefaultAsync();
         }
 
@@ -58,7 +57,6 @@ namespace Hawaso.Models
         // 삭제
         public async Task DeleteProjectAsync(int id)
         {
-            //var model = await _context.Projects.FindAsync(id);
             var model = await _context.Projects.Where(m => m.Id == id).SingleOrDefaultAsync();
             if (model != null)
             {
@@ -72,7 +70,6 @@ namespace Hawaso.Models
         {
             var totalRecords = await _context.Projects.CountAsync();
             var articles = await _context.Projects
-                //.Include(p => p.Manufacturer)
                 .OrderByDescending(m => m.Id)
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
@@ -81,20 +78,16 @@ namespace Hawaso.Models
             return new PagingResult<Project>(articles, totalRecords);
         }
 
-        public async Task<ArticleSet<Project, int>> GetArticles<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier)
+        // 필터링: 비동기 방식
+        public async Task<ArticleSet<Project, int>> GetArticles<TParentIdentifier>(
+            int pageIndex,
+            int pageSize,
+            string searchField,
+            string searchQuery,
+            string sortOrder,
+            TParentIdentifier parentIdentifier)
         {
-            //var items = from m in _context.Uploads select m; // 쿼리 구문(Query Syntax)
             var items = _context.Projects.Select(m => m); // 메서드 구문(Method Syntax)
-
-            //// ParentBy 
-            //if (parentIdentifier is int parentId && parentId != 0)
-            //{
-            //    items = items.Where(m => m.ParentId == parentId);
-            //}
-            //else if (parentIdentifier is string parentKey && !string.IsNullOrEmpty(parentKey))
-            //{
-            //    items = items.Where(m => m.ParentKey == parentKey);
-            //}
 
             // Search Mode
             if (!string.IsNullOrEmpty(searchQuery))
@@ -104,17 +97,17 @@ namespace Hawaso.Models
                     // Name
                     items = items.Where(m => m.Title.Contains(searchQuery));
                 }
-                else if (searchField == "Title")
+                else if (searchField == "Content")
                 {
                     // Title
-                    items = items.Where(m => m.Title.Contains(searchQuery));
+                    items = items.Where(m => m.Content.Contains(searchQuery));
                 }
                 else
                 {
                     // All
                     items = items.Where(
                         m => m.Title.Contains(searchQuery) ||
-                        m.Title.Contains(searchQuery) ||
+                        m.Content.Contains(searchQuery) ||
                         m.ManufacturerName.Contains(searchQuery) ||
                         m.Status.Contains(searchQuery) ||
                         m.Created.ToString().Contains(searchQuery) ||
@@ -173,6 +166,95 @@ namespace Hawaso.Models
             items = items.Skip(pageIndex * pageSize).Take(pageSize);
 
             return new ArticleSet<Project, int>(await items.ToListAsync(), totalCount);
+        }
+
+        // 필터링: 동기 방식
+        public ArticleSet<Project, int> GetArticlesSync<TParentIdentifier>(int pageIndex,
+            int pageSize,
+            string searchField,
+            string searchQuery,
+            string sortOrder,
+            TParentIdentifier parentIdentifier)
+        {
+            var items = _context.Projects.Select(m => m); // 메서드 구문(Method Syntax)
+
+            // Search Mode
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                if (searchField == "Title")
+                {
+                    // Name
+                    items = items.Where(m => m.Title.Contains(searchQuery));
+                }
+                else if (searchField == "Content")
+                {
+                    // Title
+                    items = items.Where(m => m.Content.Contains(searchQuery));
+                }
+                else
+                {
+                    // All
+                    items = items.Where(
+                        m => m.Title.Contains(searchQuery) ||
+                        m.Content.Contains(searchQuery) ||
+                        m.ManufacturerName.Contains(searchQuery) ||
+                        m.Status.Contains(searchQuery) ||
+                        m.Created.ToString().Contains(searchQuery) ||
+                        m.MachineQuantity.ToString().Contains(searchQuery) ||
+                        m.MediaQuantity.ToString().Contains(searchQuery));
+                }
+            }
+
+            var totalCount = items.Count();
+
+            // Sorting
+            switch (sortOrder)
+            {
+                case "Title":
+                    items = items.OrderBy(m => m.Title);
+                    break;
+                case "TitleDesc":
+                    items = items.OrderByDescending(m => m.Title);
+                    break;
+                case "Create":
+                    items = items.OrderBy(m => m.Created);
+                    break;
+                case "CreateDesc":
+                    items = items.OrderByDescending(m => m.Created);
+                    break;
+                case "Manufacturer":
+                    items = items.OrderBy(m => m.ManufacturerName);
+                    break;
+                case "ManufacturerDesc":
+                    items = items.OrderByDescending(m => m.ManufacturerName);
+                    break;
+                case "Machine":
+                    items = items.OrderBy(m => m.MachineQuantity);
+                    break;
+                case "MachineDesc":
+                    items = items.OrderByDescending(m => m.MachineQuantity);
+                    break;
+                case "Media":
+                    items = items.OrderBy(m => m.MediaQuantity);
+                    break;
+                case "MediaDesc":
+                    items = items.OrderByDescending(m => m.MediaQuantity);
+                    break;
+                case "Status":
+                    items = items.OrderBy(m => m.Status);
+                    break;
+                case "StatusDesc":
+                    items = items.OrderByDescending(m => m.Status);
+                    break;
+                default:
+                    items = items.OrderByDescending(m => m.Id);
+                    break;
+            }
+
+            // Paging
+            items = items.Skip(pageIndex * pageSize).Take(pageSize);
+
+            return new ArticleSet<Project, int>(items.ToList(), totalCount);
         }
     }
 }
