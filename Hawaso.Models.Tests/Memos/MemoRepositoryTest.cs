@@ -69,10 +69,10 @@ namespace MemoApp.Models.Tests
                 await repository.AddAsync(model); // Id: 2
                 await repository.AddAsync(new Memo { Name = "[3] 백두산", Title = "Q&A입니다.", ParentId = 3, ParentKey = "1" }); // Id: 3
             }
-            using (var context = new MemoAppDbContext(options))
             {
+                using var db = new MemoAppDbContext(options);
                 //[C] Assert
-                var repository = new MemoRepository(context, factory);
+                var repository = new MemoRepository(db, factory);
                 var models = await repository.GetAllAsync();
                 Assert.AreEqual(3, models.Count()); // TotalRecords: 3
             }
