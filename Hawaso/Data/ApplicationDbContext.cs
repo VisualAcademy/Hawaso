@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hawaso.Data
 {
+    // ASP.NET Core Identity
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)

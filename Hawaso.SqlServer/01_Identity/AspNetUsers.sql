@@ -1,4 +1,5 @@
-﻿CREATE TABLE [dbo].[AspNetUsers] (
+﻿-- ASP.NET Core Identity 관련 테이블: Address 등 추가된 필드 확인
+CREATE TABLE [dbo].[AspNetUsers] (
     [Id]                   NVARCHAR (450)     NOT NULL,
     [UserName]             NVARCHAR (256)     NULL,
     [NormalizedUserName]   NVARCHAR (256)     NULL,

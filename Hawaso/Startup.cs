@@ -47,7 +47,7 @@ namespace Hawaso
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), options => options.EnableRetryOnFailure()));
 
-            #region 인증과 권한 설정
+            #region 인증과 권한 설정: ASP.NET Core Identity
             //[!] ApplicationUser 클래스로 사용자 관리, ApplicationRole 클래스로 역할 관리
             // ____ (IdentityUser 클래스와 IdentityRole 클래스가 기본값)
             services.AddIdentity<ApplicationUser, ApplicationRole>(
@@ -302,7 +302,7 @@ namespace Hawaso
                 //});
             });
 
-
+            // ASP.NET Core Identity 기본 사용자 및 역할 생성 
             CreateBuiltInUsersAndRoles(serviceProvider).Wait();
         }
 
