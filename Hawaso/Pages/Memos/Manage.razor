@@ -57,7 +57,7 @@
                             <th class="text-center">ID</th>
                             <th class="text-center text-nowrap" @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Hawaso.Pages.Memos.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Hawaso.Pages.Memos.Components.SortOrderArrow></th>
                             <th class="text-center text-nowrap" @onclick="@(() => SortByName())">Name <Hawaso.Pages.Memos.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Pages.Memos.Components.SortOrderArrow></th>
-                            <th class="text-center text-nowrap">Create</th>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByCreate())">Create <Hawaso.Pages.Memos.Components.SortOrderArrow SortColumn="Create" SortOrder="@sortOrder"></Hawaso.Pages.Memos.Components.SortOrderArrow></th>
                             <th class="text-center text-nowrap">Read</th>
                             <th class="text-center text-nowrap">Actions</th>
                             <th class="text-center text-nowrap">&nbsp;</th>

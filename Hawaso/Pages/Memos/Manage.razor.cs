@@ -306,6 +306,24 @@ namespace Hawaso.Pages.Memos
         #region Sorting
         private string sortOrder = "";
 
+        protected async void SortByCreate()
+        {
+            if (sortOrder == "")
+            {
+                sortOrder = "Create";
+            }
+            else if (sortOrder == "Create")
+            {
+                sortOrder = "CreateDesc";
+            }
+            else
+            {
+                sortOrder = "";
+            }
+
+            await DisplayData();
+        }
+
         protected async void SortByName()
         {
             if (sortOrder == "")

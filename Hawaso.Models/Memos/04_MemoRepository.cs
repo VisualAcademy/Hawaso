@@ -436,6 +436,14 @@ namespace Hawaso.Models
                     items = items
                         .OrderByDescending(m => m.Title).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
+                case "Create":
+                    items = items
+                        .OrderBy(m => m.Created).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    break;
+                case "CreateDesc":
+                    items = items
+                        .OrderByDescending(m => m.Created).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    break;
                 default:
                     //items = items.OrderByDescending(m => m.Id); 
                     items = items
