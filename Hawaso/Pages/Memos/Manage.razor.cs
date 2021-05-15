@@ -308,6 +308,11 @@ namespace Hawaso.Pages.Memos
 
         protected async void SortByCreate()
         {
+            if (!sortOrder.Contains("Create"))
+            {
+                sortOrder = "";
+            }
+
             if (sortOrder == "")
             {
                 sortOrder = "Create";
@@ -326,6 +331,11 @@ namespace Hawaso.Pages.Memos
 
         protected async void SortByName()
         {
+            if (!sortOrder.Contains("Name"))
+            {
+                sortOrder = "";
+            }
+
             if (sortOrder == "")
             {
                 sortOrder = "Name";
@@ -344,6 +354,11 @@ namespace Hawaso.Pages.Memos
 
         protected async void SortByTitle()
         {
+            if (!sortOrder.Contains("Title"))
+            {
+                sortOrder = "";
+            }
+
             if (sortOrder == "")
             {
                 sortOrder = "Title";
