@@ -1,4 +1,5 @@
 ﻿using Hawaso.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Hawaso.Controllers
 {
+    [Authorize]
     public class ArchiveDownloadController : Controller
     {
         private readonly IArchiveRepository _repository;
