@@ -95,6 +95,10 @@ namespace MemoApp.Apis.Controllers
             try
             {
                 var models = await _repository.GetAllAsync();
+
+                if (models == null)
+                    return NotFound(); // 학습용 코드 
+
                 if (!models.Any())
                 {
                     return new NoContentResult(); // 참고용 코드
