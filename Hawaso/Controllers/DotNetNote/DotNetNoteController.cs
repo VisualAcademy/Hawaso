@@ -312,14 +312,16 @@ namespace Hawaso.Controllers
             return View();
         }
 
+        #region 게시판 삭제 처리
         /// <summary>
         /// 게시판 삭제 처리
         /// </summary>
         [HttpPost]
-        public IActionResult Delete(int id, string Password)
+        public IActionResult Delete(int id, string password)
         {
             //if (_repository.DeleteNote(id, Password) > 0)
-            if (_repository.DeleteNote(id, (new Dul.Security.CryptorEngine()).EncryptPassword(Password)) > 0)
+            if (_repository.DeleteNote(id,
+                (new Dul.Security.CryptorEngine()).EncryptPassword(password)) > 0)
             {
                 TempData["Message"] = "데이터가 삭제되었습니다.";
 
@@ -342,7 +344,8 @@ namespace Hawaso.Controllers
 
             ViewBag.Id = id;
             return View();
-        }
+        } 
+        #endregion
 
         /// <summary>
         /// 게시판 삭제 완료 후 추가적인 처리할 때 페이지
