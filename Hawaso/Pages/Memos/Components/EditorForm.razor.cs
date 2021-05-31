@@ -57,6 +57,9 @@ namespace Hawaso.Pages.Memos.Components
         [Parameter]
         public Memo Model { get; set; }
 
+        /// <summary>
+        /// 전체 넘어온 개체 중에서 폼에서 변경되는 내용만 따로 관리: ModelEdit => MemoEdit, MemoViewModel, ...
+        /// </summary>
         public Memo ModelEdit { get; set; }
 
         #region Lifecycle Methods
