@@ -132,6 +132,8 @@ namespace Hawaso.Models
                 old.Encoding = model.Encoding; 
 
                 // TODO: 더 넣을 항목 처리: 이 부분은 어떻게 처리하는게 가장 좋은지 고민
+                // - Repository에서는 전체 업데이트
+                // - Service에서는 부분 업데이트
 
                 old.Modified = DateTimeOffset.UtcNow;
 
