@@ -137,8 +137,8 @@ namespace Hawaso.Pages.Memos
         {
             EditorFormTitle = "CREATE";
             this.model = new Memo(); // 모델 초기화
-            this.model.ParentId = ParentId; 
-            this.model.ParentKey = ParentKey; // 
+            this.model.ParentId = model.ParentId; 
+            this.model.ParentKey = model.ParentKey; 
 
             model.Name = UserName; // 로그인 사용자 이름을 기본으로 제공
 
@@ -153,8 +153,10 @@ namespace Hawaso.Pages.Memos
             EditorFormTitle = "EDIT";
             this.model = new Memo(); // 모델 초기화
             this.model = model;
-            this.model.ParentId = ParentId;
-            this.model.ParentKey = ParentKey; // 
+            //this.model.ParentId = ParentId;
+            this.model.ParentId = model.ParentId;
+            //this.model.ParentKey = ParentKey; 
+            this.model.ParentKey = model.ParentKey;
             EditorFormReference.Show();
         }
 
