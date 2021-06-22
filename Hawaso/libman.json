@@ -12,6 +12,11 @@
       "library": "bootstrap@4.4.1",
       "files": [ "dist/js/bootstrap.js" ],
       "destination": "wwwroot/lib"
+    },
+    {
+      "library": "toastr.js@2.1.4",
+      "destination": "wwwroot/lib/toastr",
+      "files": [ "toastr.min.js", "toastr.min.css", "toastr.css", "toastr.js.map" ]
     }
   ]
 }
