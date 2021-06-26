@@ -124,6 +124,10 @@ namespace Hawaso
 
             services.AddRazorPages();
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; }); // 자세한 에러
+
+            //[1] HttpClient 사용하기 - 설정
+            services.AddHttpClient();
+
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
             services.AddSingleton<WeatherForecastService>();
 

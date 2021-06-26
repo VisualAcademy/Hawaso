@@ -1,0 +1,14 @@
+﻿@*//[3] HttpClient 사용하기 - Blazor Server 컴포넌트에서 호출*@
+@page "/Administrations/HttpClientDemo"
+@inject HttpClient Http
+
+HttpClient로부터 받아온 데이터: @Message
+
+@code {
+    public string Message { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        Message = await Http.GetStringAsync(
+            "https://localhost:5001/api/HttpClientDemo");
+    }
+}
