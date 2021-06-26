@@ -662,7 +662,7 @@ namespace Hawaso.Controllers
         /// 공지글로 올리기(관리자 전용)
         /// </summary>
         [HttpGet]
-        [Authorize("Administrators")]
+        [Authorize(Roles = "Administrators")]
         public IActionResult Pinned(int id)
         {
             // 공지사항(NOTICE)으로 올리기
@@ -674,6 +674,7 @@ namespace Hawaso.Controllers
         /// <summary>
         /// (참고) 최근 글 리스트 Web API 테스트 페이지
         /// </summary>
+        [Authorize(Roles = "Administrators")]
         public IActionResult NoteServiceDemo()
         {
             return View();
@@ -682,6 +683,7 @@ namespace Hawaso.Controllers
         /// <summary>
         /// (참고) 최근 댓글 리스트 Web API 테스트 페이지
         /// </summary>
+        [Authorize(Roles = "Administrators")]
         public IActionResult NoteCommentServiceDemo()
         {
             return View();
@@ -889,6 +891,5 @@ namespace Hawaso.Controllers
         //    }
         //}
         #endregion
-
     }
 }
