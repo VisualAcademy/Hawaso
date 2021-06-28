@@ -244,6 +244,7 @@ namespace Hawaso.Controllers
             }
         }
 
+        #region Details - 게시판의 상세 보기 페이지(Details, BoardView)
         /// <summary>
         /// 게시판의 상세 보기 페이지(Details, BoardView)
         /// </summary>
@@ -258,15 +259,15 @@ namespace Hawaso.Controllers
             string encodedContent = "";
             switch (encoding)
             {
-                // Text : 소스 그대로 표현: text/plain
+                // Text : 소스 그대로 표현: text/plain, Plain-Text
                 case ContentEncodingType.Text:
                     encodedContent = Dul.HtmlUtility.EncodeWithTabAndSpace(note.Content);
                     break;
-                // Html : HTML 형식으로 출력
+                // Html : HTML 형식으로 출력: Text/HTML
                 case ContentEncodingType.Html:
                     encodedContent = note.Content; // 변환없음
                     break;
-                // Mixed : 엔터처리만
+                // Mixed : 엔터처리만: Mixed-Text
                 case ContentEncodingType.Mixed:
                     encodedContent = note.Content.Replace("\r\n", "<br />");
                     break;
@@ -276,7 +277,7 @@ namespace Hawaso.Controllers
                     break;
             }
             ViewBag.Content = encodedContent; //[!]
-            
+
             // 첨부된 파일 확인
             if (note.FileName.Length > 1)
             {
@@ -300,7 +301,8 @@ namespace Hawaso.Controllers
             ViewBag.CommentListAndId = vm;
 
             return View(note);
-        }
+        } 
+        #endregion
 
         /// <summary>
         /// 게시판 삭제 폼
