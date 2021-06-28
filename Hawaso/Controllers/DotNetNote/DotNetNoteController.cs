@@ -258,7 +258,7 @@ namespace Hawaso.Controllers
             string encodedContent = "";
             switch (encoding)
             {
-                // Text : 소스 그대로 표현
+                // Text : 소스 그대로 표현: text/plain
                 case ContentEncodingType.Text:
                     encodedContent = Dul.HtmlUtility.EncodeWithTabAndSpace(note.Content);
                     break;
