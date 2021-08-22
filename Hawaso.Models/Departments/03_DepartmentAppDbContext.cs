@@ -20,6 +20,7 @@ namespace Hawaso.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
+                // .NET Framework 시절에 Web.config 또는 App.config 파일에서 데이터베이스 연결 문자열 값 가져오는 기본 코드
                 string connectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
                 optionsBuilder.UseSqlServer(connectionString);
             }
