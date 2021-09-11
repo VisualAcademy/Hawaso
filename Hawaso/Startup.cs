@@ -242,12 +242,13 @@ namespace Hawaso
             services.AddDependencyInjectionContainerForManufacturer(Configuration.GetConnectionString("DefaultConnection"));
             services.AddBlazoredToast(); // Blazored.Toast
 
+            // 부서 관리: 기본 CRUD 교과서 코드
+            services.AddDependencyInjectionContainerForDepartmentApp(Configuration.GetConnectionString("DefaultConnection"));
+
             /// <summary>
-            /// 메모앱(MemoApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
+            /// 메모앱(MemoApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리: 게시판 및 CRUD 관련 교과서 코드 
             /// </summary>
             services.AddDependencyInjectionContainerForMemoApp(Configuration.GetConnectionString("DefaultConnection"));
-
-            services.AddDependencyInjectionContainerForDepartmentApp(Configuration.GetConnectionString("DefaultConnection"));
 
             // Upload Feature
             services.AddDiForLibries(Configuration.GetConnectionString("DefaultConnection"));
