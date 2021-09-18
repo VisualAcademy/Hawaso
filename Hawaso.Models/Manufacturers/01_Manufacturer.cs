@@ -2,6 +2,9 @@
 
 namespace Hawaso.Models
 {
+    /// <summary>
+    /// 고객사 리스트 관리 앱
+    /// </summary>
     public class Manufacturer
     {
         public int Id { get; set; }
