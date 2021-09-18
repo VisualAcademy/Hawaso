@@ -12,7 +12,7 @@ namespace Hawaso.Models
 
         public ManufacturerRepository(ManufacturerDbContext context)
         {
-            this._context = context;
+            _context = context;
         }
 
         // 입력
@@ -33,7 +33,6 @@ namespace Hawaso.Models
         public async Task<Manufacturer> GetManufacturerAsync(int id)
         {
             return await _context.Manufacturers.Where(m => m.Id == id).SingleOrDefaultAsync();
-            //return await _context.Manufacturers.FindAsync(id);
         }
 
         // 수정
@@ -55,7 +54,6 @@ namespace Hawaso.Models
         public async Task DeleteManufacturerAsync(int id)
         {
             var manufacturer = await _context.Manufacturers.Where(m => m.Id == id).SingleOrDefaultAsync();
-            //var manufacturer = await _context.Manufacturers.FindAsync(id); 
             if (manufacturer != null)
             {
                 _context.Manufacturers.Remove(manufacturer);
