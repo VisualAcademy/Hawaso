@@ -4,7 +4,7 @@ using System.Configuration;
 namespace Hawaso.Models
 {
     /// <summary>
-    /// [3] DbContext Class
+    /// [2] DbContext Class
     /// </summary>
     public class MemoAppDbContext : DbContext
     {
