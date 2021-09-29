@@ -1,12 +1,16 @@
 # Hawaso
 회사 홈페이지 만들기 프로젝트 강의 소스
 
-## ASP.NET Core 3.1(5.0) + Blazor Server
-Hawaso 솔루션은 ASP.NET Core 3.1 버전과 Blazor Server를 하나의 프로젝트로 관리합니다.
-ASP.NET Core 버전은 5.0 버전 사용을 추천합니다.
+## Blazor Server with ASP.NET Core 6.0 
+
+Hawaso 솔루션은 ASP.NET Core 6.0 버전과 Blazor Server 6.0을 하나의 프로젝트로 관리합니다.
+
+Visual Studio 2022를 사용하여 개발을 추천합니다. 
+
 
 ## Blazor Server 6.0 전체 강의 소스
 박용준 강사가 진행하는 Blazor Server 6.0 강의의 전체 소스는 현재 리포지토리에 들어 있습니다. 
+
 
 ## 강의 데모 사이트: 하와소닷컴
 
