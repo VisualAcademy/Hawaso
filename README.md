@@ -1,4 +1,4 @@
-# Hawaso
+# Hawaso - 하와소
 회사 홈페이지 만들기 프로젝트 강의 소스
 
 ## Blazor Server with ASP.NET Core 6.0 
