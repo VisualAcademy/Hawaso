@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30104.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hawaso", "Hawaso\Hawaso.csproj", "{4C539CB3-5FF6-4BFB-9E4F-66EC6BC6D2AE}"
 EndProject
@@ -10,16 +10,6 @@ EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Hawaso.SqlServer", "Hawaso.SqlServer\Hawaso.SqlServer.sqlproj", "{6A12F9DF-7FCC-4EB0-8FFF-609A4157B88F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hawaso.Models.Tests", "Hawaso.Models.Tests\Hawaso.Models.Tests.csproj", "{4359BE4A-FAE0-4B06-8F2A-3A980B3984B9}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorInputFile", "BlazorInputFile\BlazorInputFile.csproj", "{010369CD-F104-4214-BFE8-98C8469D026B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorUtils", "BlazorUtils\BlazorUtils.csproj", "{4D729F6D-0EC5-4A8A-AA20-FF2F2AB5BB8B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zero", "Zero\Zero.csproj", "{19CCC5D5-540A-4FB4-AF4C-A3B912447C81}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGets", "NuGets", "{512C5432-0775-42CF-9ACF-DD50AD7FD334}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{014A11D8-33E1-4A65-9CA9-3A43D2C273EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,26 +35,9 @@ Global
 		{4359BE4A-FAE0-4B06-8F2A-3A980B3984B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4359BE4A-FAE0-4B06-8F2A-3A980B3984B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4359BE4A-FAE0-4B06-8F2A-3A980B3984B9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{010369CD-F104-4214-BFE8-98C8469D026B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{010369CD-F104-4214-BFE8-98C8469D026B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{010369CD-F104-4214-BFE8-98C8469D026B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{010369CD-F104-4214-BFE8-98C8469D026B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4D729F6D-0EC5-4A8A-AA20-FF2F2AB5BB8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D729F6D-0EC5-4A8A-AA20-FF2F2AB5BB8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D729F6D-0EC5-4A8A-AA20-FF2F2AB5BB8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D729F6D-0EC5-4A8A-AA20-FF2F2AB5BB8B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{19CCC5D5-540A-4FB4-AF4C-A3B912447C81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{19CCC5D5-540A-4FB4-AF4C-A3B912447C81}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{19CCC5D5-540A-4FB4-AF4C-A3B912447C81}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{19CCC5D5-540A-4FB4-AF4C-A3B912447C81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{010369CD-F104-4214-BFE8-98C8469D026B} = {512C5432-0775-42CF-9ACF-DD50AD7FD334}
-		{4D729F6D-0EC5-4A8A-AA20-FF2F2AB5BB8B} = {512C5432-0775-42CF-9ACF-DD50AD7FD334}
-		{19CCC5D5-540A-4FB4-AF4C-A3B912447C81} = {014A11D8-33E1-4A65-9CA9-3A43D2C273EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7F86D6CB-300E-4E37-A365-2AEE99055855}

@@ -73,15 +73,21 @@ namespace BlazorInputFile
             return _cachedInvokeUnmarshalledMethodInfo;
         }
 
-        [StructLayout(LayoutKind.Explicit)]
+        //[StructLayout(LayoutKind.Explicit)]
         struct ReadRequest
         {
-            [FieldOffset(0)] public string InputFileElementReferenceId;
-            [FieldOffset(4)] public int FileId;
-            [FieldOffset(8)] public long SourceOffset;
-            [FieldOffset(16)] public byte[] Destination;
-            [FieldOffset(20)] public int DestinationOffset;
-            [FieldOffset(24)] public int MaxBytes;
+            //[FieldOffset(0)] 
+            public string InputFileElementReferenceId;
+            //[FieldOffset(4)] 
+            public int FileId;
+            //[FieldOffset(8)] 
+            public long SourceOffset;
+            //[FieldOffset(16)] 
+            public byte[] Destination;
+            //[FieldOffset(20)] 
+            public int DestinationOffset;
+            //[FieldOffset(24)] 
+            public int MaxBytes;
         }
     }
 }
