@@ -46,9 +46,13 @@ https://www.youtube.com/playlist?list=PLO56HZSjrPTC1c1MbY72vVT0sO33G-9Od
 https://www.youtube.com/playlist?list=PLO56HZSjrPTA-EJxyqiN8HzItM7nDEb11
 
 
-## ASP.NET Core 3.X 버전의 Hawaso는 다음 리포지토리에 있습니다.
+## ASP.NET Core 3.X 버전의 Hawaso 프로젝트는 다음 리포지토리에 있습니다.
 
 https://github.com/VisualAcademy/Hawaso.V3X
 
+
+## ASP.NET Core 5.0 버전의 Hawaso 프로젝트는 다음 리포지토리에 있습니다.
+
+https://github.com/VisualAcademy/Hawaso.V50
 
 
