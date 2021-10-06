@@ -7,9 +7,9 @@ CREATE TABLE [dbo].[Memos]
 	[ParentKey]     NVarChar(255) Null,						    -- ParentKey == 부모의 GUID
 
 	[CreatedBy]     NVarChar(255) Null,						    -- 등록자(Creator)
-	[Created]       DATETIMEOFFSET Default(GetDate()) Null,  		    -- [5][생성일](PostDate), DatePublished, CreatedAt
+	[Created]       DATETIMEOFFSET Default(GetDate()) Null,  	-- [5][생성일](PostDate), DatePublished, CreatedAt
 	[ModifiedBy]    NVarChar(255) Null,					        -- 수정자(LastModifiedBy)
-	[Modified]      DATETIMEOFFSET Null,							    -- 수정일(LastModified)
+	[Modified]      DATETIMEOFFSET Null,						-- 수정일(LastModified)
 
     --[0] 5W1H: 누가, 언제, 어디서, 무엇을, 어떻게, 왜
     [Name]          NVarChar(25) Not Null,                      -- [2][이름](작성자)
