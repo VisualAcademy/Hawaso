@@ -9,7 +9,7 @@ namespace Hawaso.Pages.Departments.Components
     {
         #region Fields
         private string searchQuery;
-        private Timer debounceTimer;
+        private System.Timers.Timer debounceTimer;
         #endregion
 
         #region Parameters
@@ -43,7 +43,7 @@ namespace Hawaso.Pages.Departments.Components
         /// </summary>
         protected override void OnInitialized()
         {
-            debounceTimer = new Timer();
+            debounceTimer = new System.Timers.Timer();
             debounceTimer.Interval = Debounce;
             debounceTimer.AutoReset = false; // 딱 한번 실행 
             debounceTimer.Elapsed += SearchHandler;
