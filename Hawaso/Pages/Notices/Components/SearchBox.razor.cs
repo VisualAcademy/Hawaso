@@ -9,7 +9,7 @@ namespace Hawaso.Pages.Notices.Components
     {
         #region Fields
         private string searchQuery;
-        private Timer debounceTimer;
+        private System.Timers.Timer debounceTimer;
         #endregion
 
         #region Parameters
@@ -40,7 +40,7 @@ namespace Hawaso.Pages.Notices.Components
         #region Lifecycle Methods
         protected override void OnInitialized()
         {
-            debounceTimer = new Timer();
+            debounceTimer = new System.Timers.Timer();
             debounceTimer.Interval = Debounce;
             debounceTimer.AutoReset = false;
             debounceTimer.Elapsed += SearchHandler;

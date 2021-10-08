@@ -8,7 +8,7 @@ namespace Hawaso.Pages.BriefingLogs.Components
     public partial class SearchBox : IDisposable
     {
         private string searchQuery;
-        private Timer debounceTimer;
+        private System.Timers.Timer debounceTimer;
 
         public string SearchQuery
         {
@@ -33,7 +33,7 @@ namespace Hawaso.Pages.BriefingLogs.Components
 
         protected override void OnInitialized()
         {
-            debounceTimer = new Timer();
+            debounceTimer = new System.Timers.Timer();
             debounceTimer.Interval = Debounce;
             debounceTimer.AutoReset = false;
             debounceTimer.Elapsed += SearchHandler;
