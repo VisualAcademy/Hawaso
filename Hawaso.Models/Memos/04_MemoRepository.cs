@@ -129,11 +129,19 @@ namespace Hawaso.Models
                 old.Title = model.Title;
                 old.Content = model.Content;
                 old.IsPinned = model.IsPinned;
-                old.Encoding = model.Encoding; 
+                old.Encoding = model.Encoding;
 
                 // TODO: 더 넣을 항목 처리: 이 부분은 어떻게 처리하는게 가장 좋은지 고민
                 // - Repository에서는 전체 업데이트
                 // - Service에서는 부분 업데이트
+
+                // 이 부분은 예외 처리 추가(MVC 게시판과 병합을 위한...)
+                if (model.FileName != null)
+                {
+                    old.FileName = model.FileName;
+                    old.FileSize = model.FileSize;
+                    old.DownCount = model.DownCount;
+                }
 
                 old.Modified = DateTimeOffset.UtcNow;
 
@@ -484,6 +492,14 @@ namespace Hawaso.Models
             #endregion
 
             model.Created = DateTime.UtcNow;
+
+            // 이 부분은 예외 처리 추가(MVC 게시판과 병합을 위한...)
+            if (model.FileName == null)
+            {
+                model.FileName = "";
+                model.FileSize = 0;
+                model.DownCount = 0;
+            }
 
             try
             {
