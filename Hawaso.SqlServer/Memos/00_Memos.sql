@@ -6,6 +6,7 @@ CREATE TABLE [dbo].[Memos]
 	[ParentId]      Int Null,								    -- ParentId, AppId, SiteId, ...
 	[ParentKey]     NVarChar(255) Null,						    -- ParentKey == 부모의 GUID
 
+    -- Auditable
 	[CreatedBy]     NVarChar(255) Null,						    -- 등록자(Creator)
 	[Created]       DATETIMEOFFSET Default(GetDate()) Null,  	-- [5][생성일](PostDate), DatePublished, CreatedAt
 	[ModifiedBy]    NVarChar(255) Null,					        -- 수정자(LastModifiedBy)
