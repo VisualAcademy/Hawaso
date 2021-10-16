@@ -54,7 +54,8 @@ namespace Hawaso
                 options =>
                 {
                     options.SignIn.RequireConfirmedAccount = false;
-                    options.Password.RequireNonAlphanumeric = false;
+                    options.SignIn.RequireConfirmedEmail = false;
+                    //options.Password.RequireNonAlphanumeric = false;
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
