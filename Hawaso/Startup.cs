@@ -1,7 +1,6 @@
 ﻿using Blazored.Toast;
 using DotNetNote.Models;
 using DotNetNote.Services;
-using DotNetNote.Settings;
 using DotNetSaleCore.Models;
 using Hawaso.Areas.Identity;
 using Hawaso.Data;
@@ -127,8 +126,8 @@ namespace Hawaso
             services.AddCors(o => o.AddPolicy("AllowAllPolicy", options =>
             {
                 options.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader();
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
             }));
             //[CORS][1][3] 참고: 특정 도메인만 허용
             services.AddCors(o => o.AddPolicy("AllowSpecific", options =>
@@ -139,16 +138,24 @@ namespace Hawaso
 
 
             services.AddRazorPages();
+
             services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; }); // 자세한 에러
+
 
             //[1] HttpClient 사용하기 - 설정
             services.AddHttpClient();
 
+
+            //[!] 기본 템플릿 제공 서비스 등록 코드 
+            //services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
+            services.AddDatabaseDeveloperPageExceptionFilter();
             services.AddSingleton<WeatherForecastService>();
 
+
             //[!] Configuration: JSON 파일의 데이터를 POCO 클래스에 주입
-            services.Configure<DotNetNoteSettings>(Configuration.GetSection("DotNetNoteSettings"));
+            services.Configure<DotNetNote.Settings.DotNetNoteSettings>(Configuration.GetSection("DotNetNoteSettings"));
+
 
             // ============================================================================== // 
             // 새로운 DbContext 추가
@@ -156,7 +163,9 @@ namespace Hawaso
             services.AddDbContext<DotNetNoteContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             // ============================================================================== // 
 
+
             services.AddTransient<IEmailSender, EmailSender>();
+
 
             //[DI] 의존성 주입(Dependency Injection)
             DependencyInjectionContainer(services);
@@ -360,7 +369,7 @@ namespace Hawaso
                 var administrators = new ApplicationRole { Name = Dul.Roles.Administrators.ToString(), NormalizedName = Dul.Roles.Administrators.ToString().ToUpper(), Description = "응용 프로그램을 총 관리하는 관리 그룹 계정" };
                 if (!(await roleManager.RoleExistsAsync(administrators.Name)))
                 {
-                    await roleManager.CreateAsync(administrators); 
+                    await roleManager.CreateAsync(administrators);
                 }
                 //[1][2] Everyone
                 var everyone = new ApplicationRole { Name = Dul.Roles.Everyone.ToString(), NormalizedName = Dul.Roles.Everyone.ToString().ToUpper(), Description = "응용 프로그램을 사용하는 모든 사용자 그룹 계정" };
