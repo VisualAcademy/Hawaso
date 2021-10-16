@@ -47,9 +47,16 @@ namespace Hawaso
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), options => options.EnableRetryOnFailure()));
 
+
             #region 인증과 권한 설정: ASP.NET Core Identity
+
             //[!] ApplicationUser 클래스로 사용자 관리, ApplicationRole 클래스로 역할 관리
             // ____ (IdentityUser 클래스와 IdentityRole 클래스가 기본값)
+
+            ////[!] 기본 템플릿 원본 모양: 참고용으로 추가
+            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+
+            //[A] ASP.NET Core Identity 확장
             services.AddIdentity<ApplicationUser, ApplicationRole>(
                 options =>
                 {
@@ -60,13 +67,15 @@ namespace Hawaso
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            // Identity 옵션 설정
+            //[B] Identity 옵션 설정
             services.Configure<IdentityOptions>(options =>
             {
                 // 암호 설정
                 options.Password.RequiredLength = 4;
                 //options.Password.RequireDigit = true;
                 //options.Password.RequireLowercase = true;
+                //options.Password.RequireUppercase = false;
+                //options.Password.RequireNonAlphanumeric = false;
 
                 //// 잠금 설정
                 //options.Lockout.MaxFailedAccessAttempts = 5;
@@ -76,20 +85,26 @@ namespace Hawaso
                 //options.User.RequireUniqueEmail = true;
             });
 
-            // 로그인 페이지 경로 재 설정 
+            //[C] 로그인 페이지 경로 재 설정 
             services.ConfigureApplicationCookie(options =>
             {
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 //options.Cookie.Name = "YourAppCookieName";
                 //options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+
+                //options.LoginPath = "/Account/LogIn";
                 options.LoginPath = "/Identity/Account/Login";
+
                 //options.LogoutPath = "/Account/LogOff";
+                options.LogoutPath = "/Identity/Account/Logout";
+
                 // ReturnUrlParameter requires 
                 //using Microsoft.AspNetCore.Authentication.Cookies;
                 options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
                 options.SlidingExpiration = true;
             });
+
             #endregion
 
 
