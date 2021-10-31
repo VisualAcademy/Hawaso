@@ -415,6 +415,7 @@ namespace Hawaso
                     {
                         UserName = "Guest",
                         Email = $"guest@{domainName}",
+                        EmailConfirmed = false, 
                     };
                     await userManager.CreateAsync(guest, "Pa$$w0rd");
                 }
@@ -428,6 +429,7 @@ namespace Hawaso
                     {
                         UserName = "Anonymous",
                         Email = $"anonymous@{domainName}",
+                        EmailConfirmed = false,
                     };
                     await userManager.CreateAsync(anonymous, "Pa$$w0rd");
                 }
