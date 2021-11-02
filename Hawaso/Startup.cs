@@ -48,6 +48,7 @@ namespace Hawaso
 
 
             #region 인증과 권한 설정: ASP.NET Core Identity
+            // ASP.NET Core Identity 인증과 권한 
 
             //[!] ApplicationUser 클래스로 사용자 관리, ApplicationRole 클래스로 역할 관리
             // ____ (IdentityUser 클래스와 IdentityRole 클래스가 기본값)
