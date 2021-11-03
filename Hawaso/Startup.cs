@@ -105,6 +105,9 @@ namespace Hawaso
                 options.SlidingExpiration = true;
             });
 
+            //[D] EmailSender 주입
+            services.AddTransient<IEmailSender, EmailSender>();
+
             #endregion
 
 
@@ -165,7 +168,7 @@ namespace Hawaso
             // ============================================================================== // 
 
 
-            services.AddTransient<IEmailSender, EmailSender>();
+            
 
 
             //[DI] 의존성 주입(Dependency Injection)
