@@ -112,8 +112,10 @@ namespace Hawaso
 
 
             //[!] MVC 사용을 위한 서비스 등록: 가장 기본적인 확장 메서드
-            services.AddControllersWithViews();
-
+            services.AddControllersWithViews();     // MVC + Web API 사용 가능
+            services.AddRazorPages();               // Razor Pages 사용 가능
+            services.AddServerSideBlazor()          // Blazor Server 사용 가능
+                .AddCircuitOptions(options => { options.DetailedErrors = true; }); // 자세한 에러 출력 
 
             #region CORS
             //[CORS][1] CORS 사용 등록
@@ -141,9 +143,6 @@ namespace Hawaso
             #endregion
 
 
-            services.AddRazorPages();
-
-            services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; }); // 자세한 에러
 
 
             //[1] HttpClient 사용하기 - 설정
