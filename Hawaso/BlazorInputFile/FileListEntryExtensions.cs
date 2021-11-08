@@ -21,6 +21,9 @@ namespace BlazorInputFile
                 throw new ArgumentNullException(nameof(fileListEntry));
             }
 
+            // C# 10의 새로운 기능 
+            ArgumentNullException.ThrowIfNull(fileListEntry);
+
             // We can trust .Length to be correct (and can't change later) because the implementation
             // won't supply more bytes than this, even if the JS-side code would send more data.
             var sourceData = fileListEntry.Data;
