@@ -302,6 +302,8 @@ public class Startup
         }
 
         app.UseHttpsRedirection();
+
+        app.UseDefaultFiles(); // index.html 문서 실행 
         app.UseStaticFiles();
 
         app.UseRouting();
