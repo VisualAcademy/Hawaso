@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Timers;
 
-namespace Hawaso.Pages.Memos.Components
+namespace VisualAcademy.Pages.Memos.Components
 {
     public partial class SearchBox : IDisposable
     {

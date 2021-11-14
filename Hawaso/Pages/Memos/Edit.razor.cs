@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Hawaso.Pages.Memos
+namespace VisualAcademy.Pages.Memos
 {
     public partial class Edit
     {

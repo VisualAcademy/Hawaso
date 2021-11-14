@@ -1,5 +1,7 @@
 ﻿@page "/Memos/Index"
 
+@namespace VisualAcademy.Pages.Memos
+
 @*@attribute [Authorize(Roles = "Administrators")]*@
 
 <PageTitle>게시판 리스트 | Hawaso</PageTitle>
@@ -40,8 +42,8 @@
                     <thead class="thead-light">
                         <tr>
                             <th>ID</th>
-                            <th @onclick="@(() => SortByName())" style="cursor: pointer;">Name <Hawaso.Pages.Memos.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Pages.Memos.Components.SortOrderArrow></th>
-                            <th @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Hawaso.Pages.Memos.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Hawaso.Pages.Memos.Components.SortOrderArrow></th>
+                            <th @onclick="@(() => SortByName())" style="cursor: pointer;">Name <VisualAcademy.Pages.Memos.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></VisualAcademy.Pages.Memos.Components.SortOrderArrow></th>
+                            <th @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <VisualAcademy.Pages.Memos.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></VisualAcademy.Pages.Memos.Components.SortOrderArrow></th>
                             <th>Created</th>
                             <th>Actions</th>
                         </tr>
@@ -92,6 +94,6 @@
         <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
     </div>
     <div class="col-md-12">
-        <Hawaso.Pages.Memos.Components.SearchBox placeholder="Search Memos..." SearchQueryChanged="Search"></Hawaso.Pages.Memos.Components.SearchBox>
+        <VisualAcademy.Pages.Memos.Components.SearchBox placeholder="Search Memos..." SearchQueryChanged="Search"></VisualAcademy.Pages.Memos.Components.SearchBox>
     </div>
 </div>

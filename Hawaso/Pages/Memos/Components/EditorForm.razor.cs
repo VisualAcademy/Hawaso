@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 using System;
 using System.Linq;
 
-namespace Hawaso.Pages.Memos.Components
+namespace VisualAcademy.Pages.Memos.Components
 {
     public partial class EditorForm
     {

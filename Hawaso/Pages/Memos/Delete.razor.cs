@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
 
-namespace Hawaso.Pages.Memos
+namespace VisualAcademy.Pages.Memos
 {
     public partial class Delete
     {
