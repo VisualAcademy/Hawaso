@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ReplyApp.Managers;
 
-namespace UploadApp.Controllers
+namespace Hawaso.Apis
 {
     public class ReplyDownloadController : Controller
     {
@@ -22,9 +22,9 @@ namespace UploadApp.Controllers
             IReplyRepository repository,
             IFileStorageManager fileStorageManager)
         {
-            this._environment = environment;
-            this._repository = repository;
-            this._fileStorageManager = fileStorageManager;
+            _environment = environment;
+            _repository = repository;
+            _fileStorageManager = fileStorageManager;
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace UploadApp.Controllers
                     var worksheet = package.Workbook.Worksheets.Add("Replys");
 
                     var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
-                        (from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName })
+                        from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName }
                         , true);
 
                     var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
@@ -99,7 +99,7 @@ namespace UploadApp.Controllers
                     header.Style.Font.Color.SetColor(Color.White);
                     header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
 
-                    return File(package.GetAsByteArray(), "application/octet-stream", $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_Replys.xlsx");                    
+                    return File(package.GetAsByteArray(), "application/octet-stream", $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_Replys.xlsx");
                 }
 
             }
