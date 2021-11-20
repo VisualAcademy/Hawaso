@@ -1,6 +1,8 @@
 ﻿@page "/Departments"
 @page "/Departments/Manage"
 
+@namespace VisualAcademy.Pages.Departments
+
 @attribute [Authorize(Roles = "Administrators")]
 
 <h3 class="mt-1 mb-1">Departments <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;"></span> 
@@ -31,7 +33,7 @@
                     <thead class="thead-light">
                         <tr>
                             <th class="text-center">ID</th>
-                            <th class="text-center text-nowrap" @onclick="@(() => SortByName())" style="cursor: pointer;">Name <Hawaso.Pages.Departments.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Pages.Departments.Components.SortOrderArrow></th>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByName())" style="cursor: pointer;">Name <VisualAcademy.Pages.Departments.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></VisualAcademy.Pages.Departments.Components.SortOrderArrow></th>
                             <th class="text-center text-nowrap">Created</th>
                             <th class="text-center text-nowrap">Active</th>
                             <th class="text-center text-nowrap">&nbsp;</th>
@@ -88,18 +90,18 @@
         <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
     </div>
     <div class="col-md-12">
-        <Hawaso.Pages.Departments.Components.SearchBox placeholder="Search Departments..." SearchQueryChanged="Search"></Hawaso.Pages.Departments.Components.SearchBox>
+        <VisualAcademy.Pages.Departments.Components.SearchBox placeholder="Search Departments..." SearchQueryChanged="Search"></VisualAcademy.Pages.Departments.Components.SearchBox>
     </div>
 </div>
 
 @*입력 또는 수정 폼 모달 다이얼로그*@
-<Hawaso.Pages.Departments.Components.ModalForm @ref="EditorFormReference" ModelSender="model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit" UserName="@UserName">
+<VisualAcademy.Pages.Departments.Components.ModalForm @ref="EditorFormReference" ModelSender="model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit" UserName="@UserName">
     <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
-</Hawaso.Pages.Departments.Components.ModalForm>
+</VisualAcademy.Pages.Departments.Components.ModalForm>
 
 @*삭제 폼 모달 다이얼로그*@
-<Hawaso.Pages.Departments.Components.DeleteDialog @ref="DeleteDialogReference" OnClickCallback="DeleteClick">
-</Hawaso.Pages.Departments.Components.DeleteDialog>
+<VisualAcademy.Pages.Departments.Components.DeleteDialog @ref="DeleteDialogReference" OnClickCallback="DeleteClick">
+</VisualAcademy.Pages.Departments.Components.DeleteDialog>
 
 @if (IsInlineDialogShow)
 {
