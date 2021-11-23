@@ -4,6 +4,7 @@
 //Install-Package System.Configuration.ConfigurationManager
 //Install-Package Microsoft.Data.SqlClient
 
+using Hawaso.Models.Notes;
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 

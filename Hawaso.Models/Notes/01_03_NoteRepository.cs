@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace DotNetNote.Models
+namespace Hawaso.Models.Notes
 {
     public class NoteRepository : INoteRepository
     {
@@ -97,7 +97,7 @@ namespace DotNetNote.Models
             {
                 SaveOrUpdate(vm, BoardWriteFormType.Write);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("데이터 입력 에러: " + ex);
             }
@@ -114,7 +114,7 @@ namespace DotNetNote.Models
             {
                 r = SaveOrUpdate(vm, BoardWriteFormType.Modify);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("데이터 수정 에러: " + ex);
             }
@@ -131,7 +131,7 @@ namespace DotNetNote.Models
             {
                 SaveOrUpdate(vm, BoardWriteFormType.Reply);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("데이터 답변 에러: " + ex);
             }
@@ -152,7 +152,7 @@ namespace DotNetNote.Models
                 return con.Query<Note>("ListNotes", parameters,
                     commandType: CommandType.StoredProcedure).ToList();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("데이터 출력 에러: " + ex);
                 return null;
@@ -175,7 +175,7 @@ namespace DotNetNote.Models
                     .SingleOrDefault();
 
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError("카운트 출력 에러: " + ex);
                 return -1;
@@ -192,7 +192,7 @@ namespace DotNetNote.Models
                 return con.Query<int>(
                     "Select Count(*) From Notes").SingleOrDefault();
             }
-            catch (System.Exception)
+            catch (Exception)
             {
                 _logger.LogError("에러 발생");
                 return -1;
@@ -337,7 +337,7 @@ namespace DotNetNote.Models
                 _cache.Set(
                     "GetRecentPostsCache",
                     notes,
-                    (new MemoryCacheEntryOptions()).SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(5)));
             }
 
             return notes;

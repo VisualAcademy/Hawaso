@@ -6,6 +6,7 @@ using Hawaso.Areas.Identity;
 using Hawaso.Data;
 using Hawaso.Models;
 using Hawaso.Models.CommonValues;
+using Hawaso.Models.Notes;
 using MachineTypeApp.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DotNetNote.Models
+namespace Hawaso.Models.Notes
 {
     public interface INoteCommentRepository
     {

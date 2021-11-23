@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace DotNetNote.Models
+namespace Hawaso.Models.Notes
 {
     public interface INoteRepository
     {
@@ -18,7 +18,7 @@ namespace DotNetNote.Models
         void UpdateDownCount(string fileName);
         void UpdateDownCountById(int id);
         int UpdateNote(Note model);
-        
+
         // 메인 페이지에서 사용
         List<Note> GetRecentPosts();
         List<Note> GetRecentPostsCache();

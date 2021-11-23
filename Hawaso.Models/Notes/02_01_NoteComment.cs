@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace DotNetNote.Models
+namespace Hawaso.Models.Notes
 {
     /// <summary>
     /// 댓글 뷰 모델
