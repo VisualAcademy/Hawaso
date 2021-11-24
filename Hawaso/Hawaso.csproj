@@ -25,6 +25,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+    <PackageReference Include="VisualAcademy.Models.Notes" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,7 +37,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hawaso.Models\Hawaso.Models.csproj" />
-    <ProjectReference Include="..\VisualAcademy.Models.Notes\VisualAcademy.Models.Notes.csproj" />
   </ItemGroup>
 
 </Project>
