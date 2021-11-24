@@ -11,6 +11,8 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Hawaso.SqlServer", "Hawaso.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hawaso.Models.Tests", "Hawaso.Models.Tests\Hawaso.Models.Tests.csproj", "{4359BE4A-FAE0-4B06-8F2A-3A980B3984B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualAcademy.Models.Notes", "VisualAcademy.Models.Notes\VisualAcademy.Models.Notes.csproj", "{0835751C-48BD-4557-883C-F5E1DC604D8C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{4359BE4A-FAE0-4B06-8F2A-3A980B3984B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4359BE4A-FAE0-4B06-8F2A-3A980B3984B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4359BE4A-FAE0-4B06-8F2A-3A980B3984B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0835751C-48BD-4557-883C-F5E1DC604D8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0835751C-48BD-4557-883C-F5E1DC604D8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0835751C-48BD-4557-883C-F5E1DC604D8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0835751C-48BD-4557-883C-F5E1DC604D8C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

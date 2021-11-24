@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hawaso.Models\Hawaso.Models.csproj" />
+    <ProjectReference Include="..\VisualAcademy.Models.Notes\VisualAcademy.Models.Notes.csproj" />
   </ItemGroup>
 
 </Project>
