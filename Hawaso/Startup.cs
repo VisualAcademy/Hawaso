@@ -165,6 +165,7 @@ public class Startup
         // 새로운 DbContext 추가
         //services.AddEntityFrameworkSqlServer().AddDbContext<DotNetNoteContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         services.AddDbContext<DotNetNoteContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<NoteDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         // ============================================================================== // 
 
 

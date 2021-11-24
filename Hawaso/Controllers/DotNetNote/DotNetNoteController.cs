@@ -26,14 +26,14 @@ namespace Hawaso.Controllers
         private readonly INoteRepository _repository; // 게시판 리파지터리
         private readonly INoteCommentRepository _commentRepository; // 댓글 리파지터리
         private readonly ILogger<DotNetNoteController> _logger; // 기본 제공 로깅
-        private readonly DotNetNoteContext _context; // 컨텍스트 클래스
+        private readonly NoteDbContext _context; // 컨텍스트 클래스
 
         public DotNetNoteController(
             IWebHostEnvironment environment, // IWebHostEnvironment로 변경할 것
             INoteRepository repository,
             INoteCommentRepository commentRepository,
             ILogger<DotNetNoteController> logger,
-            DotNetNoteContext context
+            NoteDbContext context
             )
         {
             _environment = environment;
