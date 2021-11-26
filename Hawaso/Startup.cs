@@ -7,6 +7,7 @@ using Hawaso.Data;
 using Hawaso.Models;
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
+using Hawaso.Settings;
 using MachineTypeApp.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -158,7 +159,7 @@ public class Startup
 
 
         //[!] Configuration: JSON 파일의 데이터를 POCO 클래스에 주입
-        services.Configure<DotNetNote.Settings.DotNetNoteSettings>(Configuration.GetSection("DotNetNoteSettings"));
+        services.Configure<DotNetNoteSettings>(Configuration.GetSection("DotNetNoteSettings"));
 
 
         // ============================================================================== // 
