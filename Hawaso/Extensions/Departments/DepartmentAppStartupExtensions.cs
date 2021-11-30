@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using VisualAcademy.Models.Departments;
 
 namespace Hawaso.Models
 {
