@@ -139,5 +139,6 @@
     <Build Include="Departments\Departments.sql" />
     <Build Include="Memos\Archives\Archives.sql" />
     <Build Include="Projects\Projects.sql" />
+    <Build Include="Departments\VisualAcademyDepartments.sql" />
   </ItemGroup>
 </Project>
