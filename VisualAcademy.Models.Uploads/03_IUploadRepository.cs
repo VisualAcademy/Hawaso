@@ -1,4 +1,4 @@
-﻿namespace UploadApp.Models
+﻿namespace VisualAcademy.Models.Uploads
 {
     /// <summary>
     /// [4] Repository Interface

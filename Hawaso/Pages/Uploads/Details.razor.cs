@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
-using UploadApp.Models;
 using System.Threading.Tasks;
+using VisualAcademy.Models.Uploads;
 
 namespace Hawaso.Pages.Uploads
 {

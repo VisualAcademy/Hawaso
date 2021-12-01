@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace UploadApp.Models
+namespace VisualAcademy.Models.Uploads
 {
     /// <summary>
     /// [6] Repository Class: ADO.NET or Dapper or Entity Framework Core
@@ -19,8 +19,8 @@ namespace UploadApp.Models
 
         public UploadRepository(UploadAppDbContext context, ILoggerFactory loggerFactory)
         {
-            this._context = context;
-            this._logger = loggerFactory.CreateLogger(nameof(UploadRepository));
+            _context = context;
+            _logger = loggerFactory.CreateLogger(nameof(UploadRepository));
         }
 
         //[6][1] 입력
@@ -36,7 +36,7 @@ namespace UploadApp.Models
                 _logger.LogError($"ERROR({nameof(AddAsync)}): {e.Message}");
             }
 
-            return model; 
+            return model;
         }
 
         //[6][2] 출력
@@ -44,7 +44,7 @@ namespace UploadApp.Models
         {
             return await _context.Uploads.OrderByDescending(m => m.Id)
                 //.Include(m => m.UploadsComments)
-                .ToListAsync(); 
+                .ToListAsync();
         }
 
         //[6][3] 상세
@@ -62,14 +62,14 @@ namespace UploadApp.Models
             {
                 _context.Uploads.Attach(model);
                 _context.Entry(model).State = EntityState.Modified;
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                return await _context.SaveChangesAsync() > 0 ? true : false;
             }
             catch (Exception e)
             {
                 _logger.LogError($"ERROR({nameof(EditAsync)}): {e.Message}");
             }
 
-            return false; 
+            return false;
         }
 
         //[6][5] 삭제
@@ -80,14 +80,14 @@ namespace UploadApp.Models
             {
                 var model = await _context.Uploads.FindAsync(id);
                 _context.Remove(model);
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                return await _context.SaveChangesAsync() > 0 ? true : false;
             }
             catch (Exception e)
             {
                 _logger.LogError($"ERROR({nameof(DeleteAsync)}): {e.Message}");
             }
 
-            return false; 
+            return false;
         }
 
         //[6][6] 페이징
@@ -101,7 +101,7 @@ namespace UploadApp.Models
                 .Take(pageSize)
                 .ToListAsync();
 
-            return new PagingResult<Upload>(models, totalRecords); 
+            return new PagingResult<Upload>(models, totalRecords);
         }
 
         // 부모
@@ -140,7 +140,7 @@ namespace UploadApp.Models
                     _context.Uploads.Remove(model);
                 }
 
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                return await _context.SaveChangesAsync() > 0 ? true : false;
 
             }
             catch (Exception e)
@@ -148,7 +148,7 @@ namespace UploadApp.Models
                 _logger.LogError($"ERROR({nameof(DeleteAllByParentId)}): {e.Message}");
             }
 
-            return false; 
+            return false;
         }
 
         // 검색
@@ -191,7 +191,7 @@ namespace UploadApp.Models
             // 1월부터 12월까지 0.0으로 초기화
             for (int i = 1; i <= 12; i++)
             {
-                createCounts[i] = 0.0; 
+                createCounts[i] = 0.0;
             }
 
             for (int i = 0; i < 12; i++)
@@ -205,7 +205,7 @@ namespace UploadApp.Models
                     &&
                     Convert.ToDateTime(m.Created).Year == current.Year
                 ).ToList().Count();
-                createCounts[current.Month] = cnt;  
+                createCounts[current.Month] = cnt;
             }
 
             return await Task.FromResult(createCounts);
@@ -241,7 +241,7 @@ namespace UploadApp.Models
             return new PagingResult<Upload>(models, totalRecords);
         }
 
-        public async Task<ArticleSet<Upload, int>> GetArticles<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier) 
+        public async Task<ArticleSet<Upload, int>> GetArticles<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier)
         {
             //var items = from m in _context.Uploads select m; // 쿼리 구문(Query Syntax)
             var items = _context.Uploads.Select(m => m); // 메서드 구문(Method Syntax)
@@ -253,7 +253,7 @@ namespace UploadApp.Models
             }
             else if (parentIdentifier is string parentKey && !string.IsNullOrEmpty(parentKey))
             {
-                items = items.Where(m => m.ParentKey == parentKey); 
+                items = items.Where(m => m.ParentKey == parentKey);
             }
 
             // Search Mode
@@ -294,7 +294,7 @@ namespace UploadApp.Models
                     items = items.OrderByDescending(m => m.Title);
                     break;
                 default:
-                    items = items.OrderByDescending(m => m.Id); 
+                    items = items.OrderByDescending(m => m.Id);
                     break;
             }
 

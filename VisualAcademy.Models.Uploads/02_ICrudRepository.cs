@@ -1,7 +1,7 @@
 ﻿using Dul.Articles;
 using Dul.Domain.Common;
 
-namespace UploadApp.Models
+namespace VisualAcademy.Models.Uploads
 {
     /// <summary>
     /// [3] Generic Repository Interface

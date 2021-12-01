@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace UploadApp.Models
+namespace VisualAcademy.Models.Uploads
 {
     /// <summary>
     /// [2] Model Class: Upload 모델 클래스 == Uploads 테이블과 일대일로 매핑

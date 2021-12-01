@@ -10,7 +10,7 @@ using ChartJs.Blazor.ChartJS.Common.Wrappers;
 using ChartJs.Blazor.Charts;
 using ChartJs.Blazor.Util;
 using Microsoft.AspNetCore.Components;
-using UploadApp.Models;
+using VisualAcademy.Models.Uploads;
 
 namespace Hawaso.Pages.Uploads
 {

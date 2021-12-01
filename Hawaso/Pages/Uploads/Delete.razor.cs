@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using UploadApp.Models;
 using System.Threading.Tasks;
 using ReplyApp.Managers;
+using VisualAcademy.Models.Uploads;
 
 namespace Hawaso.Pages.Uploads
 {

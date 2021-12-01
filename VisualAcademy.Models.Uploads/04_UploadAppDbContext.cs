@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 
-namespace UploadApp.Models
+namespace VisualAcademy.Models.Uploads
 {
     /// <summary>
     /// [5] DbContext Class

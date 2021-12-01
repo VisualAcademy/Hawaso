@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using UploadApp.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +9,7 @@ using OfficeOpenXml;
 using System.Drawing;
 using OfficeOpenXml.Style;
 using System;
+using VisualAcademy.Models.Uploads;
 
 namespace Hawaso.Pages.Uploads
 {

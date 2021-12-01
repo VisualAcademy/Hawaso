@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
-using UploadApp.Models;
 using System;
 using BlazorInputFile;
 using System.Linq;
 using ReplyApp.Managers;
+using VisualAcademy.Models.Uploads;
 
 namespace Hawaso.Pages.Uploads.Components
 {

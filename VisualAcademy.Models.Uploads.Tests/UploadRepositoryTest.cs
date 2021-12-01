@@ -5,7 +5,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using UploadApp.Models;
 
 namespace VisualAcademy.Models.Uploads.Tests
 {

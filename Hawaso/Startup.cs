@@ -25,7 +25,7 @@ using ReplyApp.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using UploadApp.Models;
+using VisualAcademy.Models.Uploads;
 using Zero.Models;
 
 namespace Hawaso;

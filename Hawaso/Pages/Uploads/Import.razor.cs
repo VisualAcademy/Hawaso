@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UploadApp.Models;
 using ReplyApp.Managers;
+using VisualAcademy.Models.Uploads;
 
 namespace Hawaso.Pages.Uploads
 {
