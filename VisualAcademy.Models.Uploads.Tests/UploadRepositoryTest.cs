@@ -12,7 +12,7 @@ namespace UploadApp.Models.Tests
     /// [7] Test Class
     /// </summary>
     [TestClass]
-    public class UploadRepositoryAsyncTest
+    public class UploadRepositoryTest
     {
         [TestMethod]
         public async Task UploadRepositoryAsyncAllMethodTest()

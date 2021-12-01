@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UploadApp.Models
@@ -48,7 +47,7 @@ namespace UploadApp.Models
         /// <summary>
         /// 상단 고정: 공지글로 올리기
         /// </summary>
-        public bool? IsPinned { get; set; } = false; 
+        public bool? IsPinned { get; set; } = false;
 
         /// <summary>
         /// 등록자: CreatedBy, Creator

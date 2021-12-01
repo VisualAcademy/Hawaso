@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace UploadApp.Models
+﻿namespace UploadApp.Models
 {
     /// <summary>
     /// [4] Repository Interface
