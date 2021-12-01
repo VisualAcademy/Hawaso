@@ -5,8 +5,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using UploadApp.Models;
 
-namespace UploadApp.Models.Tests
+namespace VisualAcademy.Models.Uploads.Tests
 {
     /// <summary>
     /// [7] Test Class
@@ -121,7 +122,7 @@ namespace UploadApp.Models.Tests
                 var repository = new UploadRepository(context, factory);
                 await repository.DeleteAsync(2);
 
-                Assert.AreEqual(2, (await context.Uploads.CountAsync()));
+                Assert.AreEqual(2, await context.Uploads.CountAsync());
                 Assert.IsNull(await repository.GetByIdAsync(2));
             }
             #endregion
@@ -178,7 +179,7 @@ namespace UploadApp.Models.Tests
                 //var articleSet = await repository.GetArticles<int>(0, 10, "", "", "TitleDesc", 0); // 자유게시판, 공지사항
                 //var articleSet = await repository.GetArticles<int>(0, 10, "", "", "Title", 0); // 공지사항, 자유게시판
                 //var articleSet = await repository.GetArticles<int>(0, 10, "", "", "TitleDesc", 1); // 공지사항
-                var articleSet = await repository.GetArticles<string>(0, 10, "", "", "TitleDesc", "1"); // 자, 공
+                var articleSet = await repository.GetArticles(0, 10, "", "", "TitleDesc", "1"); // 자, 공
                 foreach (var item in articleSet.Items)
                 {
                     Console.WriteLine($"{item.Name} - {item.Title}");
