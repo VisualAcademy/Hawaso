@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using ReplyApp.Managers;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using ReplyApp.Managers;
-using System.Net.Http.Headers;
 
 namespace UploadApp.Managers
 {
@@ -26,7 +25,7 @@ namespace UploadApp.Managers
             {
                 File.Delete(Path.Combine(_folderPath, folderPath, fileName));
             }
-            return await Task.FromResult(true); 
+            return await Task.FromResult(true);
         }
 
         public async Task<byte[]> DownloadAsync(string fileName, string folderPath)
@@ -36,7 +35,7 @@ namespace UploadApp.Managers
                 byte[] fileBytes = await File.ReadAllBytesAsync(Path.Combine(_folderPath, folderPath, fileName));
                 return fileBytes;
             }
-            return null; 
+            return null;
         }
 
         public string GetFolderPath(string ownerType, string ownerId, string fileType)
@@ -68,7 +67,7 @@ namespace UploadApp.Managers
 
             using (var fileStream = new FileStream(Path.Combine(_folderPath, folderPath, fileName), FileMode.Create))
             {
-                await stream.CopyToAsync(fileStream); 
+                await stream.CopyToAsync(fileStream);
             }
 
             return fileName;
