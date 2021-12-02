@@ -4,7 +4,7 @@ using DotNetNote.Services;
 using DotNetSaleCore.Models;
 using Hawaso.Areas.Identity;
 using Hawaso.Data;
-using Hawaso.Models;
+
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
 using Hawaso.Settings;
@@ -25,7 +25,7 @@ using ReplyApp.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using VisualAcademy.Models.Uploads;
+
 using Zero.Models;
 
 namespace Hawaso;
@@ -64,46 +64,46 @@ public class Startup
             {
                 options.SignIn.RequireConfirmedAccount = false;
                 options.SignIn.RequireConfirmedEmail = false;
-                    //options.Password.RequireNonAlphanumeric = false;
-                })
+                //options.Password.RequireNonAlphanumeric = false;
+            })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
         //[B] Identity 옵션 설정
         services.Configure<IdentityOptions>(options =>
         {
-                // 암호 설정
-                options.Password.RequiredLength = 4;
-                //options.Password.RequireDigit = true;
-                //options.Password.RequireLowercase = true;
-                //options.Password.RequireUppercase = false;
-                //options.Password.RequireNonAlphanumeric = false;
+            // 암호 설정
+            options.Password.RequiredLength = 4;
+            //options.Password.RequireDigit = true;
+            //options.Password.RequireLowercase = true;
+            //options.Password.RequireUppercase = false;
+            //options.Password.RequireNonAlphanumeric = false;
 
-                //// 잠금 설정
-                //options.Lockout.MaxFailedAccessAttempts = 5;
-                //options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+            //// 잠금 설정
+            //options.Lockout.MaxFailedAccessAttempts = 5;
+            //options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
 
-                //// 사용자 설정
-                //options.User.RequireUniqueEmail = true;
-            });
+            //// 사용자 설정
+            //options.User.RequireUniqueEmail = true;
+        });
 
         //[C] 로그인 페이지 경로 재 설정 
         services.ConfigureApplicationCookie(options =>
         {
             options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-                //options.Cookie.Name = "YourAppCookieName";
-                //options.Cookie.HttpOnly = true;
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+            //options.Cookie.Name = "YourAppCookieName";
+            //options.Cookie.HttpOnly = true;
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
 
-                //options.LoginPath = "/Account/LogIn";
-                options.LoginPath = "/Identity/Account/Login";
+            //options.LoginPath = "/Account/LogIn";
+            options.LoginPath = "/Identity/Account/Login";
 
-                //options.LogoutPath = "/Account/LogOff";
-                options.LogoutPath = "/Identity/Account/Logout";
+            //options.LogoutPath = "/Account/LogOff";
+            options.LogoutPath = "/Identity/Account/Logout";
 
-                // ReturnUrlParameter requires 
-                //using Microsoft.AspNetCore.Authentication.Cookies;
-                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+            // ReturnUrlParameter requires 
+            //using Microsoft.AspNetCore.Authentication.Cookies;
+            options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
             options.SlidingExpiration = true;
         });
 
@@ -330,15 +330,15 @@ public class Startup
             endpoints.MapFallbackToPage("/_Host");
             endpoints.MapRazorPages();
 
-                ////[!] 루트 페이지 로드하자마자 특정 URL로 이동하고자 할 때 
-                //endpoints.MapGet("/", context =>
-                //{
-                //    //[!] "/" 경로 요청 시 MVC Home Controller의 Index 액션 메서드 실행
-                //    //____나중에 더 좋은 로직 발견하면 여기 코드 대체 예정
-                //    context.Response.Redirect("/Home"); 
-                //    return Task.CompletedTask;
-                //});
-            });
+            ////[!] 루트 페이지 로드하자마자 특정 URL로 이동하고자 할 때 
+            //endpoints.MapGet("/", context =>
+            //{
+            //    //[!] "/" 경로 요청 시 MVC Home Controller의 Index 액션 메서드 실행
+            //    //____나중에 더 좋은 로직 발견하면 여기 코드 대체 예정
+            //    context.Response.Redirect("/Home"); 
+            //    return Task.CompletedTask;
+            //});
+        });
 
         // ASP.NET Core Identity 기본 사용자 및 역할 생성 
         CreateBuiltInUsersAndRoles(serviceProvider).Wait();
