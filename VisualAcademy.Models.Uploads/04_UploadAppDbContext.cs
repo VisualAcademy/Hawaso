@@ -41,6 +41,6 @@ namespace VisualAcademy.Models.Uploads
             modelBuilder.Entity<Upload>().Property(m => m.Created).HasDefaultValueSql("GetDate()");
         }
 
-        public DbSet<Upload> Uploads { get; set; }
+        public DbSet<Upload> Uploads { get; set; } = null!;
     }
 }

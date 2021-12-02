@@ -151,10 +151,10 @@ namespace VisualAcademy.Models.Uploads
         public async Task<PagingResult<Upload>> SearchAllAsync(int pageIndex, int pageSize, string searchQuery)
         {
             var totalRecords = await _context.Uploads
-                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
+                .Where(m => m.Name!.Contains(searchQuery) || m.Title!.Contains(searchQuery))
                 .CountAsync();
             var models = await _context.Uploads
-                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
+                .Where(m => m.Name!.Contains(searchQuery) || m.Title!.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
                 //.Include(m => m.UploadsComments)
                 .Skip(pageIndex * pageSize)
@@ -167,10 +167,10 @@ namespace VisualAcademy.Models.Uploads
         public async Task<PagingResult<Upload>> SearchAllByParentIdAsync(int pageIndex, int pageSize, string searchQuery, int parentId)
         {
             var totalRecords = await _context.Uploads.Where(m => m.ParentId == parentId)
-                .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
+                .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title!.Contains(searchQuery))
                 .CountAsync();
             var models = await _context.Uploads.Where(m => m.ParentId == parentId)
-                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
+                .Where(m => m.Name!.Contains(searchQuery) || m.Title!.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
                 //.Include(m => m.UploadsComments)
                 .Skip(pageIndex * pageSize)
@@ -224,10 +224,10 @@ namespace VisualAcademy.Models.Uploads
         public async Task<PagingResult<Upload>> SearchAllByParentKeyAsync(int pageIndex, int pageSize, string searchQuery, string parentKey)
         {
             var totalRecords = await _context.Uploads.Where(m => m.ParentKey == parentKey)
-                .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
+                .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title!.Contains(searchQuery))
                 .CountAsync();
             var models = await _context.Uploads.Where(m => m.ParentKey == parentKey)
-                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
+                .Where(m => m.Name!.Contains(searchQuery) || m.Title!.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
                 //.Include(m => m.UploadsComments)
                 .Skip(pageIndex * pageSize)
@@ -258,17 +258,17 @@ namespace VisualAcademy.Models.Uploads
                 if (searchField == "Name")
                 {
                     // Name
-                    items = items.Where(m => m.Name.Contains(searchQuery));
+                    items = items.Where(m => m.Name!.Contains(searchQuery));
                 }
                 else if (searchField == "Title")
                 {
                     // Title
-                    items = items.Where(m => m.Title.Contains(searchQuery));
+                    items = items.Where(m => m.Title!.Contains(searchQuery));
                 }
                 else
                 {
                     // All
-                    items = items.Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery));
+                    items = items.Where(m => m.Name!.Contains(searchQuery) || m.Title!.Contains(searchQuery));
                 }
             }
 

@@ -25,24 +25,24 @@ namespace VisualAcademy.Models.Uploads
         /// <summary>
         /// 외래키
         /// </summary>
-        public string ParentKey { get; set; }
+        public string? ParentKey { get; set; }
 
         /// <summary>
         /// 이름
         /// </summary>
         [Required(ErrorMessage = "이름을 입력하세요.")]
         [MaxLength(255)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// 제목
         /// </summary>
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         /// <summary>
         /// 내용
         /// </summary>
-        public string Content { get; set; }
+        public string? Content { get; set; }
 
         /// <summary>
         /// 상단 고정: 공지글로 올리기
@@ -52,7 +52,7 @@ namespace VisualAcademy.Models.Uploads
         /// <summary>
         /// 등록자: CreatedBy, Creator
         /// </summary>
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
 
         /// <summary>
         /// 등록일: Created
@@ -63,7 +63,7 @@ namespace VisualAcademy.Models.Uploads
         /// <summary>
         /// 수정자: LastModifiedBy, ModifiedBy
         /// </summary>
-        public string ModifiedBy { get; set; }
+        public string? ModifiedBy { get; set; }
 
         /// <summary>
         /// 수정일: LastModified, Modified
@@ -75,7 +75,7 @@ namespace VisualAcademy.Models.Uploads
         /// 파일명
         /// </summary>
         [Display(Name = "파일")]
-        public string FileName { get; set; }
+        public string? FileName { get; set; }
 
         /// <summary>
         /// 파일크기
