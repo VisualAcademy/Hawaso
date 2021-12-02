@@ -20,7 +20,7 @@ namespace Zero.Models
         public BriefingLogRepository(BriefingLogAppDbContext context, ILoggerFactory loggerFactory)
         {
             this._context = context;
-            this._logger = loggerFactory.CreateLogger(nameof(LibraryRepository));
+            this._logger = loggerFactory.CreateLogger(nameof(BriefingLogRepository));
         }
 
         //[6][1] 입력
