@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualAcademy.Models.Upload
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualAcademy.Models.Libraries", "VisualAcademy.Models.Libraries\VisualAcademy.Models.Libraries.csproj", "{28FE2267-F593-4665-BA71-145D34BC6056}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualAcademy.Models.BriefingLogs", "VisualAcademy.Models.BriefingLogs\VisualAcademy.Models.BriefingLogs.csproj", "{333930C9-6CD0-493F-B43F-FBD9A78295E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{28FE2267-F593-4665-BA71-145D34BC6056}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28FE2267-F593-4665-BA71-145D34BC6056}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28FE2267-F593-4665-BA71-145D34BC6056}.Release|Any CPU.Build.0 = Release|Any CPU
+		{333930C9-6CD0-493F-B43F-FBD9A78295E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{333930C9-6CD0-493F-B43F-FBD9A78295E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{333930C9-6CD0-493F-B43F-FBD9A78295E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{333930C9-6CD0-493F-B43F-FBD9A78295E4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
