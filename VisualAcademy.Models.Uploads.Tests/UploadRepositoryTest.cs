@@ -34,7 +34,7 @@ namespace VisualAcademy.Models.Uploads.Tests
                 context.Database.EnsureCreated(); // 데이터베이스가 만들어져 있는지 확인
 
                 //[A] Arrange
-                var repository = new UploadRepository(context, factory);
+                var repository = new UploadRepository(context, factory!);
                 var model = new Upload { Name = "[1] 관리자", Title = "공지사항입니다.", Content = "내용입니다.", ParentId = 1, ParentKey = "1" };
 
                 //[B] Act
@@ -45,7 +45,7 @@ namespace VisualAcademy.Models.Uploads.Tests
                 //[C] Assert
                 Assert.AreEqual(1, await context.Uploads.CountAsync());
                 var model = await context.Uploads.Where(n => n.Id == 1).SingleOrDefaultAsync();
-                Assert.AreEqual("[1] 관리자", model.Name);
+                Assert.AreEqual("[1] 관리자", model!.Name);
             }
             #endregion
 
@@ -56,7 +56,7 @@ namespace VisualAcademy.Models.Uploads.Tests
                 // 트랜잭션 관련 코드는 InMemoryDatabase 공급자에서는 지원 X
                 //using (var transaction = context.Database.BeginTransaction()) { transaction.Commit(); }
                 //[A] Arrange
-                var repository = new UploadRepository(context, factory);
+                var repository = new UploadRepository(context, factory!);
                 var model = new Upload { Name = "[2] 홍길동", Title = "공지사항입니다.", Content = "내용입니다." };
 
                 //[B] Act
@@ -66,7 +66,7 @@ namespace VisualAcademy.Models.Uploads.Tests
             using (var context = new UploadAppDbContext(options))
             {
                 //[C] Assert
-                var repository = new UploadRepository(context, factory);
+                var repository = new UploadRepository(context, factory!);
                 var models = await repository.GetAllAsync();
                 Assert.AreEqual(3, models.Count()); // TotalRecords: 3
             }
@@ -80,9 +80,9 @@ namespace VisualAcademy.Models.Uploads.Tests
             }
             using (var context = new UploadAppDbContext(options))
             {
-                var repository = new UploadRepository(context, factory);
+                var repository = new UploadRepository(context, factory!);
                 var model = await repository.GetByIdAsync(2);
-                Assert.IsTrue(model.Name.Contains("길동"));
+                Assert.IsTrue(model!.Name!.Contains("길동"));
                 Assert.AreEqual("[2] 홍길동", model.Name);
             }
             #endregion
@@ -95,7 +95,7 @@ namespace VisualAcademy.Models.Uploads.Tests
             }
             using (var context = new UploadAppDbContext(options))
             {
-                var repository = new UploadRepository(context, factory);
+                var repository = new UploadRepository(context, factory!);
                 var model = await repository.GetByIdAsync(2);
 
                 model.Name = "[2] 임꺽정"; // Modified
@@ -103,7 +103,7 @@ namespace VisualAcademy.Models.Uploads.Tests
 
                 var updateModel = await repository.GetByIdAsync(2);
 
-                Assert.IsTrue(updateModel.Name.Contains("꺽정"));
+                Assert.IsTrue(updateModel!.Name!.Contains("꺽정"));
                 Assert.AreEqual("[2] 임꺽정", updateModel.Name);
                 Assert.AreEqual("[2] 임꺽정",
                     (await context.Uploads.Where(m => m.Id == 2).SingleOrDefaultAsync())?.Name);
@@ -118,7 +118,7 @@ namespace VisualAcademy.Models.Uploads.Tests
             }
             using (var context = new UploadAppDbContext(options))
             {
-                var repository = new UploadRepository(context, factory);
+                var repository = new UploadRepository(context, factory!);
                 await repository.DeleteAsync(2);
 
                 Assert.AreEqual(2, await context.Uploads.CountAsync());
@@ -137,7 +137,7 @@ namespace VisualAcademy.Models.Uploads.Tests
                 int pageIndex = 0;
                 int pageSize = 1;
 
-                var repository = new UploadRepository(context, factory);
+                var repository = new UploadRepository(context, factory!);
                 var noticesSet = await repository.GetAllAsync(pageIndex, pageSize);
 
                 var firstName = noticesSet.Records.FirstOrDefault()?.Name;
@@ -155,13 +155,13 @@ namespace VisualAcademy.Models.Uploads.Tests
                 int parentId = 1;
 
                 var no1 = await context.Uploads.Where(m => m.Id == 1).SingleOrDefaultAsync();
-                no1.ParentId = parentId;
+                no1!.ParentId = parentId;
                 no1.IsPinned = true; // Pinned
 
                 context.Entry(no1).State = EntityState.Modified;
                 context.SaveChanges();
 
-                var repository = new UploadRepository(context, factory);
+                var repository = new UploadRepository(context, factory!);
                 var r = await repository.GetStatus(parentId);
 
                 Assert.AreEqual(1, r.Item1); // Pinned Count == 1
@@ -171,7 +171,7 @@ namespace VisualAcademy.Models.Uploads.Tests
             //[9] GetArticles() Method Test
             using (var context = new UploadAppDbContext(options))
             {
-                var repository = new UploadRepository(context, factory);
+                var repository = new UploadRepository(context, factory!);
                 //var articleSet = await repository.GetArticles<int>(0, 10, "", "", "", 0); // [3] 백두산, [1] 관리자
                 //var articleSet = await repository.GetArticles<int>(0, 10, "", "두", "", 0); // [3] 백두산
                 //var articleSet = await repository.GetArticles<int>(0, 10, "", "", "Name", 0); // [1] 관리자, [3] 백두산
