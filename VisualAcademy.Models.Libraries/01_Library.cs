@@ -1,12 +1,12 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Zero.Models
 {
     /// <summary>
     /// [2] Model Class: Upload 모델 클래스 == Uploads 테이블과 일대일로 매핑
-    /// Upload, UploadModel, UploadViewModel, UploadBase, UploadDto, UploadEntity, UploadObject, ...
+    /// Upload, UploadModel, UploadViewModel, UploadBase, UploadDto, 
+    /// UploadEntity, UploadObject, LibraryDomain...
     /// </summary>
     [Table("Libraries")]
     public class LibraryModel
@@ -48,7 +48,7 @@ namespace Zero.Models
         /// <summary>
         /// 상단 고정: 공지글로 올리기
         /// </summary>
-        public bool? IsPinned { get; set; } = false; 
+        public bool? IsPinned { get; set; } = false;
 
         /// <summary>
         /// 등록자: CreatedBy, Creator

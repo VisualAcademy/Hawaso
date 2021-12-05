@@ -5,7 +5,8 @@ namespace VisualAcademy.Models.Uploads
 {
     /// <summary>
     /// [2] Model Class: Upload 모델 클래스 == Uploads 테이블과 일대일로 매핑
-    /// Upload, UploadModel, UploadViewModel, UploadBase, UploadDto, UploadEntity, UploadObject, ...
+    /// Upload, UploadModel, UploadViewModel, UploadBase, UploadDto, 
+    /// UploadEntity, UploadObject, UploadDomain, ...
     /// </summary>
     [Table("Uploads")]
     public class Upload

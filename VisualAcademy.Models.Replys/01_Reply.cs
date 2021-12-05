@@ -120,7 +120,8 @@ namespace VisualAcademy.Models.Replys
 
     /// <summary>
     /// [1] Model Class: Reply 모델 클래스 == Replys 테이블과 일대일로 매핑
-    /// Reply, ReplyModel, ReplyViewModel, ReplyBase, ReplyDto, ReplyEntity, ReplyObject, ...
+    /// Reply, ReplyModel, ReplyViewModel, ReplyBase, ReplyDto, ReplyEntity, 
+    /// ReplyObject, ReplyDomain, ...
     /// </summary>
     [Table("Replys")]
     public class Reply : ReplyBase
