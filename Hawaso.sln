@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualAcademy.Models.Replys
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualAcademy.Models.Replys.Tests", "VisualAcademy.Models.Replys.Tests\VisualAcademy.Models.Replys.Tests.csproj", "{B027DCB6-8550-4D69-B81C-57DAA35C89B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualAcademy.Models.Archives", "VisualAcademy.Models.Archives\VisualAcademy.Models.Archives.csproj", "{5CE11DD8-CE8E-46F4-BAC5-596093CEF1D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualAcademy.Models.Archives", "VisualAcademy.Models.Archives\VisualAcademy.Models.Archives.csproj", "{5CE11DD8-CE8E-46F4-BAC5-596093CEF1D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +91,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0835751C-48BD-4557-883C-F5E1DC604D8C} = {F6CA3E30-D409-4966-AFED-9F2D531347DA}
+		{5CE11DD8-CE8E-46F4-BAC5-596093CEF1D5} = {F6CA3E30-D409-4966-AFED-9F2D531347DA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7F86D6CB-300E-4E37-A365-2AEE99055855}

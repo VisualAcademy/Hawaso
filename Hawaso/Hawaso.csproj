@@ -25,6 +25,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.0" />
+    <PackageReference Include="VisualAcademy.Models.Archives" Version="1.0.0" />
     <PackageReference Include="VisualAcademy.Models.Departments" Version="6.0.0" />
     <PackageReference Include="VisualAcademy.Models.Notes" Version="6.0.0" />
   </ItemGroup>
@@ -38,7 +39,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hawaso.Models\Hawaso.Models.csproj" />
-    <ProjectReference Include="..\VisualAcademy.Models.Archives\VisualAcademy.Models.Archives.csproj" />
     <ProjectReference Include="..\VisualAcademy.Models.BriefingLogs\VisualAcademy.Models.BriefingLogs.csproj" />
     <ProjectReference Include="..\VisualAcademy.Models.Libraries\VisualAcademy.Models.Libraries.csproj" />
     <ProjectReference Include="..\VisualAcademy.Models.Replys\VisualAcademy.Models.Replys.csproj" />
