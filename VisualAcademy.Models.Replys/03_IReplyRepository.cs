@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace ReplyApp.Models
+﻿namespace VisualAcademy.Models.Replys
 {
     /// <summary>
     /// [4] Repository Interface, Provider Interface

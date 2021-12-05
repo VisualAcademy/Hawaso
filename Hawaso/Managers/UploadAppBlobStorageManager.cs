@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using ReplyApp.Managers;
+using VisualAcademy.Models.Replys;
 
 namespace UploadApp.Managers
 {

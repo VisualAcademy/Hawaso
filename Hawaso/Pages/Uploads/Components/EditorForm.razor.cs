@@ -2,8 +2,8 @@
 using System;
 using BlazorInputFile;
 using System.Linq;
-using ReplyApp.Managers;
 using VisualAcademy.Models.Uploads;
+using VisualAcademy.Models.Replys;
 
 namespace Hawaso.Pages.Uploads.Components
 {

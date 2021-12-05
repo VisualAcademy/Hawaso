@@ -1,7 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-
-namespace ReplyApp.Managers
+﻿namespace VisualAcademy.Models.Replys
 {
     public interface IFileStorageManager
     {

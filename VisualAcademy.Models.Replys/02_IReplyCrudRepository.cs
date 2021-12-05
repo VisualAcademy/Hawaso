@@ -1,9 +1,7 @@
 ﻿using Dul.Articles;
 using Dul.Domain.Common;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace ReplyApp.Models
+namespace VisualAcademy.Models.Replys
 {
     /// <summary>
     /// [3] Generic Repository Interface => ICrudRepositoryBase.cs 

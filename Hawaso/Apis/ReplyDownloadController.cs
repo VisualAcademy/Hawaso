@@ -2,12 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using ReplyApp.Models;
 using System;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
-using ReplyApp.Managers;
+using VisualAcademy.Models.Replys;
 
 namespace Hawaso.Apis
 {

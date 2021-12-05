@@ -8,7 +8,7 @@ using ChartJs.Blazor.ChartJS.Common.Properties;
 using ChartJs.Blazor.ChartJS.Common.Wrappers;
 using ChartJs.Blazor.Util;
 using Microsoft.AspNetCore.Components;
-using ReplyApp.Models;
+using VisualAcademy.Models.Replys;
 
 namespace Hawaso.Pages.Replys
 {

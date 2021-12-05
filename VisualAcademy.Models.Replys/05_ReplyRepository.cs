@@ -2,12 +2,8 @@
 using Dul.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace ReplyApp.Models
+namespace VisualAcademy.Models.Replys
 {
     /// <summary>
     /// [6] Repository Class: ADO.NET or Dapper(Micro ORM) or Entity Framework Core(ORM)
@@ -20,8 +16,8 @@ namespace ReplyApp.Models
 
         public ReplyRepository(ReplyAppDbContext context, ILoggerFactory loggerFactory)
         {
-            this._context = context;
-            this._logger = loggerFactory.CreateLogger(nameof(ReplyRepository));
+            _context = context;
+            _logger = loggerFactory.CreateLogger(nameof(ReplyRepository));
         }
 
         #region [6][1] 입력: AddAsync
@@ -98,7 +94,7 @@ namespace ReplyApp.Models
             {
                 _context.Replys.Attach(model);
                 _context.Entry(model).State = EntityState.Modified;
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                return await _context.SaveChangesAsync() > 0 ? true : false;
             }
             catch (Exception e)
             {
@@ -114,7 +110,7 @@ namespace ReplyApp.Models
                 //_context.Replys.Attach(model);
                 //_context.Entry(model).State = EntityState.Modified;
                 _context.Update(model);
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                return await _context.SaveChangesAsync() > 0 ? true : false;
             }
             catch (Exception e)
             {
@@ -143,7 +139,7 @@ namespace ReplyApp.Models
             }
 
             return false;
-        } 
+        }
         #endregion
 
         //[6][6] 페이징
@@ -199,7 +195,7 @@ namespace ReplyApp.Models
                     _context.Replys.Remove(model);
                 }
 
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                return await _context.SaveChangesAsync() > 0 ? true : false;
 
             }
             catch (Exception e)
@@ -362,7 +358,7 @@ namespace ReplyApp.Models
                     // All: 기타 더 검색이 필요한 컬럼이 있다면 추가 가능
                     items = items.Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery));
                 }
-            } 
+            }
             #endregion
 
             // 총 레코드 수 계산
@@ -392,7 +388,7 @@ namespace ReplyApp.Models
                     //items = items.OrderByDescending(m => m.Id); 
                     items = items.OrderByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
-            } 
+            }
             #endregion
 
             // Paging
@@ -457,7 +453,7 @@ namespace ReplyApp.Models
                     _context.Dispose(); //_context = null;
                 }
             }
-        } 
+        }
         #endregion
     }
 }

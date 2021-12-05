@@ -1,8 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ReplyApp.Models
+namespace VisualAcademy.Models.Replys
 {
     /// <summary>
     /// [!] 기본 클래스: 공통 속성들을 모두 모아 놓은 모델 클래스
@@ -52,7 +51,7 @@ namespace ReplyApp.Models
         /// <summary>
         /// 상단 고정: 공지글로 올리기
         /// </summary>
-        public bool? IsPinned { get; set; } = false; 
+        public bool? IsPinned { get; set; } = false;
 
         /// <summary>
         /// 등록자: CreatedBy, Creator
@@ -115,7 +114,7 @@ namespace ReplyApp.Models
         /// <summary>
         /// 답변순서
         /// </summary>
-        public int? RefOrder { get; set; } 
+        public int? RefOrder { get; set; }
         #endregion
     }
 

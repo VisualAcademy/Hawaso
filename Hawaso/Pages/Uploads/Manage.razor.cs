@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ReplyApp.Managers;
 using Microsoft.JSInterop;
 using BlazorUtils;
 using OfficeOpenXml;
@@ -10,6 +9,7 @@ using System.Drawing;
 using OfficeOpenXml.Style;
 using System;
 using VisualAcademy.Models.Uploads;
+using VisualAcademy.Models.Replys;
 
 namespace Hawaso.Pages.Uploads
 {

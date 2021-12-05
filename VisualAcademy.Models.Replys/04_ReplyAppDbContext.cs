@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 
-namespace ReplyApp.Models
+namespace VisualAcademy.Models.Replys
 {
     /// <summary>
     /// [5] DbContext Class

@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ReplyApp.Models.Tests
+namespace VisualAcademy.Models.Replys.Tests
 {
     /// <summary>
     /// [!] Test Class: (Arrange -> Act -> Assert) Pattern
@@ -22,7 +22,7 @@ namespace ReplyApp.Models.Tests
             //[0] DbContextOptions<T> Object Creation and ILoggerFactory Object Creation
             var options = new DbContextOptionsBuilder<ReplyAppDbContext>()
                 .UseInMemoryDatabase(databaseName: $"ReplyApp{Guid.NewGuid()}").Options;
-                //.UseSqlServer("server=(localdb)\\mssqllocaldb;database=ReplyApp;integrated security=true;").Options;
+            //.UseSqlServer("server=(localdb)\\mssqllocaldb;database=ReplyApp;integrated security=true;").Options;
 
             var serviceProvider = new ServiceCollection().AddLogging().BuildServiceProvider();
             var factory = serviceProvider.GetService<ILoggerFactory>();
@@ -126,7 +126,7 @@ namespace ReplyApp.Models.Tests
                 var repository = new ReplyRepository(context, factory);
                 await repository.DeleteAsync(2);
 
-                Assert.AreEqual(2, (await context.Replys.CountAsync()));
+                Assert.AreEqual(2, await context.Replys.CountAsync());
                 Assert.IsNull(await repository.GetByIdAsync(2));
             }
             #endregion
@@ -184,7 +184,7 @@ namespace ReplyApp.Models.Tests
                 //var articleSet = await repository.GetArticles<int>(0, 10, "", "", "TitleDesc", 0); // Q&A, Q&A
                 //var articleSet = await repository.GetArticles<int>(0, 10, "", "", "Title", 0); // Q&A, Q&A
                 //var articleSet = await repository.GetArticles<int>(0, 10, "", "", "TitleDesc", 1); // Q&A
-                var articleSet = await repository.GetArticlesAsync<string>(0, 10, "", "", "TitleDesc", "1"); // 자, 공
+                var articleSet = await repository.GetArticlesAsync(0, 10, "", "", "TitleDesc", "1"); // 자, 공
                 foreach (var item in articleSet.Items)
                 {
                     Console.WriteLine($"{item.Name} - {item.Title}");

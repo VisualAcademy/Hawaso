@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
-using ReplyApp.Models;
 using System.Threading.Tasks;
+using VisualAcademy.Models.Replys;
 
 namespace Hawaso.Pages.Replys
 {

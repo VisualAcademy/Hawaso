@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
-using ReplyApp.Models;
 using System.Threading.Tasks;
-using ReplyApp.Managers;
 using BlazorInputFile;
 using System.Linq;
 using System;
+using VisualAcademy.Models.Replys;
 
 namespace Hawaso.Pages.Replys
 {

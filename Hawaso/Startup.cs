@@ -21,11 +21,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NoticeApp.Models;
 using ReplyApp.Managers;
-using ReplyApp.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-
+using VisualAcademy.Models.Replys;
 using Zero.Models;
 
 namespace Hawaso;

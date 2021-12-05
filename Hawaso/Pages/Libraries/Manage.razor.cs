@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using ReplyApp.Managers;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using VisualAcademy.Models.Replys;
 using Zero.Models;
 
 namespace Hawaso.Pages.Libraries

@@ -5,8 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ReplyApp.Models;
-using ReplyApp.Managers;
+using VisualAcademy.Models.Replys;
 
 namespace Hawaso.Pages.Replys
 {
