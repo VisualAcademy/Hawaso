@@ -86,7 +86,7 @@ namespace VisualAcademy.Models.Archives
                 _context.SaveChanges();
             }
 
-            return model;
+            return model!;
         }
         #endregion
 
@@ -490,7 +490,7 @@ namespace VisualAcademy.Models.Archives
                 parentStep = parent?.Step ?? 0;
                 parentRefOrder = parent?.RefOrder ?? 0;
 
-                parent.AnswerNum = parent.AnswerNum + 1;
+                parent!.AnswerNum = parent.AnswerNum + 1;
 
                 await EditAsync(parent);
             }
@@ -595,12 +595,12 @@ namespace VisualAcademy.Models.Archives
                     else if (options.SearchField == "Content")
                     {
                         // Title
-                        items = items.Where(m => m.Content.Contains(searchQuery));
+                        items = items.Where(m => m!.Content!.Contains(searchQuery));
                     }
                     else
                     {
                         // All: 기타 더 검색이 필요한 컬럼이 있다면 추가 가능
-                        items = items.Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery));
+                        items = items.Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m!.Content!.Contains(searchQuery));
                     }
                 }
             }

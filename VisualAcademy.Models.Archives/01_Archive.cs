@@ -26,13 +26,13 @@ namespace VisualAcademy.Models.Archives
         /// <summary>
         /// 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성
         /// </summary>
-        public string ParentKey { get; set; }
+        public string? ParentKey { get; set; }
 
         #region Auditable
         /// <summary>
         /// 등록자: CreatedBy, Creator
         /// </summary>
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
 
         /// <summary>
         /// [5] 등록일(생성일): Created
@@ -43,7 +43,7 @@ namespace VisualAcademy.Models.Archives
         /// <summary>
         /// 수정자: LastModifiedBy, ModifiedBy
         /// </summary>
-        public string ModifiedBy { get; set; }
+        public string? ModifiedBy { get; set; }
 
         /// <summary>
         /// 수정일: LastModified, Modified
@@ -59,7 +59,7 @@ namespace VisualAcademy.Models.Archives
         [MaxLength(255)]
         [Display(Name = "작성자")]
         [Column(TypeName = "NVarChar(255)")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// 작성일
@@ -72,7 +72,7 @@ namespace VisualAcademy.Models.Archives
         /// </summary>
         [Display(Name = "작성IP")]
         [Column(TypeName = "NVarChar(255)")]
-        public string PostIp { get; set; }
+        public string? PostIp { get; set; }
 
         /// <summary>
         /// [3] 제목
@@ -81,19 +81,19 @@ namespace VisualAcademy.Models.Archives
         [Required(ErrorMessage = "제목을 입력하세요.")]
         [Display(Name = "제목")]
         [Column(TypeName = "NVarChar(255)")]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
         /// [4] 내용
         /// </summary>
         [Display(Name = "내용")]
-        public string Content { get; set; }
+        public string? Content { get; set; }
 
         /// <summary>
         /// 카테고리: Notice, Free, Data, Photo, ...
         /// </summary>
         [Display(Name = "카테고리")]
-        public string Category { get; set; }
+        public string? Category { get; set; }
         #endregion
 
         #region [1] 기본형 게시판 관련 주요 컬럼
@@ -101,14 +101,14 @@ namespace VisualAcademy.Models.Archives
         /// 작성자 이메일
         /// </summary>
         //[EmailAddress(ErrorMessage = "* 이메일을 정확히 입력하세요.")]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         /// <summary>
         /// 비밀번호
         /// </summary>
         [Display(Name = "비밀번호")]
         [Required(ErrorMessage = "* 비밀번호를 작성해 주세요.")]
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         /// <summary>
         /// 조회수
@@ -126,7 +126,7 @@ namespace VisualAcademy.Models.Archives
         /// 홈페이지 
         /// </summary>
         [Display(Name = "홈페이지")]
-        public string Homepage { get; set; }
+        public string? Homepage { get; set; }
 
         /// <summary>
         /// 수정일
@@ -138,7 +138,7 @@ namespace VisualAcademy.Models.Archives
         /// 수정 IP 주소
         /// </summary>
         [Display(Name = "수정IP")]
-        public string ModifyIp { get; set; }
+        public string? ModifyIp { get; set; }
 
         /// <summary>
         /// 댓글수 
@@ -157,7 +157,7 @@ namespace VisualAcademy.Models.Archives
         /// 파일이름
         /// </summary>
         [Display(Name = "파일이름")]
-        public string FileName { get; set; }
+        public string FileName { get; set; } = String.Empty;
 
         /// <summary>
         /// 파일크기
@@ -176,29 +176,29 @@ namespace VisualAcademy.Models.Archives
         /// <summary>
         /// 참조(부모글, 참조 번호)
         /// </summary>
-        public int Ref { get; set; }
+        public int Ref { get; set; } = 0;
 
         /// <summary>
         /// 답변깊이(레벨, 들여쓰기)
         /// </summary>
-        public int Step { get; set; }
+        public int Step { get; set; } = 0;
 
         /// <summary>
         /// 답변(참조) 순서
         /// </summary>
-        public int RefOrder { get; set; }
+        public int RefOrder { get; set; } = 0;
 
         /// <summary>
         /// 답변수
         /// </summary>
         [Display(Name = "답변수")]
-        public int AnswerNum { get; set; }
+        public int AnswerNum { get; set; } = 0;
 
         /// <summary>
         /// 부모글 번호
         /// </summary>
         [Display(Name = "부모번호")]
-        public int ParentNum { get; set; }
+        public int ParentNum { get; set; } = 0; 
         #endregion
     }
 
