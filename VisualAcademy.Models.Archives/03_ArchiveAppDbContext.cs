@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 
-namespace Hawaso.Models
+namespace VisualAcademy.Models.Archives
 {
     /// <summary>
     /// [3] DbContext Class
@@ -20,7 +20,7 @@ namespace Hawaso.Models
         //// PM> Install-Package Microsoft.AspNetCore.All // 2.1 버전까지만 사용 가능 
         #endregion
 
-        public ArchiveAppDbContext() : base() 
+        public ArchiveAppDbContext() : base()
         {
             // Empty
             // ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;

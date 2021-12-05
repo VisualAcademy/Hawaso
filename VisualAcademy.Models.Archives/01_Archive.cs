@@ -1,8 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Hawaso.Models
+namespace VisualAcademy.Models.Archives
 {
     /// <summary>
     /// [!] 기본 클래스: 공통 속성들을 모두 모아 놓은 만능 모델 클래스
@@ -49,7 +48,7 @@ namespace Hawaso.Models
         /// <summary>
         /// 수정일: LastModified, Modified
         /// </summary>
-        public DateTimeOffset? Modified { get; set; } 
+        public DateTimeOffset? Modified { get; set; }
         #endregion
 
         #region [0] 5W1H: 누가, 언제, 어디서, 무엇을, 어떻게, 왜

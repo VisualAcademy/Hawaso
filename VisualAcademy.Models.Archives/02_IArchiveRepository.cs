@@ -1,10 +1,7 @@
 ﻿using Dul.Articles;
 using Dul.Domain.Common;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace Hawaso.Models
+namespace VisualAcademy.Models.Archives
 {
     /// <summary>
     /// [!] Generic Repository Interface => ICrudRepositoryBase.cs 

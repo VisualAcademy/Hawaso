@@ -1,5 +1,4 @@
 ﻿using BlazorUtils;
-using Hawaso.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +10,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
+using VisualAcademy.Models.Archives;
 
 namespace Hawaso.Pages.Archives
 {

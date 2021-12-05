@@ -2,12 +2,8 @@
 using Dul.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Hawaso.Models
+namespace VisualAcademy.Models.Archives
 {
     /// <summary>
     /// [4] Repository Class: ADO.NET or Dapper(Micro ORM) or Entity Framework Core(ORM)
@@ -20,8 +16,8 @@ namespace Hawaso.Models
 
         public ArchiveRepository(ArchiveAppDbContext context, ILoggerFactory loggerFactory)
         {
-            this._context = context;
-            this._logger = loggerFactory.CreateLogger(nameof(ArchiveRepository));
+            _context = context;
+            _logger = loggerFactory.CreateLogger(nameof(ArchiveRepository));
         }
 
         #region [4][1] 입력: AddAsync
@@ -83,7 +79,7 @@ namespace Hawaso.Models
                 }
                 else
                 {
-                    model.ReadCount = 1; 
+                    model.ReadCount = 1;
                 }
                 _context.Archives.Attach(model);
                 _context.Entry(model).State = EntityState.Modified;
@@ -104,7 +100,7 @@ namespace Hawaso.Models
 
                 _context.Archives.Attach(model);
                 _context.Entry(model).State = EntityState.Modified;
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                return await _context.SaveChangesAsync() > 0 ? true : false;
             }
             catch (Exception e)
             {
@@ -125,14 +121,14 @@ namespace Hawaso.Models
                 old.Title = model.Title;
                 old.Content = model.Content;
                 old.IsPinned = model.IsPinned;
-                old.Encoding = model.Encoding; 
+                old.Encoding = model.Encoding;
 
                 // TODO: 더 넣을 항목 처리: 이 부분은 어떻게 처리하는게 가장 좋은지 고민
 
                 old.Modified = DateTimeOffset.UtcNow;
 
                 _context.Update(old);
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                return await _context.SaveChangesAsync() > 0 ? true : false;
             }
             catch (Exception e)
             {
@@ -174,7 +170,7 @@ namespace Hawaso.Models
                 .ToListAsync();
 
             return new PagingResult<Archive>(models, totalRecords);
-        } 
+        }
         #endregion
 
         //[4][7] 부모
@@ -223,7 +219,7 @@ namespace Hawaso.Models
                     _context.Archives.Remove(model);
                 }
 
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                return await _context.SaveChangesAsync() > 0 ? true : false;
 
             }
             catch (Exception e)
@@ -355,7 +351,7 @@ namespace Hawaso.Models
             string sortOrder,
             TParentIdentifier parentIdentifier)
         {
-            var items = 
+            var items =
                 _context.Archives
                     .AsQueryable();
 
@@ -393,7 +389,7 @@ namespace Hawaso.Models
                     items = items
                         .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery));
                 }
-            } 
+            }
             #endregion
 
             // 총 레코드 수 계산
@@ -423,7 +419,7 @@ namespace Hawaso.Models
                     items = items
                         .OrderByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
-            } 
+            }
             #endregion
 
             // Paging
@@ -512,12 +508,12 @@ namespace Hawaso.Models
                 var tmpParent = await _context.Archives.Where(m => m.Id == parentId).SingleOrDefaultAsync();
                 if (tmpParent != null)
                 {
-                    maxRefOrder = tmpParent.RefOrder; 
+                    maxRefOrder = tmpParent.RefOrder;
                 }
             }
 
             //[3] 중간에 답변달 때(비집고 들어갈 자리 마련): 부모글 순서보다 큰 글이 있다면(기존 답변 글이 있다면) 해당 글의 순서를 모두 1씩 증가 
-            var replys = await _context.Archives.Where(m => m.Ref == parentRef && m.RefOrder > (maxRefOrder + maxAnswerNum)).ToListAsync();
+            var replys = await _context.Archives.Where(m => m.Ref == parentRef && m.RefOrder > maxRefOrder + maxAnswerNum).ToListAsync();
             foreach (var item in replys)
             {
                 item.RefOrder = item.RefOrder + 1;
@@ -535,7 +531,7 @@ namespace Hawaso.Models
             //[4] 최종 저장
             model.Ref = parentRef; // 답변 글의 Ref(그룹)은 부모 글의 Ref를 그대로 저장 
             model.Step = parentStep + 1; // 어떤 글의 답변 글이기에 들여쓰기 1 증가 
-            model.RefOrder = (maxRefOrder + maxAnswerNum + 1); // 부모글의 바로 다음번 순서로 보여지도록 설정 
+            model.RefOrder = maxRefOrder + maxAnswerNum + 1; // 부모글의 바로 다음번 순서로 보여지도록 설정 
 
             model.ParentNum = parentId;
             model.AnswerNum = 0;
