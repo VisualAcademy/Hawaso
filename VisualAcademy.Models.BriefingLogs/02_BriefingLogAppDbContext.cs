@@ -4,7 +4,7 @@ using System.Configuration;
 namespace Zero.Models
 {
     /// <summary>
-    /// [5] DbContext Class
+    /// [2] DbContext Class
     /// </summary>
     public class BriefingLogAppDbContext : DbContext
     {
@@ -42,6 +42,6 @@ namespace Zero.Models
             modelBuilder.Entity<BriefingLog>().Property(m => m.DateTimeStarted).HasDefaultValueSql("GetDate()");
         }
 
-        public DbSet<BriefingLog> BriefingLogs { get; set; }
+        public DbSet<BriefingLog> BriefingLogs { get; set; } = null!;
     }
 }

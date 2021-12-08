@@ -1,7 +1,5 @@
 ﻿using Dul.Articles;
 using Dul.Domain.Common;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Zero.Models
 {
@@ -22,6 +20,6 @@ namespace Zero.Models
         Task<PagingResult<T>> SearchAllByParentIdAsync(int pageIndex, int pageSize, string searchQuery, int parentId); // 검색+부모
         Task<PagingResult<T>> SearchAllByParentKeyAsync(int pageIndex, int pageSize, string searchQuery, string parentKey); // 검색+부모
 
-        Task<ArticleSet<T, int>> GetArticles<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier); 
+        Task<ArticleSet<T, int>> GetArticles<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier);
     }
 }

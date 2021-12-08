@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace Zero.Models
+﻿namespace Zero.Models
 {
     /// <summary>
     /// [4] Repository Interface

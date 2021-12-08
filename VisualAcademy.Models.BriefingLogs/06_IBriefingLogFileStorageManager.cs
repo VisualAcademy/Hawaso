@@ -1,7 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-
-namespace Zero.Models
+﻿namespace Zero.Models
 {
     public interface IBriefingLogFileStorageManager
     {

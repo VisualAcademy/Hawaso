@@ -2,15 +2,11 @@
 using Dul.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Zero.Models
 {
     /// <summary>
-    /// [6] Repository Class: ADO.NET or Dapper or Entity Framework Core
+    /// [5] Repository Class: ADO.NET or Dapper or Entity Framework Core
     /// </summary>
     public class BriefingLogRepository : IBriefingLogRepository
     {
@@ -36,14 +32,14 @@ namespace Zero.Models
                 _logger.LogError($"ERROR({nameof(AddAsync)}): {e.Message}");
             }
 
-            return model; 
+            return model;
         }
 
         //[6][2] 출력
         public async Task<List<BriefingLog>> GetAllAsync()
         {
             return await _context.BriefingLogs.OrderByDescending(m => m.Id)
-                .ToListAsync(); 
+                .ToListAsync();
         }
 
         //[6][3] 상세
@@ -67,7 +63,7 @@ namespace Zero.Models
                 _logger.LogError($"ERROR({nameof(EditAsync)}): {e.Message}");
             }
 
-            return false; 
+            return false;
         }
 
         //[6][5] 삭제
@@ -84,7 +80,7 @@ namespace Zero.Models
                 _logger.LogError($"ERROR({nameof(DeleteAsync)}): {e.Message}");
             }
 
-            return false; 
+            return false;
         }
 
         //[6][6] 페이징
@@ -97,7 +93,7 @@ namespace Zero.Models
                 .Take(pageSize)
                 .ToListAsync();
 
-            return new PagingResult<BriefingLog>(models, totalRecords); 
+            return new PagingResult<BriefingLog>(models, totalRecords);
         }
 
         // 부모
@@ -143,7 +139,7 @@ namespace Zero.Models
                 _logger.LogError($"ERROR({nameof(DeleteAllByParentId)}): {e.Message}");
             }
 
-            return false; 
+            return false;
         }
 
         // 검색
@@ -184,7 +180,7 @@ namespace Zero.Models
             // 1월부터 12월까지 0.0으로 초기화
             for (int i = 1; i <= 12; i++)
             {
-                createCounts[i] = 0.0; 
+                createCounts[i] = 0.0;
             }
 
             for (int i = 0; i < 12; i++)
@@ -198,7 +194,7 @@ namespace Zero.Models
                     &&
                     Convert.ToDateTime(m.Created).Year == current.Year
                 ).ToList().Count();
-                createCounts[current.Month] = cnt;  
+                createCounts[current.Month] = cnt;
             }
 
             return await Task.FromResult(createCounts);
@@ -232,7 +228,7 @@ namespace Zero.Models
             return new PagingResult<BriefingLog>(models, totalRecords);
         }
 
-        public async Task<ArticleSet<BriefingLog, int>> GetArticles<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier) 
+        public async Task<ArticleSet<BriefingLog, int>> GetArticles<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier)
         {
             var items = _context.BriefingLogs.Select(m => m); // 메서드 구문(Method Syntax)
 
@@ -243,7 +239,7 @@ namespace Zero.Models
             }
             else if (parentIdentifier is string parentKey && !string.IsNullOrEmpty(parentKey))
             {
-                items = items.Where(m => m.ParentKey == parentKey); 
+                items = items.Where(m => m.ParentKey == parentKey);
             }
 
             // Search Mode
@@ -284,7 +280,7 @@ namespace Zero.Models
                     items = items.OrderByDescending(m => m.Title);
                     break;
                 default:
-                    items = items.OrderByDescending(m => m.Id); 
+                    items = items.OrderByDescending(m => m.Id);
                     break;
             }
 
