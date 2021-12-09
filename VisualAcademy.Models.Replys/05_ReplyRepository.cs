@@ -82,7 +82,7 @@ namespace VisualAcademy.Models.Replys
                 _context.SaveChanges();
             }
 
-            return model;
+            return model!;
         }
         #endregion
 
@@ -213,10 +213,10 @@ namespace VisualAcademy.Models.Replys
             string searchQuery)
         {
             var totalRecords = await _context.Replys
-                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery))
+                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content!.Contains(searchQuery))
                 .CountAsync();
             var models = await _context.Replys
-                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery))
+                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content!.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
                 //.Include(m => m.ReplysComments)
                 .Skip(pageIndex * pageSize)
@@ -234,10 +234,10 @@ namespace VisualAcademy.Models.Replys
             int parentId)
         {
             var totalRecords = await _context.Replys.Where(m => m.ParentId == parentId)
-                .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery))
+                .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title.Contains(searchQuery) || m.Content!.Contains(searchQuery))
                 .CountAsync();
             var models = await _context.Replys.Where(m => m.ParentId == parentId)
-                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery))
+                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content!.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
                 //.Include(m => m.ReplysComments)
                 .Skip(pageIndex * pageSize)
@@ -300,11 +300,12 @@ namespace VisualAcademy.Models.Replys
             string searchQuery,
             string parentKey)
         {
+            // EF.Functions.Like() 메서드는 학습 목적으로 사용 
             var totalRecords = await _context.Replys.Where(m => m.ParentKey == parentKey)
-                .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery))
+                .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title.Contains(searchQuery) || m.Content!.Contains(searchQuery))
                 .CountAsync();
             var models = await _context.Replys.Where(m => m.ParentKey == parentKey)
-                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery))
+                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content!.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
                 //.Include(m => m.ReplysComments)
                 .Skip(pageIndex * pageSize)

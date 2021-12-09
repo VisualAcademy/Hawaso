@@ -24,14 +24,14 @@ namespace VisualAcademy.Models.Replys
         /// <summary>
         /// 외래키
         /// </summary>
-        public string ParentKey { get; set; }
+        public string? ParentKey { get; set; }
 
         /// <summary>
         /// 이름
         /// </summary>
         [Required(ErrorMessage = "이름을 입력하세요.")]
         [MaxLength(255)]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// [3] 제목
@@ -40,13 +40,13 @@ namespace VisualAcademy.Models.Replys
         [Required(ErrorMessage = "제목을 입력하세요.")]
         [Display(Name = "제목")]
         [Column(TypeName = "NVarChar(255)")]
-        public string Title { get; set; }
+        public string Title { get; set; } = String.Empty;
 
         /// <summary>
         /// [4] 내용
         /// </summary>
         [Display(Name = "내용")]
-        public string Content { get; set; }
+        public string? Content { get; set; }
 
         /// <summary>
         /// 상단 고정: 공지글로 올리기
@@ -56,7 +56,7 @@ namespace VisualAcademy.Models.Replys
         /// <summary>
         /// 등록자: CreatedBy, Creator
         /// </summary>
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
 
         /// <summary>
         /// [5] 등록일(생성일): Created
@@ -67,7 +67,7 @@ namespace VisualAcademy.Models.Replys
         /// <summary>
         /// 수정자: LastModifiedBy, ModifiedBy
         /// </summary>
-        public string ModifiedBy { get; set; }
+        public string? ModifiedBy { get; set; }
 
         /// <summary>
         /// 수정일: LastModified, Modified
@@ -85,36 +85,36 @@ namespace VisualAcademy.Models.Replys
         /// 파일이름
         /// </summary>
         [Display(Name = "파일이름")]
-        public string FileName { get; set; }
+        public string? FileName { get; set; } = String.Empty;
 
         /// <summary>
         /// 파일크기
         /// </summary>
         [Display(Name = "파일크기")]
-        public int FileSize { get; set; }
+        public int FileSize { get; set; } = 0;
 
         /// <summary>
         /// 다운수 
         /// </summary>
         [Display(Name = "다운수")]
-        public int DownCount { get; set; }
+        public int? DownCount { get; set; } = 0;
         #endregion
 
         #region 답변형 게시판 관련 주요 속성
         /// <summary>
         /// 참조(부모글)
         /// </summary>
-        public int? Ref { get; set; }
+        public int? Ref { get; set; } = 0;
 
         /// <summary>
         /// 답변깊이(레벨)
         /// </summary>
-        public int? Step { get; set; }
+        public int? Step { get; set; } = 0;
 
         /// <summary>
         /// 답변순서
         /// </summary>
-        public int? RefOrder { get; set; }
+        public int? RefOrder { get; set; } = 0; 
         #endregion
     }
 
