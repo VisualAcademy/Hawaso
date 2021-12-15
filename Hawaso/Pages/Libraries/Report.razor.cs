@@ -8,7 +8,7 @@ using ChartJs.Blazor.Util;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Zero.Models;
+using VisualAcademy.Models.Libraries;
 
 namespace Hawaso.Pages.Libraries
 {

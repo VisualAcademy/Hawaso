@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
-using Zero.Models;
+using VisualAcademy.Models.Libraries;
 
 namespace Hawaso.Pages.Libraries
 {

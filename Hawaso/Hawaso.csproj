@@ -28,6 +28,7 @@
     <PackageReference Include="VisualAcademy.Models.Archives" Version="3.0.0" />
     <PackageReference Include="VisualAcademy.Models.BriefingLogs" Version="1.0.2" />
     <PackageReference Include="VisualAcademy.Models.Departments" Version="6.0.0" />
+    <PackageReference Include="VisualAcademy.Models.Libraries" Version="6.0.0" />
     <PackageReference Include="VisualAcademy.Models.Notes" Version="6.0.0" />
   </ItemGroup>
 
@@ -40,7 +41,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hawaso.Models\Hawaso.Models.csproj" />
-    <ProjectReference Include="..\VisualAcademy.Models.Libraries\VisualAcademy.Models.Libraries.csproj" />
     <ProjectReference Include="..\VisualAcademy.Models.Replys\VisualAcademy.Models.Replys.csproj" />
     <ProjectReference Include="..\VisualAcademy.Models.Uploads\VisualAcademy.Models.Uploads.csproj" />
   </ItemGroup>

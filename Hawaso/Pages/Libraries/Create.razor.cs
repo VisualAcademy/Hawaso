@@ -1,12 +1,11 @@
 ﻿using BlazorInputFile;
-using Hawaso.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Zero.Models;
+using VisualAcademy.Models.Libraries;
 
 namespace Hawaso.Pages.Libraries
 {
@@ -64,7 +63,7 @@ namespace Hawaso.Pages.Libraries
         protected override async Task OnInitializedAsync()
         {
             await GetUserIdAndUserName();
-            model.Name = UserName; 
+            model.Name = UserName;
         }
 
         #region Get UserId and UserName
