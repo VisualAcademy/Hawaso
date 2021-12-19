@@ -34,10 +34,11 @@
 
 <div class="row">
     <div class="col-md-12">
-        @if (models == null)
+        @if (models == null) // null 예외 처리 
         {
             <div>
                 <p>
+                    @*<text>Loading...</text>*@
                     <MatProgressBar Indeterminate="true"></MatProgressBar>
                 </p>
             </div>

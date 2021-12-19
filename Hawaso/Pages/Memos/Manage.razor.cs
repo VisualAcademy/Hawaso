@@ -1,5 +1,4 @@
 ﻿using BlazorUtils;
-using Hawaso.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -59,12 +58,14 @@ namespace VisualAcademy.Pages.Memos
         /// <summary>
         /// 현재 페이지에서 리스트로 사용되는 모델 리스트 
         /// </summary>
-        protected List<Memo> models = new List<Memo>();
+        //protected List<Memo> models = new List<Memo>();
+        protected List<Memo> models = new();
 
         /// <summary>
         /// 현재 페이지에서 선택된 단일 데이터를 나타내는 모델 클래스 
         /// </summary>
-        protected Memo model = new Memo();
+        //protected Memo model = new Memo();
+        protected Memo model = new();
 
         /// <summary>
         /// 페이저 설정
@@ -137,8 +138,8 @@ namespace VisualAcademy.Pages.Memos
         {
             EditorFormTitle = "CREATE";
             this.model = new Memo(); // 모델 초기화
-            this.model.ParentId = model.ParentId; 
-            this.model.ParentKey = model.ParentKey; 
+            this.model.ParentId = model.ParentId;
+            this.model.ParentKey = model.ParentKey;
 
             model.Name = UserName; // 로그인 사용자 이름을 기본으로 제공
 
