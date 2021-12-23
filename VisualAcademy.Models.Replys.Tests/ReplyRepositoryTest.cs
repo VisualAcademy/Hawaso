@@ -36,7 +36,7 @@ namespace VisualAcademy.Models.Replys.Tests
                 context.Database.EnsureCreated(); // 데이터베이스가 만들어져 있는지 확인
 
                 //[A] Arrange: 1번 데이터를 아래 항목으로 저장합니다. 
-                var repository = new ReplyRepository(context, factory);
+                var repository = new ReplyRepository(context, factory!);
                 var model = new Reply { Name = "[1] 관리자", Title = "Q&A입니다.", Content = "내용입니다.", ParentId = 1, ParentKey = "1" };
 
                 //[B] Act: AddAsync() 메서드 테스트
@@ -49,7 +49,7 @@ namespace VisualAcademy.Models.Replys.Tests
                 Assert.AreEqual(1, await context.Replys.CountAsync());
 
                 var model = await context.Replys.Where(n => n.Id == 1).SingleOrDefaultAsync();
-                Assert.AreEqual("[1] 관리자", model.Name);
+                Assert.AreEqual("[1] 관리자", model!.Name);
             }
             #endregion
 
@@ -61,7 +61,7 @@ namespace VisualAcademy.Models.Replys.Tests
                 // using (var transaction = context.Database.BeginTransaction()) { transaction.Commit(); }
 
                 //[A] Arrange
-                var repository = new ReplyRepository(context, factory);
+                var repository = new ReplyRepository(context, factory!);
                 var model = new Reply { Name = "[2] 홍길동", Title = "Q&A입니다.", Content = "내용입니다." };
 
                 //[B] Act
@@ -71,7 +71,7 @@ namespace VisualAcademy.Models.Replys.Tests
             using (var context = new ReplyAppDbContext(options))
             {
                 //[C] Assert
-                var repository = new ReplyRepository(context, factory);
+                var repository = new ReplyRepository(context, factory!);
                 var models = await repository.GetAllAsync();
                 Assert.AreEqual(3, models.Count()); // TotalRecords: 3
             }
@@ -85,7 +85,7 @@ namespace VisualAcademy.Models.Replys.Tests
             }
             using (var context = new ReplyAppDbContext(options))
             {
-                var repository = new ReplyRepository(context, factory);
+                var repository = new ReplyRepository(context, factory!);
                 var model = await repository.GetByIdAsync(2);
                 Assert.IsTrue(model.Name.Contains("길동"));
                 Assert.AreEqual("[2] 홍길동", model.Name);
@@ -100,7 +100,7 @@ namespace VisualAcademy.Models.Replys.Tests
             }
             using (var context = new ReplyAppDbContext(options))
             {
-                var repository = new ReplyRepository(context, factory);
+                var repository = new ReplyRepository(context, factory!);
                 var model = await repository.GetByIdAsync(2);
 
                 model.Name = "[2] 임꺽정"; // Modified
@@ -123,7 +123,7 @@ namespace VisualAcademy.Models.Replys.Tests
             }
             using (var context = new ReplyAppDbContext(options))
             {
-                var repository = new ReplyRepository(context, factory);
+                var repository = new ReplyRepository(context, factory!);
                 await repository.DeleteAsync(2);
 
                 Assert.AreEqual(2, await context.Replys.CountAsync());
@@ -142,7 +142,7 @@ namespace VisualAcademy.Models.Replys.Tests
                 int pageIndex = 0;
                 int pageSize = 1;
 
-                var repository = new ReplyRepository(context, factory);
+                var repository = new ReplyRepository(context, factory!);
                 var noticesSet = await repository.GetAllAsync(pageIndex, pageSize);
 
                 var firstName = noticesSet.Records.FirstOrDefault()?.Name;
@@ -160,13 +160,13 @@ namespace VisualAcademy.Models.Replys.Tests
                 int parentId = 1;
 
                 var no1 = await context.Replys.Where(m => m.Id == 1).SingleOrDefaultAsync();
-                no1.ParentId = parentId;
-                no1.IsPinned = true; // Pinned
+                no1!.ParentId = parentId;
+                no1!.IsPinned = true; // Pinned
 
                 context.Entry(no1).State = EntityState.Modified;
                 context.SaveChanges();
 
-                var repository = new ReplyRepository(context, factory);
+                var repository = new ReplyRepository(context, factory!);
                 var r = await repository.GetStatus(parentId);
 
                 Assert.AreEqual(1, r.Item1); // Pinned Count == 1
@@ -177,7 +177,7 @@ namespace VisualAcademy.Models.Replys.Tests
             //[8] GetArticles() Method Test
             using (var context = new ReplyAppDbContext(options))
             {
-                var repository = new ReplyRepository(context, factory);
+                var repository = new ReplyRepository(context, factory!);
                 //var articleSet = await repository.GetArticles<int>(0, 10, "", "", "", 0); // [3] 백두산, [1] 관리자
                 //var articleSet = await repository.GetArticles<int>(0, 10, "", "두", "", 0); // [3] 백두산
                 //var articleSet = await repository.GetArticles<int>(0, 10, "", "", "Name", 0); // [1] 관리자, [3] 백두산
