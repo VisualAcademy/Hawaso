@@ -36,8 +36,11 @@ namespace VisualAcademy.Pages.Memos.Components
             set
             {
                 searchQuery = value;
+
+                #region 타이머 가동
                 debounceTimer.Stop(); // 텍스트박스에 값을 입력하는 동안 타이머 중지
-                debounceTimer.Start(); // 타이머 실행(300밀리초 후에 딱 한 번 실행)
+                debounceTimer.Start(); // 타이머 실행(300밀리초 후에 딱 한 번 실행) 
+                #endregion
             }
         }
         #endregion
@@ -56,11 +59,17 @@ namespace VisualAcademy.Pages.Memos.Components
         #endregion
 
         #region Event Handlers
+        /// <summary>
+        /// 검색 버튼 클릭했을 때 실행
+        /// </summary>
         protected void Search()
         {
             SearchQueryChanged.InvokeAsync(SearchQuery); // 부모의 메서드에 검색어 전달
         }
 
+        /// <summary>
+        /// 타이머에 의해서 실행
+        /// </summary>
         protected async void SearchHandler(object source, ElapsedEventArgs e)
         {
             await InvokeAsync(() => SearchQueryChanged.InvokeAsync(SearchQuery)); // 부모의 메서드에 검색어 전달
@@ -70,7 +79,7 @@ namespace VisualAcademy.Pages.Memos.Components
         #region Public Methods
         public void Dispose()
         {
-            debounceTimer.Dispose();
+            debounceTimer.Dispose(); // 타이머 개체 소멸 
         }
         #endregion
     }
