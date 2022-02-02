@@ -15,6 +15,20 @@ Visual Studio 2022를 사용하여 개발을 추천합니다.
 박용준 강사가 진행하는 Blazor Server 6.0 강의의 전체 소스는 현재 리포지토리에 들어 있습니다. 
 
 
+## Hawaso 솔루션에서 참조하는 NuGet 패키지 소스들
+
+다음 경로의 소스들이 Hawaso 솔루션에서 내부적으로 사용되고 있습니다. 
+
+* https://github.com/VisualAcademy/Dul
+* https://github.com/VisualAcademy/DulPager
+* https://github.com/VisualAcademy/VisualAcademy.Models.Uploads
+* https://github.com/VisualAcademy/VisualAcademy.Models.Replys
+* https://github.com/VisualAcademy/VisualAcademy.Models.Archives
+* https://github.com/VisualAcademy/VisualAcademy.Models.Notes
+* https://github.com/VisualAcademy/VisualAcademy.Models.Departments
+* https://github.com/VisualAcademy/VisualAcademy.Models.Libraries
+
+
 ## 강의 데모 사이트: 하와소닷컴
 
 다음 링크를 통해서 현재 소스의 실제 실행되는 모양을 볼 수 있습니다.
