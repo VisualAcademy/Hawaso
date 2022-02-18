@@ -1,5 +1,4 @@
-﻿using Hawaso.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -121,13 +120,15 @@ public class MemosController : ControllerBase
     {
         try
         {
+            #region 상세보기(GetById) 공식 코드 조각 
             var model = await _repository.GetByIdAsync(id);
             if (model == null)
             {
                 //return new NoContentResult(); // 204 No Content
-                return NotFound();
+                return NotFound(); // 404 Not Found
             }
             return Ok(model);
+            #endregion
         }
         catch (Exception e)
         {
