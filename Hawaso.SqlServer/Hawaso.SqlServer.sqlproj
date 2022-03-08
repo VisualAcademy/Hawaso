@@ -83,6 +83,7 @@
     <Folder Include="Departments" />
     <Folder Include="Memos\Archives" />
     <Folder Include="Projects" />
+    <Folder Include="dbo\Tables\Cascading" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -118,8 +119,6 @@
     <Build Include="dbo\Tables\Uploads\Uploads.sql" />
     <Build Include="dbo\Tables\Replys\00_Replys.sql" />
     <Build Include="Department.sql" />
-    <Build Include="Property.sql" />
-    <Build Include="Location.sql" />
     <Build Include="ReportType.sql" />
     <Build Include="CaseStatus.sql" />
     <Build Include="Memos\00_Memos.sql" />
@@ -134,11 +133,13 @@
     <Build Include="01_Identity\AspNetUsers.sql" />
     <Build Include="01_Identity\AspNetUserTokens.sql" />
     <Build Include="ReportSpecific.sql" />
-    <Build Include="Sublocation.sql" />
     <Build Include="Incidents.sql" />
     <Build Include="Departments\Departments.sql" />
     <Build Include="Memos\Archives\Archives.sql" />
     <Build Include="Projects\Projects.sql" />
     <Build Include="Departments\VisualAcademyDepartments.sql" />
+    <Build Include="dbo\Tables\Cascading\Location.sql" />
+    <Build Include="dbo\Tables\Cascading\Property.sql" />
+    <Build Include="dbo\Tables\Cascading\Sublocation.sql" />
   </ItemGroup>
 </Project>

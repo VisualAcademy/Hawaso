@@ -1,7 +1,7 @@
 ﻿// </> 
-using Hawaso.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using VisualAcademy.Models;
 
 namespace Hawaso.Data
 {
@@ -15,6 +15,12 @@ namespace Hawaso.Data
         }
 
         //public virtual DbSet<Department> Departments { get; set; }
+
+        #region Cascading DropDownList 
+        public DbSet<Property> Properties { get; set; } = null!;
+        public DbSet<Location> Locations { get; set; } = null!;
+        public DbSet<Sublocation> Sublocations { get; set; } = null!;
+        #endregion
     }
 
     // 원본 모양 
