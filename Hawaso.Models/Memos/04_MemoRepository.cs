@@ -515,6 +515,7 @@ namespace Hawaso.Models
         }
 
         //[4][17] 답변: MemoApp
+        // TODO: 답변 로직 수정할 것...
         public async Task<Memo> AddAsync(Memo model, int parentId)
         {
             #region 답변 관련 기능 추가된 영역
