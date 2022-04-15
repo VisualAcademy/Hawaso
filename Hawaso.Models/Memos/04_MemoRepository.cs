@@ -560,7 +560,8 @@ namespace Hawaso.Models
             var replys = await _context.Memos.Where(m => m.Ref == parentRef && m.RefOrder > (maxRefOrder + maxAnswerNum)).ToListAsync();
             foreach (var item in replys)
             {
-                item.RefOrder = item.RefOrder + 1;
+                //item.RefOrder = item.RefOrder + 1;
+                item.RefOrder++;
                 try
                 {
                     //_context.Memos.Attach(item);
