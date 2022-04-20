@@ -2,6 +2,11 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
+@*
+    // 현재 사용자가 로그인했는지 확인하는 명령어
+    SignInManager.IsSignedIn(User)
+*@
+
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
