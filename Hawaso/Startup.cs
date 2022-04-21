@@ -72,6 +72,11 @@ public class Startup
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
+        //// .NET 6 
+        //builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options => options.SignIn.RequireConfirmedAccount = true)
+        //    .AddEntityFrameworkStores<ApplicationDbContext>()
+        //    .AddDefaultTokenProviders();
+
         //[B] Identity 옵션 설정
         services.Configure<IdentityOptions>(options =>
         {
