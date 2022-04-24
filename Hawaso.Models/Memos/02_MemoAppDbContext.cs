@@ -9,7 +9,7 @@ namespace Hawaso.Models
     public class MemoAppDbContext : DbContext
     {
         #region NuGet Packages
-        // PM> Install-Package Microsoft.EntityFrameworkCore.SqlServer -Version 3.1.10
+        // PM> Install-Package Microsoft.EntityFrameworkCore.SqlServer -Version 3.1.24
         // PM> Install-Package Microsoft.Data.SqlClient
         // PM> Install-Package System.Configuration.ConfigurationManager
         // --OR--
