@@ -56,6 +56,6 @@ namespace Hawaso.Models
         }
 
         //[!] MemoApp 솔루션 관련 모든 테이블에 대한 참조 
-        public DbSet<Memo> Memos { get; set; }
+        public DbSet<Memo> Memos { get; set; } // = null!;
     }
 }

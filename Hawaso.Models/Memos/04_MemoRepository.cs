@@ -83,7 +83,7 @@ namespace Hawaso.Models
             {
                 if (model.ReadCount != null)
                 {
-                    model.ReadCount = model.ReadCount + 1;
+                    model.ReadCount++;
                 }
                 else
                 {
@@ -169,7 +169,7 @@ namespace Hawaso.Models
                 _context.Remove(model);
                 return await _context.SaveChangesAsync() > 0;
             }
-            catch (Exception ಠ_ಠ) // Disapproval Look
+            catch (Exception ಠ_ಠ) // ಠ_ಠ => Disapproval Look
             {
                 _logger?.LogError($"ERROR({nameof(DeleteAsync)}): {ಠ_ಠ.Message}");
             }
@@ -191,9 +191,10 @@ namespace Hawaso.Models
                 .ToListAsync();
 
             return new PagingResult<Memo>(models, totalRecords);
-        } 
+        }
         #endregion
 
+        #region [4][7] 부모: GetAllByParentIdAsync() 
         //[4][7] 부모
         public async Task<PagingResult<Memo>> GetAllByParentIdAsync(
             int pageIndex,
@@ -213,7 +214,9 @@ namespace Hawaso.Models
 
             return new PagingResult<Memo>(models, totalRecords);
         }
+        #endregion
 
+        #region [4][8] 상태: GetStatus()
         //[4][8] 상태
         public async Task<Tuple<int, int>> GetStatus(int parentId)
         {
@@ -226,7 +229,9 @@ namespace Hawaso.Models
 
             return new Tuple<int, int>(pinnedRecords, totalRecords); // (2, 10)
         }
+        #endregion
 
+        #region [4][9] 부모 삭제: DeleteAllByParentId()
         //[4][9] 부모 삭제
         public async Task<bool> DeleteAllByParentId(int parentId)
         {
@@ -251,7 +256,9 @@ namespace Hawaso.Models
 
             return false;
         }
+        #endregion
 
+        #region [4][10] 검색: SearchAllAsync()
         //[4][10] 검색
         public async Task<PagingResult<Memo>> SearchAllAsync(
             int pageIndex,
@@ -271,7 +278,9 @@ namespace Hawaso.Models
 
             return new PagingResult<Memo>(models, totalRecords);
         }
+        #endregion
 
+        #region [4][11] 부모 검색: SearchAllByParentIdAsync()
         //[4][11] 부모 검색
         public async Task<PagingResult<Memo>> SearchAllByParentIdAsync(
             int pageIndex,
@@ -294,7 +303,9 @@ namespace Hawaso.Models
 
             return new PagingResult<Memo>(models, totalRecords);
         }
+        #endregion
 
+        #region [4][12] 통계: GetMonthlyCreateCountAsync()
         //[4][12] 통계
         public async Task<SortedList<int, double>> GetMonthlyCreateCountAsync()
         {
@@ -324,7 +335,9 @@ namespace Hawaso.Models
 
             return await Task.FromResult(createCounts);
         }
+        #endregion
 
+        #region [4][13] 부모 페이징: GetAllByParentKeyAsync()
         //[4][13] 부모 페이징
         public async Task<PagingResult<Memo>> GetAllByParentKeyAsync(
             int pageIndex,
@@ -343,7 +356,9 @@ namespace Hawaso.Models
 
             return new PagingResult<Memo>(models, totalRecords);
         }
+        #endregion
 
+        #region [4][14] 부모 검색: SearchAllByParentKeyAsync()
         //[4][14] 부모 검색
         public async Task<PagingResult<Memo>> SearchAllByParentKeyAsync(
             int pageIndex,
@@ -357,7 +372,7 @@ namespace Hawaso.Models
                 .CountAsync();
             var models = await _context.Memos
                 .Where(m => m.ParentKey == parentKey)
-                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
+                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
@@ -365,7 +380,9 @@ namespace Hawaso.Models
 
             return new PagingResult<Memo>(models, totalRecords);
         }
+        #endregion
 
+        #region [4][15] 리스트(페이징, 검색, 정렬): GetArticlesAsync()
         //[4][15] 리스트(페이징, 검색, 정렬)
         public async Task<ArticleSet<Memo, int>> GetArticlesAsync<TParentIdentifier>(
             int pageIndex,
@@ -377,7 +394,7 @@ namespace Hawaso.Models
         {
             //var items = from m in _context.Memos select m; // 쿼리 구문(Query Syntax)
             //var items = _context.Memos.Select(m => m); // 메서드 구문(Method Syntax)
-            var items = 
+            var items =
                 _context.Memos
                     //.Include(me => me.Comments)
                     .AsQueryable(); // IQueryable<T>: Expressoin Tree 생성(Deferred Execution)
@@ -416,7 +433,7 @@ namespace Hawaso.Models
                     items = items
                         .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery));
                 }
-            } 
+            }
             #endregion
 
             // 총 레코드 수 계산
@@ -454,7 +471,7 @@ namespace Hawaso.Models
                     items = items
                         .OrderByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
                     break;
-            } 
+            }
             #endregion
 
             // Paging
@@ -462,8 +479,9 @@ namespace Hawaso.Models
 
             return new ArticleSet<Memo, int>(await items.AsNoTracking().ToListAsync(), totalCount);
         }
+        #endregion
 
-        //[4][16] 답변: ReplyApp
+        //[4][16] 답변: ReplyApp, AddAsync()
         public async Task<Memo> AddAsync(Memo model, int parentRef, int parentStep, int parentRefOrder)
         {
             #region 답변 관련 기능 추가된 영역
@@ -473,7 +491,7 @@ namespace Hawaso.Models
                 .ToListAsync();
             foreach (var item in replys)
             {
-                item.RefOrder = item.RefOrder + 1;
+                item.RefOrder++;
                 try
                 {
                     _context.Memos.Attach(item);
@@ -514,7 +532,8 @@ namespace Hawaso.Models
             return model;
         }
 
-        //[4][17] 답변: MemoApp
+        #region [4][17] 답변: MemoApp, AddAsync()
+        //[4][17] 답변: MemoApp, AddAsync()
         // TODO: 답변 로직 수정할 것...
         public async Task<Memo> AddAsync(Memo model, int parentId)
         {
@@ -552,7 +571,7 @@ namespace Hawaso.Models
                 var tmpParent = await _context.Memos.Where(m => m.Id == parentId).SingleOrDefaultAsync();
                 if (tmpParent != null)
                 {
-                    maxRefOrder = tmpParent.RefOrder; 
+                    maxRefOrder = tmpParent.RefOrder;
                 }
             }
 
@@ -596,7 +615,8 @@ namespace Hawaso.Models
             }
 
             return model;
-        }
+        } 
+        #endregion
 
         #region [4][6] 검색: GetByAsync()
         //[4][6] 검색: GetByAsync()

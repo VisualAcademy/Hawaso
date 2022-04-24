@@ -22,12 +22,12 @@ namespace Hawaso.Models
         /// <summary>
         /// 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성
         /// </summary>
-        public int? ParentId { get; set; }
+        public int? ParentId { get; set; } = default; 
 
         /// <summary>
         /// 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성
         /// </summary>
-        public string ParentKey { get; set; }
+        public string ParentKey { get; set; } = string.Empty;
 
         #region Auditable
         /// <summary>
@@ -49,7 +49,7 @@ namespace Hawaso.Models
         /// <summary>
         /// 수정일: LastModified, Modified
         /// </summary>
-        public DateTimeOffset? Modified { get; set; } 
+        public DateTimeOffset? Modified { get; set; }
         #endregion
 
         #region [0] 5W1H: 누가, 언제, 어디서, 무엇을, 어떻게, 왜
@@ -60,7 +60,7 @@ namespace Hawaso.Models
         [MaxLength(255)]
         [Display(Name = "작성자")]
         [Column(TypeName = "NVarChar(255)")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty; 
 
         /// <summary>
         /// 작성일
@@ -82,7 +82,7 @@ namespace Hawaso.Models
         [Required(ErrorMessage = "제목을 입력하세요.")]
         [Display(Name = "제목")]
         [Column(TypeName = "NVarChar(255)")]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty; 
 
         /// <summary>
         /// [4] 내용
@@ -177,29 +177,29 @@ namespace Hawaso.Models
         /// <summary>
         /// 참조(부모글, 참조 번호)
         /// </summary>
-        public int Ref { get; set; }
+        public int Ref { get; set; } = 0;
 
         /// <summary>
         /// 답변깊이(레벨, 들여쓰기)
         /// </summary>
-        public int Step { get; set; }
+        public int Step { get; set; } = 0;
 
         /// <summary>
         /// 답변(참조) 순서
         /// </summary>
-        public int RefOrder { get; set; }
+        public int RefOrder { get; set; } = 0;
 
         /// <summary>
         /// 답변수
         /// </summary>
         [Display(Name = "답변수")]
-        public int AnswerNum { get; set; }
+        public int AnswerNum { get; set; } = 0;
 
         /// <summary>
         /// 부모글 번호
         /// </summary>
         [Display(Name = "부모번호")]
-        public int ParentNum { get; set; }
+        public int ParentNum { get; set; } = 0; 
         #endregion
     }
 
