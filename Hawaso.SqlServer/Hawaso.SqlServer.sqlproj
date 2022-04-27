@@ -84,6 +84,7 @@
     <Folder Include="Memos\Archives" />
     <Folder Include="Projects" />
     <Folder Include="dbo\Tables\Cascading" />
+    <Folder Include="Zero" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -118,9 +119,6 @@
     <Build Include="Manufacturers\Manufacturers.sql" />
     <Build Include="dbo\Tables\Uploads\Uploads.sql" />
     <Build Include="dbo\Tables\Replys\00_Replys.sql" />
-    <Build Include="Department.sql" />
-    <Build Include="ReportType.sql" />
-    <Build Include="CaseStatus.sql" />
     <Build Include="Memos\00_Memos.sql" />
     <Build Include="dbo\Tables\Uploads\Libraries\Libraries.sql" />
     <Build Include="dbo\Tables\Uploads\BriefingLogs\BriefingLogs.sql" />
@@ -132,8 +130,6 @@
     <Build Include="01_Identity\AspNetUserRoles.sql" />
     <Build Include="01_Identity\AspNetUsers.sql" />
     <Build Include="01_Identity\AspNetUserTokens.sql" />
-    <Build Include="ReportSpecific.sql" />
-    <Build Include="Incidents.sql" />
     <Build Include="Departments\Departments.sql" />
     <Build Include="Memos\Archives\Archives.sql" />
     <Build Include="Projects\Projects.sql" />
@@ -141,5 +137,10 @@
     <Build Include="dbo\Tables\Cascading\Location.sql" />
     <Build Include="dbo\Tables\Cascading\Property.sql" />
     <Build Include="dbo\Tables\Cascading\Sublocation.sql" />
+    <Build Include="Zero\CaseStatus.sql" />
+    <Build Include="Zero\Department.sql" />
+    <Build Include="Zero\Incidents.sql" />
+    <Build Include="Zero\ReportSpecific.sql" />
+    <Build Include="Zero\ReportType.sql" />
   </ItemGroup>
 </Project>
