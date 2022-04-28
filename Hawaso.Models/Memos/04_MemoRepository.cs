@@ -477,6 +477,7 @@ namespace Hawaso.Models
             // Paging
             items = items.Skip(pageIndex * pageSize).Take(pageSize);
 
+            // AsNoTracking() 사용으로 성능 향상: https://docs.microsoft.com/ko-kr/ef/core/querying/tracking#no-tracking-queries
             return new ArticleSet<Memo, int>(await items.AsNoTracking().ToListAsync(), totalCount);
         }
         #endregion
@@ -713,6 +714,7 @@ namespace Hawaso.Models
             // Paging
             items = items.Skip(options.PageIndex * options.PageSize).Take(options.PageSize);
 
+            // AsNoTracking() 사용으로 성능 향상: https://docs.microsoft.com/ko-kr/ef/core/querying/tracking#no-tracking-queries
             return new ArticleSet<Memo, long>(await items.AsNoTracking().ToListAsync(), totalCount);
         }
         #endregion
