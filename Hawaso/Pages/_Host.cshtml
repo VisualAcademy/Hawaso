@@ -13,7 +13,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hawaso</title>
     <base href="~/" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+
+
+    @*environment 태그 헬퍼 사용 예제*@
+    <environment names="Development">
+        @*개발 환경에서는 전체 버전의 jQuery와 Bootstrap 사용*@
+        <link rel="stylesheet" href="css/bootstrap/bootstrap.css" />
+    </environment>
+    <environment names="Production">
+        @*운영 환경에서는 최소 버전의 jQuery와 Bootstrap 사용*@
+        <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    </environment>
+
+
     <link href="~/templates/dashboard/css/styles.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
 
