@@ -76,7 +76,10 @@ public partial class Manage
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        await GetUserIdAndUserName();
+        if (UserId == "" && UserName == "")
+        {
+            await GetUserIdAndUserName();
+        }
 
         await DisplayData();
     }

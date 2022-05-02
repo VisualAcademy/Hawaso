@@ -21,7 +21,10 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
-        await GetUserIdAndUserName();
+        if (UserId == "" && UserName == "")
+        {
+            await GetUserIdAndUserName();
+        }
     }
 
     #region Get UserId and UserName

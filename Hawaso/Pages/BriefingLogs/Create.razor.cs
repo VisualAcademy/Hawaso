@@ -63,7 +63,11 @@ namespace Hawaso.Pages.BriefingLogs
 
         protected override async Task OnInitializedAsync()
         {
-            await GetUserIdAndUserName();
+            if (UserId == "" && UserName == "")
+            {
+                await GetUserIdAndUserName();
+            }
+
             model.Name = UserName;
             model.DateTimeStarted = DateTime.Today;
         }
