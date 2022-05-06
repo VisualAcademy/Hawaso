@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DotNetSaleCore.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 
-namespace DotNetSaleCore.Models
+namespace Hawaso.Models
 {
     /// <summary>
     /// [5] DbContext Class

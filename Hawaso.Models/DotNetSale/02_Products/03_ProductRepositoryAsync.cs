@@ -1,4 +1,5 @@
 ﻿using Dul.Domain.Common;
+using Hawaso.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;

@@ -4,7 +4,6 @@ using DotNetNote.Services;
 using DotNetSaleCore.Models;
 using Hawaso.Areas.Identity;
 using Hawaso.Data;
-
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
 using Hawaso.Settings;
