@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Hawaso.Controllers
+namespace Hawaso.Controllers;
+
+public class AboutController : Controller
 {
-    public class AboutController : Controller
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
     }
 }
