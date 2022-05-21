@@ -10,10 +10,7 @@ public class HomeController : Controller
 
     public HomeController(ILogger<HomeController> logger) => _logger = logger;
 
-    public IActionResult Index()
-    {
-        return View();
-    }
+    public IActionResult Index() => View();
 
     public IActionResult Privacy()
     {
