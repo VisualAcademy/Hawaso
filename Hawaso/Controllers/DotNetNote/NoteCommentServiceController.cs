@@ -2,20 +2,19 @@
 using Microsoft.AspNetCore.Mvc;
 using Hawaso.Models.Notes;
 
-namespace Hawaso.Controllers
+namespace Hawaso.Controllers;
+
+[Route("api/[controller]")]
+public class NoteCommentServiceController : Controller
 {
-    [Route("api/[controller]")]
-    public class NoteCommentServiceController : Controller
+    private INoteCommentRepository _repository;
+
+    public NoteCommentServiceController(INoteCommentRepository repository)
     {
-        private INoteCommentRepository _repository;
-
-        public NoteCommentServiceController(INoteCommentRepository repository)
-        {
-            _repository = repository;
-        }
-
-        // 최근 댓글 리스트 반환
-        [HttpGet]
-        public IEnumerable<NoteComment> Get() => _repository.GetRecentComments();
+        _repository = repository;
     }
+
+    // 최근 댓글 리스트 반환
+    [HttpGet]
+    public IEnumerable<NoteComment> Get() => _repository.GetRecentComments();
 }
