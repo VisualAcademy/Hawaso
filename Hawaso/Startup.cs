@@ -320,8 +320,11 @@ public class Startup
 
 
 
+
+        #region Azure Web App 고유 경로 요청시 www.hawaso.com 경로로 영구 이동
         // Azure Web App 고유 경로 요청시 www.hawaso.com 경로로 영구 이동 
         app.UseRewriter(new RewriteOptions().Add(new RedirectAzureWebsitesRule()).AddRedirectToWwwPermanent());
+        #endregion
 
 
 
@@ -467,8 +470,10 @@ public class Startup
 
 
 
+#region RedirectAzureWebsitesRule: 메인(닷컴) 도메인으로 이동시키기
 /// <summary>
-/// 메인 도메인으로 이동시키기 
+/// 메인(닷컴) 도메인으로 이동시키기 
+/// "hawaso.azurewebsites.net" 요청시 "www.hawaso.com" 경로로 이동 
 /// </summary>
 public class RedirectAzureWebsitesRule : IRule
 {
@@ -492,4 +497,4 @@ public class RedirectAzureWebsitesRule : IRule
         }
     }
 }
-
+#endregion
