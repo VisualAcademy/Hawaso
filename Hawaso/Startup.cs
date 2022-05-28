@@ -6,13 +6,13 @@ using Hawaso.Areas.Identity;
 using Hawaso.Data;
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
+using Hawaso.Rules;
 using Hawaso.Settings;
 using MachineTypeApp.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Rewrite;
@@ -20,12 +20,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Net.Http.Headers;
 using NoticeApp.Models;
 using ReplyApp.Managers;
 using System;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using VisualAcademy.Models.Replys;
 using Zero.Models;
@@ -467,34 +465,3 @@ public class Startup
         }
     }
 }
-
-
-
-#region RedirectAzureWebsitesRule: 메인(닷컴) 도메인으로 이동시키기
-/// <summary>
-/// 메인(닷컴) 도메인으로 이동시키기 
-/// "hawaso.azurewebsites.net" 요청시 "www.hawaso.com" 경로로 이동 
-/// </summary>
-public class RedirectAzureWebsitesRule : IRule
-{
-    public int StatusCode { get; } = (int)HttpStatusCode.MovedPermanently;
-
-    public void ApplyRule(RewriteContext context)
-    {
-        HttpRequest request = context.HttpContext.Request;
-        HostString host = context.HttpContext.Request.Host;
-
-        if (host.HasValue && host.Value == "hawaso.azurewebsites.net")
-        {
-            HttpResponse response = context.HttpContext.Response;
-            response.StatusCode = StatusCode;
-            response.Headers[HeaderNames.Location] = request.Scheme + "://" + "www.hawaso.com" + request.PathBase + request.Path + request.QueryString;
-            context.Result = RuleResult.EndResponse;
-        }
-        else
-        {
-            context.Result = RuleResult.ContinueRules;
-        }
-    }
-}
-#endregion
