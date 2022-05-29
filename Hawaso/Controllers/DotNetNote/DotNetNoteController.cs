@@ -719,10 +719,7 @@ namespace Hawaso.Controllers
             });
         }
 
-        public IActionResult MainListPage()
-        {
-            return View(); 
-        }
+        public IActionResult MainListPage() => View();
 
         /// <summary>
         /// 로그인 페이지의 팝업 공지사항 목록에 사용될 공지사항 목록 조회
