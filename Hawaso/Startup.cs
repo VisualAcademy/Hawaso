@@ -1,12 +1,12 @@
 ﻿using Blazored.Toast;
 using DotNetNote.Models;
-using DotNetNote.Services;
 using DotNetSaleCore.Models;
 using Hawaso.Areas.Identity;
 using Hawaso.Data;
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
 using Hawaso.Rules;
+using Hawaso.Services;
 using Hawaso.Settings;
 using MachineTypeApp.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;

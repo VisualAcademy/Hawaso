@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Threading.Tasks;
 
-namespace DotNetNote.Services
+namespace Hawaso.Services
 {
     // ASP.NET Core Identity 인증과 권한 
     // Abstractions: Interfaces => IEmailSender
