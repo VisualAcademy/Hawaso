@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Razor.TagHelpers;
 using System.Threading.Tasks;
 
-namespace DotNetNote.TagHelpers
+namespace Hawaso.TagHelpers
 {
     // <el>Help<el>
     //[HtmlTargetElement("email-link")]
@@ -14,7 +14,7 @@ namespace DotNetNote.TagHelpers
         {
             output.TagName = "a";
 
-            string originText = 
+            string originText =
                 (await output.GetChildContentAsync()).GetContent();
 
             string emailString = $"{originText}@{domain}";
