@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChartJs.Blazor.ChartJS.BarChart;
 using ChartJs.Blazor.ChartJS.BarChart.Axes;
@@ -7,10 +6,8 @@ using ChartJs.Blazor.ChartJS.Common.Axes;
 using ChartJs.Blazor.ChartJS.Common.Axes.Ticks;
 using ChartJs.Blazor.ChartJS.Common.Properties;
 using ChartJs.Blazor.ChartJS.Common.Wrappers;
-using ChartJs.Blazor.Charts;
 using ChartJs.Blazor.Util;
 using Microsoft.AspNetCore.Components;
-using VisualAcademy.Models.Uploads;
 
 namespace Hawaso.Pages.Uploads
 {
