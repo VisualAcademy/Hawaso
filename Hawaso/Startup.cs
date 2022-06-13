@@ -3,6 +3,7 @@ using DotNetNote.Models;
 using DotNetSaleCore.Models;
 using Hawaso.Areas.Identity;
 using Hawaso.Data;
+using Hawaso.Extensions.BriefingLogs;
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
 using Hawaso.Rules;

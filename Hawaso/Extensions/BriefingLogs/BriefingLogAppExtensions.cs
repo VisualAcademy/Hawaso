@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Zero.Models;
 
-namespace Zero.Models
+namespace Hawaso.Extensions.BriefingLogs
 {
     public static class BriefingLogAppExtensions
     {
