@@ -121,6 +121,8 @@ namespace Hawaso.Models
         {
             try
             {
+                // 강의에서는 AutoMapper NuGet 사용 X
+
                 var old = _context.Memos.Find(model.Id);
 
                 old.Name = model.Name;
