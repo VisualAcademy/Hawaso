@@ -1,4 +1,7 @@
-﻿namespace Hawaso.Pages.Archives.Components
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+
+namespace Hawaso.Pages.Archives.Components
 {
     public partial class DeleteDialog
     {
