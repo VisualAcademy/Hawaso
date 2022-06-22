@@ -85,6 +85,7 @@
     <Folder Include="Projects" />
     <Folder Include="dbo\Tables\Cascading" />
     <Folder Include="Zero" />
+    <Folder Include="Memos\Purges" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -142,5 +143,7 @@
     <Build Include="Zero\Incidents.sql" />
     <Build Include="Zero\ReportSpecific.sql" />
     <Build Include="Zero\ReportType.sql" />
+    <Build Include="Memos\Purges\Purges.sql" />
+    <Build Include="Memos\Purges\PurgesArchives.sql" />
   </ItemGroup>
 </Project>

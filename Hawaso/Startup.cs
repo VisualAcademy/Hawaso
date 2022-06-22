@@ -192,6 +192,8 @@ public class Startup
         // MachineTypeApp 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
         services.AddDependencyInjectionContainerForMachineTypeApp(Configuration.GetConnectionString("DefaultConnection"));
 
+
+
         AddDependencyInjectionContainerForUploadApp(services);
         AddDependencyInjectionContainerForReplyApp(services);
 
@@ -203,6 +205,8 @@ public class Startup
         //{
         //    e.MaximumReceiveMessageSize = 102400000;
         //});
+
+        services.AddDependencyInjectionContainerForPurgeApp(Configuration.GetConnectionString("DefaultConnection")); // Test
     }
 
     private void AddDependencyInjectionContainerForUploadApp(IServiceCollection services)
