@@ -1,5 +1,4 @@
-﻿using Hawaso.Pages.Products.Components;
-using DotNetSaleCore.Models;
+﻿using DotNetSaleCore.Models;
 using DulPager;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
