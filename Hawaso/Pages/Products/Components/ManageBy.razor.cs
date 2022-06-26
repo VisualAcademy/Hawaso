@@ -5,132 +5,131 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Hawaso.Pages.Products.Components
+namespace Hawaso.Pages.Products.Components;
+
+public partial class ManageBy
 {
-    public partial class ManageBy
+    [Parameter]
+    public int CategoryId { get; set; }
+
+    [Inject]
+    public IProductRepositoryAsync ProductRepositoryAsync { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    private DulPagerBase pager = new DulPagerBase()
     {
-        [Parameter]
-        public int CategoryId { get; set; }
+        PageNumber = 1,
+        PageIndex = 0,
+        PageSize = 3,
+        PagerButtonCount = 5
+    };
 
-        [Inject]
-        public IProductRepositoryAsync ProductRepositoryAsync { get; set; }
+    private List<Product> Products;
 
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
+    public string EditorFormTitle { get; set; } = "ADD";
 
-        private DulPagerBase pager = new DulPagerBase()
-        {
-            PageNumber = 1,
-            PageIndex = 0,
-            PageSize = 3,
-            PagerButtonCount = 5
-        };
+    public Product Product { get; set; } = new Product();
 
-        private List<Product> Products;
+    public ProductEditorForm ProductEditorForm { get; set; }
 
-        public string EditorFormTitle { get; set; } = "ADD";
+    public ProductDeleteDialog ProductDeleteDialog { get; set; }
 
-        public Product Product { get; set; } = new Product();
+    public bool IsInlineDialogShow { get; set; }
 
-        public ProductEditorForm ProductEditorForm { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        await DisplayData();
+    }
 
-        public ProductDeleteDialog ProductDeleteDialog { get; set; }
+    private async Task DisplayData()
+    {
+        var articleSet = await ProductRepositoryAsync.GetAllByParentIdAsync(pager.PageIndex, pager.PageSize, CategoryId);
+        pager.RecordCount = articleSet.TotalRecords;
+        Products = articleSet.Records.ToList();
+    }
 
-        public bool IsInlineDialogShow { get; set; }
+    private async void PageIndexChanged(int pageIndex)
+    {
+        pager.PageIndex = pageIndex;
+        pager.PageNumber = pageIndex + 1;
 
-        protected override async Task OnInitializedAsync()
-        {
-            await DisplayData();
-        }
+        await DisplayData();
 
-        private async Task DisplayData()
-        {
-            var articleSet = await ProductRepositoryAsync.GetAllByParentIdAsync(pager.PageIndex, pager.PageSize, CategoryId);
-            pager.RecordCount = articleSet.TotalRecords;
-            Products = articleSet.Records.ToList();
-        }
+        StateHasChanged();
+    }
 
-        private async void PageIndexChanged(int pageIndex)
-        {
-            pager.PageIndex = pageIndex;
-            pager.PageNumber = pageIndex + 1;
+    private void btnProductName_Click(int ProductId)
+    {
+        NavigationManager.NavigateTo($"/Products/Details/{ProductId}");
+    }
 
-            await DisplayData();
+    protected void btnCreate_Click()
+    {
+        EditorFormTitle = "ADD";
+        Product = new Product();
 
-            StateHasChanged();
-        }
+        ProductEditorForm.Show(); 
+    }
 
-        private void btnProductName_Click(int ProductId)
-        {
-            NavigationManager.NavigateTo($"/Products/Details/{ProductId}");
-        }
+    protected async void SaveOrUpdated()
+    {
+        ProductEditorForm.Close();
 
-        protected void btnCreate_Click()
-        {
-            EditorFormTitle = "ADD";
-            Product = new Product();
+        await DisplayData();
 
-            ProductEditorForm.Show(); 
-        }
+        StateHasChanged();
+    }
 
-        protected async void SaveOrUpdated()
-        {
-            ProductEditorForm.Close();
+    protected void EditBy(Product Product)
+    {
+        EditorFormTitle = "EDIT";
+        this.Product = Product; 
 
-            await DisplayData();
+        ProductEditorForm.Show();
+    }
 
-            StateHasChanged();
-        }
+    protected void DeleteBy(Product Product)
+    {
+        this.Product = Product;
+        ProductDeleteDialog.Show();
+    }
 
-        protected void EditBy(Product Product)
-        {
-            EditorFormTitle = "EDIT";
-            this.Product = Product; 
+    protected async void btnDelete_Click()
+    {
+        await ProductRepositoryAsync.DeleteAsync(Product.ProductId);
 
-            ProductEditorForm.Show();
-        }
+        ProductDeleteDialog.Close();
 
-        protected void DeleteBy(Product Product)
-        {
-            this.Product = Product;
-            ProductDeleteDialog.Show();
-        }
+        Product = new Product(); 
 
-        protected async void btnDelete_Click()
-        {
-            await ProductRepositoryAsync.DeleteAsync(Product.ProductId);
+        await DisplayData();
 
-            ProductDeleteDialog.Close();
+        StateHasChanged();
+    }
 
-            Product = new Product(); 
+    protected void ToggleBy(Product product)
+    {
+        this.Product = product;
+        IsInlineDialogShow = true;
+    }
 
-            await DisplayData();
+    protected async void btnToggleAbsence_Click()
+    {
+        Product.Absence = (Product?.Absence == 0) ? 1 : 0; // 토글
 
-            StateHasChanged();
-        }
+        await ProductRepositoryAsync.EditAsync(Product);
 
-        protected void ToggleBy(Product product)
-        {
-            this.Product = product;
-            IsInlineDialogShow = true;
-        }
+        await DisplayData();
 
-        protected async void btnToggleAbsence_Click()
-        {
-            Product.Absence = (Product?.Absence == 0) ? 1 : 0; // 토글
+        IsInlineDialogShow = false;
+        StateHasChanged();
+    }
 
-            await ProductRepositoryAsync.EditAsync(Product);
-
-            await DisplayData();
-
-            IsInlineDialogShow = false;
-            StateHasChanged();
-        }
-
-        protected void btnClose_Click()
-        {
-            IsInlineDialogShow = false;
-            Product = new Product(); 
-        }
+    protected void btnClose_Click()
+    {
+        IsInlineDialogShow = false;
+        Product = new Product(); 
     }
 }
