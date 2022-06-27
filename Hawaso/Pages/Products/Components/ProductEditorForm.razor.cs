@@ -32,10 +32,7 @@ public partial class ProductEditorForm
 
     public List<Category> Categories { get; set; } = new List<Category>();
 
-    public void Show()
-    {
-        IsShow = true;
-    }
+    public void Show() => IsShow = true;
 
     public void Close()
     {
