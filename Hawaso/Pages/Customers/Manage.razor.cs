@@ -6,130 +6,129 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Hawaso.Pages.Customers
+namespace Hawaso.Pages.Customers;
+
+public partial class Manage
 {
-    public partial class Manage
+    [Inject]
+    public ICustomerRepository CustomerRepositoryAsync { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    private DulPagerBase pager = new DulPagerBase()
     {
-        [Inject]
-        public ICustomerRepository CustomerRepositoryAsync { get; set; }
+        PageNumber = 1,
+        PageIndex = 0,
+        PageSize = 3,
+        PagerButtonCount = 5
+    };
 
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
+    private List<Customer> customers;
 
-        private DulPagerBase pager = new DulPagerBase()
-        {
-            PageNumber = 1,
-            PageIndex = 0,
-            PageSize = 3,
-            PagerButtonCount = 5
-        };
+    public string EditorFormTitle { get; set; } = "ADD";
 
-        private List<Customer> customers;
+    public Customer Customer { get; set; } = new Customer();
 
-        public string EditorFormTitle { get; set; } = "ADD";
+    public CustomerEditorForm CustomerEditorForm { get; set; }
 
-        public Customer Customer { get; set; } = new Customer();
+    public CustomerDeleteDialog CustomerDeleteDialog { get; set; }
 
-        public CustomerEditorForm CustomerEditorForm { get; set; }
+    public bool IsInlineDialogShow { get; set; }
 
-        public CustomerDeleteDialog CustomerDeleteDialog { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        await DisplayData();
+    }
 
-        public bool IsInlineDialogShow { get; set; }
+    private async Task DisplayData()
+    {
+        //await Task.Delay(3000);
+        var articleSet = await CustomerRepositoryAsync.GetAllAsync(pager.PageIndex, pager.PageSize);
+        pager.RecordCount = articleSet.TotalRecords;
+        customers = articleSet.Records.ToList();
+    }
 
-        protected override async Task OnInitializedAsync()
-        {
-            await DisplayData();
-        }
+    private async void PageIndexChanged(int pageIndex)
+    {
+        pager.PageIndex = pageIndex;
+        pager.PageNumber = pageIndex + 1;
 
-        private async Task DisplayData()
-        {
-            //await Task.Delay(3000);
-            var articleSet = await CustomerRepositoryAsync.GetAllAsync(pager.PageIndex, pager.PageSize);
-            pager.RecordCount = articleSet.TotalRecords;
-            customers = articleSet.Records.ToList();
-        }
+        await DisplayData();
 
-        private async void PageIndexChanged(int pageIndex)
-        {
-            pager.PageIndex = pageIndex;
-            pager.PageNumber = pageIndex + 1;
+        StateHasChanged();
+    }
 
-            await DisplayData();
+    private void btnCustomerName_Click(int customerId)
+    {
+        NavigationManager.NavigateTo($"/Customers/Details/{customerId}");
+    }
 
-            StateHasChanged();
-        }
+    protected void btnCreate_Click()
+    {
+        EditorFormTitle = "ADD";
+        Customer = new Customer();
 
-        private void btnCustomerName_Click(int customerId)
-        {
-            NavigationManager.NavigateTo($"/Customers/Details/{customerId}");
-        }
+        CustomerEditorForm.Show(); 
+    }
 
-        protected void btnCreate_Click()
-        {
-            EditorFormTitle = "ADD";
-            Customer = new Customer();
+    protected async void SaveOrUpdated()
+    {
+        CustomerEditorForm.Close();
 
-            CustomerEditorForm.Show(); 
-        }
+        await DisplayData();
 
-        protected async void SaveOrUpdated()
-        {
-            CustomerEditorForm.Close();
+        StateHasChanged();
+    }
 
-            await DisplayData();
+    protected void EditBy(Customer customer)
+    {
+        EditorFormTitle = "EDIT";
+        Customer = customer; 
 
-            StateHasChanged();
-        }
+        CustomerEditorForm.Show();
+    }
 
-        protected void EditBy(Customer customer)
-        {
-            EditorFormTitle = "EDIT";
-            Customer = customer; 
+    protected void DeleteBy(Customer customer)
+    {
+        Customer = customer;
+        CustomerDeleteDialog.Show();
+    }
 
-            CustomerEditorForm.Show();
-        }
+    protected async void btnDelete_Click()
+    {
+        await CustomerRepositoryAsync.DeleteAsync(Customer.CustomerId);
 
-        protected void DeleteBy(Customer customer)
-        {
-            Customer = customer;
-            CustomerDeleteDialog.Show();
-        }
+        CustomerDeleteDialog.Close();
 
-        protected async void btnDelete_Click()
-        {
-            await CustomerRepositoryAsync.DeleteAsync(Customer.CustomerId);
+        Customer = new Customer(); 
 
-            CustomerDeleteDialog.Close();
+        await DisplayData();
 
-            Customer = new Customer(); 
+        StateHasChanged();
+    }
 
-            await DisplayData();
+    protected void ToggleBy(Customer customer)
+    {
+        Customer = customer;
 
-            StateHasChanged();
-        }
+        IsInlineDialogShow = true;
+    }
 
-        protected void ToggleBy(Customer customer)
-        {
-            Customer = customer;
+    protected async void btnToggleGender_Click()
+    {
+        Customer.Gender = (Customer.Gender == "Male" ? "Female" : "Male");
+        await CustomerRepositoryAsync.EditAsync(Customer);
 
-            IsInlineDialogShow = true;
-        }
+        await DisplayData();
 
-        protected async void btnToggleGender_Click()
-        {
-            Customer.Gender = (Customer.Gender == "Male" ? "Female" : "Male");
-            await CustomerRepositoryAsync.EditAsync(Customer);
+        IsInlineDialogShow = false;
+        StateHasChanged();
+    }
 
-            await DisplayData();
-
-            IsInlineDialogShow = false;
-            StateHasChanged();
-        }
-
-        protected void btnClose_Click()
-        {
-            IsInlineDialogShow = false;
-            Customer = new Customer(); 
-        }
+    protected void btnClose_Click()
+    {
+        IsInlineDialogShow = false;
+        Customer = new Customer(); 
     }
 }
