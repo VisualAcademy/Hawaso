@@ -63,9 +63,6 @@ public partial class SearchBox : IDisposable
     #endregion
 
     #region Public Methods
-    public void Dispose()
-    {
-        debounceTimer.Dispose();
-    }
+    public void Dispose() => debounceTimer.Dispose();
     #endregion
 }
