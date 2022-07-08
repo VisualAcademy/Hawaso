@@ -23,10 +23,7 @@ public partial class ModalForm
     /// <summary>
     /// 폼 닫기
     /// </summary>
-    public void Hide()
-    {
-        IsShow = false; // 현재 인라인 모달 폼 숨기기
-    }
+    public void Hide() => IsShow = false; // 현재 인라인 모달 폼 숨기기
     #endregion
 
     #region Parameters
