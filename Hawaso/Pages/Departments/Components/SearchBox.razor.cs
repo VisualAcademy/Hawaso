@@ -51,10 +51,7 @@ public partial class SearchBox : IDisposable
     #endregion
 
     #region Event Handlers
-    protected void Search()
-    {
-        SearchQueryChanged.InvokeAsync(SearchQuery); // 부모의 메서드에 검색어 전달
-    }
+    protected void Search() => SearchQueryChanged.InvokeAsync(SearchQuery); // 부모의 메서드에 검색어 전달
 
     protected async void SearchHandler(object source, ElapsedEventArgs e)
     {
