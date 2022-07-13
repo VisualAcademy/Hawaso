@@ -15,7 +15,7 @@ namespace Hawaso.Pages.Products
         public NavigationManager NavigationManager { get; set; }
 
         [Inject]
-        public ICategoryRepository CategoryRepositoryAsync { get; set; }
+        public ICategoryRepository RepositoryReference { get; set; }
 
         private Product Product = new Product();
 
@@ -34,7 +34,7 @@ namespace Hawaso.Pages.Products
 
         protected override async Task OnInitializedAsync()
         {
-            Categories = await CategoryRepositoryAsync.GetAllAsync(); 
+            Categories = await RepositoryReference.GetAllAsync(); 
         }
     }
 }
