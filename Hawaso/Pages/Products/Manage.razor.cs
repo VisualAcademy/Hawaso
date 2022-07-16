@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Hawaso.Pages.Products
+namespace VisualAcademy.Pages.Products
 {
     public partial class Manage
     {
