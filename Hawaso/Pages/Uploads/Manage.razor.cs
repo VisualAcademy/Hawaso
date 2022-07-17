@@ -8,7 +8,6 @@ using OfficeOpenXml;
 using System.Drawing;
 using OfficeOpenXml.Style;
 using System;
-using VisualAcademy.Models.Uploads;
 using VisualAcademy.Models.Replys;
 
 namespace Hawaso.Pages.Uploads
