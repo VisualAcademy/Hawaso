@@ -99,10 +99,7 @@ namespace Hawaso.Pages.Replys
             StateHasChanged(); // Refresh
         }
 
-        protected void NameClick(int id)
-        {
-            NavigationManagerInjector.NavigateTo($"/Replys/Details/{id}");
-        }
+        protected void NameClick(int id) => NavigationManagerInjector.NavigateTo($"/Replys/Details/{id}");
 
         protected async void PageIndexChanged(int pageIndex)
         {
