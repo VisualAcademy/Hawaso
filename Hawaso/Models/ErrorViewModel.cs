@@ -1,5 +1,3 @@
-using System;
-
 namespace Hawaso.Models
 {
     public class ErrorViewModel
