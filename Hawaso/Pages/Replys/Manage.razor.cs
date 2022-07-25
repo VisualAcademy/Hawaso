@@ -51,7 +51,7 @@ public partial class Manage
     /// <summary>
     /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
     /// </summary>
-    public Components.DeleteDialog DeleteDialogReference { get; set; }
+    public Hawaso.Replys.Components.DeleteDialog DeleteDialogReference { get; set; }
     
     protected List<Reply> models;
 

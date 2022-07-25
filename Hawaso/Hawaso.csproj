@@ -43,6 +43,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hawaso.Models\Hawaso.Models.csproj" />
+    <ProjectReference Include="..\Hawaso.Replys.Components\Hawaso.Replys.Components.csproj" />
   </ItemGroup>
 
 </Project>

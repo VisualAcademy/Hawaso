@@ -11,7 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hawaso.Models.Tests", "Hawa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hawaso", "Hawaso\Hawaso.csproj", "{F0F7BF1A-17FF-431D-9781-827DDD95E65D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hawaso.Tests", "Hawaso.Tests\Hawaso.Tests.csproj", "{EDCD290D-8D6F-4467-9528-F567D0AEFFAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hawaso.Tests", "Hawaso.Tests\Hawaso.Tests.csproj", "{EDCD290D-8D6F-4467-9528-F567D0AEFFAF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{422126A8-A857-4503-834F-8E3CB61405C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hawaso.Replys.Components", "Hawaso.Replys.Components\Hawaso.Replys.Components.csproj", "{50530EE8-62E0-46C4-BDDD-505BC3986EFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,9 +45,16 @@ Global
 		{EDCD290D-8D6F-4467-9528-F567D0AEFFAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDCD290D-8D6F-4467-9528-F567D0AEFFAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDCD290D-8D6F-4467-9528-F567D0AEFFAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50530EE8-62E0-46C4-BDDD-505BC3986EFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50530EE8-62E0-46C4-BDDD-505BC3986EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50530EE8-62E0-46C4-BDDD-505BC3986EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50530EE8-62E0-46C4-BDDD-505BC3986EFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{50530EE8-62E0-46C4-BDDD-505BC3986EFA} = {422126A8-A857-4503-834F-8E3CB61405C1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7F86D6CB-300E-4E37-A365-2AEE99055855}
