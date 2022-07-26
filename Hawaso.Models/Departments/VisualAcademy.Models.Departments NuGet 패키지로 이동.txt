@@ -1,1 +1,2 @@
-﻿
+﻿https://github.com/VisualAcademy/VisualAcademy.Models.Departments
+
