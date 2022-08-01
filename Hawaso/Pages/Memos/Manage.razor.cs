@@ -118,10 +118,7 @@ namespace VisualAcademy.Pages.Memos
             StateHasChanged(); // Refresh
         }
 
-        protected void NameClick(long id)
-        {
-            NavigationManagerInjector.NavigateTo($"/Memos/Details/{id}");
-        }
+        protected void NameClick(long id) => NavigationManagerInjector.NavigateTo($"/Memos/Details/{id}");
 
         protected async void PageIndexChanged(int pageIndex)
         {
