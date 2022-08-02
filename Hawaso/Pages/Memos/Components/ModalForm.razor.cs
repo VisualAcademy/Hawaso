@@ -1,5 +1,4 @@
 ﻿using BlazorInputFile;
-using Hawaso.Models;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Linq;
@@ -130,7 +129,7 @@ namespace VisualAcademy.Pages.Memos.Components
             ModelSender.Title = ModelEdit.Title;
             ModelSender.Content = ModelEdit.Content;
             ModelSender.Password = ModelEdit.Password;
-            ModelSender.Encoding = ModelEdit.Encoding; 
+            ModelSender.Encoding = ModelEdit.Encoding;
 
             #region 파일 업로드 관련 추가 코드 영역
             if (selectedFiles != null && selectedFiles.Length > 0)
