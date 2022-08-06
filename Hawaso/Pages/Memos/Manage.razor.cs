@@ -16,20 +16,24 @@ namespace VisualAcademy.Pages.Memos
     public partial class Manage
     {
         #region Parameters
+        // 정수 형식의 Id 값을 받는 공통 속성 이름
         [Parameter]
         public int ParentId { get; set; } = 0;
 
+        // 문자열 형식의 Id 값을 받는 공통 속성 이름 
         [Parameter]
         public string ParentKey { get; set; } = "";
         #endregion
 
         #region Injectors
+        // NavigationManager를 참조해서 사용하기에 Injector 접미사를 붙임 
         [Inject]
         public NavigationManager NavigationManagerInjector { get; set; }
 
         [Inject]
         public IJSRuntime JSRuntimeInjector { get; set; }
 
+        // Repository 참조는 Reference 접미사를 붙여봄 
         [Inject]
         public IMemoRepository RepositoryReference { get; set; }
 
