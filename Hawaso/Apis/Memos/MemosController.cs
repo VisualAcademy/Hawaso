@@ -20,7 +20,7 @@ public class MemosController : ControllerBase
 
     public MemosController(IMemoRepository repository, ILoggerFactory loggerFactory)
     {
-        this._repository = repository ?? throw new ArgumentNullException(nameof(MemosController));
+        _repository = repository ?? throw new ArgumentNullException(nameof(MemosController));
         this._logger = loggerFactory.CreateLogger(nameof(MemosController));
     }
 
