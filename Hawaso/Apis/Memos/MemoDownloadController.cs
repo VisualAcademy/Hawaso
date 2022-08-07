@@ -12,6 +12,7 @@ namespace Hawaso.Controllers;
 [Authorize]
 public class MemoDownloadController : Controller
 {
+    private string moduleName = "Memos";
     private readonly IMemoRepository _repository;
     private readonly IMemoFileStorageManager _fileStorageManager;
 
@@ -36,7 +37,7 @@ public class MemoDownloadController : Controller
         {
             if (!string.IsNullOrEmpty(model.FileName))
             {
-                byte[] fileBytes = await _fileStorageManager.DownloadAsync(model.FileName, "Memos");
+                byte[] fileBytes = await _fileStorageManager.DownloadAsync(model.FileName, moduleName);
                 if (fileBytes != null)
                 {
                     model.DownCount = model.DownCount + 1;
@@ -67,7 +68,7 @@ public class MemoDownloadController : Controller
         {
             using (var package = new ExcelPackage())
             {
-                var worksheet = package.Workbook.Worksheets.Add("Memos");
+                var worksheet = package.Workbook.Worksheets.Add(moduleName);
 
                 var tableBody = worksheet.Cells["A1:A1"].LoadFromCollection((from m in models select new { m.Id, Created = m.Created?.LocalDateTime.ToString(), m.Name, m.Title, m.DownCount, m.FileName }), true);
 
@@ -90,7 +91,7 @@ public class MemoDownloadController : Controller
                 header.Style.Font.Color.SetColor(Color.White);
                 header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
 
-                return File(package.GetAsByteArray(), "application/octet-stream", $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_Memos.xlsx");
+                return File(package.GetAsByteArray(), "application/octet-stream", $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_{moduleName}.xlsx");
             }
         }
         return Redirect("/");
