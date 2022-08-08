@@ -21,7 +21,7 @@ public class MemosController : ControllerBase
     public MemosController(IMemoRepository repository, ILoggerFactory loggerFactory)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(MemosController));
-        this._logger = loggerFactory.CreateLogger(nameof(MemosController));
+        _logger = loggerFactory.CreateLogger(nameof(MemosController));
     }
 
     #region 시험
