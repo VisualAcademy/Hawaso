@@ -29,7 +29,7 @@ public class MemosController : ControllerBase
     public IEnumerable<Memo> Test() => Enumerable.Empty<Memo>();
     #endregion
 
-    #region 입력
+    #region 입력: Add
     // 입력
     // POST api/Memos
     [HttpPost] // @PostMapping
@@ -85,7 +85,7 @@ public class MemosController : ControllerBase
     }
     #endregion
 
-    #region 출력
+    #region 출력: GetAll
     // 출력
     // GET api/Memos
     [HttpGet] // [HttpGet("[action]")] // @GetMapping
@@ -112,7 +112,7 @@ public class MemosController : ControllerBase
     }
     #endregion
 
-    #region 상세
+    #region 상세: GetById
     // 상세
     // GET api/Memos/123
     [HttpGet("{id:int}", Name = nameof(GetMemoById))] // Name 속성으로 RouteName 설정
@@ -138,7 +138,7 @@ public class MemosController : ControllerBase
     }
     #endregion
 
-    #region 수정
+    #region 수정: Update
     // 수정
     // PUT api/Memos/123
     [HttpPut("{id}")] // @PutMapping
@@ -190,7 +190,7 @@ public class MemosController : ControllerBase
     }
     #endregion
 
-    #region 삭제
+    #region 삭제: Delete
     // 삭제
     // DELETE api/Memos/1
     [HttpDelete("{id:int}")] // @DeleteMapping 
@@ -214,7 +214,7 @@ public class MemosController : ControllerBase
     }
     #endregion
 
-    #region 페이징
+    #region 페이징: GetAll
     // 페이징
     // GET api/Memos/Page/1/10
     [HttpGet("Page/{pageNumber:int}/{pageSize:int}")]
