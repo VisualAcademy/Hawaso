@@ -12,7 +12,7 @@ namespace Hawaso.Controllers;
 [Authorize]
 public class MemoDownloadController : Controller
 {
-    private string moduleName = "Memos";
+    private readonly string moduleName = "Memos";
     private readonly IMemoRepository _repository;
     private readonly IMemoFileStorageManager _fileStorageManager;
 
