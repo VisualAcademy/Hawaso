@@ -6,7 +6,7 @@ Blazor Server 강의 최종 데모 소스
 
 ## 선수 학습
 
-C# 교과서 마스터하기 강좌와 ASP.NET Core Fundamentals 과정을 선수 학습으로 알고 있다고 가정하고 강의가 진행됩니다.
+`C# 교과서 마스터하기` 강좌와 `ASP.NET Core Fundamentals` 과정을 선수 학습으로 알고 있다고 가정하고 강의가 진행됩니다.
 
 ## Blazor Server with ASP.NET Core 6.0 
 
