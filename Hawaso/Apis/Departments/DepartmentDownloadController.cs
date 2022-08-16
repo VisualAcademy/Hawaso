@@ -15,10 +15,7 @@ public class DepartmentDownloadController : Controller
 {
     private readonly IDepartmentRepository _repository;
 
-    public DepartmentDownloadController(IDepartmentRepository repository)
-    {
-        _repository = repository;
-    }
+    public DepartmentDownloadController(IDepartmentRepository repository) => _repository = repository;
 
     /// <summary>
     /// 엑셀 파일 강제 다운로드 기능(/ExcelDown)
