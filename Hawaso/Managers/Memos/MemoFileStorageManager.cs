@@ -7,6 +7,7 @@ namespace Hawaso.Models
 {
     public class MemoFileStorageManager : IMemoFileStorageManager
     {
+        private const string moduleName = "Memos";
         private readonly IWebHostEnvironment _environment;
         private readonly string _containerName;
         private readonly string _folderPath;
@@ -18,7 +19,7 @@ namespace Hawaso.Models
             _folderPath = Path.Combine(_environment.WebRootPath, _containerName);
         }
 
-        public async Task<bool> DeleteAsync(string fileName, string folderPath = "Memos")
+        public async Task<bool> DeleteAsync(string fileName, string folderPath = moduleName)
         {
             if (File.Exists(Path.Combine(_folderPath, folderPath, fileName)))
             {
@@ -27,7 +28,7 @@ namespace Hawaso.Models
             return await Task.FromResult(true);
         }
 
-        public async Task<byte[]> DownloadAsync(string fileName, string folderPath = "Memos")
+        public async Task<byte[]> DownloadAsync(string fileName, string folderPath = moduleName)
         {
             if (File.Exists(Path.Combine(_folderPath, folderPath, fileName)))
             {
@@ -52,14 +53,14 @@ namespace Hawaso.Models
             throw new NotImplementedException();
         }
 
-        public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = "Memos", bool overwrite = false)
+        public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = moduleName, bool overwrite = false)
         {
             await File.WriteAllBytesAsync(Path.Combine(_folderPath, folderPath, fileName), bytes);
 
             return fileName;
         }
 
-        public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath = "Memos", bool overwrite = false)
+        public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath = moduleName, bool overwrite = false)
         {
             // 파일명 중복 처리
             fileName = Dul.FileUtility.GetFileNameWithNumbering(Path.Combine(_folderPath, folderPath), fileName);
@@ -76,16 +77,18 @@ namespace Hawaso.Models
     #region MemoBlobStorageManager
     public class MemoBlobStorageManager : IMemoFileStorageManager
     {
+        private const string moduleName = "Memos";
+
         public MemoBlobStorageManager()
         {
         }
 
-        public Task<bool> DeleteAsync(string fileName, string folderPath = "Memos")
+        public Task<bool> DeleteAsync(string fileName, string folderPath = moduleName)
         {
             throw new NotImplementedException();
         }
 
-        public Task<byte[]> DownloadAsync(string fileName, string folderPath = "Memos")
+        public Task<byte[]> DownloadAsync(string fileName, string folderPath = moduleName)
         {
             throw new NotImplementedException();
         }
@@ -105,12 +108,12 @@ namespace Hawaso.Models
             throw new NotImplementedException();
         }
 
-        public Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = "Memos", bool overwrite = false)
+        public Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = moduleName, bool overwrite = false)
         {
             throw new NotImplementedException();
         }
 
-        public Task<string> UploadAsync(Stream stream, string fileName, string folderPath = "Memos", bool overwrite = false)
+        public Task<string> UploadAsync(Stream stream, string fileName, string folderPath = moduleName, bool overwrite = false)
         {
             throw new NotImplementedException();
         }
