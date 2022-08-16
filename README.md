@@ -6,7 +6,7 @@ Blazor Server 강의 최종 데모 소스
 
 ## 선수 학습
 
-C# 교과서 마스터하기 강좌와 ASP.NET Core Fundamentals 과정을 선수 학습으로 알고 있다고 가정하고 강의가 진행됩니다.
+`C# 교과서 마스터하기` 강좌와 `ASP.NET Core Fundamentals` 과정을 선수 학습으로 알고 있다고 가정하고 강의가 진행됩니다.
 
 ## Blazor Server with ASP.NET Core 6.0 
 
@@ -16,6 +16,7 @@ Visual Studio 2022를 사용하여 개발을 추천합니다.
 
 
 ## Blazor Server 6.0 전체 강의 소스
+
 박용준 강사가 진행하는 Blazor Server 6.0 강의의 전체 소스는 현재 리포지토리에 들어 있습니다. 
 
 
