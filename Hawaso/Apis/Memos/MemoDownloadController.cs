@@ -60,7 +60,7 @@ public class MemoDownloadController : Controller
     /// </summary>
     public async Task<IActionResult> ExcelDown()
     {
-        var results = await _repository.GetAllAsync(0, 100);
+        var results = await _repository.GetAllAsync(0, 100); // 총 몇개를 포함할건지, 나중에 이 부분 업데이트할 것...
 
         var models = results.Records.ToList();
 
