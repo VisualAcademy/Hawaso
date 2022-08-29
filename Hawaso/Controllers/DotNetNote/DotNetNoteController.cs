@@ -689,10 +689,7 @@ public class DotNetNoteController : Controller
     /// (참고) 최근 댓글 리스트 Web API 테스트 페이지
     /// </summary>
     [Authorize(Roles = "Administrators")]
-    public IActionResult NoteCommentServiceDemo()
-    {
-        return View();
-    }
+    public IActionResult NoteCommentServiceDemo() => View();
 
     #region 공지사항 모듈
     /// <summary>
