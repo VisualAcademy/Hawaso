@@ -48,6 +48,9 @@ namespace Hawaso.Models
             }
         }
 
+        /// <summary>
+        /// 모델(테이블)이 생성될 때 처음 실행 
+        /// </summary>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Memos 테이블의 Created, PostDate 열은 자동으로 GetDate() 제약 조건을 부여하기 
