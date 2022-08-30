@@ -204,7 +204,7 @@ namespace Hawaso.Models
     }
 
     /// <summary>
-    /// [1] Model Class: Memo 모델 클래스 == Memos 테이블과 일대일로 매핑
+    /// [1] Model Class: Memo 모델(도메인) 클래스 == Memos 테이블과 일대일로 매핑
     /// Memo, MemoModel, MemoViewModel, MemoDto, MemoEntity, MemoObject, 
     /// MemoDomain, ...
     /// </summary>
