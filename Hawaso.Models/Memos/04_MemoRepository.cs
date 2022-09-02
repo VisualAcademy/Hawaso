@@ -108,7 +108,7 @@ namespace Hawaso.Models
 
                 _context.Memos.Attach(model);
                 _context.Entry(model).State = EntityState.Modified;
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                return (await _context.SaveChangesAsync() > 0);
             }
             catch (Exception e)
             {
