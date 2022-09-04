@@ -94,12 +94,10 @@ namespace VisualAcademy.Pages.Memos
             {
                 // 파일 업로드
                 var file = selectedFiles.FirstOrDefault();
-                var fileName = "";
-                int fileSize = 0;
                 if (file != null)
                 {
-                    fileName = file.Name;
-                    fileSize = Convert.ToInt32(file.Size);
+                    string fileName = file.Name;
+                    int fileSize = Convert.ToInt32(file.Size);
 
                     fileName = await FileStorageManagerInjector.UploadAsync(file.Data, file.Name, "Memos", true);
 
