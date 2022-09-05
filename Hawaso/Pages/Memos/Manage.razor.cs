@@ -26,7 +26,7 @@ namespace VisualAcademy.Pages.Memos
         #endregion
 
         #region Injectors
-        // NavigationManager를 참조해서 사용하기에 Injector 접미사를 붙임 
+        // NavigationManager를 참조해서 사용하기에 Injector 접미사를 붙임 또는 _(언더스코어) 접두사 붙임 
         [Inject]
         public NavigationManager NavigationManagerInjector { get; set; }
 
