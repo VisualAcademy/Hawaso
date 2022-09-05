@@ -72,11 +72,10 @@ namespace VisualAcademy.Pages.Memos
             {
                 // 파일 업로드
                 var file = selectedFiles.FirstOrDefault();
-                var fileName = "";
                 int fileSize = 0;
                 if (file != null)
                 {
-                    fileName = file.Name;
+                    string fileName = file.Name;
                     fileSize = Convert.ToInt32(file.Size);
 
                     // 첨부 파일 삭제 
