@@ -21,10 +21,7 @@ public partial class Delete
 
     private Customer customer = new Customer();
 
-    protected override async Task OnInitializedAsync()
-    {
-        customer = await CustomerRepositoryAsync.GetByIdAsync(CustomerId);
-    }
+    protected override async Task OnInitializedAsync() => customer = await CustomerRepositoryAsync.GetByIdAsync(CustomerId);
 
     protected async void btnDelete_Click()
     {
