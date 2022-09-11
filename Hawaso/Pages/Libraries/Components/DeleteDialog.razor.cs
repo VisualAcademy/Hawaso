@@ -18,10 +18,7 @@ namespace Hawaso.Pages.Libraries.Components
         /// <summary>
         /// 폼 닫기
         /// </summary>
-        public void Hide()
-        {
-            IsShow = false;
-        }
+        public void Hide() => IsShow = false;
 
         /// <summary>
         /// 부모에서 OnClick 속성에 지정한 이벤트 처리기 실행
