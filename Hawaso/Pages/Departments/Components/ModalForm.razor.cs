@@ -1,5 +1,4 @@
-﻿using BlazorInputFile;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using System;
 using VisualAcademy.Models.Departments;
 
@@ -103,11 +102,6 @@ public partial class ModalForm
             await RepositoryReference.UpdateAsync(ModelSender);
             await EditCallback.InvokeAsync(true);
         }
-    }
-
-    protected void HandleSelection(IFileListEntry[] files)
-    {
-
     }
     #endregion
 }
