@@ -120,7 +120,6 @@ public partial class Manage
         StateHasChanged();
     }
 
-
     #region Event Handlers
     /// <summary>
     /// 글쓰기 모달 폼 띄우기 
@@ -163,7 +162,6 @@ public partial class Manage
         this.model = new DepartmentModel();
 
         await DisplayData();
-        //NavigationManagerInjector.NavigateTo($"/Departments", true);
     }
 
     /// <summary>
