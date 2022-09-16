@@ -97,10 +97,7 @@ namespace VisualAcademy.Pages.Memos
         /// <summary>
         /// 파일 선택 이벤트 처리기
         /// </summary>
-        protected void HandleSelection(IFileListEntry[] files)
-        {
-            this.selectedFiles = files;
-        }
+        protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
         #endregion
     }
 }
