@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
 using VisualAcademy.Models.Libraries;
-using Zero.Models;
 
 namespace Hawaso.Pages.Libraries
 {
@@ -13,7 +12,7 @@ namespace Hawaso.Pages.Libraries
         [Inject]
         public ILibraryRepository UploadRepositoryAsyncReference { get; set; }
 
-        protected LibraryModel model = new LibraryModel();
+        protected LibraryModel model = new();
 
         protected string content = "";
 
