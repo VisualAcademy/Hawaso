@@ -54,10 +54,7 @@ public partial class Manage
         PagerButtonCount = 5
     };
 
-    protected override async Task OnInitializedAsync()
-    {
-        await DisplayData();
-    }
+    protected override async Task OnInitializedAsync() => await DisplayData();
 
     private async Task DisplayData()
     {
