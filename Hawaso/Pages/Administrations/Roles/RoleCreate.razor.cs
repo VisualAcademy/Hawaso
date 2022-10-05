@@ -3,38 +3,37 @@ using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Hawaso.Pages.Administrations.Roles
-{
-    public partial class RoleCreate
-    {        
-        [Inject]
-        public NavigationManager NavigationManagerRef { get; set; }
+namespace Hawaso.Pages.Administrations.Roles;
 
-        [Inject]
-        public RoleManager<ApplicationRole> RoleManager { get; set; }
+public partial class RoleCreate
+{        
+    [Inject]
+    public NavigationManager NavigationManagerRef { get; set; }
 
-        public ApplicationRoleViewModel ViewModel { get; set; } = new ApplicationRoleViewModel();
+    [Inject]
+    public RoleManager<ApplicationRole> RoleManager { get; set; }
 
-        public List<string> ErrorMessages { get; set; } = new List<string>();
+    public ApplicationRoleViewModel ViewModel { get; set; } = new ApplicationRoleViewModel();
 
-        public async Task HandleCreation()
+    public List<string> ErrorMessages { get; set; } = new List<string>();
+
+    public async Task HandleCreation()
+    {
+        ApplicationRole identityRole = new ApplicationRole() 
+        { 
+            Name = ViewModel.RoleName,
+        };
+
+        IdentityResult identityResult = await RoleManager.CreateAsync(identityRole);
+        if (identityResult.Succeeded)
         {
-            ApplicationRole identityRole = new ApplicationRole() 
-            { 
-                Name = ViewModel.RoleName,
-            };
-
-            IdentityResult identityResult = await RoleManager.CreateAsync(identityRole);
-            if (identityResult.Succeeded)
+            NavigationManagerRef.NavigateTo("/Administrations/Roles");
+        }
+        else
+        {
+            foreach (var error in identityResult.Errors)
             {
-                NavigationManagerRef.NavigateTo("/Administrations/Roles");
-            }
-            else
-            {
-                foreach (var error in identityResult.Errors)
-                {
-                    ErrorMessages.Add(error.Description); 
-                }
+                ErrorMessages.Add(error.Description); 
             }
         }
     }
