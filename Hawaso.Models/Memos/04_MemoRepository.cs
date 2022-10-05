@@ -384,20 +384,9 @@ namespace Hawaso.Models
         }
         #endregion
 
-        #region [4][15] 리스트(페이징, 검색, 정렬): GetArticlesAsync()
-        public Task<ArticleSet<Memo, int>> GetAllAsync<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier)
-        {
-            throw new NotImplementedException();
-        }
-
+        #region [4][15] 리스트(페이징, 검색, 정렬): GetAllAsync(), GetArticlesAsync()
         //[4][15] 리스트(페이징, 검색, 정렬)
-        public async Task<ArticleSet<Memo, int>> GetArticlesAsync<TParentIdentifier>(
-            int pageIndex,
-            int pageSize,
-            string searchField,
-            string searchQuery,
-            string sortOrder,
-            TParentIdentifier parentIdentifier)
+        public async Task<ArticleSet<Memo, int>> GetAllAsync<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier)
         {
             //var items = from m in _context.Memos select m; // 쿼리 구문(Query Syntax)
             //var items = _context.Memos.Select(m => m); // 메서드 구문(Method Syntax)
@@ -486,6 +475,18 @@ namespace Hawaso.Models
 
             // AsNoTracking() 사용으로 성능 향상: https://docs.microsoft.com/ko-kr/ef/core/querying/tracking#no-tracking-queries
             return new ArticleSet<Memo, int>(await items.AsNoTracking().ToListAsync(), totalCount);
+        }
+
+        //[4][15] 리스트(페이징, 검색, 정렬)
+        public async Task<ArticleSet<Memo, int>> GetArticlesAsync<TParentIdentifier>(
+            int pageIndex,
+            int pageSize,
+            string searchField,
+            string searchQuery,
+            string sortOrder,
+            TParentIdentifier parentIdentifier)
+        {
+            return await GetAllAsync(pageIndex, pageSize, searchField, searchQuery, sortOrder, parentIdentifier);
         }
         #endregion
 
