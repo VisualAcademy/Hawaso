@@ -739,6 +739,11 @@ namespace Hawaso.Models
                 }
             }
         }
+
+        public Task<ArticleSet<Purge, int>> GetAllAsync<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

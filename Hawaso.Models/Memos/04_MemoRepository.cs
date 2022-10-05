@@ -385,6 +385,11 @@ namespace Hawaso.Models
         #endregion
 
         #region [4][15] 리스트(페이징, 검색, 정렬): GetArticlesAsync()
+        public Task<ArticleSet<Memo, int>> GetAllAsync<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier)
+        {
+            throw new NotImplementedException();
+        }
+
         //[4][15] 리스트(페이징, 검색, 정렬)
         public async Task<ArticleSet<Memo, int>> GetArticlesAsync<TParentIdentifier>(
             int pageIndex,
