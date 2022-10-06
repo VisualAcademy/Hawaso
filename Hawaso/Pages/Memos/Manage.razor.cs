@@ -63,13 +63,14 @@ public partial class Manage
     /// 현재 페이지에서 리스트로 사용되는 모델 리스트 
     /// </summary>
     //protected List<Memo> models = new List<Memo>();
-    protected List<Memo> models = new();
+    //protected List<Memo> Models = new();
+    public List<Memo> Models { get; set; }
 
     /// <summary>
     /// 현재 페이지에서 선택된 단일 데이터를 나타내는 모델 클래스 
     /// </summary>
     //protected Memo model = new Memo();
-    protected Memo model = new();
+    public Memo Model { get; set; }
 
     /// <summary>
     /// 페이저 설정
@@ -104,19 +105,19 @@ public partial class Manage
         {
             var articleSet = await RepositoryReference.GetArticlesAsync<string>(pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, ParentKey);
             pager.RecordCount = articleSet.TotalCount;
-            models = articleSet.Items.ToList();
+            Models = articleSet.Items.ToList();
         }
         else if (ParentId != 0)
         {
             var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, ParentId);
             pager.RecordCount = articleSet.TotalCount;
-            models = articleSet.Items.ToList();
+            Models = articleSet.Items.ToList();
         }
         else
         {
             var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, parentIdentifier: 0);
             pager.RecordCount = articleSet.TotalCount;
-            models = articleSet.Items.ToList();
+            Models = articleSet.Items.ToList();
         }
 
         StateHasChanged(); // Refresh
@@ -141,11 +142,11 @@ public partial class Manage
     protected void ShowEditorForm()
     {
         EditorFormTitle = "CREATE";
-        this.model = new Memo(); // 모델 초기화
-        this.model.ParentId = model.ParentId;
-        this.model.ParentKey = model.ParentKey;
+        Model = new Memo(); // 모델 초기화
+        this.Model.ParentId = Model.ParentId;
+        this.Model.ParentKey = Model.ParentKey;
 
-        model.Name = UserName; // 로그인 사용자 이름을 기본으로 제공
+        Model.Name = UserName; // 로그인 사용자 이름을 기본으로 제공
 
         EditorFormReference.Show();
     }
@@ -156,12 +157,12 @@ public partial class Manage
     protected void EditBy(Memo model)
     {
         EditorFormTitle = "EDIT";
-        this.model = new Memo(); // 모델 초기화
-        this.model = model;
+        this.Model = new Memo(); // 모델 초기화
+        this.Model = model;
         //this.model.ParentId = ParentId;
-        this.model.ParentId = model.ParentId;
+        this.Model.ParentId = model.ParentId;
         //this.model.ParentKey = ParentKey; 
-        this.model.ParentKey = model.ParentKey;
+        this.Model.ParentKey = model.ParentKey;
         EditorFormReference.Show();
     }
 
@@ -170,7 +171,7 @@ public partial class Manage
     /// </summary>
     protected void DeleteBy(Memo model)
     {
-        this.model = model;
+        this.Model = model;
         DeleteDialogReference.Show();
     }
     #endregion
@@ -196,7 +197,7 @@ public partial class Manage
     protected async void CreateOrEdit()
     {
         EditorFormReference.Hide();
-        this.model = new Memo();
+        this.Model = new Memo();
         await DisplayData();
     }
 
@@ -205,15 +206,15 @@ public partial class Manage
     /// </summary>
     protected async void DeleteClick()
     {
-        if (!string.IsNullOrEmpty(model?.FileName))
+        if (!string.IsNullOrEmpty(Model?.FileName))
         {
             // 첨부 파일 삭제 
-            await FileStorageManagerReference.DeleteAsync(model.FileName, "Memos");
+            await FileStorageManagerReference.DeleteAsync(Model.FileName, "Memos");
         }
 
-        await RepositoryReference.DeleteAsync(this.model.Id);
+        await RepositoryReference.DeleteAsync(this.Model.Id);
         DeleteDialogReference.Hide();
-        this.model = new Memo(); // 선택했던 모델 초기화
+        this.Model = new Memo(); // 선택했던 모델 초기화
         await DisplayData(); // 다시 로드
     }
 
@@ -226,7 +227,7 @@ public partial class Manage
     protected void ToggleClose()
     {
         IsInlineDialogShow = false;
-        this.model = new Memo();
+        this.Model = new Memo();
     }
 
     /// <summary>
@@ -234,13 +235,13 @@ public partial class Manage
     /// </summary>
     protected async void ToggleClick()
     {
-        this.model.IsPinned = (this.model?.IsPinned == true) ? false : true;
+        this.Model.IsPinned = (this.Model?.IsPinned == true) ? false : true;
 
         // 변경된 내용 업데이트
-        await RepositoryReference.UpdateAsync(this.model);
+        await RepositoryReference.UpdateAsync(this.Model);
 
         IsInlineDialogShow = false; // 표시 속성 초기화
-        this.model = new Memo(); // 선택한 모델 초기화 
+        this.Model = new Memo(); // 선택한 모델 초기화 
 
         await DisplayData(); // 다시 로드
     }
@@ -250,7 +251,7 @@ public partial class Manage
     /// </summary>
     protected void ToggleBy(Memo model)
     {
-        this.model = model;
+        this.Model = model;
         IsInlineDialogShow = true;
     }
     #endregion
@@ -283,10 +284,10 @@ public partial class Manage
             var worksheet = package.Workbook.Worksheets.Add("Memos");
 
             var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
-                (from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName })
+                (from m in Models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName })
                 , true);
 
-            var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
+            var uploadCol = tableBody.Offset(1, 1, Models.Count, 1);
 
             // 그라데이션 효과 부여
             var rule = uploadCol.ConditionalFormatting.AddThreeColorScale();
@@ -296,7 +297,7 @@ public partial class Manage
 
             var header = worksheet.Cells["B2:F2"];
             worksheet.DefaultColWidth = 25;
-            worksheet.Cells[3, 2, models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
+            worksheet.Cells[3, 2, Models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
             tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
             tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
             tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);

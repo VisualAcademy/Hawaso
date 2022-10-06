@@ -34,7 +34,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        @if (models == null) // null 예외 처리 
+        @if (Models == null) // null 예외 처리 
         {
             <div>
                 <p>
@@ -69,7 +69,7 @@
                             <th class="text-center text-nowrap">Admin</th>
                         </tr>
                     </thead>
-                    @if (models.Count == 0)
+                    @if (Models.Count == 0)
                     {
                         <tbody>
                             <tr>
@@ -80,7 +80,7 @@
                         </tbody>
                     }
                     <tbody>
-                        @foreach (var m in models)
+                        @foreach (var m in Models)
                         {
                             <tr>
                                 <td class="text-center" style="font-size: xx-small;">
@@ -145,7 +145,7 @@
 </div>
 
 @*입력 또는 수정 폼 모달 다이얼로그*@
-<VisualAcademy.Pages.Memos.Components.ModalForm @ref="EditorFormReference" ModelSender="model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit">
+<VisualAcademy.Pages.Memos.Components.ModalForm @ref="EditorFormReference" ModelSender="Model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit">
     <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
 </VisualAcademy.Pages.Memos.Components.ModalForm>
 
@@ -165,7 +165,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Do you want to toggle post #@(model.Id)?</p>
+                    <p>Do you want to toggle post #@(Model.Id)?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" @onclick="ToggleClick">Toggle</button>
