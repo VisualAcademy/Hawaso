@@ -57,10 +57,7 @@ public partial class ManageBy
         StateHasChanged();
     }
 
-    private void btnProductName_Click(int ProductId)
-    {
-        NavigationManager.NavigateTo($"/Products/Details/{ProductId}");
-    }
+    private void btnProductName_Click(int ProductId) => NavigationManager.NavigateTo($"/Products/Details/{ProductId}");
 
     protected void btnCreate_Click()
     {
