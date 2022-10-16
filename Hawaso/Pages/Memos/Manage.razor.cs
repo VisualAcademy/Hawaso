@@ -75,7 +75,7 @@ public partial class Manage
     /// <summary>
     /// 페이저 설정
     /// </summary>
-    protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase()
+    protected DulPager.DulPagerBase pager = new()
     {
         PageNumber = 1,
         PageIndex = 0,
