@@ -251,7 +251,7 @@ public partial class Manage
     /// </summary>
     protected void ToggleBy(Memo model)
     {
-        this.Model = model;
+        Model = model;
         IsInlineDialogShow = true;
     }
     #endregion
