@@ -102,6 +102,7 @@ public class MemosController : ControllerBase
             {
                 return new NoContentResult(); // 참고용 코드
             }
+
             return new JsonResult(models); //return Ok(models); // 200 OK
         }
         catch (Exception e)
@@ -127,6 +128,7 @@ public class MemosController : ControllerBase
                 //return new NoContentResult(); // 204 No Content
                 return NotFound(); // 404 Not Found
             }
+
             return Ok(model);
             #endregion
         }
