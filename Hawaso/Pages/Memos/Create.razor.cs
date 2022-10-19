@@ -42,6 +42,7 @@ public partial class Create
     private Memo Model { get; set; } = new Memo();
 
     public string Name { get; set; }
+
     public string Title { get; set; }
 
     public string Content { get; set; } = "";
@@ -68,8 +69,8 @@ public partial class Create
 
             //Model.Id = 0; // 답변 페이지는 새로운 글로 초기화 
             Model.Name = "";
-            Model.Title = "Re: " + parent.Title;
-            Model.Content = "\r\n====\r\n" + parent.Content;
+            Model.Title = $"Re: {parent.Title}";
+            Model.Content = $"\r\n====\r\n{parent.Content}";
 
             ParentRef = (int)parent.Ref;
             ParentStep = (int)parent.Step;
