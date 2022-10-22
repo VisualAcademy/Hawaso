@@ -47,11 +47,7 @@ namespace Hawaso.Models
         }
 
         // 상세
-        public async Task<Login> GetByIdAsync(int id)
-        {
-            return await _context.Logins
-                .SingleOrDefaultAsync(c => c.LoginId == id);
-        }
+        public async Task<Login> GetByIdAsync(int id) => await _context.Logins.SingleOrDefaultAsync(c => c.LoginId == id);
 
         // 수정
         public async Task<bool> EditAsync(Login model)
