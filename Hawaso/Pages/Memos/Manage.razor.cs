@@ -27,6 +27,7 @@ public partial class Manage
 
     #region Injectors
     // NavigationManager를 참조해서 사용하기에 Injector 접미사를 붙임 또는 _(언더스코어) 접두사 붙임 
+    // public NavigationManager NavigationManager { get; set; } 형태가 기본 사용 방식임
     [Inject]
     public NavigationManager NavigationManagerInjector { get; set; }
 
@@ -312,6 +313,7 @@ public partial class Manage
     #endregion
 
     #region Sorting
+    // .NET 7의 QuickGrid에서 사용하는 방식처럼 더 향상된 방식이 있지만, 처음 Sorting 기능 적용할 때 사용한 구분 방식임 
     private string sortOrder = "";
 
     protected async void SortByCreate()
