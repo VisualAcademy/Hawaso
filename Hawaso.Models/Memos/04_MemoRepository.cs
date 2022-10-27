@@ -99,7 +99,7 @@ namespace Hawaso.Models
         #endregion
 
         #region [4][4] 수정: UpdateAsync
-        //[4][4] 수정: UpdateAsync
+        //[4][4] 수정: UpdateAsync, EdityAsync, SetAsync
         public async Task<bool> EditAsync(Memo model)
         {
             try
