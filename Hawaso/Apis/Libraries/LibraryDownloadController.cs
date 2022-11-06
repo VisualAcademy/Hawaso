@@ -11,6 +11,7 @@ namespace Hawaso.Apis.Libraries;
 
 public class LibraryDownloadController : Controller
 {
+    private readonly string moduleName = "Libraries";
     private readonly ILibraryRepository _repository;
     private readonly ILibraryFileStorageManager _fileStorageManager;
 
@@ -35,7 +36,7 @@ public class LibraryDownloadController : Controller
         {
             if (!string.IsNullOrEmpty(model.FileName))
             {
-                byte[] fileBytes = await _fileStorageManager.DownloadAsync(model.FileName, "Libraries");
+                byte[] fileBytes = await _fileStorageManager.DownloadAsync(model.FileName, moduleName);
                 if (fileBytes != null)
                 {
                     // DownCount
@@ -67,7 +68,7 @@ public class LibraryDownloadController : Controller
         {
             using (var package = new ExcelPackage())
             {
-                var worksheet = package.Workbook.Worksheets.Add("Libraries");
+                var worksheet = package.Workbook.Worksheets.Add(moduleName);
 
                 var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
                     from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName }
@@ -92,7 +93,7 @@ public class LibraryDownloadController : Controller
                 header.Style.Font.Color.SetColor(Color.White);
                 header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
 
-                return File(package.GetAsByteArray(), "application/octet-stream", $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_Libraries.xlsx");
+                return File(package.GetAsByteArray(), "application/octet-stream", $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_{moduleName}.xlsx");
             }
 
         }
