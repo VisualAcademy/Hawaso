@@ -2,22 +2,24 @@
 
 회사 홈페이지 만들기 프로젝트 강의 소스
 
+
 Blazor Server 강의 최종 데모 소스
 
 ## 선수 학습
 
 `C# 교과서 마스터하기` 강좌와 `ASP.NET Core Fundamentals` 과정을 선수 학습으로 알고 있다고 가정하고 강의가 진행됩니다.
 
-## Blazor Server with ASP.NET Core 6.0 
 
-Hawaso 솔루션은 ASP.NET Core 6.0 버전과 Blazor Server 6.0을 하나의 프로젝트로 관리합니다.
+## Blazor Server with ASP.NET Core 7.0 
+
+Hawaso 솔루션은 ASP.NET Core 7.0 버전과 Blazor Server 7.0을 하나의 프로젝트로 관리합니다.
 
 Visual Studio 2022를 사용하여 개발을 추천합니다. 
 
 
-## Blazor Server 6.0 전체 강의 소스
+## Blazor Server 7.0 전체 강의 소스
 
-박용준 강사가 진행하는 Blazor Server 6.0 강의의 전체 소스는 현재 리포지토리에 들어 있습니다. 
+박용준 강사가 진행하는 Blazor Server 7.0 강의의 전체 소스는 현재 리포지토리에 들어 있습니다. 
 
 
 ## Hawaso 솔루션에서 참조하는 NuGet 패키지 소스들
@@ -77,4 +79,8 @@ https://github.com/VisualAcademy/Hawaso.V3X
 
 https://github.com/VisualAcademy/Hawaso.V50
 
+
+## ASP.NET Core 6.0 버전의 Hawaso 프로젝트는 다음 리포지토리에 있습니다.
+
+https://github.com/VisualAcademy/Hawaso.V60
 
