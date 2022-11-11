@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Hawaso.Areas.Identity.Models
+namespace Hawaso.Areas.Identity.Models;
+
+public class ApplicationRole : IdentityRole
 {
-    public class ApplicationRole : IdentityRole
-    {
-        public string? Description { get; set; }
-    }
+    public string? Description { get; set; }
 }
