@@ -164,10 +164,7 @@ namespace VisualAcademy.Pages.Memos.Components
             //IsShow = false; // this.Hide()
         }
 
-        protected void HandleSelection(IFileListEntry[] files)
-        {
-            this.selectedFiles = files;
-        }
+        protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
         #endregion
     }
 }
