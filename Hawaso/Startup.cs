@@ -362,6 +362,7 @@ public class Startup
         CreateBuiltInUsersAndRoles(serviceProvider).Wait();
     }
 
+    #region Create BuiltIn Users and Roles 
     /// <summary>
     /// 내장 사용자 및 그룹(역할) 생성
     /// </summary>
@@ -466,5 +467,6 @@ public class Startup
             await userManager.AddToRoleAsync(guest, Dul.Roles.Guests.ToString());
             await userManager.AddToRoleAsync(anonymous, Dul.Roles.Guests.ToString());
         }
-    }
+    } 
+    #endregion
 }
