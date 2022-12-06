@@ -176,6 +176,7 @@ namespace Hawaso.Models
         #region 답변형 게시판 관련 주요 속성
         /// <summary>
         /// 참조(부모글, 참조 번호)
+        /// 그룹ID: 같은 그룹이면 모두 동일한 값 
         /// </summary>
         public int Ref { get; set; } = 0;
 
