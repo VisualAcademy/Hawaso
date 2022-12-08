@@ -8,10 +8,7 @@ namespace DotNetNote.Models
     {
         private readonly TechContext _context;
 
-        public TechRepositoryEf()
-        {
-            _context = new TechContext();
-        }
+        public TechRepositoryEf() => _context = new TechContext();
 
         public TechRepositoryEf(TechContext context)
         {
