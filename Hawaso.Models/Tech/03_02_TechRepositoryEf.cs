@@ -10,10 +10,7 @@ namespace DotNetNote.Models
 
         public TechRepositoryEf() => _context = new TechContext();
 
-        public TechRepositoryEf(TechContext context)
-        {
-            _context = context;
-        }
+        public TechRepositoryEf(TechContext context) => _context = context;
 
         public async Task<IEnumerable<Tech>> GetTechesAsync()
         {
