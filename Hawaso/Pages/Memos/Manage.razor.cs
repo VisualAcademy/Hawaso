@@ -90,6 +90,7 @@ public partial class Manage
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
+        // Razor Page 또는 MVC에서 인증 정보를 Blazor Server로 전송하여 Blazor에서는 따로 인증된 사용자 정보를 읽어오지 않도록 설정
         if (UserId == "" && UserName == "")
         {
             await GetUserIdAndUserName();
