@@ -2,13 +2,13 @@
 using DotNetNote.Models;
 using DotNetSaleCore.Models;
 using Hawaso.Areas.Identity;
+using Hawaso.Areas.Identity.Services;
 using Hawaso.Data;
 using Hawaso.Extensions.BriefingLogs;
 using Hawaso.Extensions.Memos;
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
 using Hawaso.Rules;
-using Hawaso.Services;
 using Hawaso.Settings;
 using MachineTypeApp.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
