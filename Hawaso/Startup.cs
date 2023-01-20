@@ -393,25 +393,45 @@ public class Startup
             //    }
             //}
             //[1][1] Administrators
-            var administrators = new ApplicationRole { Name = Dul.Roles.Administrators.ToString(), NormalizedName = Dul.Roles.Administrators.ToString().ToUpper(), Description = "응용 프로그램을 총 관리하는 관리 그룹 계정" };
+            var administrators = new ApplicationRole 
+            { 
+                Name = Dul.Roles.Administrators.ToString(), 
+                NormalizedName = Dul.Roles.Administrators.ToString().ToUpper(), 
+                Description = "응용 프로그램을 총 관리하는 관리 그룹 계정" 
+            };
             if (!(await roleManager.RoleExistsAsync(administrators.Name)))
             {
                 await roleManager.CreateAsync(administrators);
             }
             //[1][2] Everyone
-            var everyone = new ApplicationRole { Name = Dul.Roles.Everyone.ToString(), NormalizedName = Dul.Roles.Everyone.ToString().ToUpper(), Description = "응용 프로그램을 사용하는 모든 사용자 그룹 계정" };
+            var everyone = new ApplicationRole 
+            { 
+                Name = Dul.Roles.Everyone.ToString(), 
+                NormalizedName = Dul.Roles.Everyone.ToString().ToUpper(), 
+                Description = "응용 프로그램을 사용하는 모든 사용자 그룹 계정" 
+            };
             if (!(await roleManager.RoleExistsAsync(everyone.Name)))
             {
                 await roleManager.CreateAsync(everyone);
             }
             //[1][3] Users
-            var users = new ApplicationRole { Name = Dul.Roles.Users.ToString(), NormalizedName = Dul.Roles.Users.ToString().ToUpper(), Description = "일반 사용자 그룹 계정" };
+            var users = new ApplicationRole 
+            { 
+                Name = Dul.Roles.Users.ToString(), 
+                NormalizedName = Dul.Roles.Users.ToString().ToUpper(), 
+                Description = "일반 사용자 그룹 계정" 
+            };
             if (!(await roleManager.RoleExistsAsync(users.Name)))
             {
                 await roleManager.CreateAsync(users);
             }
             //[1][4] Guests
-            var guests = new ApplicationRole { Name = Dul.Roles.Guests.ToString(), NormalizedName = Dul.Roles.Guests.ToString().ToUpper(), Description = "게스트 사용자 그룹 계정" };
+            var guests = new ApplicationRole 
+            { 
+                Name = Dul.Roles.Guests.ToString(), 
+                NormalizedName = Dul.Roles.Guests.ToString().ToUpper(), 
+                Description = "게스트 사용자 그룹 계정" 
+            };
             if (!(await roleManager.RoleExistsAsync(guests.Name)))
             {
                 await roleManager.CreateAsync(guests);
