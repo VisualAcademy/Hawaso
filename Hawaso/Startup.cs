@@ -359,6 +359,8 @@ public class Startup
         });
 
         // ASP.NET Core Identity 기본 사용자 및 역할 생성 
+        // ASP.NET Core 6.0 이상의 Top Level Statement 방식은 다음 링크를 참고하세요. 
+        // https://github.com/VisualAcademy/VisualAcademy/blob/608e85e4964469743b2ee1b9d5192110434a9eeb/src/VisualAcademy/VisualAcademy/Program.cs#L107
         CreateBuiltInUsersAndRoles(serviceProvider).Wait();
     }
 
