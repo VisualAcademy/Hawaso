@@ -41,10 +41,7 @@ public partial class RoleDelete
         }
     }
 
-    protected void HandleDelete()
-    {
-        ShowModal = true;
-    }
+    protected void HandleDelete() => ShowModal = true;
 
     protected void CloseModal()
     {
