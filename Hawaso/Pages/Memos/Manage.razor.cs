@@ -84,6 +84,19 @@ public partial class Manage
         PagerButtonCount = 5
     };
 
+    #region Search
+    private string searchQuery = "";
+
+    protected async void Search(string query)
+    {
+        pager.PageIndex = 0;
+
+        this.searchQuery = query;
+
+        await DisplayData();
+    }
+    #endregion
+
     #region Lifecycle Methods
     /// <summary>
     /// 페이지 초기화 이벤트 처리기
@@ -125,12 +138,19 @@ public partial class Manage
         StateHasChanged(); // Refresh
     }
 
+    /// <summary>
+    /// 상세보기로 이동하는 링크
+    /// </summary>
     protected void NameClick(long id) => NavigationManagerInjector.NavigateTo($"/Memos/Details/{id}");
 
+    /// <summary>
+    /// Pager 링크 버튼 클릭에 따른 리스트 내용 업데이트
+    /// </summary>
+    /// <param name="pageIndex">페이지 인덱스</param>
     protected async void PageIndexChanged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
-        pager.PageNumber = pageIndex + 1;
+        pager.PageNumber = pageIndex + 1; // 하위 호환성때문에 이 코드 유지 
 
         await DisplayData();
 
@@ -255,19 +275,6 @@ public partial class Manage
     {
         Model = model;
         IsInlineDialogShow = true;
-    }
-    #endregion
-
-    #region Search
-    private string searchQuery = "";
-
-    protected async void Search(string query)
-    {
-        pager.PageIndex = 0;
-
-        this.searchQuery = query;
-
-        await DisplayData();
     }
     #endregion
 
