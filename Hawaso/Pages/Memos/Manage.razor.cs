@@ -143,10 +143,14 @@ public partial class Manage
     /// </summary>
     protected void NameClick(long id) => NavigationManagerInjector.NavigateTo($"/Memos/Details/{id}");
 
+    /// <summary>
+    /// Pager 링크 버튼 클릭에 따른 리스트 내용 업데이트
+    /// </summary>
+    /// <param name="pageIndex">페이지 인덱스</param>
     protected async void PageIndexChanged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
-        pager.PageNumber = pageIndex + 1;
+        pager.PageNumber = pageIndex + 1; // 하위 호환성때문에 이 코드 유지 
 
         await DisplayData();
 
