@@ -292,7 +292,7 @@ public partial class Manage
         {
             var worksheet = package.Workbook.Worksheets.Add("Memos");
 
-            var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
+            var tableBody = worksheet.Cells["A1:A1"].LoadFromCollection(
                 (from m in Models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName })
                 , true);
 
@@ -304,9 +304,9 @@ public partial class Manage
             rule.MiddleValue.Color = Color.White;
             rule.HighValue.Color = Color.Red;
 
-            var header = worksheet.Cells["B2:F2"];
+            var header = worksheet.Cells["A1:E1"];
             worksheet.DefaultColWidth = 25;
-            worksheet.Cells[3, 2, Models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
+            worksheet.Cells[2, 1, Models.Count + 1, 1].Style.Numberformat.Format = "yyyy MMM d DDD";
             tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
             tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
             tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
