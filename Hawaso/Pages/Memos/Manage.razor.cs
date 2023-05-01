@@ -89,7 +89,7 @@ public partial class Manage
 
     protected async void Search(string query)
     {
-        pager.PageIndex = 0;
+        pager.PageIndex = 0; // Pager 컴포넌트 인덱스 초기화 후 검색
 
         this.searchQuery = query;
 
