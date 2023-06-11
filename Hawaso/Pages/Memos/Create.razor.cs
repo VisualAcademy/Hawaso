@@ -154,9 +154,6 @@ public partial class Create
     /// <summary>
     /// 파일 첨부 이벤트 처리기 
     /// </summary>
-    protected void HandleSelection(IFileListEntry[] files)
-    {
-        this.selectedFiles = files;
-    }
+    protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
     #endregion
 }
