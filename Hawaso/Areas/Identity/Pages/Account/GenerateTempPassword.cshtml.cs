@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
-namespace Hawaso.Areas.Identity.Pages
+namespace Hawaso.Areas.Identity.Pages.Account
 {
     public class GenerateTempPasswordModel : PageModel
     {
