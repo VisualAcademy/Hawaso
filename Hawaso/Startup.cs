@@ -45,7 +45,23 @@ public class Startup
         //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddHttpContextAccessor(); //[1]
 
-        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), options => options.EnableRetryOnFailure()));
+        //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), options => options.EnableRetryOnFailure()));
+        // 서비스 컬렉션에 ApplicationDbContext를 위한 DbContext를 추가합니다.
+        // 이는 Entity Framework Core를 사용하여 데이터베이스와 상호작용하는데 필요합니다.
+        services.AddDbContext<ApplicationDbContext>(options =>
+
+            // UseSqlServer 메서드를 사용하여 SQL Server 데이터베이스를 사용하도록 설정합니다.
+            // 'DefaultConnection' 문자열은 appsettings.json 파일에 저장된 데이터베이스 연결 문자열의 이름입니다.
+            options.UseSqlServer(
+
+                // Configuration.GetConnectionString 메서드를 사용하여 'DefaultConnection'의 값을 가져옵니다.
+                Configuration.GetConnectionString("DefaultConnection"), options =>
+
+                    // EnableRetryOnFailure 옵션을 사용하여 데이터베이스 연결이 실패할 경우 자동으로 재시도하도록 설정합니다.
+                    // 이는 일시적인 네트워크 문제나 데이터베이스 서버의 문제로 인한 연결 실패를 완화하는데 도움이 됩니다.
+                    options.EnableRetryOnFailure()
+            )
+        );
 
 
         #region 인증과 권한 설정: ASP.NET Core Identity
