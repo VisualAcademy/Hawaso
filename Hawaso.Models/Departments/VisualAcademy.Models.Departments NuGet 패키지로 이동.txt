@@ -1,2 +1,7 @@
 ﻿https://github.com/VisualAcademy/VisualAcademy.Models.Departments
 
+이 패키지에 대한 아티클을 다음 링크를 참고하세요.
+
+* VisualAcademy.Models.Departments NuGet 패키지로 EF Core CRUD 연습하기 
+    
+    * https://www.memoenginecom/docs/visualacademy/visualacademy-models-departments/
