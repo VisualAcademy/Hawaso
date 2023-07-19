@@ -27,6 +27,7 @@ using ReplyApp.Managers;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using VisualAcademy.Models.Departments;
 using VisualAcademy.Models.Replys;
 using Zero.Models;
 
