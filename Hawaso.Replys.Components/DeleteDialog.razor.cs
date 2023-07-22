@@ -29,10 +29,7 @@ namespace Hawaso.Replys.Components
         /// <summary>
         /// 폼 닫기
         /// </summary>
-        public void Hide()
-        {
-            IsShow = false;
-        }
+        public void Hide() => IsShow = false;
         #endregion
     }
 }
