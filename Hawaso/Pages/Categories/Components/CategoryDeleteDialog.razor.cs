@@ -9,10 +9,7 @@ namespace Hawaso.Pages.Categories.Components
 
         public void Show() => IsShow = true;
 
-        public void Close()
-        {
-            IsShow = false;
-        }
+        public void Close() => IsShow = false;
 
         [Parameter]
         public EventCallback<MouseEventArgs> OnClick { get; set; }
