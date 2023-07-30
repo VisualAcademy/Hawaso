@@ -84,12 +84,26 @@ public partial class Manage
         PagerButtonCount = 5
     };
 
+    #region Search
+    private string searchQuery = "";
+
+    protected async void Search(string query)
+    {
+        pager.PageIndex = 0; // Pager 컴포넌트 인덱스 초기화 후 검색
+
+        this.searchQuery = query;
+
+        await DisplayData();
+    }
+    #endregion
+
     #region Lifecycle Methods
     /// <summary>
     /// 페이지 초기화 이벤트 처리기
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
+        // Razor Page 또는 MVC에서 인증 정보를 Blazor Server로 전송하여 Blazor에서는 따로 인증된 사용자 정보를 읽어오지 않도록 설정
         if (UserId == "" && UserName == "")
         {
             await GetUserIdAndUserName();
@@ -124,12 +138,19 @@ public partial class Manage
         StateHasChanged(); // Refresh
     }
 
+    /// <summary>
+    /// 상세보기로 이동하는 링크
+    /// </summary>
     protected void NameClick(long id) => NavigationManagerInjector.NavigateTo($"/Memos/Details/{id}");
 
+    /// <summary>
+    /// Pager 링크 버튼 클릭에 따른 리스트 내용 업데이트
+    /// </summary>
+    /// <param name="pageIndex">페이지 인덱스</param>
     protected async void PageIndexChanged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
-        pager.PageNumber = pageIndex + 1;
+        pager.PageNumber = pageIndex + 1; // 하위 호환성때문에 이 코드 유지 
 
         await DisplayData();
 
@@ -257,19 +278,6 @@ public partial class Manage
     }
     #endregion
 
-    #region Search
-    private string searchQuery = "";
-
-    protected async void Search(string query)
-    {
-        pager.PageIndex = 0;
-
-        this.searchQuery = query;
-
-        await DisplayData();
-    }
-    #endregion
-
     #region Excel
     protected void DownloadExcelWithWebApi()
     {
@@ -284,7 +292,7 @@ public partial class Manage
         {
             var worksheet = package.Workbook.Worksheets.Add("Memos");
 
-            var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
+            var tableBody = worksheet.Cells["A1:A1"].LoadFromCollection(
                 (from m in Models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName })
                 , true);
 
@@ -296,9 +304,9 @@ public partial class Manage
             rule.MiddleValue.Color = Color.White;
             rule.HighValue.Color = Color.Red;
 
-            var header = worksheet.Cells["B2:F2"];
+            var header = worksheet.Cells["A1:E1"];
             worksheet.DefaultColWidth = 25;
-            worksheet.Cells[3, 2, Models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
+            worksheet.Cells[2, 1, Models.Count + 1, 1].Style.Numberformat.Format = "yyyy MMM d DDD";
             tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
             tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
             tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
@@ -313,32 +321,47 @@ public partial class Manage
     #endregion
 
     #region Sorting
-    // .NET 7의 QuickGrid에서 사용하는 방식처럼 더 향상된 방식이 있지만, 처음 Sorting 기능 적용할 때 사용한 구분 방식임 
+    // 이 코드 부분은 Grid 컴포넌트에서 컬럼 정렬을 수행하기 위한 로직을 담고 있습니다.
+    // .NET 7의 QuickGrid에서 사용하는 방식처럼 더 향상된 방식이 있지만,
+    // 이 코드는 처음 Sorting 기능을 적용할 때 사용한 기본적인 구분 방식을 사용하고 있습니다.
+    // sortOrder 변수는 현재 어떤 컬럼이 어떤 방식(오름차순, 내림차순)으로 정렬되어 있는지를 나타냅니다.
     private string sortOrder = "";
 
+    // 아래의 각 메서드는 특정 컬럼에 대해 정렬을 수행합니다.
+    // 각 메서드는 현재의 sortOrder 값을 검사하고, 이에 따라 적절하게 정렬 순서를 변경합니다.
+    // 메서드가 호출될 때마다, sortOrder 값이 업데이트되며,
+    // 이 값은 비동기적으로 데이터를 화면에 표시하는 DisplayData 메서드에 의해 사용됩니다.
+
+    // 이 메서드는 "Create" 컬럼에 대한 정렬을 수행합니다.
     protected async void SortByCreate()
     {
+        // sortOrder 값이 "Create"를 포함하고 있지 않으면, sortOrder를 초기화합니다.
         if (!sortOrder.Contains("Create"))
         {
             sortOrder = "";
         }
 
+        // sortOrder 값이 비어있으면, sortOrder를 "Create"로 설정하여 오름차순 정렬하도록 합니다.
         if (sortOrder == "")
         {
             sortOrder = "Create";
         }
+        // sortOrder 값이 "Create"이면, sortOrder를 "CreateDesc"로 설정하여 내림차순 정렬하도록 합니다.
         else if (sortOrder == "Create")
         {
             sortOrder = "CreateDesc";
         }
+        // 그 외의 경우는 sortOrder를 초기화합니다.
         else
         {
             sortOrder = "";
         }
 
+        // 데이터를 새로 고침하여 변경된 정렬 순서를 반영합니다.
         await DisplayData();
     }
 
+    // 이 메서드는 "Name" 컬럼에 대한 정렬을 수행합니다.
     protected async void SortByName()
     {
         if (!sortOrder.Contains("Name"))
@@ -362,6 +385,7 @@ public partial class Manage
         await DisplayData();
     }
 
+    // 이 메서드는 "Title" 컬럼에 대한 정렬을 수행합니다.
     protected async void SortByTitle()
     {
         if (!sortOrder.Contains("Title"))

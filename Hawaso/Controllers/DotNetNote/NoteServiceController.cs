@@ -12,10 +12,8 @@ public class NoteServiceController : Controller
     public NoteServiceController(INoteRepository repository) => _repository = repository;
 
     [HttpGet]
-    public IEnumerable<Note> Get()
-    {
+    public IEnumerable<Note> Get() =>
         // 최근 글 리스트 반환
         //return _repository.GetRecentPosts();      // 캐싱 적용 전
-        return _repository.GetRecentPostsCache();   // 캐싱 적용 후
-    }
+        _repository.GetRecentPostsCache();   // 캐싱 적용 후
 }

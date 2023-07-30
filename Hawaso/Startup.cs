@@ -2,13 +2,13 @@
 using DotNetNote.Models;
 using DotNetSaleCore.Models;
 using Hawaso.Areas.Identity;
+using Hawaso.Areas.Identity.Services;
 using Hawaso.Data;
 using Hawaso.Extensions.BriefingLogs;
 using Hawaso.Extensions.Memos;
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
 using Hawaso.Rules;
-using Hawaso.Services;
 using Hawaso.Settings;
 using MachineTypeApp.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -27,6 +27,7 @@ using ReplyApp.Managers;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using VisualAcademy.Models.Departments;
 using VisualAcademy.Models.Replys;
 using Zero.Models;
 
@@ -45,7 +46,23 @@ public class Startup
         //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddHttpContextAccessor(); //[1]
 
-        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), options => options.EnableRetryOnFailure()));
+        //services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), options => options.EnableRetryOnFailure()));
+        // 서비스 컬렉션에 ApplicationDbContext를 위한 DbContext를 추가합니다.
+        // 이는 Entity Framework Core를 사용하여 데이터베이스와 상호작용하는데 필요합니다.
+        services.AddDbContext<ApplicationDbContext>(options =>
+
+            // UseSqlServer 메서드를 사용하여 SQL Server 데이터베이스를 사용하도록 설정합니다.
+            // 'DefaultConnection' 문자열은 appsettings.json 파일에 저장된 데이터베이스 연결 문자열의 이름입니다.
+            options.UseSqlServer(
+
+                // Configuration.GetConnectionString 메서드를 사용하여 'DefaultConnection'의 값을 가져옵니다.
+                Configuration.GetConnectionString("DefaultConnection"), options =>
+
+                    // EnableRetryOnFailure 옵션을 사용하여 데이터베이스 연결이 실패할 경우 자동으로 재시도하도록 설정합니다.
+                    // 이는 일시적인 네트워크 문제나 데이터베이스 서버의 문제로 인한 연결 실패를 완화하는데 도움이 됩니다.
+                    options.EnableRetryOnFailure()
+            )
+        );
 
 
         #region 인증과 권한 설정: ASP.NET Core Identity
@@ -281,9 +298,6 @@ public class Startup
         services.AddDependencyInjectionContainerForManufacturer(Configuration.GetConnectionString("DefaultConnection"));
         services.AddBlazoredToast(); // Blazored.Toast
 
-        // 부서 관리: 기본 CRUD 교과서 코드
-        services.AddDependencyInjectionContainerForDepartmentApp(Configuration.GetConnectionString("DefaultConnection"));
-
         /// <summary>
         /// 메모앱(MemoApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리: 게시판 및 CRUD 관련 교과서 코드 
         /// </summary>
@@ -295,6 +309,9 @@ public class Startup
 
         // Memos -> Archives
         services.AddDependencyInjectionContainerForArchiveApp(Configuration.GetConnectionString("DefaultConnection"));
+
+        // 부서 관리: 기본 CRUD 교과서 코드
+        services.AddDependencyInjectionContainerForDepartmentApp(Configuration.GetConnectionString("DefaultConnection"));
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -359,6 +376,8 @@ public class Startup
         });
 
         // ASP.NET Core Identity 기본 사용자 및 역할 생성 
+        // ASP.NET Core 6.0 이상의 Top Level Statement 방식은 다음 링크를 참고하세요. 
+        // https://github.com/VisualAcademy/VisualAcademy/blob/608e85e4964469743b2ee1b9d5192110434a9eeb/src/VisualAcademy/VisualAcademy/Program.cs#L107
         CreateBuiltInUsersAndRoles(serviceProvider).Wait();
     }
 
@@ -393,25 +412,45 @@ public class Startup
             //    }
             //}
             //[1][1] Administrators
-            var administrators = new ApplicationRole { Name = Dul.Roles.Administrators.ToString(), NormalizedName = Dul.Roles.Administrators.ToString().ToUpper(), Description = "응용 프로그램을 총 관리하는 관리 그룹 계정" };
+            var administrators = new ApplicationRole 
+            { 
+                Name = Dul.Roles.Administrators.ToString(), 
+                NormalizedName = Dul.Roles.Administrators.ToString().ToUpper(), 
+                Description = "응용 프로그램을 총 관리하는 관리 그룹 계정" 
+            };
             if (!(await roleManager.RoleExistsAsync(administrators.Name)))
             {
                 await roleManager.CreateAsync(administrators);
             }
             //[1][2] Everyone
-            var everyone = new ApplicationRole { Name = Dul.Roles.Everyone.ToString(), NormalizedName = Dul.Roles.Everyone.ToString().ToUpper(), Description = "응용 프로그램을 사용하는 모든 사용자 그룹 계정" };
+            var everyone = new ApplicationRole 
+            { 
+                Name = Dul.Roles.Everyone.ToString(), 
+                NormalizedName = Dul.Roles.Everyone.ToString().ToUpper(), 
+                Description = "응용 프로그램을 사용하는 모든 사용자 그룹 계정" 
+            };
             if (!(await roleManager.RoleExistsAsync(everyone.Name)))
             {
                 await roleManager.CreateAsync(everyone);
             }
             //[1][3] Users
-            var users = new ApplicationRole { Name = Dul.Roles.Users.ToString(), NormalizedName = Dul.Roles.Users.ToString().ToUpper(), Description = "일반 사용자 그룹 계정" };
+            var users = new ApplicationRole 
+            { 
+                Name = Dul.Roles.Users.ToString(), 
+                NormalizedName = Dul.Roles.Users.ToString().ToUpper(), 
+                Description = "일반 사용자 그룹 계정" 
+            };
             if (!(await roleManager.RoleExistsAsync(users.Name)))
             {
                 await roleManager.CreateAsync(users);
             }
             //[1][4] Guests
-            var guests = new ApplicationRole { Name = Dul.Roles.Guests.ToString(), NormalizedName = Dul.Roles.Guests.ToString().ToUpper(), Description = "게스트 사용자 그룹 계정" };
+            var guests = new ApplicationRole 
+            { 
+                Name = Dul.Roles.Guests.ToString(), 
+                NormalizedName = Dul.Roles.Guests.ToString().ToUpper(), 
+                Description = "게스트 사용자 그룹 계정" 
+            };
             if (!(await roleManager.RoleExistsAsync(guests.Name)))
             {
                 await roleManager.CreateAsync(guests);
