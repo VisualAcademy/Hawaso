@@ -171,9 +171,6 @@ public partial class ModalForm
         }
     }
 
-    protected void HandleSelection(IFileListEntry[] files)
-    {
-        this.selectedFiles = files;
-    }
+    protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
     #endregion
 }
