@@ -124,10 +124,7 @@ namespace Hawaso.Pages.BriefingLogs.Components
         }
 
         private IFileListEntry[] selectedFiles;
-        protected void HandleSelection(IFileListEntry[] files)
-        {
-            this.selectedFiles = files;
-        }
+        protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
 
         [Inject]
         public IBriefingLogFileStorageManager FileStorageManager { get; set; }
