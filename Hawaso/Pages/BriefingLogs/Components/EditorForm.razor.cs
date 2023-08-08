@@ -28,10 +28,7 @@ namespace Hawaso.Pages.BriefingLogs.Components
         /// <summary>
         /// 폼 닫기
         /// </summary>
-        public void Hide()
-        {
-            IsShow = false;
-        }
+        public void Hide() => IsShow = false;
 
         /// <summary>
         /// 폼의 제목 영역
