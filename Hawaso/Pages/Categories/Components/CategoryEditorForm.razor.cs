@@ -23,10 +23,7 @@ namespace Hawaso.Pages.Categories.Components
 
         public bool IsShow { get; set; }
 
-        public void Show()
-        {
-            IsShow = true;
-        }
+        public void Show() => IsShow = true;
 
         public void Close()
         {
