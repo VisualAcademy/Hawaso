@@ -121,10 +121,7 @@ namespace Hawaso.Pages.Libraries.Components
         }
 
         private IFileListEntry[] selectedFiles;
-        protected void HandleSelection(IFileListEntry[] files)
-        {
-            this.selectedFiles = files;
-        }
+        protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
 
         [Inject]
         public ILibraryFileStorageManager FileStorageManager { get; set; }
