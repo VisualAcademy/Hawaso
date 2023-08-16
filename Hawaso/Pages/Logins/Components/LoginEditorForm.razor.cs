@@ -1,5 +1,4 @@
-﻿using Hawaso.Models;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using System;
 
 namespace Hawaso.Pages.Logins.Components
