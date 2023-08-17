@@ -22,10 +22,7 @@ namespace Hawaso.Pages.Logins.Components
 
         public bool IsShow { get; set; }
 
-        public void Show()
-        {
-            IsShow = true;
-        }
+        public void Show() => IsShow = true;
 
         public void Close()
         {
