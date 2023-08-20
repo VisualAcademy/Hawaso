@@ -104,7 +104,6 @@ public partial class EditorForm
     public IMemoFileStorageManager FileStorageManagerReference { get; set; }
     #endregion
 
-
     #region Event Handlers
 
     protected async void CreateOrEditClick()

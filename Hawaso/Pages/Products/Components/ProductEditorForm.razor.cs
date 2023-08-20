@@ -34,10 +34,8 @@ public partial class ProductEditorForm
 
     public void Show() => IsShow = true;
 
-    public void Close()
-    {
-        IsShow = false; 
-    }
+    // 입력, 수정 모달 폼 닫기 
+    public void Close() => IsShow = false;
 
     protected async void btnSaveOrUpdate_Click()
     {
