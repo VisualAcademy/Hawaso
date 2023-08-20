@@ -24,8 +24,10 @@ namespace Hawaso.Pages.Logins.Components
 
         public void Show() => IsShow = true;
 
-        // 편집 모달 폼 닫기 
-        public void Close() => IsShow = false;
+        public void Close()
+        {
+            IsShow = false;
+        }
 
         protected async void btnSaveOrUpdate_Click()
         {
