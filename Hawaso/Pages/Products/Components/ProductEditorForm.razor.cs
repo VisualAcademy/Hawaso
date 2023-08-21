@@ -62,8 +62,5 @@ public partial class ProductEditorForm
         }
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        Categories = await CategoryRepositoryAsync.GetAllAsync();
-    }
+    protected override async Task OnInitializedAsync() => Categories = await CategoryRepositoryAsync.GetAllAsync();
 }
