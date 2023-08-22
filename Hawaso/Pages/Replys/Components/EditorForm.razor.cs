@@ -30,10 +30,7 @@ public partial class EditorForm
     /// <summary>
     /// 폼 보이기 
     /// </summary>
-    public void Show()
-    {
-        IsShow = true; // 현재 인라인 모달 폼 보이기
-    }
+    public void Show() => IsShow = true; // 현재 인라인 모달 폼 보이기
 
     /// <summary>
     /// 폼 닫기
@@ -106,7 +103,6 @@ public partial class EditorForm
     [Inject]
     public IFileStorageManager FileStorageManagerReference { get; set; }
     #endregion
-
 
     #region Event Handlers
     protected async void CreateOrEditClick()
