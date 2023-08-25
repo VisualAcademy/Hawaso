@@ -122,10 +122,7 @@ public partial class EditorForm
     }
 
     private IFileListEntry[] selectedFiles;
-    protected void HandleSelection(IFileListEntry[] files)
-    {
-        this.selectedFiles = files;
-    }
+    protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
 
     [Inject]
     public IFileStorageManager FileStorageManager { get; set; }
