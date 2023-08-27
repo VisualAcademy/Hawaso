@@ -29,10 +29,7 @@ public partial class EditorForm
     /// <summary>
     /// 폼 닫기
     /// </summary>
-    public void Hide()
-    {
-        IsShow = false;
-    }
+    public void Hide() => IsShow = false;
 
     /// <summary>
     /// 폼의 제목 영역
@@ -125,10 +122,7 @@ public partial class EditorForm
     }
 
     private IFileListEntry[] selectedFiles;
-    protected void HandleSelection(IFileListEntry[] files)
-    {
-        this.selectedFiles = files;
-    }
+    protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
 
     [Inject]
     public IFileStorageManager FileStorageManager { get; set; }
