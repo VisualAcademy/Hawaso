@@ -16,7 +16,7 @@
     <div class="m-5" id="dotnetnote-list">
         <h2 style="text-align:center;">게시판</h2>
         <span style="color: #ff0000">
-            글 목록 - ASP.NET Core 6.0 완성형 게시판입니다.
+            글 목록 - ASP.NET Core 7.0 완성형 게시판입니다.
         </span>
         <hr />
 
@@ -82,7 +82,8 @@
                                 @Html.Raw(BoardLibrary.FuncFileDownSingle(item.Id, item.FileName, item.FileSize.ToString(), "DotNetNote", "/BoardDown/"))
                             </td>
                             <td style="text-align:center;">
-                                @Html.DisplayFor(modelItem => item.Name)
+                                @* @Html.DisplayFor(modelItem => item.Name) *@
+                                @StringLibrary.CutStringUnicode(item.Name, 5)
                             </td>
                             <td style="text-align:center; font-size: xx-small;">
                                 @BoardLibrary.FuncShowTime(item.PostDate)
