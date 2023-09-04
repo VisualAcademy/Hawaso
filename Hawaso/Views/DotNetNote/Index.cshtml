@@ -82,7 +82,8 @@
                                 @Html.Raw(BoardLibrary.FuncFileDownSingle(item.Id, item.FileName, item.FileSize.ToString(), "DotNetNote", "/BoardDown/"))
                             </td>
                             <td style="text-align:center;">
-                                @Html.DisplayFor(modelItem => item.Name)
+                                @* @Html.DisplayFor(modelItem => item.Name) *@
+                                @StringLibrary.CutStringUnicode(item.Name, 5)
                             </td>
                             <td style="text-align:center; font-size: xx-small;">
                                 @BoardLibrary.FuncShowTime(item.PostDate)
@@ -127,7 +128,8 @@
                                 @Html.Raw(BoardLibrary.FuncFileDownSingle(item.Id, item.FileName, item.FileSize.ToString(), "DotNetNote", "/BoardDown/"))
                             </td>
                             <td style="text-align:center;">
-                                @Html.DisplayFor(modelItem => item.Name)
+                                @* @Html.DisplayFor(modelItem => item.Name) *@
+                                @StringLibrary.CutStringUnicode(item.Name, 5)
                             </td>
                             <td style="text-align:center; font-size: xx-small;">
                                 @BoardLibrary.FuncShowTime(item.PostDate)
