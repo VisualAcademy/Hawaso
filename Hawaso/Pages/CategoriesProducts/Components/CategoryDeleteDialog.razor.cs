@@ -1,17 +1,16 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
-namespace Hawaso.Pages.CategoriesProducts.Components
+namespace Hawaso.Pages.CategoriesProducts.Components;
+
+public partial class CategoryDeleteDialog
 {
-    public partial class CategoryDeleteDialog
-    {
-        public bool IsShow { get; set; }
+    public bool IsShow { get; set; }
 
-        public void Show() => IsShow = true;
+    public void Show() => IsShow = true;
 
-        public void Close() => IsShow = false;
+    public void Close() => IsShow = false;
 
-        [Parameter]
-        public EventCallback<MouseEventArgs> OnClick { get; set; }
-    }
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
 }
