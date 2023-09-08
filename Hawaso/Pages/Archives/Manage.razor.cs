@@ -117,10 +117,7 @@ namespace Hawaso.Pages.Archives
             StateHasChanged(); // Refresh
         }
 
-        protected void NameClick(long id)
-        {
-            NavigationManagerInjector.NavigateTo($"/Archives/Details/{id}");
-        }
+        protected void NameClick(long id) => NavigationManagerInjector.NavigateTo($"/Archives/Details/{id}");
 
         protected async void PageIndexChanged(int pageIndex)
         {
