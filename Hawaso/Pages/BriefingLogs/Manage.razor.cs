@@ -80,10 +80,7 @@ namespace Hawaso.Pages.BriefingLogs
             StateHasChanged();
         }
 
-        protected void NameClick(int id)
-        {
-            NavigationManagerReference.NavigateTo($"/BriefingLogs/Details/{id}");
-        }
+        protected void NameClick(int id) => NavigationManagerReference.NavigateTo($"/BriefingLogs/Details/{id}");
 
         protected async void PageIndexChanged(int pageIndex)
         {
