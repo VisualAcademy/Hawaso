@@ -56,10 +56,7 @@ public partial class Manage
         StateHasChanged();
     }
 
-    private void btnCustomerName_Click(int customerId)
-    {
-        NavigationManager.NavigateTo($"/Customers/Details/{customerId}");
-    }
+    private void btnCustomerName_Click(int customerId) => NavigationManager.NavigateTo($"/Customers/Details/{customerId}");
 
     protected void btnCreate_Click()
     {
