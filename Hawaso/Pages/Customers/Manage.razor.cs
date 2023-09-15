@@ -36,10 +36,7 @@ public partial class Manage
 
     public bool IsInlineDialogShow { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await DisplayData();
-    }
+    protected override async Task OnInitializedAsync() => await DisplayData();
 
     private async Task DisplayData()
     {
@@ -59,10 +56,7 @@ public partial class Manage
         StateHasChanged();
     }
 
-    private void btnCustomerName_Click(int customerId)
-    {
-        NavigationManager.NavigateTo($"/Customers/Details/{customerId}");
-    }
+    private void btnCustomerName_Click(int customerId) => NavigationManager.NavigateTo($"/Customers/Details/{customerId}");
 
     protected void btnCreate_Click()
     {
