@@ -69,10 +69,7 @@ public partial class Manage
     /// <summary>
     /// 페이지 초기화 이벤트 처리기
     /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
-        await DisplayData();
-    } 
+    protected override async Task OnInitializedAsync() => await DisplayData();
     #endregion
 
     private async Task DisplayData()
