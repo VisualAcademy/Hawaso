@@ -118,10 +118,7 @@ namespace VisualAcademy.Pages.Purges
             StateHasChanged(); // Refresh
         }
 
-        protected void NameClick(long id)
-        {
-            NavigationManagerInjector.NavigateTo($"/Purges/Details/{id}");
-        }
+        protected void NameClick(long id) => NavigationManagerInjector.NavigateTo($"/Purges/Details/{id}");
 
         protected async void PageIndexChanged(int pageIndex)
         {
