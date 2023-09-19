@@ -9,9 +9,10 @@ namespace Hawaso.Pages.Notices
 {
     public partial class Manage
     {
+        #region Parameters
         [Parameter]
         public int ParentId { get; set; } = 0;
-
+        #endregion
         [Inject]
         public INoticeRepository NoticeRepositoryAsyncReference { get; set; }
 
@@ -188,6 +189,7 @@ namespace Hawaso.Pages.Notices
             await DisplayData();
         }
 
+        #region Search
         private string searchQuery = "";
 
         protected async void Search(string query)
@@ -197,6 +199,7 @@ namespace Hawaso.Pages.Notices
             await SearchData();
 
             StateHasChanged();
-        }
+        } 
+        #endregion
     }
 }
