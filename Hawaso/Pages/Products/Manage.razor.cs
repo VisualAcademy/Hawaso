@@ -56,10 +56,7 @@ namespace VisualAcademy.Pages.Products
             StateHasChanged();
         }
 
-        private void btnProductName_Click(int ProductId)
-        {
-            NavigationManager.NavigateTo($"/Products/Details/{ProductId}");
-        }
+        private void btnProductName_Click(int ProductId) => NavigationManager.NavigateTo($"/Products/Details/{ProductId}");
 
         protected void ShowEditorForm()
         {
