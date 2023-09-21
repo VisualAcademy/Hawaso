@@ -10,11 +10,13 @@ namespace Hawaso.Pages.Logins
 {
     public partial class Manage
     {
+        #region Injectors
         [Inject]
         public ILoginRepositoryAsync LoginRepositoryAsync { get; set; }
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+        #endregion
 
         private DulPagerBase pager = new DulPagerBase()
         {
