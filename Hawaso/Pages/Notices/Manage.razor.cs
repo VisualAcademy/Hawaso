@@ -96,10 +96,7 @@ public partial class Manage
         }
     }
 
-    protected void NameClick(int id)
-    {
-        NavigationManagerReference.NavigateTo($"/Notices/Details/{id}");
-    }
+    protected void NameClick(int id) => NavigationManagerReference.NavigateTo($"/Notices/Details/{id}");
 
     protected async void PageIndexChanged(int pageIndex)
     {
