@@ -6,102 +6,103 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Hawaso.Pages.Logins;
-
-public partial class Manage
+namespace Hawaso.Pages.Logins
 {
-    [Inject]
-    public ILoginRepositoryAsync LoginRepositoryAsync { get; set; }
-
-    [Inject]
-    public NavigationManager NavigationManager { get; set; }
-
-    private DulPagerBase pager = new DulPagerBase()
+    public partial class Manage
     {
-        PageNumber = 1,
-        PageIndex = 0,
-        PageSize = 10,
-        PagerButtonCount = 5
-    };
+        [Inject]
+        public ILoginRepositoryAsync LoginRepositoryAsync { get; set; }
 
-    private List<Login> logins;
+        [Inject]
+        public NavigationManager NavigationManager { get; set; }
 
-    public string EditorFormTitle { get; set; } = "ADD";
+        private DulPagerBase pager = new DulPagerBase()
+        {
+            PageNumber = 1,
+            PageIndex = 0,
+            PageSize = 10,
+            PagerButtonCount = 5
+        };
 
-    public Login Login { get; set; } = new Login();
+        private List<Login> logins;
 
-    public LoginEditorForm LoginEditorForm { get; set; }
+        public string EditorFormTitle { get; set; } = "ADD";
 
-    public LoginDeleteDialog LoginDeleteDialog { get; set; }
+        public Login Login { get; set; } = new Login();
 
-    public bool IsInlineDialogShow { get; set; }
+        public LoginEditorForm LoginEditorForm { get; set; }
 
-    protected override async Task OnInitializedAsync() => await DisplayData();
+        public LoginDeleteDialog LoginDeleteDialog { get; set; }
 
-    private async Task DisplayData()
-    {
-        var articleSet = await LoginRepositoryAsync.GetAllAsync(pager.PageIndex, pager.PageSize);
-        pager.RecordCount = articleSet.TotalRecords;
-        logins = articleSet.Records.ToList();
-    }
+        public bool IsInlineDialogShow { get; set; }
 
-    private async void PageIndexChanged(int pageIndex)
-    {
-        pager.PageIndex = pageIndex;
-        pager.PageNumber = pageIndex + 1;
+        protected override async Task OnInitializedAsync() => await DisplayData();
 
-        await DisplayData();
+        private async Task DisplayData()
+        {
+            var articleSet = await LoginRepositoryAsync.GetAllAsync(pager.PageIndex, pager.PageSize);
+            pager.RecordCount = articleSet.TotalRecords;
+            logins = articleSet.Records.ToList();
+        }
 
-        StateHasChanged();
-    }
+        private async void PageIndexChanged(int pageIndex)
+        {
+            pager.PageIndex = pageIndex;
+            pager.PageNumber = pageIndex + 1;
 
-    protected void btnCreate_Click()
-    {
-        EditorFormTitle = "ADD";
-        Login = new Login();
+            await DisplayData();
 
-        LoginEditorForm.Show();
-    }
+            StateHasChanged();
+        }
 
-    protected async void SaveOrUpdated()
-    {
-        LoginEditorForm.Close();
+        protected void btnCreate_Click()
+        {
+            EditorFormTitle = "ADD";
+            Login = new Login();
 
-        await DisplayData();
+            LoginEditorForm.Show();
+        }
 
-        StateHasChanged();
-    }
+        protected async void SaveOrUpdated()
+        {
+            LoginEditorForm.Close();
 
-    protected void EditBy(Login customer)
-    {
-        EditorFormTitle = "EDIT";
-        Login = customer;
+            await DisplayData();
 
-        LoginEditorForm.Show();
-    }
+            StateHasChanged();
+        }
 
-    protected void DeleteBy(Login customer)
-    {
-        Login = customer;
-        LoginDeleteDialog.Show();
-    }
+        protected void EditBy(Login customer)
+        {
+            EditorFormTitle = "EDIT";
+            Login = customer;
 
-    protected async void btnDelete_Click()
-    {
-        await LoginRepositoryAsync.DeleteAsync(Login.LoginId);
+            LoginEditorForm.Show();
+        }
 
-        LoginDeleteDialog.Close();
+        protected void DeleteBy(Login customer)
+        {
+            Login = customer;
+            LoginDeleteDialog.Show();
+        }
 
-        Login = new Login();
+        protected async void btnDelete_Click()
+        {
+            await LoginRepositoryAsync.DeleteAsync(Login.LoginId);
 
-        await DisplayData();
+            LoginDeleteDialog.Close();
 
-        StateHasChanged();
-    }
+            Login = new Login();
 
-    protected void btnClose_Click()
-    {
-        IsInlineDialogShow = false;
-        Login = new Login();
+            await DisplayData();
+
+            StateHasChanged();
+        }
+
+        protected void btnClose_Click()
+        {
+            IsInlineDialogShow = false;
+            Login = new Login();
+        }
     }
 }
