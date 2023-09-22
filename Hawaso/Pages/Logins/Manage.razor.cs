@@ -36,7 +36,10 @@ namespace Hawaso.Pages.Logins
 
         public bool IsInlineDialogShow { get; set; }
 
-        protected override async Task OnInitializedAsync() => await DisplayData();
+        protected override async Task OnInitializedAsync()
+        {
+            await DisplayData();
+        }
 
         private async Task DisplayData()
         {
