@@ -10,11 +10,13 @@ namespace Hawaso.Pages.Logins
 {
     public partial class Manage
     {
+        #region Injectors
         [Inject]
         public ILoginRepositoryAsync LoginRepositoryAsync { get; set; }
 
         [Inject]
         public NavigationManager NavigationManager { get; set; }
+        #endregion
 
         private DulPagerBase pager = new DulPagerBase()
         {
@@ -36,10 +38,7 @@ namespace Hawaso.Pages.Logins
 
         public bool IsInlineDialogShow { get; set; }
 
-        protected override async Task OnInitializedAsync()
-        {
-            await DisplayData();
-        }
+        protected override async Task OnInitializedAsync() => await DisplayData();
 
         private async Task DisplayData()
         {
