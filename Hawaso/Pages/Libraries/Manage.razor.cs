@@ -21,11 +21,13 @@ public partial class Manage
     [Parameter]
     public string ParentKey { get; set; } = "";
 
+    #region Injectors
     [Inject]
     public ILibraryRepository UploadRepositoryAsyncReference { get; set; }
 
     [Inject]
-    public NavigationManager NavigationManagerReference { get; set; }
+    public NavigationManager NavigationManagerReference { get; set; } 
+    #endregion
 
     /// <summary>
     /// EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기
