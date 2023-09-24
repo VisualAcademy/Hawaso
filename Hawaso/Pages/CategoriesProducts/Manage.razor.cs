@@ -6,103 +6,102 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Hawaso.Pages.CategoriesProducts
+namespace Hawaso.Pages.CategoriesProducts;
+
+public partial class Manage
 {
-    public partial class Manage
+    [Inject]
+    public ICategoryRepository CategoryRepositoryAsync { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    private DulPagerBase pager = new DulPagerBase()
     {
-        [Inject]
-        public ICategoryRepository CategoryRepositoryAsync { get; set; }
+        PageNumber = 1,
+        PageIndex = 0,
+        PageSize = 10,
+        PagerButtonCount = 5
+    };
 
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
+    private List<Category> customers;
 
-        private DulPagerBase pager = new DulPagerBase()
-        {
-            PageNumber = 1,
-            PageIndex = 0,
-            PageSize = 10,
-            PagerButtonCount = 5
-        };
+    public string EditorFormTitle { get; set; } = "ADD";
 
-        private List<Category> customers;
+    public Category Category { get; set; } = new Category();
 
-        public string EditorFormTitle { get; set; } = "ADD";
+    public CategoryEditorForm CategoryEditorForm { get; set; }
 
-        public Category Category { get; set; } = new Category();
+    public CategoryDeleteDialog CategoryDeleteDialog { get; set; }
 
-        public CategoryEditorForm CategoryEditorForm { get; set; }
+    public bool IsInlineDialogShow { get; set; }
 
-        public CategoryDeleteDialog CategoryDeleteDialog { get; set; }
+    protected override async Task OnInitializedAsync() => await DisplayData();
 
-        public bool IsInlineDialogShow { get; set; }
+    private async Task DisplayData()
+    {
+        var articleSet = await CategoryRepositoryAsync.GetAllAsync(pager.PageIndex, pager.PageSize);
+        pager.RecordCount = articleSet.TotalRecords;
+        customers = articleSet.Records.ToList();
+    }
 
-        protected override async Task OnInitializedAsync() => await DisplayData();
+    private async void PageIndexChanged(int pageIndex)
+    {
+        pager.PageIndex = pageIndex;
+        pager.PageNumber = pageIndex + 1;
 
-        private async Task DisplayData()
-        {
-            var articleSet = await CategoryRepositoryAsync.GetAllAsync(pager.PageIndex, pager.PageSize);
-            pager.RecordCount = articleSet.TotalRecords;
-            customers = articleSet.Records.ToList();
-        }
+        await DisplayData();
 
-        private async void PageIndexChanged(int pageIndex)
-        {
-            pager.PageIndex = pageIndex;
-            pager.PageNumber = pageIndex + 1;
+        StateHasChanged();
+    }
 
-            await DisplayData();
+    protected void btnCreate_Click()
+    {
+        EditorFormTitle = "ADD";
+        Category = new Category();
 
-            StateHasChanged();
-        }
+        CategoryEditorForm.Show(); 
+    }
 
-        protected void btnCreate_Click()
-        {
-            EditorFormTitle = "ADD";
-            Category = new Category();
+    protected async void SaveOrUpdated()
+    {
+        CategoryEditorForm.Close();
 
-            CategoryEditorForm.Show(); 
-        }
+        await DisplayData();
 
-        protected async void SaveOrUpdated()
-        {
-            CategoryEditorForm.Close();
+        StateHasChanged();
+    }
 
-            await DisplayData();
+    protected void EditBy(Category customer)
+    {
+        EditorFormTitle = "EDIT";
+        Category = customer; 
 
-            StateHasChanged();
-        }
+        CategoryEditorForm.Show();
+    }
 
-        protected void EditBy(Category customer)
-        {
-            EditorFormTitle = "EDIT";
-            Category = customer; 
+    protected void DeleteBy(Category customer)
+    {
+        Category = customer;
+        CategoryDeleteDialog.Show();
+    }
 
-            CategoryEditorForm.Show();
-        }
+    protected async void btnDelete_Click()
+    {
+        await CategoryRepositoryAsync.DeleteAsync(Category.CategoryId);
 
-        protected void DeleteBy(Category customer)
-        {
-            Category = customer;
-            CategoryDeleteDialog.Show();
-        }
+        CategoryDeleteDialog.Close();
 
-        protected async void btnDelete_Click()
-        {
-            await CategoryRepositoryAsync.DeleteAsync(Category.CategoryId);
+        Category = new Category(); 
 
-            CategoryDeleteDialog.Close();
+        await DisplayData();
 
-            Category = new Category(); 
+        StateHasChanged();
+    }
 
-            await DisplayData();
-
-            StateHasChanged();
-        }
-
-        protected void btnClose_Click()
-        {
-            IsInlineDialogShow = false;
-            Category = new Category(); 
-        }
+    protected void btnClose_Click()
+    {
+        IsInlineDialogShow = false;
+        Category = new Category(); 
     }
 }
