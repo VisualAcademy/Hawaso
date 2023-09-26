@@ -6,124 +6,123 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace VisualAcademy.Pages.Products
+namespace VisualAcademy.Pages.Products;
+
+public partial class Manage
 {
-    public partial class Manage
+    [Inject]
+    public IProductRepositoryAsync ProductRepositoryAsync { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
+    private DulPagerBase pager = new DulPagerBase()
     {
-        [Inject]
-        public IProductRepositoryAsync ProductRepositoryAsync { get; set; }
+        PageNumber = 1,
+        PageIndex = 0,
+        PageSize = 3,
+        PagerButtonCount = 5
+    };
 
-        [Inject]
-        public NavigationManager NavigationManager { get; set; }
+    private List<Product> Products;
 
-        private DulPagerBase pager = new DulPagerBase()
-        {
-            PageNumber = 1,
-            PageIndex = 0,
-            PageSize = 3,
-            PagerButtonCount = 5
-        };
+    public string EditorFormTitle { get; set; } = "ADD";
 
-        private List<Product> Products;
+    public Product Product { get; set; } = new Product();
 
-        public string EditorFormTitle { get; set; } = "ADD";
+    public ProductEditorForm ProductEditorForm { get; set; }
 
-        public Product Product { get; set; } = new Product();
+    public ProductDeleteDialog ProductDeleteDialog { get; set; }
 
-        public ProductEditorForm ProductEditorForm { get; set; }
+    public bool IsInlineDialogShow { get; set; }
 
-        public ProductDeleteDialog ProductDeleteDialog { get; set; }
+    protected override async Task OnInitializedAsync() => await DisplayData();
 
-        public bool IsInlineDialogShow { get; set; }
+    private async Task DisplayData()
+    {
+        //await Task.Delay(3000);
+        var articleSet = await ProductRepositoryAsync.GetAllAsync(pager.PageIndex, pager.PageSize);
+        pager.RecordCount = articleSet.TotalRecords;
+        Products = articleSet.Records.ToList();
+    }
 
-        protected override async Task OnInitializedAsync() => await DisplayData();
+    private async void PageIndexChanged(int pageIndex)
+    {
+        pager.PageIndex = pageIndex;
+        pager.PageNumber = pageIndex + 1;
 
-        private async Task DisplayData()
-        {
-            //await Task.Delay(3000);
-            var articleSet = await ProductRepositoryAsync.GetAllAsync(pager.PageIndex, pager.PageSize);
-            pager.RecordCount = articleSet.TotalRecords;
-            Products = articleSet.Records.ToList();
-        }
+        await DisplayData();
 
-        private async void PageIndexChanged(int pageIndex)
-        {
-            pager.PageIndex = pageIndex;
-            pager.PageNumber = pageIndex + 1;
+        StateHasChanged();
+    }
 
-            await DisplayData();
+    private void btnProductName_Click(int ProductId) => NavigationManager.NavigateTo($"/Products/Details/{ProductId}");
 
-            StateHasChanged();
-        }
+    protected void ShowEditorForm()
+    {
+        EditorFormTitle = "ADD";
+        Product = new Product();
 
-        private void btnProductName_Click(int ProductId) => NavigationManager.NavigateTo($"/Products/Details/{ProductId}");
+        ProductEditorForm.Show(); 
+    }
 
-        protected void ShowEditorForm()
-        {
-            EditorFormTitle = "ADD";
-            Product = new Product();
+    protected async void SaveOrUpdated()
+    {
+        ProductEditorForm.Close();
 
-            ProductEditorForm.Show(); 
-        }
+        await DisplayData();
 
-        protected async void SaveOrUpdated()
-        {
-            ProductEditorForm.Close();
+        StateHasChanged();
+    }
 
-            await DisplayData();
+    protected void EditBy(Product Product)
+    {
+        EditorFormTitle = "EDIT";
+        this.Product = Product; 
 
-            StateHasChanged();
-        }
+        ProductEditorForm.Show();
+    }
 
-        protected void EditBy(Product Product)
-        {
-            EditorFormTitle = "EDIT";
-            this.Product = Product; 
+    protected void DeleteBy(Product Product)
+    {
+        this.Product = Product;
+        ProductDeleteDialog.Show();
+    }
 
-            ProductEditorForm.Show();
-        }
+    protected async void btnDelete_Click()
+    {
+        await ProductRepositoryAsync.DeleteAsync(Product.ProductId);
 
-        protected void DeleteBy(Product Product)
-        {
-            this.Product = Product;
-            ProductDeleteDialog.Show();
-        }
+        ProductDeleteDialog.Close();
 
-        protected async void btnDelete_Click()
-        {
-            await ProductRepositoryAsync.DeleteAsync(Product.ProductId);
+        Product = new Product(); 
 
-            ProductDeleteDialog.Close();
+        await DisplayData();
 
-            Product = new Product(); 
+        StateHasChanged();
+    }
 
-            await DisplayData();
+    protected void ToggleBy(Product product)
+    {
+        this.Product = product;
+        IsInlineDialogShow = true;
+    }
 
-            StateHasChanged();
-        }
+    protected async void btnToggleAbsence_Click()
+    {
+        Product.Absence = (Product?.Absence == 0) ? 1 : 0; // 토글
 
-        protected void ToggleBy(Product product)
-        {
-            this.Product = product;
-            IsInlineDialogShow = true;
-        }
+        await ProductRepositoryAsync.EditAsync(Product);
 
-        protected async void btnToggleAbsence_Click()
-        {
-            Product.Absence = (Product?.Absence == 0) ? 1 : 0; // 토글
+        await DisplayData();
 
-            await ProductRepositoryAsync.EditAsync(Product);
+        IsInlineDialogShow = false;
+        StateHasChanged();
+    }
 
-            await DisplayData();
-
-            IsInlineDialogShow = false;
-            StateHasChanged();
-        }
-
-        protected void btnClose_Click()
-        {
-            IsInlineDialogShow = false;
-            Product = new Product(); 
-        }
+    protected void btnClose_Click()
+    {
+        IsInlineDialogShow = false;
+        Product = new Product(); 
     }
 }
