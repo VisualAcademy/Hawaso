@@ -82,10 +82,7 @@ public partial class Manage
         StateHasChanged();
     }
 
-    protected void NameClick(int id)
-    {
-        NavigationManagerReference.NavigateTo($"/Libraries/Details/{id}");
-    }
+    protected void NameClick(int id) => NavigationManagerReference.NavigateTo($"/Libraries/Details/{id}");
 
     protected async void PageIndexChanged(int pageIndex)
     {
