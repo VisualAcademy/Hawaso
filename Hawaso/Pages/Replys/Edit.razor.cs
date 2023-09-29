@@ -94,15 +94,12 @@ namespace Hawaso.Pages.Replys
 
             await RepositoryReference.EditAsync(Model);
             NavigationManagerInjector.NavigateTo("/Replys");
-        } 
+        }
 
         /// <summary>
         /// 파일 선택 이벤트 처리기
         /// </summary>
-        protected void HandleSelection(IFileListEntry[] files)
-        {
-            this.selectedFiles = files;
-        }
+        protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
         #endregion
     }
 }
