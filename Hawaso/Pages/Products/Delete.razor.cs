@@ -21,10 +21,7 @@ public partial class Delete
 
     private Product Product = new Product();
 
-    protected override async Task OnInitializedAsync()
-    {
-        Product = await ProductRepositoryAsync.GetByIdAsync(ProductId);
-    }
+    protected override async Task OnInitializedAsync() => Product = await ProductRepositoryAsync.GetByIdAsync(ProductId);
 
     protected async void btnDelete_Click()
     {
