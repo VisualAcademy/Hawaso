@@ -27,10 +27,7 @@ public partial class RoleDelete
     public bool ShowModal { get; set; } = false;
     public bool ShowBuiltIn { get; set; } = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-        model = await RoleManager.FindByIdAsync(Id);
-    }
+    protected override async Task OnInitializedAsync() => model = await RoleManager.FindByIdAsync(Id);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
