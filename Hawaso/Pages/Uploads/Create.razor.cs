@@ -52,8 +52,5 @@ public partial class Create
     [Inject]
     public IFileStorageManager FileStorageManager { get; set; }
     private IFileListEntry[] selectedFiles;
-    protected void HandleSelection(IFileListEntry[] files)
-    {
-        this.selectedFiles = files;
-    }
+    protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
 }
