@@ -32,8 +32,5 @@ public partial class Create
         NavigationManager.NavigateTo("/Products");
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        Categories = await RepositoryReference.GetAllAsync(); 
-    }
+    protected override async Task OnInitializedAsync() => Categories = await RepositoryReference.GetAllAsync();
 }
