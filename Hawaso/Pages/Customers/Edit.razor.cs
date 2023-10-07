@@ -18,10 +18,7 @@ namespace Hawaso.Pages.Customers
 
         private Customer customer = new Customer();
 
-        protected override async Task OnInitializedAsync()
-        {
-            customer = await CustomerRepositoryAsync.GetByIdAsync(CustomerId);
-        }
+        protected override async Task OnInitializedAsync() => customer = await CustomerRepositoryAsync.GetByIdAsync(CustomerId);
 
         private string[] genders = { "Male", "Female" };
 
