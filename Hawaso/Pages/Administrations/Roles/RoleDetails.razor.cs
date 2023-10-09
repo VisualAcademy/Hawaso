@@ -20,16 +20,18 @@ public partial class RoleDetails
     [Inject]
     public IJSRuntime JSRuntime { get; set; }
 
-    private ApplicationRole model = new ApplicationRole(); 
+    #region Properties
+    private ApplicationRole Model = new ApplicationRole();  
+    #endregion
 
     protected override async Task OnInitializedAsync()
     {
-        model = await RoleManager.FindByIdAsync(Id);
+        Model = await RoleManager.FindByIdAsync(Id);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && model == null)
+        if (firstRender && Model == null)
         {
             await JSRuntime.InvokeVoidAsync("alert", "잘못된 요청입니다.");
             NavigationManagerRef.NavigateTo("/Administrations/Roles");
