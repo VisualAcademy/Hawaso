@@ -14,9 +14,6 @@ namespace Hawaso.Pages.Customers
 
         private Customer customer = new Customer();
 
-        protected override async Task OnInitializedAsync()
-        {
-            customer = await CustomerRepositoryReference.GetByIdAsync(CustomerId);
-        }
+        protected override async Task OnInitializedAsync() => customer = await CustomerRepositoryReference.GetByIdAsync(CustomerId);
     }
 }
