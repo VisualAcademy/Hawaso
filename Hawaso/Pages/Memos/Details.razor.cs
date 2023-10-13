@@ -16,6 +16,7 @@ public partial class Details
     #endregion
 
     #region Properties
+    // MVC에서 Controller에서 View로 Model 개체로 데이터 전송하는 것처럼, 코드 비하인드에서 컴포넌트로 모델 값 전송
     public Memo Model { get; set; } = new Memo();
 
     public string Content { get; set; } = "";
