@@ -2,18 +2,17 @@
 using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
 
-namespace Hawaso.Pages.Customers
+namespace Hawaso.Pages.Customers;
+
+public partial class Details
 {
-    public partial class Details
-    {
-        [Parameter]
-        public int CustomerId { get; set; }
+    [Parameter]
+    public int CustomerId { get; set; }
 
-        [Inject]
-        public ICustomerRepository CustomerRepositoryReference { get; set; }
+    [Inject]
+    public ICustomerRepository CustomerRepositoryReference { get; set; }
 
-        private Customer customer = new Customer();
+    private Customer customer = new Customer();
 
-        protected override async Task OnInitializedAsync() => customer = await CustomerRepositoryReference.GetByIdAsync(CustomerId);
-    }
+    protected override async Task OnInitializedAsync() => customer = await CustomerRepositoryReference.GetByIdAsync(CustomerId);
 }
