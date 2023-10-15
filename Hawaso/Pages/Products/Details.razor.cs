@@ -14,8 +14,5 @@ public partial class Details
 
     private Product Product = new();
 
-    protected override async Task OnInitializedAsync()
-    {
-        Product = await ProductRepositoryAsync.GetByIdAsync(ProductId);
-    }
+    protected override async Task OnInitializedAsync() => Product = await ProductRepositoryAsync.GetByIdAsync(ProductId);
 }
