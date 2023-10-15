@@ -12,7 +12,7 @@ public partial class Details
     [Inject]
     public IProductRepositoryAsync ProductRepositoryAsync { get; set; }
 
-    private Product Product = new Product();
+    private Product Product = new();
 
     protected override async Task OnInitializedAsync()
     {
