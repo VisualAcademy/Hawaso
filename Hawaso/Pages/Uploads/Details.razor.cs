@@ -6,8 +6,10 @@ namespace Hawaso.Pages.Uploads;
 
 public partial class Details
 {
+    #region Parameters
     [Parameter]
-    public int Id { get; set; }
+    public int Id { get; set; } 
+    #endregion
 
     [Inject]
     public IUploadRepository UploadRepositoryAsyncReference { get; set; }
