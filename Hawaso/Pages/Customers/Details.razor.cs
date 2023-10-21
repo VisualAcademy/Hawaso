@@ -6,13 +6,21 @@ namespace Hawaso.Pages.Customers;
 
 public partial class Details
 {
+    #region Parameters
     [Parameter]
     public int CustomerId { get; set; }
+    #endregion
 
+    #region Injectors
     [Inject]
     public ICustomerRepository CustomerRepositoryReference { get; set; }
+    #endregion
 
-    private Customer customer = new Customer();
+    #region Fields
+    private Customer customer = new();
+    #endregion
 
+    #region Lifecycle Methods
     protected override async Task OnInitializedAsync() => customer = await CustomerRepositoryReference.GetByIdAsync(CustomerId);
+    #endregion
 }
