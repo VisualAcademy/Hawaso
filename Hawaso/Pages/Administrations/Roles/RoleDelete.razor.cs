@@ -72,10 +72,7 @@ public partial class RoleDelete
         }
     }
 
-    protected void OpenBuiltIn()
-    {
-        ShowBuiltIn = true;
-    }
+    protected void OpenBuiltIn() => ShowBuiltIn = true;
 
     protected void CloseBuiltIn()
     {
