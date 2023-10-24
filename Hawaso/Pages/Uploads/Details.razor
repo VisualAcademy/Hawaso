@@ -9,19 +9,19 @@
         <div class="form-group row">
             <label for="id" class="col-sm-2 col-form-label">ID: </label>
             <div class="col-sm-10">
-                <input type="text" class="form-control-plaintext" id="id" value="@model.Id" />
+                <input type="text" class="form-control-plaintext" id="id" value="@Model.Id" />
             </div>
         </div>
         <div class="form-group row">
             <label for="lblName" class="col-sm-2 col-form-label">Name: </label>
             <div class="col-sm-10">
-                <input type="text" class="form-control-plaintext" id="lblName" value="@model.Name" />
+                <input type="text" class="form-control-plaintext" id="lblName" value="@Model.Name" />
             </div>
         </div>
         <div class="form-group row">
             <label for="lblTitle" class="col-sm-2 col-form-label">Title: </label>
             <div class="col-sm-10">
-                <input type="text" class="form-control-plaintext" id="lblTitle" value="@model.Title" />
+                <input type="text" class="form-control-plaintext" id="lblTitle" value="@Model.Title" />
             </div>
         </div>
         <div class="form-group row">
@@ -30,8 +30,8 @@
             </div>
         </div>
         <div class="form-group">
-            <a href="/Uploads/Edit/@model.Id" class="btn btn-primary">Edit</a>
-            <a href="/Uploads/Delete/@model.Id" class="btn btn-danger">Delete</a>
+            <a href="/Uploads/Edit/@Model.Id" class="btn btn-primary">Edit</a>
+            <a href="/Uploads/Delete/@Model.Id" class="btn btn-danger">Delete</a>
             <a href="/Uploads" class="btn btn-secondary">List</a>
         </div>
     </div>
