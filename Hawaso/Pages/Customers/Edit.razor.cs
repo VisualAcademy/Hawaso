@@ -7,6 +7,10 @@ namespace Hawaso.Pages.Customers;
 
 public partial class Edit
 {
+    #region Fields
+    private string[] genders = { "Male", "Female" }; 
+    #endregion
+
     #region Parameters
     [Parameter]
     public int CustomerId { get; set; }
@@ -19,9 +23,6 @@ public partial class Edit
     public NavigationManager NavigationManager { get; set; }
 
     private Customer customer = new Customer();
-
-
-    private string[] genders = { "Male", "Female" };
 
     #region Lifecycle Methods 
     protected override async Task OnInitializedAsync() => customer = await CustomerRepositoryAsync.GetByIdAsync(CustomerId);
