@@ -7,8 +7,10 @@ namespace Hawaso.Pages.BriefingLogs;
 
 public partial class Delete
 {
+    #region Parameters
     [Parameter]
-    public int Id { get; set; }
+    public int Id { get; set; } 
+    #endregion
 
     [Inject]
     public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; }
