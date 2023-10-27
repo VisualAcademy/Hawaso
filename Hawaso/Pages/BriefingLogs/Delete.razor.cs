@@ -9,17 +9,19 @@ public partial class Delete
 {
     #region Parameters
     [Parameter]
-    public int Id { get; set; } 
+    public int Id { get; set; }
     #endregion
 
-    [Inject]
-    public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; }
-
+    #region Injectors
     [Inject]
     public IJSRuntime JSRuntime { get; set; }
 
     [Inject]
     public NavigationManager NavigationManagerReference { get; set; }
+
+    [Inject]
+    public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; }
+    #endregion
 
     protected BriefingLog model = new BriefingLog();
 
