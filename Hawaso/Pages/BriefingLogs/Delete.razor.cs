@@ -25,7 +25,9 @@ public partial class Delete
 
     protected BriefingLog model = new BriefingLog();
 
+    #region Fields
     protected string content = "";
+    #endregion
 
     protected override async Task OnInitializedAsync()
     {
