@@ -23,7 +23,7 @@ public partial class Delete
     public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; }
     #endregion
 
-    protected BriefingLog model = new BriefingLog();
+    protected BriefingLog model = new();
 
     #region Fields
     protected string content = "";
