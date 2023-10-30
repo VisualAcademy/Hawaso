@@ -29,11 +29,13 @@ public partial class Delete
     protected string content = "";
     #endregion
 
+    #region Lifecycle Methods
     protected override async Task OnInitializedAsync()
     {
         model = await UploadRepositoryAsyncReference.GetByIdAsync(Id);
         content = Dul.HtmlUtility.EncodeWithTabAndSpace(model.Content);
     }
+    #endregion
 
     protected async void DeleteClick()
     {
