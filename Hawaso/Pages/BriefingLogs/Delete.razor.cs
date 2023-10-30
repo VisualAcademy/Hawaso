@@ -7,27 +7,35 @@ namespace Hawaso.Pages.BriefingLogs;
 
 public partial class Delete
 {
+    #region Parameters
     [Parameter]
     public int Id { get; set; }
+    #endregion
 
-    [Inject]
-    public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; }
-
+    #region Injectors
     [Inject]
     public IJSRuntime JSRuntime { get; set; }
 
     [Inject]
     public NavigationManager NavigationManagerReference { get; set; }
 
-    protected BriefingLog model = new BriefingLog();
+    [Inject]
+    public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; }
+    #endregion
 
+    protected BriefingLog model = new();
+
+    #region Fields
     protected string content = "";
+    #endregion
 
+    #region Lifecycle Methods
     protected override async Task OnInitializedAsync()
     {
         model = await UploadRepositoryAsyncReference.GetByIdAsync(Id);
         content = Dul.HtmlUtility.EncodeWithTabAndSpace(model.Content);
     }
+    #endregion
 
     protected async void DeleteClick()
     {
