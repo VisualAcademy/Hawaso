@@ -21,12 +21,15 @@ public partial class Delete
 
     [Inject]
     public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; }
-    #endregion
 
-    protected BriefingLog model = new();
+    [Inject]
+    public IBriefingLogFileStorageManager FileStorageManager { get; set; }
+    #endregion
 
     #region Fields
     protected string content = "";
+
+    protected BriefingLog model = new();
     #endregion
 
     #region Lifecycle Methods
@@ -36,7 +39,8 @@ public partial class Delete
         content = Dul.HtmlUtility.EncodeWithTabAndSpace(model.Content);
     }
     #endregion
-
+    
+    #region Event Handlers
     protected async void DeleteClick()
     {
         bool isDelete = await JSRuntime.InvokeAsync<bool>("confirm", $"{Id}번 글을 정말로 삭제하시겠습니까?");
@@ -56,8 +60,6 @@ public partial class Delete
         {
             await JSRuntime.InvokeAsync<object>("alert", "취소되었습니다.");
         }
-    }
-
-    [Inject]
-    public IBriefingLogFileStorageManager FileStorageManager { get; set; }
+    } 
+    #endregion
 }
