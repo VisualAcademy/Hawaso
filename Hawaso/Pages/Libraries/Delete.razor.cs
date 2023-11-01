@@ -7,18 +7,22 @@ namespace Hawaso.Pages.Libraries;
 
 public partial class Delete
 {
+    #region Parameters
     [Parameter]
     public int Id { get; set; }
+    #endregion
 
+    #region Injectors
     [Inject]
-    public ILibraryRepository UploadRepositoryAsyncReference { get; set; }
+    public NavigationManager NavigationManagerReference { get; set; }
 
     [Inject]
     public IJSRuntime JSRuntime { get; set; }
 
     [Inject]
-    public NavigationManager NavigationManagerReference { get; set; }
-
+    public ILibraryRepository UploadRepositoryAsyncReference { get; set; }
+    #endregion
+    
     protected LibraryModel model = new LibraryModel();
 
     protected string content = "";
