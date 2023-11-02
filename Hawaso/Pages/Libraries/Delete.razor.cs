@@ -25,13 +25,20 @@ public partial class Delete
     
     protected LibraryModel model = new LibraryModel();
 
-    protected string content = "";
+    #region Properties
+    public string Content { get; set; } = ""; 
+    #endregion
 
+    #region Lifecycle Methods
+    /// <summary>
+    /// 페이지 초기화 이벤트 처리기
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         model = await UploadRepositoryAsyncReference.GetByIdAsync(Id);
-        content = Dul.HtmlUtility.EncodeWithTabAndSpace(model.Content);
+        Content = Dul.HtmlUtility.EncodeWithTabAndSpace(model.Content);
     }
+    #endregion
 
     protected async void DeleteClick()
     {
