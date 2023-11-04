@@ -21,6 +21,9 @@ public partial class Delete
 
     [Inject]
     public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; }
+
+    [Inject]
+    public IBriefingLogFileStorageManager FileStorageManager { get; set; }
     #endregion
 
     protected BriefingLog model = new();
@@ -57,7 +60,4 @@ public partial class Delete
             await JSRuntime.InvokeAsync<object>("alert", "취소되었습니다.");
         }
     }
-
-    [Inject]
-    public IBriefingLogFileStorageManager FileStorageManager { get; set; }
 }
