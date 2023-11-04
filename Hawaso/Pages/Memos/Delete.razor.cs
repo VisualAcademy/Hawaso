@@ -6,6 +6,10 @@ namespace VisualAcademy.Pages.Memos;
 
 public partial class Delete
 {
+    #region Fields
+    private const string MemoListPage = "/Memos"; 
+    #endregion
+
     #region Parameters
     [Parameter]
     public int Id { get; set; }
@@ -60,7 +64,7 @@ public partial class Delete
             }
 
             await RepositoryReference.DeleteAsync(Id); // 삭제
-            NavigationManagerInjector.NavigateTo("/Memos"); // 리스트 페이지로 이동
+            NavigationManagerInjector.NavigateTo(MemoListPage); // 리스트 페이지로 이동
         }
         else
         {
