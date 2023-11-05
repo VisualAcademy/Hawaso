@@ -21,6 +21,9 @@ public partial class Delete
 
     [Inject]
     public ILibraryRepository UploadRepositoryAsyncReference { get; set; }
+
+    [Inject]
+    public ILibraryFileStorageManager FileStorageManager { get; set; }
     #endregion
     
     protected LibraryModel model = new LibraryModel();
@@ -60,7 +63,4 @@ public partial class Delete
             await JSRuntime.InvokeAsync<object>("alert", "취소되었습니다.");
         }
     }
-
-    [Inject]
-    public ILibraryFileStorageManager FileStorageManager { get; set; }
 }
