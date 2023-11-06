@@ -43,6 +43,7 @@ public partial class Delete
     }
     #endregion
 
+    #region Event Handlers
     protected async void DeleteClick()
     {
         bool isDelete = await JSRuntime.InvokeAsync<bool>("confirm", $"{Id}번 글을 정말로 삭제하시겠습니까?");
@@ -62,5 +63,6 @@ public partial class Delete
         {
             await JSRuntime.InvokeAsync<object>("alert", "취소되었습니다.");
         }
-    }
+    } 
+    #endregion
 }
