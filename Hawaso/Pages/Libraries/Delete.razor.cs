@@ -26,10 +26,10 @@ public partial class Delete
     public ILibraryFileStorageManager FileStorageManager { get; set; }
     #endregion
     
-    protected LibraryModel model = new LibraryModel();
-
     #region Properties
     public string Content { get; set; } = ""; 
+    
+    public LibraryModel Model { get; set; }
     #endregion
 
     #region Lifecycle Methods
@@ -38,8 +38,8 @@ public partial class Delete
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        model = await UploadRepositoryAsyncReference.GetByIdAsync(Id);
-        Content = Dul.HtmlUtility.EncodeWithTabAndSpace(model.Content);
+        Model = await UploadRepositoryAsyncReference.GetByIdAsync(Id);
+        Content = Dul.HtmlUtility.EncodeWithTabAndSpace(Model.Content);
     }
     #endregion
 
@@ -50,10 +50,10 @@ public partial class Delete
 
         if (isDelete)
         {
-            if (!string.IsNullOrEmpty(model?.FileName))
+            if (!string.IsNullOrEmpty(Model?.FileName))
             {
                 // 첨부 파일 삭제 
-                await FileStorageManager.DeleteAsync(model.FileName, "Libraries");
+                await FileStorageManager.DeleteAsync(Model.FileName, "Libraries");
             }
 
             await UploadRepositoryAsyncReference.DeleteAsync(Id); // 삭제
