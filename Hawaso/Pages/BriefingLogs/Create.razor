@@ -6,26 +6,26 @@
 
 <div class="row">
     <div class="col-md-12">
-        <EditForm Model="model" OnValidSubmit="FormSubmit">
+        <EditForm Model="Model" OnValidSubmit="FormSubmit">
             <DataAnnotationsValidator></DataAnnotationsValidator>
             <ValidationSummary></ValidationSummary>
             <div class="form-group">
                 <label for="txtName">Name</label>
                 <InputText id="txtName" class="form-control" placeholder="Enter Title"
-                           @bind-Value="@model.Name"></InputText>
-                <ValidationMessage For="@(() => model.Name)" class="form-text text-muted"></ValidationMessage>
+                           @bind-Value="@Model.Name"></InputText>
+                <ValidationMessage For="@(() => Model.Name)" class="form-text text-muted"></ValidationMessage>
             </div>
             <div class="form-group">
                 <label for="txtTitle">Title</label>
                 <InputText id="txtTitle" class="form-control" placeholder="Enter Title"
-                           @bind-Value="@model.Title"></InputText>
-                <ValidationMessage For="@(() => model.Title)" class="form-text text-muted"></ValidationMessage>
+                           @bind-Value="@Model.Title"></InputText>
+                <ValidationMessage For="@(() => Model.Title)" class="form-text text-muted"></ValidationMessage>
             </div>
 
             <div class="form-group">
                 <label for="txtTitle">DateTime Started</label>
                 <input type="datetime-local" 
-                       @bind="@model.DateTimeStarted" 
+                       @bind="@Model.DateTimeStarted" 
                        @bind:format="yyyy-MM-ddTHH:mm" 
                        class="form-control" />
             </div>
@@ -33,8 +33,8 @@
             <div class="form-group">
                 <label for="txtContent">Content</label>
                 <InputTextArea id="txtContext" class="form-control" placeholder="Enter Content" rows="5"
-                               @bind-Value="@model.Content"></InputTextArea>
-                <ValidationMessage For="@(() => model.Content)" class="form-text text-muted"></ValidationMessage>
+                               @bind-Value="@Model.Content"></InputTextArea>
+                <ValidationMessage For="@(() => Model.Content)" class="form-text text-muted"></ValidationMessage>
             </div>
             <div class="form-group" style="display: none;">
                 <label for="lstCategory">Parent</label>
