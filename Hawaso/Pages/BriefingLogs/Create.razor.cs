@@ -26,7 +26,9 @@ public partial class Create
     public string ParentId { get; set; }
     #endregion
 
+    #region Fields
     protected int[] parentIds = { 1, 2, 3 };
+    #endregion
 
     protected async void FormSubmit()
     {
@@ -62,6 +64,7 @@ public partial class Create
     private IFileListEntry[] selectedFiles;
     protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
 
+    #region Lifecycle Methods
     protected override async Task OnInitializedAsync()
     {
         if (UserId == "" && UserName == "")
@@ -72,6 +75,7 @@ public partial class Create
         Model.Name = UserName;
         Model.DateTimeStarted = DateTime.Today;
     }
+    #endregion
 
     #region Get UserId and UserName
     [Parameter]
