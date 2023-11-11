@@ -19,7 +19,7 @@ public partial class Import
     public NavigationManager NavigationManagerReference { get; set; } 
     #endregion
 
-    protected Upload model = new Upload();
+    protected Upload Model = new Upload();
 
     public string ParentId { get; set; }
 
@@ -28,7 +28,7 @@ public partial class Import
     protected async void FormSubmit()
     {
         int.TryParse(ParentId, out int parentId);
-        model.ParentId = parentId;
+        Model.ParentId = parentId;
 
         #region 파일 업로드 관련 추가 코드 영역
         if (selectedFiles != null && selectedFiles.Length > 0)
@@ -44,16 +44,16 @@ public partial class Import
 
                 fileName = await FileStorageManager.UploadAsync(file.Data, file.Name, "", true);
 
-                model.FileName = fileName;
-                model.FileSize = fileSize;
+                Model.FileName = fileName;
+                Model.FileSize = fileSize;
             } 
         }
         #endregion
 
         foreach (var m in Models)
         {
-            m.FileName = model.FileName;
-            m.FileSize = model.FileSize; 
+            m.FileName = Model.FileName;
+            m.FileSize = Model.FileSize; 
             await UploadRepositoryAsyncReference.AddAsync(m);
         }
 
@@ -61,6 +61,7 @@ public partial class Import
     }
 
     public List<Upload> Models { get; set; } = new List<Upload>(); 
+
     [Inject]
     public IFileStorageManager FileStorageManager { get; set; }
     private IFileListEntry[] selectedFiles;
