@@ -11,11 +11,13 @@ namespace Hawaso.Pages.Uploads;
 
 public partial class Import
 {
+    #region Injectors
     [Inject]
     public IUploadRepository UploadRepositoryAsyncReference { get; set; }
 
     [Inject]
-    public NavigationManager NavigationManagerReference { get; set; }
+    public NavigationManager NavigationManagerReference { get; set; } 
+    #endregion
 
     protected Upload model = new Upload();
 
