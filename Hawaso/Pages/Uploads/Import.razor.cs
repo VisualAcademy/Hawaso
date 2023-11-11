@@ -7,91 +7,90 @@ using System.IO;
 using System.Linq;
 using VisualAcademy.Models.Replys;
 
-namespace Hawaso.Pages.Uploads
+namespace Hawaso.Pages.Uploads;
+
+public partial class Import
 {
-    public partial class Import
+    [Inject]
+    public IUploadRepository UploadRepositoryAsyncReference { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManagerReference { get; set; }
+
+    protected Upload model = new Upload();
+
+    public string ParentId { get; set; }
+
+    protected int[] parentIds = { 1, 2, 3 };
+
+    protected async void FormSubmit()
     {
-        [Inject]
-        public IUploadRepository UploadRepositoryAsyncReference { get; set; }
+        int.TryParse(ParentId, out int parentId);
+        model.ParentId = parentId;
 
-        [Inject]
-        public NavigationManager NavigationManagerReference { get; set; }
-
-        protected Upload model = new Upload();
-
-        public string ParentId { get; set; }
-
-        protected int[] parentIds = { 1, 2, 3 };
-
-        protected async void FormSubmit()
+        #region 파일 업로드 관련 추가 코드 영역
+        if (selectedFiles != null && selectedFiles.Length > 0)
         {
-            int.TryParse(ParentId, out int parentId);
-            model.ParentId = parentId;
-
-            #region 파일 업로드 관련 추가 코드 영역
-            if (selectedFiles != null && selectedFiles.Length > 0)
+            // 파일 업로드
+            var file = selectedFiles.FirstOrDefault();
+            var fileName = "";
+            int fileSize = 0;
+            if (file != null)
             {
-                // 파일 업로드
-                var file = selectedFiles.FirstOrDefault();
-                var fileName = "";
-                int fileSize = 0;
-                if (file != null)
-                {
-                    fileName = file.Name;
-                    fileSize = Convert.ToInt32(file.Size);
+                fileName = file.Name;
+                fileSize = Convert.ToInt32(file.Size);
 
-                    fileName = await FileStorageManager.UploadAsync(file.Data, file.Name, "", true);
+                fileName = await FileStorageManager.UploadAsync(file.Data, file.Name, "", true);
 
-                    model.FileName = fileName;
-                    model.FileSize = fileSize;
-                } 
-            }
-            #endregion
+                model.FileName = fileName;
+                model.FileSize = fileSize;
+            } 
+        }
+        #endregion
 
-            foreach (var m in Models)
-            {
-                m.FileName = model.FileName;
-                m.FileSize = model.FileSize; 
-                await UploadRepositoryAsyncReference.AddAsync(m);
-            }
-
-            NavigationManagerReference.NavigateTo("/Uploads");
+        foreach (var m in Models)
+        {
+            m.FileName = model.FileName;
+            m.FileSize = model.FileSize; 
+            await UploadRepositoryAsyncReference.AddAsync(m);
         }
 
-        public List<Upload> Models { get; set; } = new List<Upload>(); 
-        [Inject]
-        public IFileStorageManager FileStorageManager { get; set; }
-        private IFileListEntry[] selectedFiles;
-        protected async void HandleSelection(IFileListEntry[] files)
+        NavigationManagerReference.NavigateTo("/Uploads");
+    }
+
+    public List<Upload> Models { get; set; } = new List<Upload>(); 
+    [Inject]
+    public IFileStorageManager FileStorageManager { get; set; }
+    private IFileListEntry[] selectedFiles;
+    protected async void HandleSelection(IFileListEntry[] files)
+    {
+        this.selectedFiles = files;
+
+        // 엑셀 데이터 읽어오기 
+        if (selectedFiles != null && selectedFiles.Length > 0)
         {
-            this.selectedFiles = files;
+            var file = selectedFiles.FirstOrDefault();
 
-            // 엑셀 데이터 읽어오기 
-            if (selectedFiles != null && selectedFiles.Length > 0)
+            using (var stream = new MemoryStream())
             {
-                var file = selectedFiles.FirstOrDefault();
+                await file.Data.CopyToAsync(stream);
 
-                using (var stream = new MemoryStream())
+                using (var package = new ExcelPackage(stream))
                 {
-                    await file.Data.CopyToAsync(stream);
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    var rowCount = worksheet.Dimension.Rows;
 
-                    using (var package = new ExcelPackage(stream))
+                    for (int row = 2; row <= rowCount; row++)
                     {
-                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                        var rowCount = worksheet.Dimension.Rows;
-
-                        for (int row = 2; row <= rowCount; row++)
+                        Models.Add(new Upload
                         {
-                            Models.Add(new Upload
-                            {
-                                Name = worksheet.Cells[row, 1].Value.ToString().Trim(),
-                                DownCount = int.Parse(worksheet.Cells[row, 2].Value.ToString().Trim()),
-                            }); ;
-                        }
+                            Name = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                            DownCount = int.Parse(worksheet.Cells[row, 2].Value.ToString().Trim()),
+                        }); ;
                     }
                 }
-                StateHasChanged();
             }
+            StateHasChanged();
         }
     }
 }
