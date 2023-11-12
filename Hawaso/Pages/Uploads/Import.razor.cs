@@ -16,14 +16,17 @@ public partial class Import
     public IUploadRepository UploadRepositoryAsyncReference { get; set; }
 
     [Inject]
-    public NavigationManager NavigationManagerReference { get; set; } 
+    public NavigationManager NavigationManagerReference { get; set; }
     #endregion
 
-    protected Upload Model = new Upload();
-
+    #region Properties
+    public Upload Model { get; set; }
     public string ParentId { get; set; }
+    #endregion
 
+    #region Fields
     protected int[] parentIds = { 1, 2, 3 };
+    #endregion
 
     protected async void FormSubmit()
     {
