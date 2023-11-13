@@ -29,7 +29,7 @@ namespace Hawaso.Pages.Replys
         public IFileStorageManager FileStorageManagerReference { get; set; } 
         #endregion
 
-        protected Reply model = new Reply();
+        protected Reply Model = new Reply();
 
         public string ParentId { get; set; }
 
@@ -41,7 +41,7 @@ namespace Hawaso.Pages.Replys
         protected async void FormSubmit()
         {
             int.TryParse(ParentId, out int parentId);
-            model.ParentId = parentId;
+            Model.ParentId = parentId;
 
             #region 파일 업로드 관련 추가 코드 영역
             if (selectedFiles != null && selectedFiles.Length > 0)
@@ -57,16 +57,16 @@ namespace Hawaso.Pages.Replys
 
                     fileName = await FileStorageManagerReference.UploadAsync(file.Data, file.Name, "", true);
 
-                    model.FileName = fileName;
-                    model.FileSize = fileSize;
+                    Model.FileName = fileName;
+                    Model.FileSize = fileSize;
                 } 
             }
             #endregion
 
             foreach (var m in Models)
             {
-                m.FileName = model.FileName;
-                m.FileSize = model.FileSize; 
+                m.FileName = Model.FileName;
+                m.FileSize = Model.FileSize; 
                 await RepositoryReference.AddAsync(m);
             }
 
