@@ -7,103 +7,104 @@ using System.IO;
 using System.Linq;
 using VisualAcademy.Models.Replys;
 
-namespace Hawaso.Pages.Replys;
-
-public partial class Import
+namespace Hawaso.Pages.Replys
 {
-    #region Fields
-    /// <summary>
-    /// 첨부 파일 리스트 보관
-    /// </summary>
-    private IFileListEntry[] selectedFiles;
-    #endregion
-
-    #region Injectors
-    [Inject]
-    public IReplyRepository RepositoryReference { get; set; }
-
-    [Inject]
-    public NavigationManager NavigationManagerInjector { get; set; }
-
-    [Inject]
-    public IFileStorageManager FileStorageManagerReference { get; set; } 
-    #endregion
-
-    protected Reply Model = new Reply();
-
-    public string ParentId { get; set; }
-
-    protected int[] parentIds = { 1, 2, 3 };
-
-    /// <summary>
-    /// 파일 업로드 버튼 클릭 이벤트 처리기
-    /// </summary>
-    protected async void FormSubmit()
+    public partial class Import
     {
-        int.TryParse(ParentId, out int parentId);
-        Model.ParentId = parentId;
-
-        #region 파일 업로드 관련 추가 코드 영역
-        if (selectedFiles != null && selectedFiles.Length > 0)
-        {
-            // 파일 업로드
-            var file = selectedFiles.FirstOrDefault();
-            var fileName = "";
-            int fileSize = 0;
-            if (file != null)
-            {
-                fileName = file.Name;
-                fileSize = Convert.ToInt32(file.Size);
-
-                fileName = await FileStorageManagerReference.UploadAsync(file.Data, file.Name, "", true);
-
-                Model.FileName = fileName;
-                Model.FileSize = fileSize;
-            } 
-        }
+        #region Fields
+        /// <summary>
+        /// 첨부 파일 리스트 보관
+        /// </summary>
+        private IFileListEntry[] selectedFiles;
         #endregion
 
-        foreach (var m in Models)
+        #region Injectors
+        [Inject]
+        public IReplyRepository RepositoryReference { get; set; }
+
+        [Inject]
+        public NavigationManager NavigationManagerInjector { get; set; }
+
+        [Inject]
+        public IFileStorageManager FileStorageManagerReference { get; set; } 
+        #endregion
+
+        protected Reply Model = new Reply();
+
+        public string ParentId { get; set; }
+
+        protected int[] parentIds = { 1, 2, 3 };
+
+        /// <summary>
+        /// 파일 업로드 버튼 클릭 이벤트 처리기
+        /// </summary>
+        protected async void FormSubmit()
         {
-            m.FileName = Model.FileName;
-            m.FileSize = Model.FileSize; 
-            await RepositoryReference.AddAsync(m);
+            int.TryParse(ParentId, out int parentId);
+            Model.ParentId = parentId;
+
+            #region 파일 업로드 관련 추가 코드 영역
+            if (selectedFiles != null && selectedFiles.Length > 0)
+            {
+                // 파일 업로드
+                var file = selectedFiles.FirstOrDefault();
+                var fileName = "";
+                int fileSize = 0;
+                if (file != null)
+                {
+                    fileName = file.Name;
+                    fileSize = Convert.ToInt32(file.Size);
+
+                    fileName = await FileStorageManagerReference.UploadAsync(file.Data, file.Name, "", true);
+
+                    Model.FileName = fileName;
+                    Model.FileSize = fileSize;
+                } 
+            }
+            #endregion
+
+            foreach (var m in Models)
+            {
+                m.FileName = Model.FileName;
+                m.FileSize = Model.FileSize; 
+                await RepositoryReference.AddAsync(m);
+            }
+
+            NavigationManagerInjector.NavigateTo("/Replys");
         }
 
-        NavigationManagerInjector.NavigateTo("/Replys");
-    }
+        public List<Reply> Models { get; set; } = new List<Reply>(); 
 
-    public List<Reply> Models { get; set; } = new List<Reply>(); 
-
-    protected async void HandleSelection(IFileListEntry[] files)
-    {
-        this.selectedFiles = files;
-
-        // 엑셀 데이터 읽어오기 
-        if (selectedFiles != null && selectedFiles.Length > 0)
+        protected async void HandleSelection(IFileListEntry[] files)
         {
-            var file = selectedFiles.FirstOrDefault();
+            this.selectedFiles = files;
 
-            using (var stream = new MemoryStream())
+            // 엑셀 데이터 읽어오기 
+            if (selectedFiles != null && selectedFiles.Length > 0)
             {
-                await file.Data.CopyToAsync(stream);
+                var file = selectedFiles.FirstOrDefault();
 
-                using (var package = new ExcelPackage(stream))
+                using (var stream = new MemoryStream())
                 {
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                    var rowCount = worksheet.Dimension.Rows;
+                    await file.Data.CopyToAsync(stream);
 
-                    for (int row = 2; row <= rowCount; row++)
+                    using (var package = new ExcelPackage(stream))
                     {
-                        Models.Add(new Reply
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        var rowCount = worksheet.Dimension.Rows;
+
+                        for (int row = 2; row <= rowCount; row++)
                         {
-                            Name = worksheet.Cells[row, 1].Value.ToString().Trim(),
-                            DownCount = int.Parse(worksheet.Cells[row, 2].Value.ToString().Trim()),
-                        }); ;
+                            Models.Add(new Reply
+                            {
+                                Name = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                                DownCount = int.Parse(worksheet.Cells[row, 2].Value.ToString().Trim()),
+                            }); ;
+                        }
                     }
                 }
+                StateHasChanged();
             }
-            StateHasChanged();
         }
     }
 }
