@@ -134,7 +134,8 @@
         manufacturers = pagingData.Records.ToList();
         manufacturer = new Manufacturer(); // 선택 항목 초기화
 
-        toastService.ShowError("삭제되었습니다.", "삭제 완료");
+        //toastService.ShowError("삭제되었습니다.", "삭제 완료");
+        toastService.ShowError("삭제되었습니다.");
     }
 
     private void DeleteBy(Manufacturer manu)

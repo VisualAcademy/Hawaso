@@ -61,14 +61,16 @@
     {
         if (EditorModel.Id == 0)
         {
-            toastService.ShowInfo("저장되었습니다.", "저장 완료");
+            //toastService.ShowInfo("저장되었습니다.", "저장 완료");
+            toastService.ShowInfo("저장되었습니다.");
 
             // 저장
             await repository.AddManufacturerAsync(EditorModel);
         }
         else
         {
-            toastService.ShowInfo("수정되었습니다.", "수정 완료");
+            //toastService.ShowInfo("수정되었습니다.", "수정 완료");
+            toastService.ShowInfo("수정되었습니다.");
 
             // 수정
             await repository.EditManufacturerAsync(EditorModel);
