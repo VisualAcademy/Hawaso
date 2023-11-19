@@ -34,6 +34,10 @@ using Zero.Models;
 
 namespace Hawaso;
 
+/// <summary>
+/// Startup.cs 파일의 내용은 ASP.NET Core 5.0 버전까지 사용되던 코드입니다. 
+/// 이후로의 모든 설정은 Program.cs 파일에서 진행합니다. 
+/// </summary>
 public class Startup
 {
     public Startup(IConfiguration configuration) => Configuration = configuration;
