@@ -1,4 +1,5 @@
-﻿// Microsoft의 Identity 프레임워크를 사용하기 위해 참조를 추가합니다.
+﻿#nullable enable
+// Microsoft의 Identity 프레임워크를 사용하기 위해 참조를 추가합니다.
 using Microsoft.AspNetCore.Identity;
 
 // 'Hawaso.Areas.Identity.Models' 네임스페이스는 Identity 관련 모델들을 포함하고 있습니다.
