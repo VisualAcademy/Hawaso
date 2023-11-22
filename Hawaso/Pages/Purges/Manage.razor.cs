@@ -187,16 +187,6 @@ public partial class Manage
     }
 
     /// <summary>
-    /// 모델 초기화 및 모달 폼 닫기
-    /// </summary>
-    protected async void CreateOrEdit()
-    {
-        //EditorFormReference.Hide();
-        //this.model = new Purge();
-        //await DisplayData();
-    }
-
-    /// <summary>
     /// 삭제 모달 폼에서 현재 선택한 항목 삭제
     /// </summary>
     protected async void DeleteClick()
