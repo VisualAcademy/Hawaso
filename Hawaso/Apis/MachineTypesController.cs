@@ -216,14 +216,13 @@ public class MachineTypesController : ControllerBase
             var resultSet = await _repository.GetAllAsync(pageIndex, pageSize);
             if (resultSet.Items == null)
             {
-                return NotFound($"아무런 데이터가 없습니다.");
+                return NotFound("아무런 데이터가 없습니다.");
             }
 
             // 응답 헤더에 총 레코드 수를 담아서 출력
-            Response.Headers.Add("X-TotalRecordCount", resultSet.TotalCount.ToString());
-            Response.Headers.Add("Access-Control-Expose-Headers", "X-TotalRecordCount");
+            SetResponseHeader("X-TotalRecordCount", resultSet.TotalCount.ToString());
+            SetResponseHeader("Access-Control-Expose-Headers", "X-TotalRecordCount");
 
-            //return Ok(resultSet.Records);
             var ʘ‿ʘ = resultSet.Items; // 재미를 위해서 
             return Ok(ʘ‿ʘ); // Look of Approval
         }
@@ -233,5 +232,11 @@ public class MachineTypesController : ControllerBase
             return BadRequest();
         }
     }
+
+    private void SetResponseHeader(string key, string value)
+    {
+        Response.Headers[key] = value;
+    }
     #endregion
+
 }
