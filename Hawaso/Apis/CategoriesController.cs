@@ -139,8 +139,10 @@ public class CategoriesController : Controller
             var categorySet = await _categoryRepository.GetAllAsync(pageIndex, pageSize);
 
             // 응답 헤더에 총 레코드 수를 담아서 출력 
-            Response.Headers.Add("X-TotalRecordCount", categorySet.TotalRecords.ToString());
-            Response.Headers.Add("Access-Control-Expose-Headers", "X-TotalRecordCount"); // 코드 추가
+            //Response.Headers.Add("X-TotalRecordCount", categorySet.TotalRecords.ToString());
+            //Response.Headers.Add("Access-Control-Expose-Headers", "X-TotalRecordCount"); // 코드 추가
+            Response.Headers["X-TotalRecordCount"] = categorySet.TotalRecords.ToString();
+            Response.Headers["Access-Control-Expose-Headers"] = "X-TotalRecordCount";
 
             return Ok(categorySet.Records);
         }
