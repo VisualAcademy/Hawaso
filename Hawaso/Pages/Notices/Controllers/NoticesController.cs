@@ -156,8 +156,12 @@ namespace NoticeApp.Apis.Controllers
                 var resultsSet = await _repository.GetAllAsync(pageIndex, pageSize);
 
                 // 응답 헤더에 총 레코드 수를 담아서 출력 
-                Response.Headers.Add("X-TotalRecordCount", resultsSet.TotalRecords.ToString());
-                Response.Headers.Add("Access-Control-Expose-Headers", "X-TotalRecordCount"); 
+                // Original code:
+                // Response.Headers.Add("X-TotalRecordCount", resultsSet.TotalRecords.ToString());
+                // Response.Headers.Add("Access-Control-Expose-Headers", "X-TotalRecordCount"); 
+                // Updated to:
+                Response.Headers["X-TotalRecordCount"] = resultsSet.TotalRecords.ToString();
+                Response.Headers["Access-Control-Expose-Headers"] = "X-TotalRecordCount";
 
                 return Ok(resultsSet.Records);
             }
