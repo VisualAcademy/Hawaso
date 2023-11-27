@@ -234,8 +234,10 @@ public class MemosController : ControllerBase
             }
 
             // 응답 헤더에 총 레코드 수를 담아서 출력
-            Response.Headers.Add("X-TotalRecordCount", resultSet.TotalRecords.ToString());
-            Response.Headers.Add("Access-Control-Expose-Headers", "X-TotalRecordCount");
+            //Response.Headers.Add("X-TotalRecordCount", resultSet.TotalRecords.ToString());
+            //Response.Headers.Add("Access-Control-Expose-Headers", "X-TotalRecordCount");
+            Response.Headers["X-TotalRecordCount"] = resultSet.TotalRecords.ToString();
+            Response.Headers["Access-Control-Expose-Headers"] = "X-TotalRecordCount";
 
             //return Ok(resultSet.Records);
             var ʘ‿ʘ = resultSet.Records; // 재미를 위해서 
