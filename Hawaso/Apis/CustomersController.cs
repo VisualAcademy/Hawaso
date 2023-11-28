@@ -184,8 +184,10 @@ public class CustomersController : ControllerBase
             var customersSet = await _repository.GetAllAsync(pageIndex, pageSize);
 
             // 응답 헤더에 총 레코드 수를 담아서 출력 
-            Response.Headers.Add("X-TotalRecordCount", customersSet.TotalRecords.ToString());
-            Response.Headers.Add("Access-Control-Expose-Headers", "X-TotalRecordCount"); // 코드 추가
+            //Response.Headers.Add("X-TotalRecordCount", customersSet.TotalRecords.ToString());
+            //Response.Headers.Add("Access-Control-Expose-Headers", "X-TotalRecordCount"); // 코드 추가
+            Response.Headers["X-TotalRecordCount"] = customersSet.TotalRecords.ToString();
+            Response.Headers["Access-Control-Expose-Headers"] = "X-TotalRecordCount";
 
             return Ok(customersSet.Records);
         }
