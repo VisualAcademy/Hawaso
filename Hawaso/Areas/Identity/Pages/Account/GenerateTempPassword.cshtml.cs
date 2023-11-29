@@ -70,14 +70,19 @@ namespace Hawaso.Areas.Identity.Pages.Account
                 chars += "!@#$%^&*()";
             }
 
-            // Generate the password
-            var rng = new RNGCryptoServiceProvider();
-            var buffer = new byte[length];
-            rng.GetBytes(buffer);
+            // Initialize the password StringBuilder outside of the using block
             var password = new StringBuilder(length);
-            foreach (byte b in buffer)
+
+            // Generate the password
+            using (var rng = RandomNumberGenerator.Create())
             {
-                password.Append(chars[b % chars.Length]);
+                var buffer = new byte[length];
+                rng.GetBytes(buffer);
+
+                foreach (byte b in buffer)
+                {
+                    password.Append(chars[b % chars.Length]);
+                }
             }
 
             return password.ToString();
