@@ -8,13 +8,16 @@
           value="@CurrentValue"></textarea>
 
 @code {
-    string _id;
+    //string _id;
+    //[Parameter]
+    // public string Id
+    // {
+    //     get => _id ?? $"CKEditor_{uid}";
+    //     set => _id = value;
+    // }
     [Parameter]
-    public string Id
-    {
-        get => _id ?? $"CKEditor_{uid}";
-        set => _id = value;
-    }
+    public string Id { get; set; } = $"CKEditor_{Guid.NewGuid().ToString().ToLower().Replace("-", "")}";
+
 
     readonly string uid = Guid.NewGuid().ToString().ToLower().Replace("-", "");
 
