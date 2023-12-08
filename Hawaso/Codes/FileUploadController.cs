@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Hawaso.Codes
 {
+    [Authorize(Roles = "Administrators")]
     [ApiController]
     [Route("[controller]")]
     public class FileUploadController : ControllerBase
