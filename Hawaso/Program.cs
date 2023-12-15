@@ -28,6 +28,7 @@ using ReplyApp.Managers;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using VisualAcademy;
 using VisualAcademy.Models.Departments;
 using VisualAcademy.Models.Replys;
 using Zero.Models;
@@ -35,6 +36,8 @@ using Zero.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 var services = builder.Services;
 var Configuration = builder.Configuration;
 
@@ -139,6 +142,16 @@ void DependencyInjectionContainer(IServiceCollection services)
 
 // DotNetSaleCore 관련 의존성 주입
 AddDependencyInjectionContainerForDotNetSaleCore(services, Configuration);
+
+// 데이터베이스 초기화 및 마이그레이션
+try
+{
+    await DatabaseHelper.AddOrUpdateRegistrationDate(connectionString);
+}
+catch (Exception)
+{
+
+}
 
 var app = builder.Build();
 

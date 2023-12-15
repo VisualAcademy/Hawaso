@@ -19,6 +19,14 @@ CREATE TABLE [dbo].[AspNetUsers] (
     [LockoutEnabled]       BIT                NOT NULL,                      -- 계정 잠금 활성화 여부
     [AccessFailedCount]    INT                NOT NULL,                      -- 계정 접근 실패 횟수
     [Address]              NVARCHAR (MAX)     NULL,                          -- 주소 (추가된 필드)
+	[FirstName] [nvarchar](max) NULL,
+	[LastName] [nvarchar](max) NULL,
+	[Timezone] [nvarchar](max) NULL,
+
+    [TenantName]               NVARCHAR (MAX)     Default('Kodee'),
+
+    RegistrationDate DATETIMEOFFSET  NULL DEFAULT (SYSDATETIMEOFFSET()),
+
     CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)             -- 기본키 설정
 );
 
