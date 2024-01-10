@@ -13,7 +13,7 @@ CREATE TABLE [dbo].[Memos]
 	[Modified]      DATETIMEOFFSET Null,						-- 수정일(LastModified)
 
     --[0] 5W1H: 누가, 언제, 어디서, 무엇을, 어떻게, 왜
-    [Name]          NVarChar(25) Not Null,                      -- [2][이름](작성자)
+    [Name]          NVarChar(255) Not Null,                      -- [2][이름](작성자)
     PostDate        DateTime Default GetDate() Not Null,        -- 작성일 
     PostIp          NVarChar(15) Null,                          -- 작성IP
     [Title]         NVarChar(150) Not Null,                     -- [3][제목]

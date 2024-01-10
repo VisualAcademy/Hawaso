@@ -2,7 +2,7 @@
 Create Table dbo.Notes
 (
     Id              Int Identity(1, 1) Not Null Primary Key,    -- 번호
-    Name            NVarChar(25) Not Null,                      -- 이름
+    Name            NVarChar(255) Not Null,                      -- 이름
     Email           NVarChar(100) Null,                         -- 이메일 
     Title           NVarChar(150) Not Null,                     -- 제목
     PostDate        DateTime Default GetDate() Not Null,        -- 작성일 

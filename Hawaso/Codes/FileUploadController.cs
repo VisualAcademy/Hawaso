@@ -70,7 +70,7 @@ public class FileUploadController : ControllerBase
             var blobClient = containerClient.GetBlobClient(blobItem.Name);
             var downloadPath = Path.Combine(localPath, blobItem.Name);
 
-            // 해당 디렉토리 생성
+            // 해당 디렉터리 생성
             var directoryName = Path.GetDirectoryName(downloadPath);
             if (!Directory.Exists(directoryName))
             {
