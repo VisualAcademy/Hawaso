@@ -5,13 +5,9 @@ using Hawaso.Models.Notes;
 namespace Hawaso.Controllers;
 
 [Route("api/[controller]")]
-public class NoteCommentServiceController : Controller
+public class NoteCommentServiceController(INoteCommentRepository repository) : Controller
 {
-    private INoteCommentRepository _repository;
-
-    public NoteCommentServiceController(INoteCommentRepository repository) => _repository = repository;
-
     // 최근 댓글 리스트 반환
     [HttpGet]
-    public IEnumerable<NoteComment> Get() => _repository.GetRecentComments();
+    public IEnumerable<NoteComment> Get() => repository.GetRecentComments();
 }
