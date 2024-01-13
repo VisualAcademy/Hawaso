@@ -9,23 +9,14 @@ using Zero.Models;
 
 namespace Hawaso.Apis.BriefingLogs;
 
-public class BriefingLogDownloadController : Controller
+public class BriefingLogDownloadController(IBriefingLogRepository repository, IBriefingLogFileStorageManager fileStorageManager) : Controller
 {
-    private readonly IBriefingLogRepository _repository;
-    private readonly IBriefingLogFileStorageManager _fileStorageManager;
-
-    public BriefingLogDownloadController(IBriefingLogRepository repository, IBriefingLogFileStorageManager fileStorageManager)
-    {
-        _repository = repository;
-        _fileStorageManager = fileStorageManager;
-    }
-
     /// <summary>
     /// 게시판 파일 강제 다운로드 기능(/BoardDown/:Id)
     /// </summary>
     public async Task<IActionResult> FileDown(int id)
     {
-        var model = await _repository.GetByIdAsync(id);
+        var model = await repository.GetByIdAsync(id);
 
         if (model == null)
         {
@@ -35,12 +26,12 @@ public class BriefingLogDownloadController : Controller
         {
             if (!string.IsNullOrEmpty(model.FileName))
             {
-                byte[] fileBytes = await _fileStorageManager.DownloadAsync(model.FileName, "BriefingLogs");
+                byte[] fileBytes = await fileStorageManager.DownloadAsync(model.FileName, "BriefingLogs");
                 if (fileBytes != null)
                 {
                     // DownCount
                     model.DownCount = model.DownCount + 1;
-                    await _repository.EditAsync(model);
+                    await repository.EditAsync(model);
 
                     return File(fileBytes, "application/octet-stream", model.FileName);
                 }
@@ -59,7 +50,7 @@ public class BriefingLogDownloadController : Controller
     /// </summary>
     public async Task<IActionResult> ExcelDown()
     {
-        var results = await _repository.GetAllAsync(0, 100);
+        var results = await repository.GetAllAsync(0, 100);
 
         var models = results.Records.ToList();
 
