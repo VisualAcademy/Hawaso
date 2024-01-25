@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System.Diagnostics;
-
-namespace Hawaso.Controllers;
+﻿namespace Hawaso.Controllers;
 
 public class HomeController : Controller
 {
