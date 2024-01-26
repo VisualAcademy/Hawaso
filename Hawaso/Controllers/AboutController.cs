@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Hawaso.Controllers;
+﻿namespace Hawaso.Controllers;
 
 public class AboutController : Controller
 {
