@@ -1,15 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Dul.Board;
+using Hawaso.Models.Notes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using Dul.Board;
-using Hawaso.Models.Notes;
 
 namespace Hawaso.Controllers;
 
@@ -41,7 +35,7 @@ public class DotNetNotePublicController(
     public IActionResult Index()
     {
         // 로깅
-        logger.LogInformation("게시판 리스트 페이지 로딩"); 
+        logger.LogInformation("게시판 리스트 페이지 로딩");
 
         // 검색 모드 결정: ?SearchField=Name&SearchQuery=닷넷코리아 
         SearchMode = (
@@ -97,7 +91,7 @@ public class DotNetNotePublicController(
 
         // 주요 정보를 뷰 페이지로 전송
         ViewBag.TotalRecord = TotalRecordCount;
-        ViewBag.SearchMode  = SearchMode;
+        ViewBag.SearchMode = SearchMode;
         ViewBag.SearchField = SearchField;
         ViewBag.SearchQuery = SearchQuery;
 
@@ -156,11 +150,11 @@ public class DotNetNotePublicController(
 
         Note note = new Note();
 
-        note.Name     = model.Name;
-        note.Email    = Dul.HtmlUtility.Encode(model.Email);
+        note.Name = model.Name;
+        note.Email = Dul.HtmlUtility.Encode(model.Email);
         note.Homepage = model.Homepage;
-        note.Title    = Dul.HtmlUtility.Encode(model.Title);
-        note.Content  = model.Content;
+        note.Title = Dul.HtmlUtility.Encode(model.Title);
+        note.Content = model.Content;
         note.FileName = fileName;
         note.FileSize = fileSize;
         note.Password = (new Dul.Security.CryptorEngine()).EncryptPassword(model.Password);
@@ -183,7 +177,7 @@ public class DotNetNotePublicController(
     public FileResult BoardDown(int id)
     {
         string fileName = "";
-        
+
         // 넘겨져 온 번호에 해당하는 파일명 가져오기(보안때문에... 파일명 숨김)
         fileName = repository.GetFileNameById(id);
 
@@ -220,7 +214,7 @@ public class DotNetNotePublicController(
         {
             // Text : 소스 그대로 표현
             case ContentEncodingType.Text:
-                encodedContent = 
+                encodedContent =
                     Dul.HtmlUtility.EncodeWithTabAndSpace(note.Content);
                 break;
             // Html : HTML 형식으로 출력
@@ -237,20 +231,20 @@ public class DotNetNotePublicController(
                 break;
         }
         ViewBag.Content = encodedContent; //[!]
-        
+
         // 첨부된 파일 확인
         if (note.FileName.Length > 1)
         {
             //[a] 파일 다운로드 링크: String.Format()으로 표현해 봄 
             ViewBag.FileName = String.Format(
-                "<a href='/DotNetNote/BoardDown?Id={0}'>" 
+                "<a href='/DotNetNote/BoardDown?Id={0}'>"
                 + "{1}{2} / 전송수: {3}</a>", note.Id
                 , "<img src=\"/images/ext/ext_zip.gif\" border=\"0\">"
                 , note.FileName, note.DownCount);
             //[b] 이미지 미리보기: C# 6.0 String 보간법으로 표현해 봄
             if (Dul.BoardLibrary.IsPhoto(note.FileName))
             {
-                ViewBag.ImageDown = 
+                ViewBag.ImageDown =
                     $"<img src=\'/DotNetNote/ImageDown/{note.Id}\'><br />";
             }
         }
@@ -333,7 +327,7 @@ public class DotNetNotePublicController(
         {
             ViewBag.FileName = note.FileName;
             ViewBag.FileSize = note.FileSize;
-            ViewBag.FileNamePrevious = 
+            ViewBag.FileNamePrevious =
                 $"기존에 업로드된 파일명: {note.FileName}";
         }
         else
@@ -350,7 +344,7 @@ public class DotNetNotePublicController(
     /// </summary>
     [HttpPost]
     public async Task<IActionResult> Edit(
-        Note model, ICollection<IFormFile> files, 
+        Note model, ICollection<IFormFile> files,
         int id, string previousFileName = "", int previousFileSize = 0)
     {
         ViewBag.FormType = BoardWriteFormType.Modify;
@@ -387,19 +381,19 @@ public class DotNetNotePublicController(
                 }
             }
         }
-        
+
         Note note = new Note();
 
         note.Id = id;
-        note.Name     = model.Name;
-        note.Email    = Dul.HtmlUtility.Encode(model.Email);
+        note.Name = model.Name;
+        note.Email = Dul.HtmlUtility.Encode(model.Email);
         note.Homepage = model.Homepage;
-        note.Title    = Dul.HtmlUtility.Encode(model.Title);
-        note.Content  = model.Content;
+        note.Title = Dul.HtmlUtility.Encode(model.Title);
+        note.Content = model.Content;
         note.FileName = fileName;
         note.FileSize = fileSize;
         note.Password = (new Dul.Security.CryptorEngine()).EncryptPassword(model.Password);
-        note.ModifyIp = 
+        note.ModifyIp =
             HttpContext.Connection.RemoteIpAddress.ToString(); // IP 주소
         note.Encoding = model.Encoding;
 
@@ -411,7 +405,7 @@ public class DotNetNotePublicController(
         }
         else
         {
-            ViewBag.ErrorMessage = 
+            ViewBag.ErrorMessage =
                 "업데이트가 되지 않았습니다. 암호를 확인하세요.";
             return View(note);
         }
@@ -437,8 +431,8 @@ public class DotNetNotePublicController(
 
         // 기존 글의 제목과 내용을 새 Note 개체에 저장 후 전달
         newNote.Title = $"Re : {note.Title}";
-        newNote.Content = 
-            $"\n\nOn {note.PostDate}, '{note.Name}' wrote:\n----------\n>" 
+        newNote.Content =
+            $"\n\nOn {note.PostDate}, '{note.Name}' wrote:\n----------\n>"
             + $"{note.Content.Replace("\n", "\n>")}\n---------";
 
         return View(newNote);
@@ -479,15 +473,15 @@ public class DotNetNotePublicController(
         Note note = new Note();
 
         note.Id = note.ParentNum = Convert.ToInt32(id); // 부모글 저장
-        note.Name     = model.Name;
-        note.Email    = Dul.HtmlUtility.Encode(model.Email);
+        note.Name = model.Name;
+        note.Email = Dul.HtmlUtility.Encode(model.Email);
         note.Homepage = model.Homepage;
-        note.Title    = Dul.HtmlUtility.Encode(model.Title);
-        note.Content  = model.Content;
+        note.Title = Dul.HtmlUtility.Encode(model.Title);
+        note.Content = model.Content;
         note.FileName = fileName;
         note.FileSize = fileSize;
         note.Password = (new Dul.Security.CryptorEngine()).EncryptPassword(model.Password);
-        note.PostIp   = HttpContext.Connection.RemoteIpAddress.ToString();
+        note.PostIp = HttpContext.Connection.RemoteIpAddress.ToString();
         note.Encoding = model.Encoding;
 
         repository.ReplyNote(note); // 데이터 답변 저장
@@ -520,7 +514,7 @@ public class DotNetNotePublicController(
             string strFileName = fileName;
             string strFileExt = Path.GetExtension(strFileName);
             string strContentType = "";
-            if (strFileExt == ".gif" || strFileExt == ".jpg" 
+            if (strFileExt == ".gif" || strFileExt == ".jpg"
                 || strFileExt == ".jpeg" || strFileExt == ".png")
             {
                 switch (strFileExt)
@@ -565,7 +559,7 @@ public class DotNetNotePublicController(
 
         // 댓글 데이터 저장
         commentRepository.AddNoteComment(comment);
-        
+
         // 댓글 저장 후 다시 게시판 상세 보기 페이지로 이동
         return RedirectToAction("Details", new { Id = BoardId });
     }
@@ -616,7 +610,7 @@ public class DotNetNotePublicController(
     public IActionResult Pinned(int id)
     {
         // 공지사항(NOTICE)으로 올리기
-        repository.Pinned(id); 
+        repository.Pinned(id);
 
         return RedirectToAction("Details", new { Id = id });
     }
