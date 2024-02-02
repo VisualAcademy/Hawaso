@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.Threading.Tasks;
 
 namespace VisualAcademy.Pages.Memos;
 
 public partial class Delete
 {
     #region Fields
-    private const string MemoListPage = "/Memos"; 
+    private const string MemoListPage = "/Memos";
     #endregion
 
     #region Parameters
