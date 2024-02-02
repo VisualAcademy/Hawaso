@@ -1,7 +1,5 @@
 ﻿using BlazorInputFile;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Linq;
 
 namespace VisualAcademy.Pages.Memos.Components;
 
@@ -112,7 +110,7 @@ public partial class EditorForm
         Model.Name = ModelEdit.Name;
         Model.Title = ModelEdit.Title;
         Model.Content = ModelEdit.Content;
-        Model.Password = ModelEdit.Password; 
+        Model.Password = ModelEdit.Password;
 
         #region 파일 업로드 관련 추가 코드 영역
         if (selectedFiles != null && selectedFiles.Length > 0)
