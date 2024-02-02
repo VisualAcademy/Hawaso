@@ -1,7 +1,5 @@
 ﻿using BlazorInputFile;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Linq;
 
 namespace VisualAcademy.Pages.Memos.Components;
 
