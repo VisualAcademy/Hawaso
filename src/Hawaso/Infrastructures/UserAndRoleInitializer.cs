@@ -1,10 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Hawaso.Models; // ApplicationUser, ApplicationRole 등의 모델을 사용하기 위해 필요
-using System.Threading.Tasks;
-using System;
-using Hawaso.Data;
+﻿using Hawaso.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
 
 namespace Hawaso.Infrastructures;
 
