@@ -3,9 +3,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using VisualAcademy.Models.BannedTypes;
 
 namespace VisualAcademy.Components.Pages.BannedTypes;
