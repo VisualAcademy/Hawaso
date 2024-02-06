@@ -29,6 +29,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using VisualAcademy;
+using VisualAcademy.Models.BannedTypes;
 using VisualAcademy.Models.Departments;
 using VisualAcademy.Models.Replys;
 using Zero.Models;
@@ -138,8 +139,10 @@ void DependencyInjectionContainer(IServiceCollection services)
 
     #region VisualAcademy.Models.Departments.dll 
     // DepartmentApp 관련 의존성 주입
-    services.AddDependencyInjectionContainerForDepartmentApp(Configuration.GetConnectionString("DefaultConnection")); 
+    services.AddDependencyInjectionContainerForDepartmentApp(Configuration.GetConnectionString("DefaultConnection"));
     #endregion
+
+    builder.Services.AddDependencyInjectionContainerForBannedTypeApp(connectionString);
 }
 
 // DotNetSaleCore 관련 의존성 주입
