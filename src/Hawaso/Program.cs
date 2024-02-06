@@ -136,8 +136,10 @@ void DependencyInjectionContainer(IServiceCollection services)
     // ArchiveApp 관련 의존성 주입
     services.AddDependencyInjectionContainerForArchiveApp(Configuration.GetConnectionString("DefaultConnection"));
 
+    #region VisualAcademy.Models.Departments.dll 
     // DepartmentApp 관련 의존성 주입
-    services.AddDependencyInjectionContainerForDepartmentApp(Configuration.GetConnectionString("DefaultConnection"));
+    services.AddDependencyInjectionContainerForDepartmentApp(Configuration.GetConnectionString("DefaultConnection")); 
+    #endregion
 }
 
 // DotNetSaleCore 관련 의존성 주입
