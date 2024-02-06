@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Folder Include="DotNetSale\01_Categories\" />
+    <Folder Include="BannedTypes\" />
   </ItemGroup>
 
 </Project>
