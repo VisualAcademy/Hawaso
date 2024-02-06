@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System;
 using VisualAcademy.Models.BannedTypes;
 
 namespace VisualAcademy.Components.Pages.BannedTypes.Components;
