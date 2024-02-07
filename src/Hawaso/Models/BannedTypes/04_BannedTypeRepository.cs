@@ -12,19 +12,12 @@ namespace VisualAcademy.Models.BannedTypes
     /// <summary>
     /// BannedTypeRepository는 IBannedTypeRepository와 IDisposable 인터페이스를 구현하는 클래스입니다.
     /// </summary>
-    public class BannedTypeRepository : IBannedTypeRepository, IDisposable
+    /// <remarks>
+    /// BannedTypeRepository 생성자는 DB Context와 Logger를 주입받습니다.
+    /// </remarks>
+    public class BannedTypeRepository(BannedTypeAppDbContext context, ILoggerFactory loggerFactory) : IBannedTypeRepository, IDisposable
     {
-        private readonly BannedTypeAppDbContext _context;
-        private readonly ILogger _logger;
-
-        /// <summary>
-        /// BannedTypeRepository 생성자는 DB Context와 Logger를 주입받습니다.
-        /// </summary>
-        public BannedTypeRepository(BannedTypeAppDbContext context, ILoggerFactory loggerFactory)
-        {
-            this._context = context;
-            this._logger = loggerFactory.CreateLogger(nameof(BannedTypeRepository));
-        }
+        private readonly ILogger _logger = loggerFactory.CreateLogger(nameof(BannedTypeRepository));
 
         #region [4][1] 입력: AddAsync
         //[4][1] 입력: AddAsync
@@ -37,8 +30,8 @@ namespace VisualAcademy.Models.BannedTypes
 
             try
             {
-                _context.BannedTypes.Add(model);
-                await _context.SaveChangesAsync();
+                context.BannedTypes.Add(model);
+                await context.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -56,7 +49,7 @@ namespace VisualAcademy.Models.BannedTypes
         /// </summary>
         public async Task<List<BannedTypeModel>> GetAllAsync()
         {
-            return await _context.BannedTypes.OrderByDescending(m => m.Id).ToListAsync();
+            return await context.BannedTypes.OrderByDescending(m => m.Id).ToListAsync();
         }
         #endregion
 
@@ -67,7 +60,7 @@ namespace VisualAcademy.Models.BannedTypes
         /// </summary>
         public async Task<BannedTypeModel> GetByIdAsync(long id)
         {
-            var model = await _context.BannedTypes.SingleOrDefaultAsync(m => m.Id == id);
+            var model = await context.BannedTypes.SingleOrDefaultAsync(m => m.Id == id);
 
             return model!;
         }
@@ -83,8 +76,8 @@ namespace VisualAcademy.Models.BannedTypes
             try
             {
                 //_context.BannedTypes.Attach(model);
-                _context.Entry(model).State = EntityState.Modified;
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                context.Entry(model).State = EntityState.Modified;
+                return (await context.SaveChangesAsync() > 0 ? true : false);
             }
             catch (Exception e)
             {
@@ -101,13 +94,13 @@ namespace VisualAcademy.Models.BannedTypes
         {
             try
             {
-                var m = _context.BannedTypes.Find(model.Id);
+                var m = context.BannedTypes.Find(model.Id);
 
                 m!.Name = model.Name;
                 m.Active = model.Active;
 
-                _context.Update(m);
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                context.Update(m);
+                return (await context.SaveChangesAsync() > 0 ? true : false);
             }
             catch (Exception e)
             {
@@ -129,9 +122,9 @@ namespace VisualAcademy.Models.BannedTypes
         {
             try
             {
-                var model = await _context.BannedTypes.FindAsync(id);
-                _context.Remove(model!);
-                return await _context.SaveChangesAsync() > 0;
+                var model = await context.BannedTypes.FindAsync(id);
+                context.Remove(model!);
+                return await context.SaveChangesAsync() > 0;
             }
             catch (Exception ಠ_ಠ) // Disapproval Look
             {
@@ -152,8 +145,8 @@ namespace VisualAcademy.Models.BannedTypes
         /// <returns>페이지 결과</returns>
         public async Task<PagingResult<BannedTypeModel>> GetAllAsync(int pageIndex, int pageSize)
         {
-            var totalRecords = await _context.BannedTypes.CountAsync();
-            var models = await _context.BannedTypes
+            var totalRecords = await context.BannedTypes.CountAsync();
+            var models = await context.BannedTypes
                 .OrderByDescending(m => m.Id)
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
@@ -177,10 +170,10 @@ namespace VisualAcademy.Models.BannedTypes
             int pageSize,
             int parentId)
         {
-            var totalRecords = await _context.BannedTypes
+            var totalRecords = await context.BannedTypes
                 //.Where(m => m.ParentId == parentId)
                 .CountAsync();
-            var models = await _context.BannedTypes
+            var models = await context.BannedTypes
                 //.Where(m => m.ParentId == parentId)
                 .OrderByDescending(m => m.Id)
                 .Skip(pageIndex * pageSize)
@@ -200,10 +193,10 @@ namespace VisualAcademy.Models.BannedTypes
         /// <returns>고정된 기록과 전체 기록의 수</returns>
         public async Task<Tuple<int, int>> GetStatus(int parentId)
         {
-            var totalRecords = await _context.BannedTypes
+            var totalRecords = await context.BannedTypes
                 //.Where(m => m.ParentId == parentId)
                 .CountAsync();
-            var pinnedRecords = await _context.BannedTypes
+            var pinnedRecords = await context.BannedTypes
                 //.Where(m => m.ParentId == parentId && m.IsPinned == true)
                 .CountAsync();
 
@@ -222,16 +215,16 @@ namespace VisualAcademy.Models.BannedTypes
         {
             try
             {
-                var models = await _context.BannedTypes
+                var models = await context.BannedTypes
                     //.Where(m => m.ParentId == parentId)
                     .ToListAsync();
 
                 foreach (var model in models)
                 {
-                    _context.BannedTypes.Remove(model);
+                    context.BannedTypes.Remove(model);
                 }
 
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                return (await context.SaveChangesAsync() > 0 ? true : false);
 
             }
             catch (Exception e)
@@ -257,13 +250,13 @@ namespace VisualAcademy.Models.BannedTypes
             int pageSize,
             string searchQuery)
         {
-            var totalRecords = await _context.BannedTypes
+            var totalRecords = await context.BannedTypes
                 .Where(m => m.Name!.Contains(searchQuery)
                 //|| m.Title.Contains(searchQuery) 
                 //|| m.Title.Contains(searchQuery)
                 )
                 .CountAsync();
-            var models = await _context.BannedTypes
+            var models = await context.BannedTypes
                 .Where(m => m.Name!.Contains(searchQuery)
                 //|| m.Title.Contains(searchQuery) 
                 //|| m.Title.Contains(searchQuery)
@@ -293,13 +286,13 @@ namespace VisualAcademy.Models.BannedTypes
             string searchQuery,
             int parentId)
         {
-            var totalRecords = await _context.BannedTypes
+            var totalRecords = await context.BannedTypes
                 //.Where(m => m.ParentId == parentId)
                 .Where(m => EF.Functions.Like(m.Name!, $"%{searchQuery}%")
                 //|| m.Title.Contains(searchQuery) 
                 )
                 .CountAsync();
-            var models = await _context.BannedTypes
+            var models = await context.BannedTypes
                 //.Where(m => m.ParentId == parentId)
                 .Where(m => m.Name!.Contains(searchQuery)
                 //|| m.Title.Contains(searchQuery) 
@@ -332,7 +325,7 @@ namespace VisualAcademy.Models.BannedTypes
             {
                 // 현재 달부터 12개월 전까지 반복
                 var current = DateTime.Now.AddMonths(-i);
-                var cnt = _context.BannedTypes.AsEnumerable()
+                var cnt = context.BannedTypes.AsEnumerable()
                     .Where(
                         m => m?.CreatedAt != null
                         //&&
@@ -358,10 +351,10 @@ namespace VisualAcademy.Models.BannedTypes
             int pageSize,
             string parentKey)
         {
-            var totalRecords = await _context.BannedTypes
+            var totalRecords = await context.BannedTypes
                 //.Where(m => m.ParentKey == parentKey)
                 .CountAsync();
-            var models = await _context.BannedTypes
+            var models = await context.BannedTypes
                 //.Where(m => m.ParentKey == parentKey)
                 .OrderByDescending(m => m.Id)
                 .Skip(pageIndex * pageSize)
@@ -383,13 +376,13 @@ namespace VisualAcademy.Models.BannedTypes
             string searchQuery,
             string parentKey)
         {
-            var totalRecords = await _context.BannedTypes
+            var totalRecords = await context.BannedTypes
                 //.Where(m => m.ParentKey == parentKey)
                 .Where(m => EF.Functions.Like(m.Name!, $"%{searchQuery}%")
                 //|| m.Title.Contains(searchQuery) 
                 )
                 .CountAsync();
-            var models = await _context.BannedTypes
+            var models = await context.BannedTypes
                 //.Where(m => m.ParentKey == parentKey)
                 .Where(m => m.Name!.Contains(searchQuery)
                 //|| m.Title.Contains(searchQuery)
@@ -410,7 +403,7 @@ namespace VisualAcademy.Models.BannedTypes
         /// </summary>
         public async Task<ArticleSet<BannedTypeModel, int>> GetAllAsync<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier)
         {
-            var items = _context.BannedTypes.AsQueryable();
+            var items = context.BannedTypes.AsQueryable();
 
             #region ParentBy: 특정 부모 키 값(int, string)에 해당하는 리스트인지 확인
             //// ParentBy 
@@ -504,8 +497,8 @@ namespace VisualAcademy.Models.BannedTypes
 
             try
             {
-                _context.BannedTypes.Add(model);
-                await _context.SaveChangesAsync();
+                context.BannedTypes.Add(model);
+                await context.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -527,8 +520,8 @@ namespace VisualAcademy.Models.BannedTypes
 
             try
             {
-                _context.BannedTypes.Add(model);
-                await _context.SaveChangesAsync();
+                context.BannedTypes.Add(model);
+                await context.SaveChangesAsync();
             }
             catch (Exception e)
             {
@@ -547,7 +540,7 @@ namespace VisualAcademy.Models.BannedTypes
         public async Task<ArticleSet<BannedTypeModel, long>> GetByAsync<TParentIdentifier>(
             FilterOptions<TParentIdentifier> options)
         {
-            var items = _context.BannedTypes.AsQueryable();
+            var items = context.BannedTypes.AsQueryable();
 
             //#region ParentBy: 특정 부모 키 값(int, string)에 해당하는 리스트인지 확인
             //if (options.ChildMode)
@@ -647,9 +640,9 @@ namespace VisualAcademy.Models.BannedTypes
         {
             if (disposing)
             {
-                if (_context != null)
+                if (context != null)
                 {
-                    _context.Dispose(); //_context = null;
+                    context.Dispose(); //_context = null;
                 }
             }
         }
