@@ -1,8 +1,5 @@
 ﻿using Dul.Articles;
 using Dul.Domain.Common;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
 
 namespace VisualAcademy.Models.BannedTypes;
 
