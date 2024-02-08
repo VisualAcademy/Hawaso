@@ -1,11 +1,5 @@
 ﻿using Dul.Articles;
 using Dul.Domain.Common;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
 
 namespace VisualAcademy.Models.BannedTypes
 {
