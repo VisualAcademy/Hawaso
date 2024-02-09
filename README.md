@@ -12,7 +12,7 @@ Blazor Server 강의 최종 데모 소스
 
 ## Blazor Server with ASP.NET Core 7.0 
 
-Hawaso 솔루션은 ASP.NET Core 7.0 버전과 Blazor Server 7.0을 하나의 프로젝트로 관리합니다.
+Hawaso 솔루션은 ASP.NET Core 8.0 버전과 Blazor Server 8.0을 하나의 프로젝트로 관리합니다.
 
 Visual Studio 2022를 사용하여 개발을 추천합니다. 
 
