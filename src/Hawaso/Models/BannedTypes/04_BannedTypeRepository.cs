@@ -41,10 +41,7 @@ public class BannedTypeRepository(BannedTypeAppDbContext context, ILoggerFactory
     /// <summary>
     /// GetAllAsync 메서드는 모든 BannedTypeModel 인스턴스를 데이터베이스에서 가져옵니다.
     /// </summary>
-    public async Task<List<BannedTypeModel>> GetAllAsync()
-    {
-        return await context.BannedTypes.OrderByDescending(m => m.Id).ToListAsync();
-    }
+    public async Task<List<BannedTypeModel>> GetAllAsync() => await context.BannedTypes.OrderByDescending(m => m.Id).ToListAsync();
     #endregion
 
     #region [4][3] 상세: GetByIdAsync
