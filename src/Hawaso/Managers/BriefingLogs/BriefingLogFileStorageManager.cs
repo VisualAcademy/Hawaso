@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-
-namespace Zero.Models
+﻿namespace Zero.Models
 {
     #region BriefingLogBlobStorageManager
     public class BriefingLogBlobStorageManager : IBriefingLogFileStorageManager
