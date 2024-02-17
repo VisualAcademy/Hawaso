@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hawaso.Models.Tests", "Hawa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hawaso", "Hawaso\Hawaso.csproj", "{F0F7BF1A-17FF-431D-9781-827DDD95E65D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{422126A8-A857-4503-834F-8E3CB61405C1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", "{422126A8-A857-4503-834F-8E3CB61405C1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hawaso.Replys.Components", "Hawaso.Replys.Components\Hawaso.Replys.Components.csproj", "{50530EE8-62E0-46C4-BDDD-505BC3986EFA}"
 EndProject
