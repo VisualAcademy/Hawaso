@@ -7,22 +7,14 @@ namespace Hawaso.Codes;
 [Authorize(Roles = "Administrators")]
 [ApiController]
 [Route("[controller]")]
-public class FileUploadController : ControllerBase
+public class FileUploadController(IWebHostEnvironment environment, IConfiguration configuration) : ControllerBase
 {
-    private readonly IWebHostEnvironment _environment;
-    private readonly IConfiguration _configuration;
     private readonly string _containerName = "files";
-
-    public FileUploadController(IWebHostEnvironment environment, IConfiguration configuration)
-    {
-        _environment = environment;
-        _configuration = configuration;
-    }
 
     [HttpGet("uploadfiles")]
     public async Task<IActionResult> UploadFiles()
     {
-        var localPath = Path.Combine(_environment.WebRootPath, "files");
+        var localPath = Path.Combine(environment.WebRootPath, "files");
         await UploadFilesToBlobAsync(localPath);
         return Ok("Files uploaded successfully.");
     }
@@ -30,14 +22,14 @@ public class FileUploadController : ControllerBase
     [HttpGet("downloadfiles")]
     public async Task<IActionResult> DownloadFiles()
     {
-        var localPath = Path.Combine(_environment.WebRootPath, "files");
+        var localPath = Path.Combine(environment.WebRootPath, "files");
         await DownloadFilesFromBlobAsync(localPath);
         return Ok("Files downloaded successfully.");
     }
 
     private async Task UploadFilesToBlobAsync(string localPath)
     {
-        var connectionString = $"DefaultEndpointsProtocol=https;AccountName={_configuration["AppKeys:AzureStorageAccount"]};AccountKey={_configuration["AppKeys:AzureStorageAccessKey"]};EndpointSuffix=core.windows.net";
+        var connectionString = $"DefaultEndpointsProtocol=https;AccountName={configuration["AppKeys:AzureStorageAccount"]};AccountKey={configuration["AppKeys:AzureStorageAccessKey"]};EndpointSuffix=core.windows.net";
         var blobServiceClient = new BlobServiceClient(connectionString);
         var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
         await containerClient.CreateIfNotExistsAsync();
@@ -57,7 +49,7 @@ public class FileUploadController : ControllerBase
 
     private async Task DownloadFilesFromBlobAsync(string localPath)
     {
-        var connectionString = $"DefaultEndpointsProtocol=https;AccountName={_configuration["AppKeys:AzureStorageAccount"]};AccountKey={_configuration["AppKeys:AzureStorageAccessKey"]};EndpointSuffix=core.windows.net";
+        var connectionString = $"DefaultEndpointsProtocol=https;AccountName={configuration["AppKeys:AzureStorageAccount"]};AccountKey={configuration["AppKeys:AzureStorageAccessKey"]};EndpointSuffix=core.windows.net";
         var blobServiceClient = new BlobServiceClient(connectionString);
         var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
 
