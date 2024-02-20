@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using VisualAcademy.Models.Libraries;
+using Zero.Models;
 
-namespace Zero.Models
+namespace Hawaso.Extensions.Libraries
 {
     public static class LibraryAppExtensions
     {

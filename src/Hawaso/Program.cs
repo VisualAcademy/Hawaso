@@ -5,6 +5,7 @@ using Hawaso.Areas.Identity;
 using Hawaso.Areas.Identity.Services;
 using Hawaso.Data;
 using Hawaso.Extensions.BriefingLogs;
+using Hawaso.Extensions.Libraries;
 using Hawaso.Extensions.Memos;
 using Hawaso.Infrastructures;
 using Hawaso.Models.CommonValues;
@@ -32,7 +33,6 @@ using VisualAcademy;
 using VisualAcademy.Models.BannedTypes;
 using VisualAcademy.Models.Departments;
 using VisualAcademy.Models.Replys;
-using Zero.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
