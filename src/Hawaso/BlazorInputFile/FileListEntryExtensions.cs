@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-
-namespace BlazorInputFile
+﻿namespace BlazorInputFile
 {
     public static class FileListEntryExtensions
     {
