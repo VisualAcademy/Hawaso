@@ -1,17 +1,16 @@
-﻿namespace BlazorInputFile
+﻿namespace BlazorInputFile;
+
+public interface IFileListEntry
 {
-    public interface IFileListEntry
-    {
-        DateTime LastModified { get; }
+    DateTime LastModified { get; }
 
-        string Name { get; }
+    string Name { get; }
 
-        long Size { get; }
+    long Size { get; }
 
-        string Type { get; }
+    string Type { get; }
 
-        Stream Data { get; }
+    Stream Data { get; }
 
-        event EventHandler OnDataRead;
-    }
+    event EventHandler OnDataRead;
 }
