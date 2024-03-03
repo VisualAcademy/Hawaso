@@ -30,7 +30,9 @@ public class BannedTypeModel
     /// <summary>
     /// 레코드 생성자 이름
     /// </summary>
+    #nullable enable
     public string? CreatedBy { get; set; }
+    #nullable restore
 
     /// <summary>
     /// BannedType명
