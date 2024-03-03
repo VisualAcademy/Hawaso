@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VisualAcademy.Models.BannedTypes;
@@ -30,9 +29,9 @@ public class BannedTypeModel
     /// <summary>
     /// 레코드 생성자 이름
     /// </summary>
-    #nullable enable
+#nullable enable
     public string? CreatedBy { get; set; }
-    #nullable restore
+#nullable restore
 
     /// <summary>
     /// BannedType명
