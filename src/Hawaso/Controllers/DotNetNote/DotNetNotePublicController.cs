@@ -1,7 +1,6 @@
 ﻿using Dul.Board;
 using Hawaso.Models.Notes;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http.Headers;
 
