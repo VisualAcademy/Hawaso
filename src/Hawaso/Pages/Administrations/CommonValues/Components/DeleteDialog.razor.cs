@@ -1,7 +1,6 @@
-﻿namespace Hawaso.Pages.Administrations.CommonValues.Components
-{
-    public partial class DeleteDialog
-    {
+﻿namespace Hawaso.Pages.Administrations.CommonValues.Components;
 
-    }
+public partial class DeleteDialog
+{
+
 }
