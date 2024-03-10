@@ -1,8 +1,4 @@
 ﻿using DotNetSaleCore.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
 
 namespace DotNetSaleCore.Apis.Controllers;
 
