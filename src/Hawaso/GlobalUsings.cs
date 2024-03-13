@@ -11,3 +11,4 @@ global using System.Linq;
 global using System.Threading.Tasks;
 global using System.Timers;
 global using VisualAcademy.Models.Uploads;
+global using System.Net;
