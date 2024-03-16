@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace Hawaso.Extensions.Memos;
+﻿namespace Hawaso.Extensions.Memos;
 
 /// <summary>
 /// 메모앱(MemoApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
