@@ -19,7 +19,7 @@ public class MemoDownloadController(IMemoRepository repository, IMemoFileStorage
 
         if (model == null)
         {
-            return null;
+            return NotFound(); // 존재하지 않는 리소스에 대해 404 오류 반환
         }
         else
         {
@@ -28,18 +28,24 @@ public class MemoDownloadController(IMemoRepository repository, IMemoFileStorage
                 byte[] fileBytes = await fileStorageManager.DownloadAsync(model.FileName, moduleName);
                 if (fileBytes != null)
                 {
-                    model.DownCount = model.DownCount + 1;
+                    model.DownCount += 1;
                     await repository.EditAsync(model);
 
                     return File(fileBytes, "application/octet-stream", model.FileName);
                 }
                 else
                 {
-                    return Redirect("/");
+                    // 파일이 Memos 폴더에 없을 경우, placeholder.png 파일을 대신 반환
+                    var placeholderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", "file-not-found.png");
+                    byte[] placeholderBytes = await System.IO.File.ReadAllBytesAsync(placeholderPath);
+                    return File(placeholderBytes, "image/png", "file-not-found.png");
                 }
             }
 
-            return Redirect("/");
+            // 파일명이 비어있는 경우, 또는 다른 이유로 파일을 처리하지 못한 경우
+            // 사용자에게 적절한 메시지와 함께 오류 페이지나 기본 페이지로 리디렉션할 수 있습니다.
+            // 여기서는 간단히 NotFound를 반환합니다.
+            return NotFound();
         }
     }
 
