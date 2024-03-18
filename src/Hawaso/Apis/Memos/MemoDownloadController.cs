@@ -6,24 +6,16 @@ using System.Drawing;
 namespace Hawaso.Controllers;
 
 [Authorize]
-public class MemoDownloadController : Controller
+public class MemoDownloadController(IMemoRepository repository, IMemoFileStorageManager fileStorageManager) : Controller
 {
     private readonly string moduleName = "Memos";
-    private readonly IMemoRepository _repository;
-    private readonly IMemoFileStorageManager _fileStorageManager;
-
-    public MemoDownloadController(IMemoRepository repository, IMemoFileStorageManager fileStorageManager)
-    {
-        _repository = repository;
-        _fileStorageManager = fileStorageManager;
-    }
 
     /// <summary>
     /// 게시판 파일 강제 다운로드 기능(/BoardDown/:Id)
     /// </summary>
     public async Task<IActionResult> FileDown(int id)
     {
-        var model = await _repository.GetByIdAsync(id);
+        var model = await repository.GetByIdAsync(id);
 
         if (model == null)
         {
@@ -33,11 +25,11 @@ public class MemoDownloadController : Controller
         {
             if (!string.IsNullOrEmpty(model.FileName))
             {
-                byte[] fileBytes = await _fileStorageManager.DownloadAsync(model.FileName, moduleName);
+                byte[] fileBytes = await fileStorageManager.DownloadAsync(model.FileName, moduleName);
                 if (fileBytes != null)
                 {
                     model.DownCount = model.DownCount + 1;
-                    await _repository.EditAsync(model);
+                    await repository.EditAsync(model);
 
                     return File(fileBytes, "application/octet-stream", model.FileName);
                 }
@@ -56,7 +48,7 @@ public class MemoDownloadController : Controller
     /// </summary>
     public async Task<IActionResult> ExcelDown()
     {
-        var results = await _repository.GetAllAsync(0, 100); // 총 몇개를 포함할건지, 나중에 이 부분 업데이트할 것...
+        var results = await repository.GetAllAsync(0, 100); // 총 몇개를 포함할건지, 나중에 이 부분 업데이트할 것...
 
         var models = results.Records.ToList();
 
