@@ -7,18 +7,14 @@ using VisualAcademy.Models.BannedTypes;
 namespace Hawaso.Apis.BannedTypes;
 
 [Authorize(Roles = "Administrators")]
-public class BannedTypeDownloadController : Controller
+public class BannedTypeDownloadController(IBannedTypeRepository repository) : Controller
 {
-    private readonly IBannedTypeRepository _repository;
-
-    public BannedTypeDownloadController(IBannedTypeRepository repository) => _repository = repository;
-
     /// <summary>
     /// 엑셀 파일 강제 다운로드 기능(/ExcelDown)
     /// </summary>
     public async Task<IActionResult> ExcelDown()
     {
-        var results = await _repository.GetAllAsync(0, 100);
+        var results = await repository.GetAllAsync(0, 100);
 
         var models = results.Records.ToList();
 
