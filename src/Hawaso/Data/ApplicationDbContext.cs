@@ -1,6 +1,4 @@
-﻿// </> 
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using VisualAcademy.Models;
 
 namespace Hawaso.Data;
