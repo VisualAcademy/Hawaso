@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using VisualAcademy.Models;
+﻿using VisualAcademy.Models;
 
 namespace Hawaso.Data;
 
