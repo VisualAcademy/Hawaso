@@ -6,11 +6,12 @@ namespace Hawaso.Models
 {
     /// <summary>
     /// [!] 기본 클래스: 공통 속성들을 모두 모아 놓은 만능 모델 클래스
-    /// MemoBase, ArticleBase, PostBase, EntryBase, ...
+    /// MemoBase, ArticleBase, PostBase, EntryBase, ArchiveBase, ...
     /// Scaffold-DbContext: https://docs.microsoft.com/ko-kr/ef/core/cli/powershell#scaffold-dbcontext
     /// </summary>
     public class MemoBase
     {
+        #region Key Section
         /// <summary>
         /// [1] 일련 번호(Serial Number)
         /// </summary>
@@ -22,16 +23,17 @@ namespace Hawaso.Models
         /// <summary>
         /// 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성
         /// </summary>
-        public int? ParentId { get; set; } = default; 
+        public int? ParentId { get; set; } = default;  // long? 형식으로 변경 가능    
 
         /// <summary>
         /// 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성
         /// </summary>
-        public string ParentKey { get; set; } = string.Empty;
+        public string ParentKey { get; set; } = string.Empty; 
+        #endregion
 
         #region Auditable
         /// <summary>
-        /// 등록자: CreatedBy, Creator
+        /// 등록자: CreatedBy, Creator, Email, ...
         /// </summary>
         public string CreatedBy { get; set; }
 
@@ -118,16 +120,16 @@ namespace Hawaso.Models
         public int? ReadCount { get; set; }
 
         /// <summary>
-        /// 인코딩: Text, HTML, Mixed
+        /// 인코딩: Text(Plain-Text), HTML(Text/HTML), Mixed(Mixed-Text)
         /// </summary>
         [Display(Name = "인코딩")]
-        public string Encoding { get; set; } = "Text";
+        public string Encoding { get; set; } = "Plain-Text"; // "Text"
 
         /// <summary>
         /// 홈페이지 
         /// </summary>
         [Display(Name = "홈페이지")]
-        public string Homepage { get; set; }
+        public string Homepage { get; set; } // URL
 
         /// <summary>
         /// 수정일
@@ -177,6 +179,7 @@ namespace Hawaso.Models
         /// <summary>
         /// 참조(부모글, 참조 번호)
         /// 그룹ID: 같은 그룹이면 모두 동일한 값 
+        /// https://youtu.be/1B4AjvD7s1g
         /// </summary>
         public int Ref { get; set; } = 0;
 
