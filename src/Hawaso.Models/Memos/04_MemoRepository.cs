@@ -294,11 +294,11 @@ namespace Hawaso.Models
         {
             var totalRecords = await _context.Memos
                 .Where(m => m.ParentId == parentId)
-                .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
+                .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery))
                 .CountAsync();
             var models = await _context.Memos
                 .Where(m => m.ParentId == parentId)
-                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
+                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
                 //.Include(m => m.MemosComments)
                 .Skip(pageIndex * pageSize)
@@ -492,6 +492,7 @@ namespace Hawaso.Models
         }
         #endregion
 
+        #region [4][16] 답변: ReplyApp.AddAsync()
         //[4][16] 답변: ReplyApp.AddAsync()
         public async Task<Memo> AddAsync(Memo model, int parentRef, int parentStep, int parentRefOrder)
         {
@@ -521,7 +522,7 @@ namespace Hawaso.Models
             model.RefOrder = parentRefOrder + 1; // 부모글의 바로 다음번 순서로 보여지도록 설정 
             #endregion
 
-            model.Created = DateTime.UtcNow;
+            model.Created = DateTimeOffset.Now; // DateTime.UtcNow;
 
             // 이 부분은 예외 처리 추가(MVC 게시판과 병합을 위한...)
             if (model.FileName == null)
@@ -538,11 +539,13 @@ namespace Hawaso.Models
             }
             catch (Exception e)
             {
-                _logger?.LogError($"ERROR({nameof(AddAsync)}): {e.Message}");
+                string message = $"ERROR({nameof(AddAsync)}): {e.Message}";
+                _logger?.LogError(message);
             }
 
             return model;
-        }
+        } 
+        #endregion
 
         #region [4][17] 답변: 메모앱.AddAsync()
         //[4][17] 답변: 메모앱.AddAsync()
