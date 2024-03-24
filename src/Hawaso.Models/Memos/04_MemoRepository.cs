@@ -270,10 +270,10 @@ namespace Hawaso.Models
             string searchQuery)
         {
             var totalRecords = await _context.Memos
-                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
+                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery))
                 .CountAsync();
             var models = await _context.Memos
-                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
+                .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery))
                 .OrderByDescending(m => m.Id)
                 //.Include(m => m.MemosComments)
                 .Skip(pageIndex * pageSize)
@@ -492,7 +492,7 @@ namespace Hawaso.Models
         }
         #endregion
 
-        //[4][16] 답변: ReplyApp, AddAsync()
+        //[4][16] 답변: ReplyApp.AddAsync()
         public async Task<Memo> AddAsync(Memo model, int parentRef, int parentStep, int parentRefOrder)
         {
             #region 답변 관련 기능 추가된 영역
@@ -511,7 +511,8 @@ namespace Hawaso.Models
                 }
                 catch (Exception e)
                 {
-                    _logger?.LogError($"ERROR({nameof(AddAsync)}): {e.Message}");
+                    string message = $"ERROR({nameof(AddAsync)}): {e.Message}";
+                    _logger?.LogError(message);
                 }
             }
 
@@ -543,9 +544,8 @@ namespace Hawaso.Models
             return model;
         }
 
-        #region [4][17] 답변: MemoApp, AddAsync()
-        //[4][17] 답변: MemoApp, AddAsync()
-        // TODO: 답변 로직 수정할 것...
+        #region [4][17] 답변: 메모앱.AddAsync()
+        //[4][17] 답변: 메모앱.AddAsync()
         public async Task<Memo> AddAsync(Memo model, int parentId)
         {
             #region 답변 관련 기능 추가된 영역
