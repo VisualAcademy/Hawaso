@@ -2,7 +2,7 @@
 
 namespace MemoApp.Apis.Controllers;
 
-[Authorize]
+[Authorize(Roles = "Administrators")]
 //[ApiVersion("1.0")] //[Route("api/v{v:apiVersion}/Memos")]
 [ApiController] // @RestController 
 [Route("api/[controller]")] // [Route("api/Memos")] // @RequestMapping
