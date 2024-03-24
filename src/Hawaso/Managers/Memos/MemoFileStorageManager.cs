@@ -1,7 +1,13 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using System.Threading.Tasks;
+using Hawaso.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace Hawaso.Models;
 
+#region MemoFileStorageManager
 public class MemoFileStorageManager : IMemoFileStorageManager
 {
     private const string moduleName = "Memos";
@@ -35,21 +41,6 @@ public class MemoFileStorageManager : IMemoFileStorageManager
         return null;
     }
 
-    public string GetFolderPath(string ownerType, string ownerId, string fileType)
-    {
-        throw new NotImplementedException();
-    }
-
-    public string GetFolderPath(string ownerType, long ownerId, string fileType)
-    {
-        throw new NotImplementedException();
-    }
-
-    public string GetFolderPath(string ownerType, int ownerId, string fileType)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = moduleName, bool overwrite = false)
     {
         await File.WriteAllBytesAsync(Path.Combine(_folderPath, folderPath, fileName), bytes);
@@ -69,50 +60,61 @@ public class MemoFileStorageManager : IMemoFileStorageManager
 
         return fileName;
     }
-}
+} 
+#endregion
 
 #region MemoBlobStorageManager
 public class MemoBlobStorageManager : IMemoFileStorageManager
 {
-    private const string moduleName = "Memos";
+    private readonly BlobServiceClient _blobServiceClient;
+    private readonly BlobContainerClient _containerClient;
+    private const string ContainerName = "files"; // Azure Blob Storage 컨테이너 이름
+    private const string DefaultFolderPath = "Memos"; // 기본 폴더 경로를 클래스 레벨 상수로 정의
 
-    public MemoBlobStorageManager()
+    public MemoBlobStorageManager(IConfiguration configuration)
     {
+        var connectionString = configuration.GetConnectionString("BlobConnection");
+        _blobServiceClient = new BlobServiceClient(connectionString);
+        _containerClient = _blobServiceClient.GetBlobContainerClient(ContainerName);
+        _containerClient.CreateIfNotExists(); // 컨테이너가 없으면 생성
     }
 
-    public Task<bool> DeleteAsync(string fileName, string folderPath = moduleName)
+    public async Task<bool> DeleteAsync(string fileName, string folderPath = DefaultFolderPath)
     {
-        throw new NotImplementedException();
+        var blobClient = _containerClient.GetBlobClient(Path.Combine(folderPath, fileName));
+        return await blobClient.DeleteIfExistsAsync();
     }
 
-    public Task<byte[]> DownloadAsync(string fileName, string folderPath = moduleName)
+    public async Task<byte[]> DownloadAsync(string fileName, string folderPath = DefaultFolderPath)
     {
-        throw new NotImplementedException();
+        var blobClient = _containerClient.GetBlobClient(Path.Combine(folderPath, fileName));
+        if (await blobClient.ExistsAsync())
+        {
+            var downloadInfo = await blobClient.DownloadAsync();
+            using (var ms = new MemoryStream())
+            {
+                await downloadInfo.Value.Content.CopyToAsync(ms);
+                return ms.ToArray();
+            }
+        }
+        return null;
     }
 
-    public string GetFolderPath(string ownerType, string ownerId, string fileType)
+    public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = DefaultFolderPath, bool overwrite = false)
     {
-        throw new NotImplementedException();
+        var blobClient = _containerClient.GetBlobClient(Path.Combine(folderPath, fileName));
+        using (var ms = new MemoryStream(bytes))
+        {
+            await blobClient.UploadAsync(ms, overwrite);
+        }
+        return blobClient.Uri.ToString(); // 업로드된 파일의 URI 반환
     }
 
-    public string GetFolderPath(string ownerType, long ownerId, string fileType)
+    public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath = DefaultFolderPath, bool overwrite = false)
     {
-        throw new NotImplementedException();
-    }
-
-    public string GetFolderPath(string ownerType, int ownerId, string fileType)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = moduleName, bool overwrite = false)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<string> UploadAsync(Stream stream, string fileName, string folderPath = moduleName, bool overwrite = false)
-    {
-        throw new NotImplementedException();
+        var blobClient = _containerClient.GetBlobClient(Path.Combine(folderPath, fileName));
+        await blobClient.UploadAsync(stream, overwrite);
+        return blobClient.Uri.ToString(); // 업로드된 파일의 URI 반환
     }
 }
 #endregion

@@ -30,20 +30,5 @@ namespace Hawaso.Models
         /// </summary>
         /// <returns>true or false</returns>
         Task<bool> DeleteAsync(string fileName, string folderPath = "Memos");
-
-        /// <summary>
-        /// Get Sub Folder with string
-        /// </summary>
-        string GetFolderPath(string ownerType, string ownerId, string fileType);
-
-        /// <summary>
-        /// Get Sub Folder with long
-        /// </summary>
-        string GetFolderPath(string ownerType, long ownerId, string fileType);
-
-        /// <summary>
-        /// Get Sub Folder with int
-        /// </summary>
-        string GetFolderPath(string ownerType, int ownerId, string fileType);
     }
 }
