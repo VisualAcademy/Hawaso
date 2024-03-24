@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Hawaso.Models
 {
     /// <summary>
-    /// [4] Repository Class: ADO.NET or Dapper(Micro ORM) or Entity Framework Core(ORM)
+    /// [4] Repository Class: ADO.NET or Dapper(Micro ORM) or Entity Framework Core(Full ORM)
     /// ~Repository, ~Provider, ~Data
     /// </summary>
     public class MemoRepository : IMemoRepository, IDisposable
@@ -42,7 +42,7 @@ namespace Hawaso.Models
             model.RefOrder = 0; // 참조(그룹) 순서
             #endregion
 
-            model.Created = DateTime.UtcNow;
+            model.Created = DateTimeOffset.Now; // 현재 서버의 시간으로 저장
 
             try
             {
@@ -62,7 +62,7 @@ namespace Hawaso.Models
         //[4][2] 출력: GetAllAsync
         public async Task<List<Memo>> GetAllAsync()
         {
-            // 학습 목적으로... InMemory 데이터베이스에선 사용 금지 
+            // 학습 목적으로... 인-메모리 데이터베이스에선 사용 금지 
             //return await _context.Memos.FromSqlRaw<Memo>("Select * From dbo.Memos Order By Id Desc") 
             return await _context.Memos.OrderByDescending(m => m.Id)
                 //.Include(m => m.MemosComments)
@@ -145,10 +145,11 @@ namespace Hawaso.Models
                     old.DownCount = model.DownCount;
                 }
 
-                old.Modified = DateTimeOffset.UtcNow;
+                old.Modified = DateTimeOffset.Now; // 현재 서버의 시간으로 저장
 
                 _context.Update(old);
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+
+                return (await _context.SaveChangesAsync() > 0);
             }
             catch (Exception e)
             {
@@ -726,6 +727,108 @@ namespace Hawaso.Models
             return new ArticleSet<Memo, long>(await items.AsNoTracking().ToListAsync(), totalCount);
         }
         #endregion
+
+        public async Task<ArticleSet<Memo, long>> GetArticlesWithDateAsync<TParentIdentifier>(
+            int pageIndex,
+            int pageSize,
+            string searchField,
+            string searchQuery,
+            string sortOrder,
+            TParentIdentifier parentIdentifier, DateTime from, DateTime to)
+        {
+            var items =
+                _context.Memos
+                    .AsQueryable();
+
+            #region ParentBy: 특정 부모 키 값(int, string)에 해당하는 리스트인지 확인
+            // ParentBy 
+            if (parentIdentifier is int parentId && parentId != 0)
+            {
+                items = items.Where(m => m.ParentId == parentId);
+            }
+            else if (parentIdentifier is string parentKey && !string.IsNullOrEmpty(parentKey))
+            {
+                items = items.Where(m => m.ParentKey == parentKey);
+            }
+            #endregion
+
+            if (from != null && to != null)
+            {
+                items = items.Where(it => (it.PostDate == null) || it.PostDate >= from && it.PostDate <= to);
+            }
+
+            #region Search Mode: SearchField와 SearchQuery에 해당하는 데이터 검색
+            // Search Mode
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                if (searchField == "Name")
+                {
+                    // Name
+                    items = items
+                        .Where(m => m.Name.Contains(searchQuery));
+                }
+                else if (searchField == "Title")
+                {
+                    // Title
+                    items = items
+                        .Where(m => m.Title.Contains(searchQuery));
+                }
+                else
+                {
+                    // All: 기타 더 검색이 필요한 컬럼이 있다면 추가 가능
+                    items = items
+                        .Where(m => m.Name.Contains(searchQuery) || m.Title.Contains(searchQuery) || m.FileName.Contains(searchQuery));
+                }
+            }
+            #endregion
+
+            // 총 레코드 수 계산
+            var totalCount = items.Count();
+
+            #region Sorting: 어떤 열에 대해 정렬(None, Asc, Desc)할 것인지 원하는 문자열로 지정
+            // Sorting
+            switch (sortOrder)
+            {
+                case "Name":
+                    //items = items.OrderBy(m => m.Name);
+                    items = items
+                        .OrderBy(m => m.Name).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    break;
+                case "NameDesc":
+                    //items = items.OrderByDescending(m => m.Name);
+                    items = items
+                        .OrderByDescending(m => m.Name).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    break;
+                case "Title":
+                    //items = items.OrderBy(m => m.Title);
+                    items = items
+                        .OrderBy(m => m.Title).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    break;
+                case "TitleDesc":
+                    //items = items.OrderByDescending(m => m.Title);
+                    items = items
+                        .OrderByDescending(m => m.Title).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    break;
+                case "Created":
+                    items = items
+                        .OrderBy(m => m.Created).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    break;
+                case "CreatedDesc":
+                    items = items
+                        .OrderByDescending(m => m.Created).ThenByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    break;
+                default:
+                    items = items
+                        .OrderByDescending(m => m.Ref).ThenBy(m => m.RefOrder);
+                    break;
+            }
+            #endregion
+
+            // Paging
+            items = items.Skip(pageIndex * pageSize).Take(pageSize);
+
+            return new ArticleSet<Memo, long>(items.AsNoTracking().ToList(), totalCount);
+        }
 
         #region Dispose
         // https://docs.microsoft.com/ko-kr/dotnet/api/system.gc.suppressfinalize?view=net-5.0
