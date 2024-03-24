@@ -174,7 +174,8 @@ namespace Hawaso.Models
             }
             catch (Exception ಠ_ಠ) // ಠ_ಠ => Disapproval Look
             {
-                _logger?.LogError($"ERROR({nameof(DeleteAsync)}): {ಠ_ಠ.Message}");
+                string message = $"ERROR({nameof(DeleteAsync)}): {ಠ_ಠ.Message}";
+                _logger?.LogError(message);
             }
 
             return false;
@@ -249,7 +250,7 @@ namespace Hawaso.Models
                     _context.Memos.Remove(model);
                 }
 
-                return (await _context.SaveChangesAsync() > 0 ? true : false);
+                return await _context.SaveChangesAsync() > 0;
 
             }
             catch (Exception e)
