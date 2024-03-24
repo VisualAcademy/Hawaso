@@ -744,6 +744,11 @@ namespace Hawaso.Models
         {
             throw new NotImplementedException();
         }
+
+        public Task<ArticleSet<Purge, int>> GetAllAsync<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier, DateTime from, DateTime to)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

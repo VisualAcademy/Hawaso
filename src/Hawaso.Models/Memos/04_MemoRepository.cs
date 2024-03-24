@@ -480,13 +480,7 @@ namespace Hawaso.Models
         }
 
         //[4][15] 리스트(페이징, 검색, 정렬)
-        public async Task<ArticleSet<Memo, int>> GetArticlesAsync<TParentIdentifier>(
-            int pageIndex,
-            int pageSize,
-            string searchField,
-            string searchQuery,
-            string sortOrder,
-            TParentIdentifier parentIdentifier)
+        public async Task<ArticleSet<Memo, int>> GetArticlesAsync<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier)
         {
             return await GetAllAsync(pageIndex, pageSize, searchField, searchQuery, sortOrder, parentIdentifier);
         }
@@ -632,10 +626,9 @@ namespace Hawaso.Models
         } 
         #endregion
 
-        #region [4][6] 검색: GetByAsync()
-        //[4][6] 검색: GetByAsync()
-        public async Task<ArticleSet<Memo, long>> GetByAsync<TParentIdentifier>(
-            FilterOptions<TParentIdentifier> options)
+        #region [4][18] 검색: GetByAsync()
+        //[4][18] 검색: GetByAsync()
+        public async Task<ArticleSet<Memo, long>> GetByAsync<TParentIdentifier>(FilterOptions<TParentIdentifier> options)
         {
             //var items = from m in _context.Memos select m; // 쿼리 구문(Query Syntax)
             //var items = _context.Memos.Select(m => m); // 메서드 구문(Method Syntax)
@@ -732,13 +725,14 @@ namespace Hawaso.Models
         }
         #endregion
 
-        public async Task<ArticleSet<Memo, long>> GetArticlesWithDateAsync<TParentIdentifier>(
-            int pageIndex,
-            int pageSize,
-            string searchField,
-            string searchQuery,
-            string sortOrder,
-            TParentIdentifier parentIdentifier, DateTime from, DateTime to)
+        #region [4][19] 날짜 범위 필터링
+        //[4][19] 날짜 범위 필터링
+        public async Task<ArticleSet<Memo, int>> GetAllAsync<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier, DateTime from, DateTime to)
+        {
+            return await GetArticlesWithDateAsync(pageIndex, pageSize, searchField, searchQuery, sortOrder, parentIdentifier, from, to);
+        }
+
+        public async Task<ArticleSet<Memo, int>> GetArticlesWithDateAsync<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier, DateTime from, DateTime to)
         {
             var items =
                 _context.Memos
@@ -831,10 +825,12 @@ namespace Hawaso.Models
             // Paging
             items = items.Skip(pageIndex * pageSize).Take(pageSize);
 
-            return new ArticleSet<Memo, long>(await items.AsNoTracking().ToListAsync(), totalCount);
+            return new ArticleSet<Memo, int>(await items.AsNoTracking().ToListAsync(), totalCount);
         }
+        #endregion
 
-        #region Dispose
+        #region [4][20] Dispose
+        //[4][20] Dispose
         // https://learn.microsoft.com/ko-kr/dotnet/api/system.gc.suppressfinalize?view=net-8.0
         public void Dispose()
         {
