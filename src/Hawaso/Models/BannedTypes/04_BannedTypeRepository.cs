@@ -637,5 +637,10 @@ public class BannedTypeRepository(BannedTypeAppDbContext context, ILoggerFactory
             }
         }
     }
+
+    public Task<ArticleSet<BannedTypeModel, int>> GetAllAsync<TParentIdentifier>(int pageIndex, int pageSize, string searchField, string searchQuery, string sortOrder, TParentIdentifier parentIdentifier, DateTime from, DateTime to)
+    {
+        throw new NotImplementedException();
+    }
     #endregion
 }

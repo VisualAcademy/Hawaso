@@ -9,6 +9,7 @@ using System.Drawing;
 using OfficeOpenXml.Style;
 using System;
 using VisualAcademy.Models.Replys;
+using Hawaso.Pages.Replys.Components;
 
 namespace Hawaso.Pages.Replys;
 
@@ -51,7 +52,7 @@ public partial class Manage
     /// <summary>
     /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
     /// </summary>
-    public Hawaso.Replys.Components.DeleteDialog DeleteDialogReference { get; set; }
+    public DeleteDialog DeleteDialogReference { get; set; }
     
     protected List<Reply> models;
 
