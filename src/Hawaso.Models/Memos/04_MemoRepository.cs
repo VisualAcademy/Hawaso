@@ -372,7 +372,7 @@ namespace Hawaso.Models
         {
             var totalRecords = await _context.Memos
                 .Where(m => m.ParentKey == parentKey)
-                .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title.Contains(searchQuery) || m.Title.Contains(searchQuery))
+                .Where(m => EF.Functions.Like(m.Name, $"%{searchQuery}%") || m.Title.Contains(searchQuery) || m.Content.Contains(searchQuery))
                 .CountAsync();
             var models = await _context.Memos
                 .Where(m => m.ParentKey == parentKey)
@@ -787,7 +787,7 @@ namespace Hawaso.Models
             #endregion
 
             // 총 레코드 수 계산
-            var totalCount = items.Count();
+            var totalCount = await items.CountAsync();
 
             #region Sorting: 어떤 열에 대해 정렬(None, Asc, Desc)할 것인지 원하는 문자열로 지정
             // Sorting
@@ -831,11 +831,11 @@ namespace Hawaso.Models
             // Paging
             items = items.Skip(pageIndex * pageSize).Take(pageSize);
 
-            return new ArticleSet<Memo, long>(items.AsNoTracking().ToList(), totalCount);
+            return new ArticleSet<Memo, long>(await items.AsNoTracking().ToListAsync(), totalCount);
         }
 
         #region Dispose
-        // https://docs.microsoft.com/ko-kr/dotnet/api/system.gc.suppressfinalize?view=net-5.0
+        // https://learn.microsoft.com/ko-kr/dotnet/api/system.gc.suppressfinalize?view=net-8.0
         public void Dispose()
         {
             Dispose(true);
