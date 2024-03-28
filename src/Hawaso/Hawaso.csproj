@@ -30,7 +30,7 @@
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.5.0" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.5.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
-    <PackageReference Include="VisualAcademy.Models.Archives" Version="3.0.1" />
+    <PackageReference Include="VisualAcademy.Models.Archives" Version="3.0.2" />
     <PackageReference Include="VisualAcademy.Models.BriefingLogs" Version="1.0.3" />
     <PackageReference Include="VisualAcademy.Models.Departments" Version="8.0.1" />
     <PackageReference Include="VisualAcademy.Models.Libraries" Version="6.0.1" />
