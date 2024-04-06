@@ -61,7 +61,7 @@ public partial class Manage
     /// </summary>
     //protected List<Memo> models = new List<Memo>();
     //protected List<Memo> Models = new();
-    public List<Memo> Models { get; set; } = new();
+    public List<Memo> Models { get; set; } = [];
 
     /// <summary>
     /// 현재 페이지에서 선택된 단일 데이터를 나타내는 모델 클래스 
