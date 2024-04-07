@@ -6,6 +6,7 @@ using Microsoft.JSInterop;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Drawing;
+using VisualAcademy.Pages.Memos.Components;
 
 namespace VisualAcademy.Pages.Memos;
 
@@ -49,12 +50,12 @@ public partial class Manage
     /// EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기
     /// </summary>
     //public Components.EditorForm EditorFormReference { get; set; }
-    public Components.ModalForm EditorFormReference { get; set; }
+    public ModalForm EditorFormReference { get; set; }
 
     /// <summary>
     /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
     /// </summary>
-    public Components.DeleteDialog DeleteDialogReference { get; set; }
+    public DeleteDialog DeleteDialogReference { get; set; }
 
     /// <summary>
     /// 현재 페이지에서 리스트로 사용되는 모델 리스트 
