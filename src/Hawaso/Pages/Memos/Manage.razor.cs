@@ -46,6 +46,7 @@ public partial class Manage
     public string EditorFormTitle { get; set; } = "CREATE";
     #endregion
 
+    #region Component References
     /// <summary>
     /// EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기
     /// </summary>
@@ -55,7 +56,8 @@ public partial class Manage
     /// <summary>
     /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
     /// </summary>
-    public DeleteDialog DeleteDialogReference { get; set; }
+    public DeleteDialog DeleteDialogReference { get; set; } 
+    #endregion
 
     /// <summary>
     /// 현재 페이지에서 리스트로 사용되는 모델 리스트 
