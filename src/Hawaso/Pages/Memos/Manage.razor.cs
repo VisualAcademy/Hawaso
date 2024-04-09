@@ -44,20 +44,6 @@ public partial class Manage
     /// 글쓰기 또는 수정하기 폼의 제목에 전달할 문자열(태그 포함 가능)
     /// </summary>
     public string EditorFormTitle { get; set; } = "CREATE";
-    #endregion
-
-    #region Component References
-    /// <summary>
-    /// EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기
-    /// </summary>
-    //public Components.EditorForm EditorFormReference { get; set; }
-    public ModalForm EditorFormReference { get; set; }
-
-    /// <summary>
-    /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
-    /// </summary>
-    public DeleteDialog DeleteDialogReference { get; set; } 
-    #endregion
 
     /// <summary>
     /// 현재 페이지에서 리스트로 사용되는 모델 리스트 
@@ -82,6 +68,20 @@ public partial class Manage
         PageSize = 10,
         PagerButtonCount = 5
     };
+    #endregion
+
+    #region Component References
+    /// <summary>
+    /// EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기
+    /// </summary>
+    //public Components.EditorForm EditorFormReference { get; set; }
+    public ModalForm EditorFormReference { get; set; }
+
+    /// <summary>
+    /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
+    /// </summary>
+    public DeleteDialog DeleteDialogReference { get; set; } 
+    #endregion
 
     #region Search
     private string searchQuery = "";
