@@ -1,6 +1,5 @@
 ﻿using Hawaso.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Hawaso.Infrastructures;
 
