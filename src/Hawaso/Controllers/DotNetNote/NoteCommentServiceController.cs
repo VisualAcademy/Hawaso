@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using Hawaso.Models.Notes;
+﻿using Hawaso.Models.Notes;
 
 namespace Hawaso.Controllers;
 
