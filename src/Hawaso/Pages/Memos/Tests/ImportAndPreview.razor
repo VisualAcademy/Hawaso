@@ -1,0 +1,108 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using System.IO
+@using DocumentFormat.OpenXml.Packaging
+@using DocumentFormat.OpenXml.Spreadsheet
+
+<PageTitle>Excel 데이터 가져오기</PageTitle>
+
+<h3>Excel 파일 업로드</h3>
+
+<a href="/templates/Memos/MemosImport.xlsx" class="btn btn-secondary mb-3">Template Download</a><br />
+
+<Microsoft.AspNetCore.Components.Forms.InputFile OnChange="HandleExcelUpload" accept=".xlsx" />
+
+@if (memos != null && memos.Count > 0)
+{
+    <h4>데이터 미리보기</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>이름</th>
+                <th>이메일</th>
+                <th>제목</th>
+                <th>내용</th>
+                <th>작성자</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var memo in memos)
+            {
+                <tr>
+                    <td>@memo.Name</td>
+                    <td>@memo.Email</td>
+                    <td>@memo.Title</td>
+                    <td>@memo.Content</td>
+                    <td>@memo.CreatedBy</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Memo> memos = new List<Memo>();
+
+    private async Task HandleExcelUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            await file.OpenReadStream(maxAllowedSize: 10485760).CopyToAsync(memoryStream);
+            memoryStream.Position = 0; // 스트림의 위치를 처음으로 되돌림
+
+            using var package = SpreadsheetDocument.Open(memoryStream, false);
+            var workbookPart = package.WorkbookPart;
+            var sheet = workbookPart.Workbook.Descendants<Sheet>().FirstOrDefault();
+            var worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id);
+            var sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
+
+            List<Memo> loadedMemos = new List<Memo>();
+
+            // 엑셀 파일에서 첫 번째 행은 헤더로 가정, 데이터는 두 번째 행부터 시작
+            foreach (Row row in sheetData.Descendants<Row>().Skip(1))
+            {
+                // 각 행에서 셀 데이터 읽기
+                var cells = row.Descendants<Cell>().ToList();
+                if (cells.Count >= 5) // 최소한 5개의 셀 데이터가 필요
+                {
+                    var name = ReadCellValue(workbookPart, cells[0]);
+                    var email = ReadCellValue(workbookPart, cells[1]);
+                    var title = ReadCellValue(workbookPart, cells[2]);
+                    var content = ReadCellValue(workbookPart, cells[3]);
+                    var createdBy = ReadCellValue(workbookPart, cells[4]);
+
+                    loadedMemos.Add(new Memo
+                        {
+                            Name = name,
+                            Email = email,
+                            Title = title,
+                            Content = content,
+                            CreatedBy = createdBy,
+                            Created = DateTime.UtcNow // 생성 날짜를 현재 시간으로 설정
+                        });
+                }
+            }
+
+            if (loadedMemos.Any())
+            {
+                memos = loadedMemos; // 로컬 상태에 업로드된 데이터 저장
+                StateHasChanged(); // UI 갱신
+            }
+        }
+    }
+
+    // 셀 값 읽기 함수
+    private string ReadCellValue(WorkbookPart workbookPart, Cell cell)
+    {
+        if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
+        {
+            return workbookPart.SharedStringTablePart.SharedStringTable
+                .ElementAt(int.Parse(cell.InnerText)).InnerText;
+        }
+        else
+        {
+            return cell.InnerText;
+        }
+    }
+}
