@@ -40,7 +40,15 @@
     </table>
 }
 
+<button class="btn btn-primary" @onclick="SaveMemos">Save All</button>
+
 @code {
+    [Inject]
+    public IMemoRepository RepositoryReference { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
     private List<Memo> memos = new List<Memo>();
 
     private async Task HandleExcelUpload(InputFileChangeEventArgs e)
@@ -105,5 +113,29 @@
         {
             return cell.InnerText;
         }
+    }
+
+    private async Task SaveMemos()
+    {
+        foreach (var memo in memos)
+        {
+            memo.Password = "";
+            memo.FileName = "";
+            memo.FileSize = 0;
+            memo.PostDate = DateTime.Now;
+            memo.ParentNum = 0;
+            memo.AnswerNum = 0;
+            memo.CommentCount = 0;
+            memo.Encoding = "Text";
+            memo.Step = 0;
+            memo.RefOrder = 0;
+            memo.PostIp = "127.0.0.1";
+            memo.Password = "";
+            memo.ReadCount = 0;
+            memo.DownCount = 0;
+
+            await RepositoryReference.AddAsync(memo);
+        }
+        NavigationManager.NavigateTo("/Memos");
     }
 }
