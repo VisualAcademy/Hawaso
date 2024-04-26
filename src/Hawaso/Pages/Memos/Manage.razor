@@ -1,6 +1,8 @@
 ﻿@page "/Memos"
 @page "/Memos/Manage"
 
+@using Microsoft.FluentUI.AspNetCore.Components
+
 @namespace VisualAcademy.Pages.Memos
 
 @attribute [Authorize(Roles = "Administrators")]
@@ -9,6 +11,22 @@
 
 <h3>Memo Manage <a href="/Memos/Create"><span class="oi oi-plus align-baseline"></span></a>&nbsp; 
     <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;"></span></h3>
+
+<div class="row">
+    <div class="col-md-4">
+        <FluentButton OnClick="ShowEditorForm" Appearance="Appearance.Accent" Style="width: 150px;">
+            <FluentIcon Value="@(new Icons.Regular.Size32.Add())" Color="Color.Lightweight" Slot="start"/>
+            Create
+        </FluentButton>
+        <FluentAnchor Href="/Memos/Import"  Appearance="Appearance.Accent" Style="width: 150px;">
+            <FluentIcon Value="@(new Icons.Regular.Size32.ArrowUp())" Color="Color.Lightweight" Slot="start" />
+            Excel Upload
+        </FluentAnchor>    
+    </div>
+    <div class="col-md-8">
+        
+    </div>
+</div>
 
 <div class="row mb-1">
     <div class="col-md-12">
