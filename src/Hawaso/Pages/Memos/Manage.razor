@@ -146,6 +146,22 @@
                                         <a href="/MemoDownload/FileDown/@m.Id" class="btn btn-sm btn-primary" download="@m.FileName">Dn</a>
                                         <button onclick="location.href = '/MemoDownload/FileDown/@m.Id';" class="btn btn-sm btn-primary">Dn</button>
                                     }
+                                    <hr />
+                                    <button type="button" class="btn btn-primary" @onclick="@(() => OpenPreview(m.Id))">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-success" @onclick="(() => EditBy(m))">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-danger" @onclick="(() => DeleteBy(m))">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                    @if (m.FileSize > 0)
+                                    {
+                                        <button type="button" class="btn btn-info" onclick="location.href = '/IncidentAttachmentDownload/FileDown/@m.Id';" style="margin-left: 3px;">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                    }
                                 </td>
                             </tr>
                         }

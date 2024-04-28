@@ -438,4 +438,9 @@ public partial class Manage
         }
     }
     #endregion
+
+    private async Task OpenPreview(long attachmentId)
+    {
+        await JSRuntimeInjector.InvokeVoidAsync("attachmentFunctions.openPreview", attachmentId);
+    }
 }
