@@ -20,6 +20,9 @@ public partial class Manage
     // 문자열 형식의 Id 값을 받는 공통 속성 이름 
     [Parameter]
     public string ParentKey { get; set; } = "";
+
+    [Parameter]
+    public bool IsReadOnly { get; set; } = false;
     #endregion
 
     #region Injectors

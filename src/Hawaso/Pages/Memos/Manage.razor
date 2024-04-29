@@ -132,13 +132,13 @@
                                 </td>
                                 <td class="small text-center">
                                     <a href="/Memos/Details/@m.Id" class="btn btn-sm btn-light">Details</a>
-                                    <a href="/Memos/Edit/@m.Id" class="btn btn-sm btn-light">Edit</a>
-                                    <a href="/Memos/Delete/@m.Id" class="btn btn-sm btn-light">Del</a>
+                                    <a href="/Memos/Edit/@m.Id" class="btn btn-sm btn-light" disabled="@IsReadOnly">Edit</a>
+                                    <a href="/Memos/Delete/@m.Id" class="btn btn-sm btn-light" disabled="@IsReadOnly">Del</a>
                                 </td>
                                 <td>&nbsp;</td>
                                 <td class="text-center">
-                                    <input type="button" name="btnEdit" value="Edit" class="btn btn-sm btn-primary" @onclick="(() => EditBy(m))" />
-                                    <input type="button" name="btnDelete" value="Del" class="btn btn-sm btn-danger" @onclick="(() => DeleteBy(m))" />
+                                    <input type="button" name="btnEdit" value="Edit" class="btn btn-sm btn-primary" @onclick="(() => EditBy(m))" disabled="@IsReadOnly" />
+                                    <input type="button" name="btnDelete" value="Del" class="btn btn-sm btn-danger" @onclick="(() => DeleteBy(m))" disabled="@IsReadOnly" />
                                     <input type="button" name="btnToggle" value="Toggle" class="btn btn-sm btn-primary" @onclick="(() => ToggleBy(m))" />
                                     @if (m.FileSize > 0)
                                     {
@@ -161,6 +161,8 @@
                                         <button type="button" class="btn btn-info" onclick="location.href = '/IncidentAttachmentDownload/FileDown/@m.Id';" style="margin-left: 3px;">
                                             <i class="fas fa-download"></i>
                                         </button>
+
+                                        @((MarkupString)Dul.BoardLibrary.DownloadType(m.FileName, m.FileName))
                                     }
                                 </td>
                             </tr>
