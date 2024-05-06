@@ -149,5 +149,6 @@
     <Build Include="Memos\Purges\PurgesArchives.sql" />
     <Build Include="BannedTypes\BannedTypes.sql" />
     <Build Include="InternalAudit\Audit.sql" />
+    <Build Include="InternalAudit\Business.sql" />
   </ItemGroup>
 </Project>
