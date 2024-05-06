@@ -87,6 +87,7 @@
     <Folder Include="Zero" />
     <Folder Include="Memos\Purges" />
     <Folder Include="BannedTypes" />
+    <Folder Include="InternalAudit" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -147,5 +148,6 @@
     <Build Include="Memos\Purges\Purges.sql" />
     <Build Include="Memos\Purges\PurgesArchives.sql" />
     <Build Include="BannedTypes\BannedTypes.sql" />
+    <Build Include="InternalAudit\Audit.sql" />
   </ItemGroup>
 </Project>
