@@ -5,5 +5,5 @@ CREATE TABLE [dbo].[Departments]
     [Active]    BIT                DEFAULT ((1)) NOT NULL,
     [CreatedAt] DATETIMEOFFSET (7) NOT NULL,
     [CreatedBy] NVARCHAR (255)     NULL,
-    [Name]      NVARCHAR (MAX)     NULL
+    [Name]      NVARCHAR (MAX)     NULL,                                    -- 'IT', 'HR', 'Sales', 'Marketing', 'Finance', 'Engineering', 'Accounting'    
 );
