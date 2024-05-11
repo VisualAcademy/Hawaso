@@ -48,6 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\At\At.csproj" />
     <ProjectReference Include="..\Hawaso.Models\Hawaso.Models.csproj" />
   </ItemGroup>
 
