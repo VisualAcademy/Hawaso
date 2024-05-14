@@ -1,5 +1,3 @@
-using System;
-
 namespace Hawaso.Data;
 
 public class WeatherForecast
