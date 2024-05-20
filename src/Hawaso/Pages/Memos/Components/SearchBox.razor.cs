@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System.Timers;
 
 namespace VisualAcademy.Pages.Memos.Components;
 
