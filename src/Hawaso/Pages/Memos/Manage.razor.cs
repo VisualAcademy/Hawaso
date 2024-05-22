@@ -167,8 +167,10 @@ public partial class Manage
     {
         EditorFormTitle = "CREATE";
         Model = new Memo(); // 모델 초기화
-        this.Model.ParentId = Model.ParentId;
-        this.Model.ParentKey = Model.ParentKey;
+
+        // 부모 페이지에서 넘어온 ParentId와 ParentKey를 사용하여 자식 페이지에 전달
+        Model.ParentId = ParentId;
+        Model.ParentKey = ParentKey;
 
         Model.Name = UserName; // 로그인 사용자 이름을 기본으로 제공
 
