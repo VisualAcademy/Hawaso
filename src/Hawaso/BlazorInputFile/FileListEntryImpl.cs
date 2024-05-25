@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace BlazorInputFile
+﻿namespace BlazorInputFile
 {
     // This is public only because it's used in a JSInterop method signature,
     // but otherwise is intended as internal
