@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Zero.Models;
+﻿using Zero.Models;
 
 namespace Hawaso.Extensions.BriefingLogs;
 
