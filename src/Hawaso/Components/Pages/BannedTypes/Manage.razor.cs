@@ -181,7 +181,7 @@ public partial class Manage
     protected void ToggleClose()
     {
         IsInlineDialogShow = false;
-        this.model = new BannedTypeModel();
+        model = new BannedTypeModel();
     }
 
     /// <summary>
