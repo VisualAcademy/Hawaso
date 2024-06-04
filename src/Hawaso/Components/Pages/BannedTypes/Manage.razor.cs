@@ -155,7 +155,7 @@ public partial class Manage
     protected async void CreateOrEdit()
     {
         EditorFormReference.Hide();
-        this.model = null;
+        model = null;
         this.model = new BannedTypeModel();
 
         await DisplayData();
