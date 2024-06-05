@@ -156,7 +156,7 @@ public partial class Manage
     {
         EditorFormReference.Hide();
         model = null;
-        this.model = new BannedTypeModel();
+        model = new BannedTypeModel();
 
         await DisplayData();
     }
