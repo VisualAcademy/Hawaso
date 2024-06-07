@@ -217,7 +217,7 @@ public partial class Manage
     {
         pager.PageIndex = 0;
 
-        this.searchQuery = query;
+        searchQuery = query;
 
         await DisplayData();
     }
