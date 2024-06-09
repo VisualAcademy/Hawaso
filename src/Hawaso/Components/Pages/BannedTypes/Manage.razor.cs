@@ -155,8 +155,8 @@ public partial class Manage
     protected async void CreateOrEdit()
     {
         EditorFormReference.Hide();
-        this.model = null;
-        this.model = new BannedTypeModel();
+        model = null;
+        model = new BannedTypeModel();
 
         await DisplayData();
     }
@@ -181,7 +181,7 @@ public partial class Manage
     protected void ToggleClose()
     {
         IsInlineDialogShow = false;
-        this.model = new BannedTypeModel();
+        model = new BannedTypeModel();
     }
 
     /// <summary>
@@ -217,7 +217,7 @@ public partial class Manage
     {
         pager.PageIndex = 0;
 
-        this.searchQuery = query;
+        searchQuery = query;
 
         await DisplayData();
     }
