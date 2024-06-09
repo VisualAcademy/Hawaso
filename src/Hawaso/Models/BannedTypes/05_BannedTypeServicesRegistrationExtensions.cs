@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace VisualAcademy.Models.BannedTypes;
+﻿namespace VisualAcademy.Models.BannedTypes;
 
 // 이 정적 클래스는 IServiceCollection에 대한 확장 메서드를 제공하며, BannedType 관련 서비스의 등록을 담당합니다.
 public static class BannedTypeServicesRegistrationExtensions
