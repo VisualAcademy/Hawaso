@@ -115,6 +115,7 @@ public partial class Manage
     }
     #endregion
 
+    #region DisplayData()
     private async Task DisplayData()
     {
         // ParentKey와 ParentId를 사용하는 목적은 특정 부모의 Details 페이지에서 리스트로 표현하기 위함
@@ -138,7 +139,8 @@ public partial class Manage
         }
 
         StateHasChanged(); // Refresh
-    }
+    } 
+    #endregion
 
     /// <summary>
     /// 상세보기로 이동하는 링크
@@ -197,7 +199,7 @@ public partial class Manage
     /// </summary>
     protected void DeleteBy(Memo model)
     {
-        this.Model = model;
+        Model = model;
         DeleteDialogReference.Show();
     }
     #endregion
