@@ -31,10 +31,10 @@ public class BannedTypeModel
     /// </summary>
 #nullable enable
     public string? CreatedBy { get; set; }
-#nullable restore
 
     /// <summary>
     /// BannedType명
     /// </summary>
     public string? Name { get; set; }
+#nullable restore
 }

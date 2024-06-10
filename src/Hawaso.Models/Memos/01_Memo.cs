@@ -6,7 +6,7 @@ namespace Hawaso.Models
 {
     /// <summary>
     /// [!] 기본 클래스: 공통 속성들을 모두 모아 놓은 만능 모델 클래스
-    /// MemoBase, ArticleBase, PostBase, EntryBase, ArchiveBase, ...
+    /// MemoBase, ArticleBase, PostBase, EntryBase, ArchiveBase, ActBase, ...
     /// Scaffold-DbContext: https://docs.microsoft.com/ko-kr/ef/core/cli/powershell#scaffold-dbcontext
     /// </summary>
     public class MemoBase
@@ -18,15 +18,15 @@ namespace Hawaso.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "번호")]
-        public long Id { get; set; }
+        public long Id { get; set; } // Id 속성(컬럼)을 int로 사용해야하나? long으로 사용해야하나? 이것이 문제로다. 
 
         /// <summary>
-        /// 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성
+        /// 숫자 형식의 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성
         /// </summary>
         public int? ParentId { get; set; } = default;  // long? 형식으로 변경 가능    
 
         /// <summary>
-        /// 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성
+        /// 숫자 형식의 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성
         /// </summary>
         public string ParentKey { get; set; } = string.Empty; 
         #endregion
@@ -209,7 +209,7 @@ namespace Hawaso.Models
 
     /// <summary>
     /// [1] Model Class: Memo 모델(도메인, 엔터티) 클래스 == Memos 테이블과 일대일로 매핑
-    /// Memo, MemoModel, MemoViewModel, MemoDto, MemoEntity, MemoObject, 
+    /// Memo, MemoModel, MemoViewModel, MemoDto, MemoEntity, MemoObject, MemoTable 
     /// MemoDomain, ...
     /// </summary>
     [Table("Memos")]
