@@ -23,7 +23,7 @@ namespace Hawaso.Models
         /// <summary>
         /// 숫자 형식의 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성
         /// </summary>
-        public int? ParentId { get; set; } = default;  // long? 형식으로 변경 가능    
+        public long? ParentId { get; set; } = default;  // long? 형식으로 변경 가능    
 
         /// <summary>
         /// 숫자 형식의 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성
