@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[Memos]
     [Content]       NText Not Null,                             -- [4][내용]__NVarChar(Max) => NText__
     [Category]      NVarChar(20) Default('Free') Null,          -- 카테고리(확장...) => '공지', '자유', '자료', '사진', ...
 
-	--[1] 기본형 게시판 관련 주요 컬럼
+	--[1] 기본형(Article, Basic, Notice) 게시판 관련 주요 컬럼
     Email           NVarChar(100) Null,                         -- 이메일 
     Password        NVarChar(255) Null,                         -- 비밀번호
     ReadCount       Int Default 0,                              -- 조회수
@@ -31,14 +31,14 @@ CREATE TABLE [dbo].[Memos]
     CommentCount    Int Default 0,                              -- 댓글수
 	IsPinned        Bit Default 0 Null,                         -- 공지글로 올리기, IsActive 
 
-	--[2] 자료실 게시판 관련 주요 컬럼
+	--[2] 자료실(Upload, BBS) 게시판 관련 주요 컬럼
     FileName        NVarChar(255) Null,                         -- 파일명
     FileSize        Int Default 0,                              -- 파일크기
     DownCount       Int Default 0,                              -- 다운수 
 
-	--[3] 답변형 게시판 관련 주요 컬럼
-    Ref             Int Not Null,                               -- 참조(부모글)
-    Step            Int Not Null Default 0,                     -- 답변깊이(레벨)
+	--[3] 답변형(Reply, Qna) 게시판 관련 주요 컬럼
+    Ref             Int Not Null,                               -- 참조(부모글), Group
+    Step            Int Not Null Default 0,                     -- 답변깊이(레벨), Depth, Level
     RefOrder        Int Not Null Default 0,                     -- 답변순서
     AnswerNum       Int Not Null Default 0,                     -- 답변수
     ParentNum       Int Not Null Default 0,                     -- 부모글번호
