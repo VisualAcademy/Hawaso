@@ -3,8 +3,8 @@
 CREATE TABLE [dbo].[Memos]
 (
 	[Id]            BIGINT NOT NULL PRIMARY KEY Identity(1, 1), -- [1][일련번호], Serial Number
-	[ParentId]      BigInt Null,								-- ParentId, AppId, SiteId, ...
-	[ParentKey]     NVarChar(255) Null,						    -- ParentKey == 부모의 GUID
+	[ParentId]      BigInt Null,								-- ParentId, AppId, SiteId, ProductId, CategoryId, ...
+	[ParentKey]     NVarChar(255) Null,						    -- ParentKey == 부모의 GUID, UserId, RoleId, ...
 
     -- Auditable
 	[CreatedBy]     NVarChar(255) Null,						    -- 등록자(Creator)
