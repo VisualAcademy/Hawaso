@@ -6,25 +6,25 @@ CREATE TABLE [dbo].[Memos]
 	[ParentId]      BigInt Null,								-- ParentId, AppId, SiteId, ProductId, CategoryId, ...
 	[ParentKey]     NVarChar(255) Null,						    -- ParentKey == 부모의 GUID, UserId, RoleId, ...
 
-    -- Auditable
+    --[!] Auditable
 	[CreatedBy]     NVarChar(255) Null,						    -- 등록자(Creator)
 	[Created]       DATETIMEOFFSET Default(GetDate()) Null,  	-- [5][생성일](PostDate), DatePublished, CreatedAt
 	[ModifiedBy]    NVarChar(255) Null,					        -- 수정자(LastModifiedBy)
 	[Modified]      DATETIMEOFFSET Null,						-- 수정일(LastModified)
 
     --[0] 5W1H: 누가, 언제, 어디서, 무엇을, 어떻게, 왜
-    [Name]          NVarChar(255) Not Null,                      -- [2][이름](작성자)
-    PostDate        DateTime Default GetDate() Not Null,        -- 작성일 
-    PostIp          NVarChar(15) Null,                          -- 작성IP
+    [Name]          NVarChar(255) Not Null,                     -- [2][이름](작성자)
+    [PostDate]      DateTime Default GetDate() Not Null,        -- 작성일 
+    [PostIp]        NVarChar(15) Null,                          -- 작성IP
     [Title]         NVarChar(150) Not Null,                     -- [3][제목]
     [Content]       NText Not Null,                             -- [4][내용]__NVarChar(Max) => NText__
-    Category        NVarChar(20) Default('Free') Null,          -- 카테고리(확장...) => '공지', '자유', '자료', '사진', ...
+    [Category]      NVarChar(20) Default('Free') Null,          -- 카테고리(확장...) => '공지', '자유', '자료', '사진', ...
 
 	--[1] 기본형 게시판 관련 주요 컬럼
     Email           NVarChar(100) Null,                         -- 이메일 
     Password        NVarChar(255) Null,                         -- 비밀번호
     ReadCount       Int Default 0,                              -- 조회수
-    Encoding        NVarChar(20) Not Null,                      -- 인코딩(HTML/Text/Mixed)
+    Encoding        NVarChar(20) Not Null,                      -- 인코딩(Text/HTML/Mixed/MarkDown)
     Homepage        NVarChar(100) Null,                         -- 홈페이지
     ModifyDate      DateTime Null,                              -- 수정일 
     ModifyIp        NVarChar(15) Null,                          -- 수정IP
@@ -48,6 +48,6 @@ CREATE TABLE [dbo].[Memos]
     UserId          Int Null,                                   -- (확장...) 사용자 테이블 Id
     CategoryId      Int Null Default 0,                         -- (확장...) 카테고리 테이블 Id
     BoardId         Int Null Default 0,                         -- (확장...) 게시판(Boards) 테이블 Id
-    ApplicationId    Int Null Default 0                         -- (확장용) 응용 프로그램 Id
+    ApplicationId   Int Null Default 0                          -- (확장용) 응용 프로그램 Id
 )
 Go
