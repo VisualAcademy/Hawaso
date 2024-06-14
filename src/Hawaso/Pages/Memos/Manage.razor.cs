@@ -139,13 +139,15 @@ public partial class Manage
         }
 
         StateHasChanged(); // Refresh
-    } 
+    }
     #endregion
 
+    #region Event Handlers
     /// <summary>
     /// 상세보기로 이동하는 링크
     /// </summary>
-    protected void NameClick(long id) => NavigationManagerInjector.NavigateTo($"/Memos/Details/{id}");
+    protected void NameClick(long id) => NavigationManagerInjector.NavigateTo($"/Memos/Details/{id}"); 
+    #endregion
 
     /// <summary>
     /// Pager 링크 버튼 클릭에 따른 리스트 내용 업데이트
