@@ -21,12 +21,12 @@ namespace Hawaso.Models
         public long Id { get; set; } // Id 속성(컬럼)을 int로 사용해야하나? long으로 사용해야하나? 이것이 문제로다. 
 
         /// <summary>
-        /// 숫자 형식의 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성
+        /// 숫자 형식의 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성(ProductId, CategoryId, ...)
         /// </summary>
         public long? ParentId { get; set; } = default;  // long? 형식으로 변경 가능    
 
         /// <summary>
-        /// 숫자 형식의 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성
+        /// 숫자 형식의 외래키? - AppId 형태로 ParentId와 ParentKey 속성은 보조로 만들어 놓은 속성(UserId, RoleId, ...)
         /// </summary>
         public string ParentKey { get; set; } = string.Empty; 
         #endregion
