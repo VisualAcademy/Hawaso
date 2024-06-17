@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Hawaso.Models;
-
-namespace Hawaso.Services.Memos
+﻿namespace Hawaso.Services.Memos
 {
     public interface IMemoService
     {
