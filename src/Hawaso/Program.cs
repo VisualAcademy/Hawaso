@@ -157,6 +157,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Enhance tenant databases on startup
+EnhanceTenantDatabases(app.Services, app.Configuration);
+
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
@@ -201,4 +204,11 @@ void AddDependencyInjectionContainerForDotNetSaleCore(IServiceCollection service
     services.AddDbContext<LoginDbContext>(options =>
         options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
     services.AddTransient<ILoginRepositoryAsync, LoginRepositoryAsync>();
+}
+
+void EnhanceTenantDatabases(IServiceProvider services, IConfiguration configuration)
+{
+    var masterConnectionString = configuration.GetConnectionString("DefaultConnection");
+    var schemaEnhancerApplications = new TenantSchemaEnhancerAddColumnApplications(masterConnectionString);
+    schemaEnhancerApplications.EnhanceAllTenantDatabases();
 }
