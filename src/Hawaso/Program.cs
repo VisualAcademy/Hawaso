@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Portals.Infrastructures;
 using ReplyApp.Managers;
 using VisualAcademy;
 using VisualAcademy.Models.BannedTypes;
@@ -90,6 +91,11 @@ services.AddDbContext<DotNetNoteContext>(options =>
 services.AddDbContext<NoteDbContext>(options =>
     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+#region Changes 테이블 생성 
+var schemaEnhancerChanges = new TenantSchemaEnhancerCreateChangesTable(connectionString);
+schemaEnhancerChanges.CreateChangesTable();
+#endregion
+
 // 의존성 주입 컨테이너 설정
 DependencyInjectionContainer(services);
 
@@ -157,8 +163,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+#region Tenants Update
 // Enhance tenant databases on startup
-EnhanceTenantDatabases(app.Services, app.Configuration);
+//EnhanceTenantDatabases(app.Services, app.Configuration); 
+#endregion
 
 app.UseHttpsRedirection();
 
