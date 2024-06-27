@@ -1,7 +1,4 @@
-﻿using Hawaso.Infrastructures;
-using Hawaso;
-using Microsoft.Data.SqlClient;
-using System.Configuration;
+﻿using Microsoft.Data.SqlClient;
 
 namespace Hawaso.Infrastructures
 {
