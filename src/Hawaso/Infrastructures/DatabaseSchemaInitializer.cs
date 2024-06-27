@@ -3,16 +3,8 @@
 namespace VisualAcademy.Infrastructures;
 
 // 데이터베이스 스키마 초기화 및 확장을 관리하는 클래스입니다.
-public class DatabaseSchemaInitializer
+public class DatabaseSchemaInitializer(string defaultConnectionString)
 {
-    private string _defaultConnectionString; // 데이터베이스 연결 문자열을 저장하는 필드입니다.
-
-    // 생성자에서 연결 문자열을 초기화합니다.
-    public DatabaseSchemaInitializer(string defaultConnectionString)
-    {
-        _defaultConnectionString = defaultConnectionString;
-    }
-
     // 스키마를 초기화하거나 확장하는 메서드입니다.
     public void InitializeOrEnhanceSchema()
     {
@@ -23,7 +15,7 @@ public class DatabaseSchemaInitializer
     // 지정된 테이블에 특정 열이 존재하지 않는 경우 추가하는 메서드입니다.
     private void EnsureColumnExists(string tableName, string columnName, string columnDefinition)
     {
-        using (SqlConnection connection = new SqlConnection(_defaultConnectionString))
+        using (SqlConnection connection = new SqlConnection(defaultConnectionString))
         {
             connection.Open(); // 데이터베이스 연결을 엽니다.
 
