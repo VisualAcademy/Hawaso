@@ -1,6 +1,4 @@
-﻿
-
-namespace VisualAcademy.Infrastructures;
+﻿namespace VisualAcademy.Infrastructures;
 
 // 데이터베이스 스키마 초기화 및 확장을 관리하는 클래스입니다.
 public class DatabaseSchemaInitializer(string defaultConnectionString)
