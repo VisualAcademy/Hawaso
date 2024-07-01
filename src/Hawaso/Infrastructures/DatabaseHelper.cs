@@ -1,6 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-
-namespace VisualAcademy;
+﻿namespace VisualAcademy;
 
 public class DatabaseHelper
 {
