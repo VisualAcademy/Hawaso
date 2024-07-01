@@ -1,4 +1,5 @@
 using Blazored.Toast;
+using Dalbodre.Infrastructures;
 using DotNetNote.Models;
 using DotNetSaleCore.Models;
 using Hawaso.Areas.Identity;
@@ -192,6 +193,11 @@ using (var scope = app.Services.CreateScope())
     var scopedServices = scope.ServiceProvider;
     await UserAndRoleInitializer.CreateBuiltInUsersAndRoles(scopedServices);
 }
+
+#region Tenants Table 생성 및 컬럼 추가 데모
+var tenantSchemaEnhancerCreateAndAlter = new TenantSchemaEnhancerCreateAndAlter(Configuration.GetConnectionString("DefaultConnection"));
+tenantSchemaEnhancerCreateAndAlter.EnsureSchema();
+#endregion
 
 app.Run();
 
