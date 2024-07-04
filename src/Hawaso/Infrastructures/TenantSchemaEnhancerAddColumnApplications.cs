@@ -1,8 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
-
-namespace Hawaso.Infrastructures
+﻿namespace Hawaso.Infrastructures
 {
     public class TenantSchemaEnhancerAddColumnApplications
     {
