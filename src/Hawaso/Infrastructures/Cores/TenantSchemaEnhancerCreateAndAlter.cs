@@ -1,13 +1,8 @@
 ﻿namespace Dalbodre.Infrastructures.Cores;
 
-public class TenantSchemaEnhancerCreateAndAlter
+public class TenantSchemaEnhancerCreateAndAlter(string connectionString)
 {
-    private readonly string _connectionString;
-
-    public TenantSchemaEnhancerCreateAndAlter(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
+    private readonly string _connectionString = connectionString;
 
     public void EnsureTenantsTableExists()
     {
