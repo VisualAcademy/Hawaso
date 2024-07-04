@@ -1,14 +1,7 @@
 ﻿namespace Hawaso.Infrastructures;
 
-public class TenantSchemaEnhancerAddColumnApplications
+public class TenantSchemaEnhancerAddColumnApplications(string masterConnectionString)
 {
-    private readonly string _masterConnectionString;
-
-    public TenantSchemaEnhancerAddColumnApplications(string masterConnectionString)
-    {
-        _masterConnectionString = masterConnectionString;
-    }
-
     public void EnhanceAllTenantDatabases()
     {
         List<string> tenantConnectionStrings = GetTenantConnectionStrings();
@@ -23,7 +16,7 @@ public class TenantSchemaEnhancerAddColumnApplications
     {
         List<string> result = new List<string>();
 
-        using (SqlConnection connection = new SqlConnection(_masterConnectionString))
+        using (SqlConnection connection = new SqlConnection(masterConnectionString))
         {
             connection.Open();
 
