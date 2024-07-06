@@ -1,6 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-
-namespace Portals.Infrastructures
+﻿namespace Portals.Infrastructures
 {
     public class TenantSchemaEnhancerCreateChangesTable
     {
