@@ -5,9 +5,6 @@
     /// </summary>
     public class ApplicationFormDataViewerController : Controller
     {
-        public IActionResult Index(string formName = "", long id = 0, long applicationId = 0)
-        {
-            return View();
-        }
+        public IActionResult Index(string formName = "", long id = 0, long applicationId = 0) => View();
     }
 }
