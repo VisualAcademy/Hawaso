@@ -10,6 +10,7 @@ using Hawaso.Extensions.BriefingLogs;
 using Hawaso.Extensions.Libraries;
 using Hawaso.Extensions.Memos;
 using Hawaso.Infrastructures;
+using Hawaso.Infrastructures.Tenants;
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
 using Hawaso.Settings;
@@ -198,6 +199,11 @@ using (var scope = app.Services.CreateScope())
 #region Tenants Table 생성 및 컬럼 추가 데모
 var tenantSchemaEnhancerCreateAndAlter = new TenantSchemaEnhancerCreateAndAlter(Configuration.GetConnectionString("DefaultConnection"));
 tenantSchemaEnhancerCreateAndAlter.EnsureSchema();
+#endregion
+
+#region Partners Table 생성 및 컬럼 추가 데모
+var tenantSchemaEnhancerCreatePartnersTable = new TenantSchemaEnhancerCreatePartnersTable(Configuration.GetConnectionString("DefaultConnection"));
+tenantSchemaEnhancerCreatePartnersTable.EnhanceAllTenantDatabases();
 #endregion
 
 app.Run();
