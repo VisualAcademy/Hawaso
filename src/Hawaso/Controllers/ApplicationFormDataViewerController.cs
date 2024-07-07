@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Hawaso.Controllers
+﻿namespace Hawaso.Controllers
 {
     /// <summary>
     /// 특정 Application의 JSON Form Data를 HTML로 변환하여 보여주는 컨트롤러
