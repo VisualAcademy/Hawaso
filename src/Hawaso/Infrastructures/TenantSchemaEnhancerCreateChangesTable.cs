@@ -1,31 +1,31 @@
-﻿namespace Portals.Infrastructures
+﻿namespace Portals.Infrastructures;
+
+public class TenantSchemaEnhancerCreateChangesTable
 {
-    public class TenantSchemaEnhancerCreateChangesTable
+    private readonly string _connectionString;
+
+    public TenantSchemaEnhancerCreateChangesTable(string connectionString)
     {
-        private readonly string _connectionString;
+        _connectionString = connectionString;
+    }
 
-        public TenantSchemaEnhancerCreateChangesTable(string connectionString)
+    public void CreateChangesTable()
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
         {
-            _connectionString = connectionString;
-        }
+            connection.Open();
 
-        public void CreateChangesTable()
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-
-                SqlCommand cmdCheck = new SqlCommand(@"
+            SqlCommand cmdCheck = new SqlCommand(@"
                     SELECT COUNT(*) 
                     FROM INFORMATION_SCHEMA.TABLES 
                     WHERE TABLE_SCHEMA = 'dbo' 
                     AND TABLE_NAME = 'Changes'", connection);
 
-                int tableCount = (int)cmdCheck.ExecuteScalar();
+            int tableCount = (int)cmdCheck.ExecuteScalar();
 
-                if (tableCount == 0)
-                {
-                    SqlCommand cmdCreateTable = new SqlCommand(@"
+            if (tableCount == 0)
+            {
+                SqlCommand cmdCreateTable = new SqlCommand(@"
                         CREATE TABLE [dbo].[Changes](
                             [Id] INT IDENTITY(1,1) PRIMARY KEY,
                             [Email] NVARCHAR(255) NULL,
@@ -41,11 +41,10 @@
                             [CreatedAt] DATETIME DEFAULT GETDATE() NULL
                         )", connection);
 
-                    cmdCreateTable.ExecuteNonQuery();
-                }
-
-                connection.Close();
+                cmdCreateTable.ExecuteNonQuery();
             }
+
+            connection.Close();
         }
     }
 }
