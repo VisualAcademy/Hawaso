@@ -6,23 +6,14 @@ using System.Drawing;
 namespace Hawaso.Controllers;
 
 [Authorize]
-public class PurgeDownloadController : Controller
+public class PurgeDownloadController(IPurgeRepository repository, IPurgeFileStorageManager fileStorageManager) : Controller
 {
-    private readonly IPurgeRepository _repository;
-    private readonly IPurgeFileStorageManager _fileStorageManager;
-
-    public PurgeDownloadController(IPurgeRepository repository, IPurgeFileStorageManager fileStorageManager)
-    {
-        _repository = repository;
-        _fileStorageManager = fileStorageManager;
-    }
-
     /// <summary>
     /// 게시판 파일 강제 다운로드 기능(/BoardDown/:Id)
     /// </summary>
     public async Task<IActionResult> FileDown(int id)
     {
-        var model = await _repository.GetByIdAsync(id);
+        var model = await repository.GetByIdAsync(id);
 
         if (model == null)
         {
@@ -32,11 +23,11 @@ public class PurgeDownloadController : Controller
         {
             if (!string.IsNullOrEmpty(model.FileName))
             {
-                byte[] fileBytes = await _fileStorageManager.DownloadAsync(model.FileName, "Purges");
+                byte[] fileBytes = await fileStorageManager.DownloadAsync(model.FileName, "Purges");
                 if (fileBytes != null)
                 {
                     model.DownCount = model.DownCount + 1;
-                    await _repository.EditAsync(model);
+                    await repository.EditAsync(model);
 
                     return File(fileBytes, "application/octet-stream", model.FileName);
                 }
@@ -55,7 +46,7 @@ public class PurgeDownloadController : Controller
     /// </summary>
     public async Task<IActionResult> ExcelDown()
     {
-        var results = await _repository.GetAllAsync(0, 100);
+        var results = await repository.GetAllAsync(0, 100);
 
         var models = results.Records.ToList();
 
