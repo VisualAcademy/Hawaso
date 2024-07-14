@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hawaso.Models.Tests", "Hawa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hawaso", "Hawaso\Hawaso.csproj", "{F0F7BF1A-17FF-431D-9781-827DDD95E65D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "At", "At\At.csproj", "{68D17EDF-281C-4A46-B133-5D2898CCADF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "At", "At\At.csproj", "{68D17EDF-281C-4A46-B133-5D2898CCADF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
