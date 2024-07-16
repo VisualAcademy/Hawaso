@@ -6,7 +6,6 @@ using VisualAcademy.Models.Replys;
 namespace Hawaso.Apis;
 
 public class ReplyDownloadController(
-    IWebHostEnvironment environment,
     IReplyRepository repository,
     IFileStorageManager fileStorageManager) : Controller
 {
