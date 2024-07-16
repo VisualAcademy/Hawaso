@@ -1,11 +1,6 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using OfficeOpenXml;
+﻿using OfficeOpenXml;
 using OfficeOpenXml.Style;
-using System;
 using System.Drawing;
-using System.Linq;
-using System.Threading.Tasks;
 using VisualAcademy.Models.Replys;
 
 namespace Hawaso.Apis;
