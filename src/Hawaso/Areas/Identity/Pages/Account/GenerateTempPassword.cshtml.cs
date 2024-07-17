@@ -5,84 +5,83 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 
-namespace Hawaso.Areas.Identity.Pages.Account
+namespace Hawaso.Areas.Identity.Pages.Account;
+
+public class GenerateTempPasswordModel : PageModel
 {
-    public class GenerateTempPasswordModel : PageModel
+    private readonly UserManager<IdentityUser> _userManager;
+    private readonly IEmailSender _emailSender;
+
+    public GenerateTempPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender)
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly IEmailSender _emailSender;
+        _userManager = userManager;
+        _emailSender = emailSender;
+    }
 
-        public GenerateTempPasswordModel(UserManager<IdentityUser> userManager, IEmailSender emailSender)
+    [BindProperty]
+    public InputModel Input { get; set; }
+
+    public class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+    }
+
+    public void OnGet()
+    {
+    }
+
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (ModelState.IsValid)
         {
-            _userManager = userManager;
-            _emailSender = emailSender;
-        }
-
-        [BindProperty]
-        public InputModel Input { get; set; }
-
-        public class InputModel
-        {
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; }
-        }
-
-        public void OnGet()
-        {
-        }
-
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (ModelState.IsValid)
+            var user = await _userManager.FindByEmailAsync(Input.Email);
+            if (user != null)
             {
-                var user = await _userManager.FindByEmailAsync(Input.Email);
-                if (user != null)
-                {
-                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    var password = GenerateRandomPassword(_userManager.Options.Password);
-                    var resetPasswordResult = await _userManager.ResetPasswordAsync(user, token, password);
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var password = GenerateRandomPassword(_userManager.Options.Password);
+                var resetPasswordResult = await _userManager.ResetPasswordAsync(user, token, password);
 
-                    if (resetPasswordResult.Succeeded)
-                    {
-                        await _emailSender.SendEmailAsync(Input.Email, "Your temporary password", $"Your temporary password is {password}");
-                        // redirect to confirmation page
-                        return RedirectToPage("./GenerateTempPasswordConfirmation");
-                    }
+                if (resetPasswordResult.Succeeded)
+                {
+                    await _emailSender.SendEmailAsync(Input.Email, "Your temporary password", $"Your temporary password is {password}");
+                    // redirect to confirmation page
+                    return RedirectToPage("./GenerateTempPasswordConfirmation");
                 }
             }
-            return Page();
         }
+        return Page();
+    }
 
-        private string GenerateRandomPassword(PasswordOptions opts)
+    private string GenerateRandomPassword(PasswordOptions opts)
+    {
+        int length = opts.RequiredLength;
+
+        // Create a string of characters that are allowed in the password
+        string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+
+        // If non-alphanumeric characters are required, add a few to the string
+        if (opts.RequireNonAlphanumeric)
         {
-            int length = opts.RequiredLength;
-
-            // Create a string of characters that are allowed in the password
-            string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-
-            // If non-alphanumeric characters are required, add a few to the string
-            if (opts.RequireNonAlphanumeric)
-            {
-                chars += "!@#$%^&*()";
-            }
-
-            // Initialize the password StringBuilder outside of the using block
-            var password = new StringBuilder(length);
-
-            // Generate the password
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                var buffer = new byte[length];
-                rng.GetBytes(buffer);
-
-                foreach (byte b in buffer)
-                {
-                    password.Append(chars[b % chars.Length]);
-                }
-            }
-
-            return password.ToString();
+            chars += "!@#$%^&*()";
         }
+
+        // Initialize the password StringBuilder outside of the using block
+        var password = new StringBuilder(length);
+
+        // Generate the password
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            var buffer = new byte[length];
+            rng.GetBytes(buffer);
+
+            foreach (byte b in buffer)
+            {
+                password.Append(chars[b % chars.Length]);
+            }
+        }
+
+        return password.ToString();
     }
 }
