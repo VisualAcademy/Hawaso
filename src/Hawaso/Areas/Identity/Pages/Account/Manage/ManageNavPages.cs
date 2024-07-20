@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-
-namespace Hawaso.Areas.Identity.Pages.Account.Manage
+﻿namespace Hawaso.Areas.Identity.Pages.Account.Manage
 {
     public static class ManageNavPages
     {
