@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using System;
-using System.IO;
-using System.Threading.Tasks;
-
-namespace Hawaso.Models
+﻿namespace Hawaso.Models
 {
     public class PurgeFileStorageManager : IPurgeFileStorageManager
     {
