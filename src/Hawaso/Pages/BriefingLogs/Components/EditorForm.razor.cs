@@ -1,7 +1,5 @@
 ﻿using BlazorInputFile;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Linq;
 using Zero.Models;
 
 namespace Hawaso.Pages.BriefingLogs.Components;
