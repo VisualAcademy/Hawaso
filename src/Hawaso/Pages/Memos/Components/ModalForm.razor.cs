@@ -130,8 +130,15 @@ public partial class ModalForm
             var file = selectedFiles.FirstOrDefault();
             if (file != null)
             {
-                //file.Name = $"{DateTime.Now.ToString("yyyyMMddhhmmss")}{file.Name}";
                 string fileName = file.Name;
+
+                //file.Name = $"{DateTime.Now.ToString("yyyyMMddhhmmss")}{file.Name}";
+                // 파일명이 30자를 넘으면 앞의 30자까지만 사용
+                if (fileName.Length > 30)
+                {
+                    fileName = fileName.Substring(0, 30);
+                }
+
                 int fileSize = Convert.ToInt32(file.Size);
 
                 //[A] byte[] 형태
@@ -140,7 +147,7 @@ public partial class ModalForm
                 //await FileStorageManager.ReplyAsync(ms.ToArray(), file.Name, "", true);
                 //[B] Stream 형태
                 //string folderPath = Path.Combine(WebHostEnvironment.WebRootPath, "files");
-                await FileStorageManagerReference.UploadAsync(file.Data, file.Name, "Memos", true);
+                await FileStorageManagerReference.UploadAsync(file.Data, fileName, "Memos", true);
 
                 ModelSender.FileName = fileName;
                 ModelSender.FileSize = fileSize;
