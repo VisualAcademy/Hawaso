@@ -1,11 +1,7 @@
 ﻿using BlazorInputFile;
-using Hawaso.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Zero.Models;
 
 namespace Hawaso.Pages.BriefingLogs;
