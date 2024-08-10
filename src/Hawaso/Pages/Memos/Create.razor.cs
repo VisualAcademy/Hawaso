@@ -77,7 +77,6 @@ public partial class Create
     #endregion
 
     #region Event Handlers
-
     /// <summary>
     /// 저장하기 버튼 클릭 이벤트 처리기
     /// </summary>

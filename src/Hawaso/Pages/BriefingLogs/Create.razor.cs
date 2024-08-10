@@ -26,6 +26,7 @@ public partial class Create
     protected int[] parentIds = { 1, 2, 3 };
     #endregion
 
+    #region Event Handlers
     protected async void FormSubmit()
     {
         int.TryParse(ParentId, out int parentId);
@@ -58,7 +59,8 @@ public partial class Create
     [Inject]
     public IBriefingLogFileStorageManager FileStorageManager { get; set; }
     private IFileListEntry[] selectedFiles;
-    protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
+    protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files; 
+    #endregion
 
     #region Lifecycle Methods
     protected override async Task OnInitializedAsync()
