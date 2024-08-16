@@ -13,7 +13,7 @@ namespace VisualAcademy.Pages.Cascading.Properties;
 
 public class CreateModel : PageModel
 {
-    private readonly Hawaso.Data.ApplicationDbContext _context;
+    private readonly ApplicationDbContext _context;
 
     public CreateModel(Hawaso.Data.ApplicationDbContext context)
     {
