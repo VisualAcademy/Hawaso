@@ -11,15 +11,8 @@ using VisualAcademy.Models;
 
 namespace VisualAcademy.Pages.Cascading.Properties;
 
-public class CreateModel : PageModel
+public class CreateModel(Hawaso.Data.ApplicationDbContext context) : PageModel
 {
-    private readonly ApplicationDbContext _context;
-
-    public CreateModel(Hawaso.Data.ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public IActionResult OnGet()
     {
         return Page();
@@ -36,8 +29,8 @@ public class CreateModel : PageModel
             return Page();
         }
 
-        _context.Properties.Add(Property);
-        await _context.SaveChangesAsync();
+        context.Properties.Add(Property);
+        await context.SaveChangesAsync();
 
         return RedirectToPage("./Index");
     }
