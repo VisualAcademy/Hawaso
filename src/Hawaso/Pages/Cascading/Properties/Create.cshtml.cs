@@ -13,10 +13,7 @@ namespace VisualAcademy.Pages.Cascading.Properties;
 
 public class CreateModel(Hawaso.Data.ApplicationDbContext context) : PageModel
 {
-    public IActionResult OnGet()
-    {
-        return Page();
-    }
+    public IActionResult OnGet() => Page();
 
     [BindProperty]
     public Property Property { get; set; }
