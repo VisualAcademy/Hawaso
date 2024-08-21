@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Blazored.Toast;
 using Dalbodre.Infrastructures;
 using Dalbodre.Infrastructures.Cores;
@@ -21,6 +22,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.SemanticKernel;
 using Portals.Infrastructures;
 using ReplyApp.Managers;
 using VisualAcademy;
@@ -160,8 +162,15 @@ catch (Exception)
 
 
 
+#region Semantic Kernel
 builder.Services.AddKernel();
 
+var aiConfig = builder.Configuration.GetSection("SmartComponents");
+//builder.Services.AddAzureOpenAIChatCompletion(
+//    deploymentName: aiConfig["DeploymentName"],
+//    endpoint: aiConfig["Endpoint"],
+//    new DefaultAzureCredential()); 
+#endregion
 
 
 
