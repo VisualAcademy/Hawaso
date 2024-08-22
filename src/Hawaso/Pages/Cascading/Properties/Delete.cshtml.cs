@@ -11,15 +11,8 @@ using VisualAcademy.Models;
 
 namespace VisualAcademy.Pages.Cascading.Properties
 {
-    public class DeleteModel : PageModel
+    public class DeleteModel(Hawaso.Data.ApplicationDbContext context) : PageModel
     {
-        private readonly Hawaso.Data.ApplicationDbContext _context;
-
-        public DeleteModel(Hawaso.Data.ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         [BindProperty]
         public Property Property { get; set; }
 
@@ -30,7 +23,7 @@ namespace VisualAcademy.Pages.Cascading.Properties
                 return NotFound();
             }
 
-            Property = await _context.Properties.FirstOrDefaultAsync(m => m.Id == id);
+            Property = await context.Properties.FirstOrDefaultAsync(m => m.Id == id);
 
             if (Property == null)
             {
@@ -46,12 +39,12 @@ namespace VisualAcademy.Pages.Cascading.Properties
                 return NotFound();
             }
 
-            Property = await _context.Properties.FindAsync(id);
+            Property = await context.Properties.FindAsync(id);
 
             if (Property != null)
             {
-                _context.Properties.Remove(Property);
-                await _context.SaveChangesAsync();
+                context.Properties.Remove(Property);
+                await context.SaveChangesAsync();
             }
 
             return RedirectToPage("./Index");
