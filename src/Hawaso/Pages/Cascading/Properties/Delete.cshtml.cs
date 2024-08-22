@@ -11,7 +11,7 @@ using VisualAcademy.Models;
 
 namespace VisualAcademy.Pages.Cascading.Properties
 {
-    public class DeleteModel(Hawaso.Data.ApplicationDbContext context) : PageModel
+    public class DeleteModel(ApplicationDbContext context) : PageModel
     {
         [BindProperty]
         public Property Property { get; set; }
