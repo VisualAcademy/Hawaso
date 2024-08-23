@@ -15,7 +15,7 @@ namespace VisualAcademy.Pages.Cascading.Properties
     {
         private readonly Hawaso.Data.ApplicationDbContext _context;
 
-        public DetailsModel(Hawaso.Data.ApplicationDbContext context)
+        public DetailsModel(ApplicationDbContext context)
         {
             _context = context;
         }
