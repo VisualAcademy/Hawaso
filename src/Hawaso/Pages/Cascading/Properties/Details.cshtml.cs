@@ -11,15 +11,8 @@ using VisualAcademy.Models;
 
 namespace VisualAcademy.Pages.Cascading.Properties;
 
-public class DetailsModel : PageModel
+public class DetailsModel(ApplicationDbContext context) : PageModel
 {
-    private readonly Hawaso.Data.ApplicationDbContext _context;
-
-    public DetailsModel(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public Property Property { get; set; }
 
     public async Task<IActionResult> OnGetAsync(int? id)
@@ -29,7 +22,7 @@ public class DetailsModel : PageModel
             return NotFound();
         }
 
-        Property = await _context.Properties.FirstOrDefaultAsync(m => m.Id == id);
+        Property = await context.Properties.FirstOrDefaultAsync(m => m.Id == id);
 
         if (Property == null)
         {
