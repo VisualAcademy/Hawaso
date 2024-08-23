@@ -221,15 +221,24 @@ public partial class Manage
         }
     }
 
+    #region CreateOrEdit
     /// <summary>
     /// 모델 초기화 및 모달 폼 닫기
     /// </summary>
-    protected async void CreateOrEdit()
+    protected async void CreateOrEditOld()
     {
         EditorFormReference.Hide();
         this.Model = new Memo();
         await DisplayData();
     }
+    protected void CreateOrEdit()
+    {
+        EditorFormReference.Hide(); // 모달 폼을 숨깁니다.
+
+        // 현재 페이지를 강제로 리프레시합니다.
+        NavigationManagerInjector.NavigateTo(NavigationManagerInjector.Uri, forceLoad: true);
+    } 
+    #endregion
 
     /// <summary>
     /// 삭제 모달 폼에서 현재 선택한 항목 삭제
