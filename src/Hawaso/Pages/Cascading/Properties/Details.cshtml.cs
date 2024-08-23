@@ -9,33 +9,32 @@ using Microsoft.EntityFrameworkCore;
 using Hawaso.Data;
 using VisualAcademy.Models;
 
-namespace VisualAcademy.Pages.Cascading.Properties
+namespace VisualAcademy.Pages.Cascading.Properties;
+
+public class DetailsModel : PageModel
 {
-    public class DetailsModel : PageModel
+    private readonly Hawaso.Data.ApplicationDbContext _context;
+
+    public DetailsModel(ApplicationDbContext context)
     {
-        private readonly Hawaso.Data.ApplicationDbContext _context;
+        _context = context;
+    }
 
-        public DetailsModel(ApplicationDbContext context)
+    public Property Property { get; set; }
+
+    public async Task<IActionResult> OnGetAsync(int? id)
+    {
+        if (id == null)
         {
-            _context = context;
+            return NotFound();
         }
 
-        public Property Property { get; set; }
+        Property = await _context.Properties.FirstOrDefaultAsync(m => m.Id == id);
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        if (Property == null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Property = await _context.Properties.FirstOrDefaultAsync(m => m.Id == id);
-
-            if (Property == null)
-            {
-                return NotFound();
-            }
-            return Page();
+            return NotFound();
         }
+        return Page();
     }
 }
