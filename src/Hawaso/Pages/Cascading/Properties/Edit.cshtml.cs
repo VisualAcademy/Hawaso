@@ -16,7 +16,7 @@ public class EditModel : PageModel
 {
     private readonly Hawaso.Data.ApplicationDbContext _context;
 
-    public EditModel(Hawaso.Data.ApplicationDbContext context)
+    public EditModel(ApplicationDbContext context)
     {
         _context = context;
     }
