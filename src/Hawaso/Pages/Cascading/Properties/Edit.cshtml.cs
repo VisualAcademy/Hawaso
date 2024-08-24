@@ -12,15 +12,8 @@ using VisualAcademy.Models;
 
 namespace VisualAcademy.Pages.Cascading.Properties;
 
-public class EditModel : PageModel
+public class EditModel(ApplicationDbContext context) : PageModel
 {
-    private readonly Hawaso.Data.ApplicationDbContext _context;
-
-    public EditModel(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     [BindProperty]
     public Property Property { get; set; }
 
@@ -31,7 +24,7 @@ public class EditModel : PageModel
             return NotFound();
         }
 
-        Property = await _context.Properties.FirstOrDefaultAsync(m => m.Id == id);
+        Property = await context.Properties.FirstOrDefaultAsync(m => m.Id == id);
 
         if (Property == null)
         {
@@ -49,11 +42,11 @@ public class EditModel : PageModel
             return Page();
         }
 
-        _context.Attach(Property).State = EntityState.Modified;
+        context.Attach(Property).State = EntityState.Modified;
 
         try
         {
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
@@ -72,6 +65,6 @@ public class EditModel : PageModel
 
     private bool PropertyExists(int id)
     {
-        return _context.Properties.Any(e => e.Id == id);
+        return context.Properties.Any(e => e.Id == id);
     }
 }
