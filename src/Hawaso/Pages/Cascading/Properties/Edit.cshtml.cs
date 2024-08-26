@@ -56,8 +56,5 @@ public class EditModel(ApplicationDbContext context) : PageModel
         return RedirectToPage("./Index");
     }
 
-    private bool PropertyExists(int id)
-    {
-        return context.Properties.Any(e => e.Id == id);
-    }
+    private bool PropertyExists(int id) => context.Properties.Any(e => e.Id == id);
 }
