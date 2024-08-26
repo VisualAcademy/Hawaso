@@ -15,7 +15,7 @@ public class CreateModel : PageModel
 {
     private readonly Hawaso.Data.ApplicationDbContext _context;
 
-    public CreateModel(Hawaso.Data.ApplicationDbContext context)
+    public CreateModel(ApplicationDbContext context)
     {
         _context = context;
     }
