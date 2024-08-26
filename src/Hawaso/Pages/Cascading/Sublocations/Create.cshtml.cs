@@ -11,18 +11,11 @@ using VisualAcademy.Models;
 
 namespace VisualAcademy.Pages.Cascading.Sublocations;
 
-public class CreateModel : PageModel
+public class CreateModel(ApplicationDbContext context) : PageModel
 {
-    private readonly Hawaso.Data.ApplicationDbContext _context;
-
-    public CreateModel(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public IActionResult OnGet()
     {
-        ViewData["LocationId"] = new SelectList(_context.Locations, "Id", "Name");
+        ViewData["LocationId"] = new SelectList(context.Locations, "Id", "Name");
         return Page();
     }
 
@@ -37,8 +30,8 @@ public class CreateModel : PageModel
             return Page();
         }
 
-        _context.Sublocations.Add(Sublocation);
-        await _context.SaveChangesAsync();
+        context.Sublocations.Add(Sublocation);
+        await context.SaveChangesAsync();
 
         return RedirectToPage("./Index");
     }
