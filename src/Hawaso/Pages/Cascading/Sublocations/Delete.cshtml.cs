@@ -13,9 +13,9 @@ namespace VisualAcademy.Pages.Cascading.Sublocations
 {
     public class DeleteModel : PageModel
     {
-        private readonly Hawaso.Data.ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public DeleteModel(Hawaso.Data.ApplicationDbContext context)
+        public DeleteModel(ApplicationDbContext context)
         {
             _context = context;
         }
