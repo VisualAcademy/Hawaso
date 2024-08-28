@@ -11,15 +11,8 @@ using VisualAcademy.Models;
 
 namespace VisualAcademy.Pages.Cascading.Sublocations
 {
-    public class DetailsModel : PageModel
+    public class DetailsModel(ApplicationDbContext context) : PageModel
     {
-        private readonly ApplicationDbContext _context;
-
-        public DetailsModel(Hawaso.Data.ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public Sublocation Sublocation { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
@@ -29,7 +22,7 @@ namespace VisualAcademy.Pages.Cascading.Sublocations
                 return NotFound();
             }
 
-            Sublocation = await _context.Sublocations
+            Sublocation = await context.Sublocations
                 .Include(s => s.LocationRef).FirstOrDefaultAsync(m => m.Id == id);
 
             if (Sublocation == null)
