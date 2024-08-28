@@ -9,46 +9,45 @@ using Microsoft.EntityFrameworkCore;
 using Hawaso.Data;
 using VisualAcademy.Models;
 
-namespace VisualAcademy.Pages.Cascading.Sublocations
+namespace VisualAcademy.Pages.Cascading.Sublocations;
+
+public class DeleteModel(ApplicationDbContext context) : PageModel
 {
-    public class DeleteModel(ApplicationDbContext context) : PageModel
+    [BindProperty]
+    public Sublocation Sublocation { get; set; }
+
+    public async Task<IActionResult> OnGetAsync(int? id)
     {
-        [BindProperty]
-        public Sublocation Sublocation { get; set; }
-
-        public async Task<IActionResult> OnGetAsync(int? id)
+        if (id == null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Sublocation = await context.Sublocations
-                .Include(s => s.LocationRef).FirstOrDefaultAsync(m => m.Id == id);
-
-            if (Sublocation == null)
-            {
-                return NotFound();
-            }
-            return Page();
+            return NotFound();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        Sublocation = await context.Sublocations
+            .Include(s => s.LocationRef).FirstOrDefaultAsync(m => m.Id == id);
+
+        if (Sublocation == null)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            Sublocation = await context.Sublocations.FindAsync(id);
-
-            if (Sublocation != null)
-            {
-                context.Sublocations.Remove(Sublocation);
-                await context.SaveChangesAsync();
-            }
-
-            return RedirectToPage("./Index");
+            return NotFound();
         }
+        return Page();
+    }
+
+    public async Task<IActionResult> OnPostAsync(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        Sublocation = await context.Sublocations.FindAsync(id);
+
+        if (Sublocation != null)
+        {
+            context.Sublocations.Remove(Sublocation);
+            await context.SaveChangesAsync();
+        }
+
+        return RedirectToPage("./Index");
     }
 }
