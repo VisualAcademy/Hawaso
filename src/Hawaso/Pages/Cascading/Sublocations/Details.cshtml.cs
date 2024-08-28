@@ -13,7 +13,7 @@ namespace VisualAcademy.Pages.Cascading.Sublocations
 {
     public class DetailsModel : PageModel
     {
-        private readonly Hawaso.Data.ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public DetailsModel(Hawaso.Data.ApplicationDbContext context)
         {
