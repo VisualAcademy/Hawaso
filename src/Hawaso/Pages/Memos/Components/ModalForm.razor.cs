@@ -8,6 +8,9 @@ public partial class ModalForm
     #region Fields
     private string parentId = "";
 
+    private bool isSubmitting = false; // 업로드 중인지 여부를 나타내는 플래그 추가
+    private string submitButtonText = "Submit"; // 버튼 텍스트 속성 추가
+
     /// <summary>
     /// 첨부 파일 리스트 보관
     /// </summary>
@@ -25,7 +28,11 @@ public partial class ModalForm
     /// <summary>
     /// 폼 보이기 
     /// </summary>
-    public void Show() => IsShow = true; // 현재 인라인 모달 폼 보이기
+    public void Show()
+    {
+        IsShow = true; // 현재 인라인 모달 폼 보이기
+        submitButtonText = "Submit"; // 폼이 열릴 때 버튼 텍스트를 기본 값으로 재설정
+    }
 
     /// <summary>
     /// 폼 닫기
@@ -116,63 +123,74 @@ public partial class ModalForm
     #region Event Handlers
     protected async void CreateOrEditClick()
     {
-        // 변경 내용 저장
-        ModelSender.Name = ModelEdit.Name;
-        ModelSender.Title = ModelEdit.Title;
-        ModelSender.Content = ModelEdit.Content;
-        ModelSender.Password = ModelEdit.Password;
-        ModelSender.Encoding = ModelEdit.Encoding;
+        if (isSubmitting) return; // 이미 제출 중이면 반환
 
-        #region 파일 업로드 관련 추가 코드 영역
-        if (selectedFiles != null && selectedFiles.Length > 0)
+        isSubmitting = true; // 제출 시작 플래그 설정
+        submitButtonText = "Uploading..."; // 버튼 텍스트를 'Uploading...'으로 변경
+
+        try
         {
-            // 파일 업로드
-            var file = selectedFiles.FirstOrDefault();
-            if (file != null)
+            // 변경 내용 저장
+            ModelSender.Name = ModelEdit.Name;
+            ModelSender.Title = ModelEdit.Title;
+            ModelSender.Content = ModelEdit.Content;
+            ModelSender.Password = ModelEdit.Password;
+            ModelSender.Encoding = ModelEdit.Encoding;
+
+            #region 파일 업로드 관련 추가 코드 영역
+            if (selectedFiles != null && selectedFiles.Length > 0)
             {
-                string fileName = file.Name;
-
-                //file.Name = $"{DateTime.Now.ToString("yyyyMMddhhmmss")}{file.Name}";
-                // 파일명이 30자를 넘으면 앞의 30자까지만 사용
-                if (fileName.Length > 30)
+                // 파일 업로드
+                var file = selectedFiles.FirstOrDefault();
+                if (file != null)
                 {
-                    fileName = fileName.Substring(0, 30);
+                    string fileName = file.Name;
+
+                    // 파일명이 30자를 넘으면 앞의 30자까지만 사용
+                    if (fileName.Length > 30)
+                    {
+                        fileName = fileName.Substring(0, 30);
+                    }
+
+                    int fileSize = Convert.ToInt32(file.Size);
+
+                    await FileStorageManagerReference.UploadAsync(file.Data, fileName, "Memos", true);
+
+                    ModelSender.FileName = fileName;
+                    ModelSender.FileSize = fileSize;
                 }
+            }
+            #endregion
 
-                int fileSize = Convert.ToInt32(file.Size);
+            if (!int.TryParse(parentId, out int newParentId))
+            {
+                newParentId = 0;
+            }
+            ModelSender.ParentId = newParentId;
+            ModelSender.ParentKey = ModelSender.ParentKey;
 
-                //[A] byte[] 형태
-                //var ms = new MemoryStream();
-                //await file.Data.CopyToAsync(ms);
-                //await FileStorageManager.ReplyAsync(ms.ToArray(), file.Name, "", true);
-                //[B] Stream 형태
-                //string folderPath = Path.Combine(WebHostEnvironment.WebRootPath, "files");
-                await FileStorageManagerReference.UploadAsync(file.Data, fileName, "Memos", true);
-
-                ModelSender.FileName = fileName;
-                ModelSender.FileSize = fileSize;
+            if (ModelSender.Id == 0)
+            {
+                // Create
+                await RepositoryReference.AddAsync(ModelSender);
+                CreateCallback?.Invoke();
+            }
+            else
+            {
+                // Edit
+                await RepositoryReference.UpdateAsync(ModelSender);
+                await EditCallback.InvokeAsync(true);
             }
         }
-        #endregion
-
-        if (!int.TryParse(parentId, out int newParentId))
+        catch (Exception ex)
         {
-            newParentId = 0;
+            // 오류 처리 로직 추가 (필요시)
+            Console.WriteLine($"Error: {ex.Message}");
         }
-        ModelSender.ParentId = newParentId;
-        ModelSender.ParentKey = ModelSender.ParentKey;
-
-        if (ModelSender.Id == 0)
+        finally
         {
-            // Create
-            await RepositoryReference.AddAsync(ModelSender);
-            CreateCallback?.Invoke();
-        }
-        else
-        {
-            // Edit
-            await RepositoryReference.UpdateAsync(ModelSender);
-            await EditCallback.InvokeAsync(true);
+            isSubmitting = false; // 작업 완료 후 플래그 재설정
+            submitButtonText = "Submit"; // 작업 완료 후 버튼 텍스트를 'Submit'으로 재설정
         }
     }
 
