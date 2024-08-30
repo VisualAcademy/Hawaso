@@ -12,15 +12,8 @@ using VisualAcademy.Models;
 
 namespace VisualAcademy.Pages.Cascading.Sublocations
 {
-    public class EditModel : PageModel
+    public class EditModel(ApplicationDbContext context) : PageModel
     {
-        private readonly ApplicationDbContext _context;
-
-        public EditModel(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         [BindProperty]
         public Sublocation Sublocation { get; set; }
 
@@ -31,14 +24,14 @@ namespace VisualAcademy.Pages.Cascading.Sublocations
                 return NotFound();
             }
 
-            Sublocation = await _context.Sublocations
+            Sublocation = await context.Sublocations
                 .Include(s => s.LocationRef).FirstOrDefaultAsync(m => m.Id == id);
 
             if (Sublocation == null)
             {
                 return NotFound();
             }
-           ViewData["LocationId"] = new SelectList(_context.Locations, "Id", "Id");
+           ViewData["LocationId"] = new SelectList(context.Locations, "Id", "Id");
             return Page();
         }
 
@@ -51,11 +44,11 @@ namespace VisualAcademy.Pages.Cascading.Sublocations
                 return Page();
             }
 
-            _context.Attach(Sublocation).State = EntityState.Modified;
+            context.Attach(Sublocation).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -74,7 +67,7 @@ namespace VisualAcademy.Pages.Cascading.Sublocations
 
         private bool SublocationExists(int id)
         {
-            return _context.Sublocations.Any(e => e.Id == id);
+            return context.Sublocations.Any(e => e.Id == id);
         }
     }
 }
