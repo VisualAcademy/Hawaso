@@ -14,7 +14,7 @@ namespace VisualAcademy.Pages.Cascading.Sublocations
 {
     public class EditModel : PageModel
     {
-        private readonly Hawaso.Data.ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public EditModel(Hawaso.Data.ApplicationDbContext context)
         {
