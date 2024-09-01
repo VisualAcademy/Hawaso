@@ -1,7 +1,5 @@
 ﻿using DotNetSaleCore.Models;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Threading.Tasks;
 
 namespace Hawaso.Pages.Customers;
 
