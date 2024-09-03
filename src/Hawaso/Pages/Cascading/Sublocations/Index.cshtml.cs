@@ -11,20 +11,13 @@ using VisualAcademy.Models;
 
 namespace VisualAcademy.Pages.Cascading.Sublocations
 {
-    public class IndexModel : PageModel
+    public class IndexModel(ApplicationDbContext context) : PageModel
     {
-        private readonly Hawaso.Data.ApplicationDbContext _context;
-
-        public IndexModel(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public IList<Sublocation> Sublocation { get;set; }
 
         public async Task OnGetAsync()
         {
-            Sublocation = await _context.Sublocations
+            Sublocation = await context.Sublocations
                 .Include(s => s.LocationRef).ToListAsync();
         }
     }
