@@ -15,7 +15,7 @@ namespace VisualAcademy.Pages.Cascading.Sublocations
     {
         private readonly Hawaso.Data.ApplicationDbContext _context;
 
-        public IndexModel(Hawaso.Data.ApplicationDbContext context)
+        public IndexModel(ApplicationDbContext context)
         {
             _context = context;
         }
