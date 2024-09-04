@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System;
 using VisualAcademy.Models.Departments;
 
 namespace VisualAcademy.Pages.Departments.Components;
