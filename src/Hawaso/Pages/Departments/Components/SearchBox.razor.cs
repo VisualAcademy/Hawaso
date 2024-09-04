@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Timers;
 
 namespace VisualAcademy.Pages.Departments.Components;
 
