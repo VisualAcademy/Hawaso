@@ -59,7 +59,7 @@ public partial class Manage
     {
         if (ParentKey != "")
         {
-            var articleSet = await UploadRepositoryAsyncReference.GetArticles<string>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentKey);
+            var articleSet = await UploadRepositoryAsyncReference.GetArticles<string>(pager.PageIndex, pager.PageSize, "", this.searchQuery, sortOrder, ParentKey);
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
