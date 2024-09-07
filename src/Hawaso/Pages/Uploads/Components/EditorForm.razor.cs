@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System;
 using BlazorInputFile;
-using System.Linq;
-using VisualAcademy.Models.Uploads;
 using VisualAcademy.Models.Replys;
 
 namespace Hawaso.Pages.Uploads.Components;
