@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
 using NoticeApp.Models;
-using System;
 
 namespace Hawaso.Pages.Notices.Components;
 
