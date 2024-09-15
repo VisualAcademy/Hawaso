@@ -4,7 +4,7 @@
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@GetLayout(routeData.PageType)">
                 <NotAuthorized>
                     @{
                         var returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
@@ -20,3 +20,17 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+@code {
+    private Type GetLayout(Type page)
+    {
+        // "AccessDenied" 페이지에서만 레이아웃을 사용하지 않음
+        if (page == typeof(DotNetNote.Components.Pages.AccessDenied))
+        {
+            return null;
+        }
+
+        // 그 외의 페이지에서는 기본 레이아웃 사용
+        return typeof(MainLayout);
+    }
+}
