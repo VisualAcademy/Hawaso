@@ -6,170 +6,169 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace NoticeApp.Apis.Controllers
+namespace NoticeApp.Apis.Controllers;
+
+[Authorize(Roles = "Administrators")] // 최고 관리자 그룹(역할)에 포함된 사용자만 공지사항 관리
+[Produces("application/json")]
+[Route("api/Notices")]
+[ApiController]
+public class NoticesController : ControllerBase
 {
-    [Authorize(Roles = "Administrators")] // 최고 관리자 그룹(역할)에 포함된 사용자만 공지사항 관리
-    [Produces("application/json")]
-    [Route("api/Notices")]
-    [ApiController]
-    public class NoticesController : ControllerBase
+    private readonly INoticeRepository _repository;
+    private readonly ILogger _logger;
+
+    public NoticesController(INoticeRepository repository, ILoggerFactory loggerFactory)
     {
-        private readonly INoticeRepository _repository;
-        private readonly ILogger _logger;
+        this._repository = repository;
+        this._logger = loggerFactory.CreateLogger(nameof(NoticesController));
+    }
 
-        public NoticesController(INoticeRepository repository, ILoggerFactory loggerFactory)
+    // 입력
+    // POST api/Notices
+    [HttpPost]
+    public async Task<IActionResult> AddAsync([FromBody]Notice model)
+    {
+        // model.Id = 0
+        var tmpModel = new Notice();
+        tmpModel.Name = model.Name;
+        tmpModel.Title = model.Title;
+        tmpModel.Content = model.Content; 
+        tmpModel.ParentId = model.ParentId;
+        tmpModel.Created = DateTime.Now;
+
+        if (!ModelState.IsValid)
         {
-            this._repository = repository;
-            this._logger = loggerFactory.CreateLogger(nameof(NoticesController));
+            return BadRequest();
         }
 
-        // 입력
-        // POST api/Notices
-        [HttpPost]
-        public async Task<IActionResult> AddAsync([FromBody]Notice model)
+        try
         {
-            // model.Id = 0
-            var tmpModel = new Notice();
-            tmpModel.Name = model.Name;
-            tmpModel.Title = model.Title;
-            tmpModel.Content = model.Content; 
-            tmpModel.ParentId = model.ParentId;
-            tmpModel.Created = DateTime.Now;
-
-            if (!ModelState.IsValid)
+            var newModel = await _repository.AddAsync(tmpModel);
+            if (newModel == null)
             {
                 return BadRequest();
             }
+            //return Ok(newModel); // 200 OK
+            var uri = Url.Link("GetNoticeById", new { id = newModel.Id });
+            return Created(uri, newModel); // 201 Created
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            return BadRequest();
+        }
+    }
 
-            try
+    // 출력
+    // GET api/Notices
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        try
+        {
+            var models = await _repository.GetAllAsync();
+            if (!models.Any())
             {
-                var newModel = await _repository.AddAsync(tmpModel);
-                if (newModel == null)
-                {
-                    return BadRequest();
-                }
-                //return Ok(newModel); // 200 OK
-                var uri = Url.Link("GetNoticeById", new { id = newModel.Id });
-                return Created(uri, newModel); // 201 Created
+                return new NoContentResult(); // 참고용 코드
             }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message);
-                return BadRequest();
-            }
+            return Ok(models);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            return BadRequest(); 
+        }
+    }
+
+    // 상세
+    // GET api/Notices/1
+    [HttpGet("{id}", Name = "GetNoticeById")]
+    public async Task<IActionResult> GetById([FromRoute]int id)
+    {
+        try
+        {
+            var model = await _repository.GetByIdAsync(id);
+            return Ok(model);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            return BadRequest();
+        }
+    }
+
+    // 수정
+    // PUT api/Notices/1
+    [HttpPut("{id}")]
+    public async Task<IActionResult> EditAsync(int id, [FromBody]Notice model)
+    {
+        model.Id = id;
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
         }
 
-        // 출력
-        // GET api/Notices
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        try
         {
-            try
+            var status = await _repository.EditAsync(model);
+            if (!status)
             {
-                var models = await _repository.GetAllAsync();
-                if (!models.Any())
-                {
-                    return new NoContentResult(); // 참고용 코드
-                }
-                return Ok(models);
+                return BadRequest();
             }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message);
-                return BadRequest(); 
-            }
+            return Ok();
         }
-
-        // 상세
-        // GET api/Notices/1
-        [HttpGet("{id}", Name = "GetNoticeById")]
-        public async Task<IActionResult> GetById([FromRoute]int id)
+        catch (Exception e)
         {
-            try
-            {
-                var model = await _repository.GetByIdAsync(id);
-                return Ok(model);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message);
-                return BadRequest();
-            }
+            _logger.LogError(e.Message);
+            return BadRequest();
         }
+    }
 
-        // 수정
-        // PUT api/Notices/1
-        [HttpPut("{id}")]
-        public async Task<IActionResult> EditAsync(int id, [FromBody]Notice model)
+    // 삭제
+    // DELETE api/Notices/1
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAsync(int id)
+    {
+        try
         {
-            model.Id = id;
-
-            if (!ModelState.IsValid)
+            var status = await _repository.DeleteAsync(id);
+            if (!status)
             {
                 return BadRequest();
             }
-
-            try
-            {
-                var status = await _repository.EditAsync(model);
-                if (!status)
-                {
-                    return BadRequest();
-                }
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message);
-                return BadRequest();
-            }
+            return Ok();
         }
-
-        // 삭제
-        // DELETE api/Notices/1
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        catch (Exception e)
         {
-            try
-            {
-                var status = await _repository.DeleteAsync(id);
-                if (!status)
-                {
-                    return BadRequest();
-                }
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message);
-                return BadRequest();
-            }
+            _logger.LogError(e.Message);
+            return BadRequest();
         }
+    }
 
-        // 페이징
-        // GET api/Notices/Page/0/10
-        [HttpGet("Page/{pageIndex}/{pageSize}")]
-        public async Task<IActionResult> GetAll(int pageIndex, int pageSize)
+    // 페이징
+    // GET api/Notices/Page/0/10
+    [HttpGet("Page/{pageIndex}/{pageSize}")]
+    public async Task<IActionResult> GetAll(int pageIndex, int pageSize)
+    {
+        try
         {
-            try
-            {
-                var resultsSet = await _repository.GetAllAsync(pageIndex, pageSize);
+            var resultsSet = await _repository.GetAllAsync(pageIndex, pageSize);
 
-                // 응답 헤더에 총 레코드 수를 담아서 출력 
-                // Original code:
-                // Response.Headers.Add("X-TotalRecordCount", resultsSet.TotalRecords.ToString());
-                // Response.Headers.Add("Access-Control-Expose-Headers", "X-TotalRecordCount"); 
-                // Updated to:
-                Response.Headers["X-TotalRecordCount"] = resultsSet.TotalRecords.ToString();
-                Response.Headers["Access-Control-Expose-Headers"] = "X-TotalRecordCount";
+            // 응답 헤더에 총 레코드 수를 담아서 출력 
+            // Original code:
+            // Response.Headers.Add("X-TotalRecordCount", resultsSet.TotalRecords.ToString());
+            // Response.Headers.Add("Access-Control-Expose-Headers", "X-TotalRecordCount"); 
+            // Updated to:
+            Response.Headers["X-TotalRecordCount"] = resultsSet.TotalRecords.ToString();
+            Response.Headers["Access-Control-Expose-Headers"] = "X-TotalRecordCount";
 
-                return Ok(resultsSet.Records);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.Message);
-                return BadRequest();
-            }
+            return Ok(resultsSet.Records);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            return BadRequest();
         }
     }
 }
