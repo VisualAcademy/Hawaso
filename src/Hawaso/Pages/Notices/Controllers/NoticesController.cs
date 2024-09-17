@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using NoticeApp.Models;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NoticeApp.Apis.Controllers;
 
