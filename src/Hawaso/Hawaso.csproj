@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -36,7 +36,7 @@
     <PackageReference Include="VisualAcademy.Models.Archives" Version="3.0.2" />
     <PackageReference Include="VisualAcademy.Models.BriefingLogs" Version="1.0.4" />
     <PackageReference Include="VisualAcademy.Models.Departments" Version="8.0.2" />
-    <PackageReference Include="VisualAcademy.Models.Libraries" Version="6.0.1" />
+    <PackageReference Include="VisualAcademy.Models.Libraries" Version="6.0.2" />
     <PackageReference Include="VisualAcademy.Models.Notes" Version="6.0.1" />
     <PackageReference Include="VisualAcademy.Models.Replys" Version="1.0.1" />
     <PackageReference Include="VisualAcademy.Models.Uploads" Version="1.0.1" />
