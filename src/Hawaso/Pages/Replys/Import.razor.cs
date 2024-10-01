@@ -7,104 +7,103 @@ using System.IO;
 using System.Linq;
 using VisualAcademy.Models.Replys;
 
-namespace Hawaso.Pages.Replys
+namespace Hawaso.Pages.Replys;
+
+public partial class Import
 {
-    public partial class Import
+    #region Fields
+    /// <summary>
+    /// 첨부 파일 리스트 보관
+    /// </summary>
+    private IFileListEntry[] selectedFiles;
+    #endregion
+
+    #region Injectors
+    [Inject]
+    public IReplyRepository RepositoryReference { get; set; }
+
+    [Inject]
+    public NavigationManager NavigationManagerInjector { get; set; }
+
+    [Inject]
+    public IFileStorageManager FileStorageManagerReference { get; set; } 
+    #endregion
+
+    protected Reply Model = new Reply();
+
+    public string ParentId { get; set; }
+
+    protected int[] parentIds = { 1, 2, 3 };
+
+    /// <summary>
+    /// 파일 업로드 버튼 클릭 이벤트 처리기
+    /// </summary>
+    protected async void FormSubmit()
     {
-        #region Fields
-        /// <summary>
-        /// 첨부 파일 리스트 보관
-        /// </summary>
-        private IFileListEntry[] selectedFiles;
-        #endregion
+        int.TryParse(ParentId, out int parentId);
+        Model.ParentId = parentId;
 
-        #region Injectors
-        [Inject]
-        public IReplyRepository RepositoryReference { get; set; }
-
-        [Inject]
-        public NavigationManager NavigationManagerInjector { get; set; }
-
-        [Inject]
-        public IFileStorageManager FileStorageManagerReference { get; set; } 
-        #endregion
-
-        protected Reply Model = new Reply();
-
-        public string ParentId { get; set; }
-
-        protected int[] parentIds = { 1, 2, 3 };
-
-        /// <summary>
-        /// 파일 업로드 버튼 클릭 이벤트 처리기
-        /// </summary>
-        protected async void FormSubmit()
+        #region 파일 업로드 관련 추가 코드 영역
+        if (selectedFiles != null && selectedFiles.Length > 0)
         {
-            int.TryParse(ParentId, out int parentId);
-            Model.ParentId = parentId;
-
-            #region 파일 업로드 관련 추가 코드 영역
-            if (selectedFiles != null && selectedFiles.Length > 0)
+            // 파일 업로드
+            var file = selectedFiles.FirstOrDefault();
+            var fileName = "";
+            int fileSize = 0;
+            if (file != null)
             {
-                // 파일 업로드
-                var file = selectedFiles.FirstOrDefault();
-                var fileName = "";
-                int fileSize = 0;
-                if (file != null)
-                {
-                    fileName = file.Name;
-                    fileSize = Convert.ToInt32(file.Size);
+                fileName = file.Name;
+                fileSize = Convert.ToInt32(file.Size);
 
-                    fileName = await FileStorageManagerReference.UploadAsync(file.Data, file.Name, "", true);
+                fileName = await FileStorageManagerReference.UploadAsync(file.Data, file.Name, "", true);
 
-                    Model.FileName = fileName;
-                    Model.FileSize = fileSize;
-                } 
-            }
-            #endregion
+                Model.FileName = fileName;
+                Model.FileSize = fileSize;
+            } 
+        }
+        #endregion
 
-            foreach (var m in Models)
-            {
-                m.FileName = Model.FileName;
-                m.FileSize = Model.FileSize; 
-                await RepositoryReference.AddAsync(m);
-            }
-
-            NavigationManagerInjector.NavigateTo("/Replys");
+        foreach (var m in Models)
+        {
+            m.FileName = Model.FileName;
+            m.FileSize = Model.FileSize; 
+            await RepositoryReference.AddAsync(m);
         }
 
-        public List<Reply> Models { get; set; } = new List<Reply>(); 
+        NavigationManagerInjector.NavigateTo("/Replys");
+    }
 
-        protected async void HandleSelection(IFileListEntry[] files)
+    public List<Reply> Models { get; set; } = new List<Reply>(); 
+
+    protected async void HandleSelection(IFileListEntry[] files)
+    {
+        this.selectedFiles = files;
+
+        // 엑셀 데이터 읽어오기 
+        if (selectedFiles != null && selectedFiles.Length > 0)
         {
-            this.selectedFiles = files;
+            var file = selectedFiles.FirstOrDefault();
 
-            // 엑셀 데이터 읽어오기 
-            if (selectedFiles != null && selectedFiles.Length > 0)
+            using (var stream = new MemoryStream())
             {
-                var file = selectedFiles.FirstOrDefault();
+                await file.Data.CopyToAsync(stream);
 
-                using (var stream = new MemoryStream())
+                using (var package = new ExcelPackage(stream))
                 {
-                    await file.Data.CopyToAsync(stream);
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                    var rowCount = worksheet.Dimension.Rows;
 
-                    using (var package = new ExcelPackage(stream))
+                    for (int row = 2; row <= rowCount; row++)
                     {
-                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-                        var rowCount = worksheet.Dimension.Rows;
-
-                        for (int row = 2; row <= rowCount; row++)
+                        Models.Add(new Reply
                         {
-                            Models.Add(new Reply
-                            {
-                                Name = worksheet.Cells[row, 1].Value.ToString().Trim(),
-                                DownCount = int.Parse(worksheet.Cells[row, 2].Value.ToString().Trim()),
-                            }); ;
-                        }
+                            Name = worksheet.Cells[row, 1].Value.ToString().Trim(),
+                            DownCount = int.Parse(worksheet.Cells[row, 2].Value.ToString().Trim()),
+                        }); ;
                     }
                 }
-                StateHasChanged();
             }
+            StateHasChanged();
         }
     }
 }
