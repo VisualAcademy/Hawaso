@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace At
+﻿namespace At
 {
     public class Page
     {
