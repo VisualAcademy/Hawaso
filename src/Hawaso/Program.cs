@@ -83,7 +83,9 @@ services.AddCors(options =>
         builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
-services.AddHttpClient();
+// HttpClient 등록
+// HttpClient 인스턴스를 DI(Dependency Injection) 컨테이너에 등록하여 재사용성을 높임
+builder.Services.AddHttpClient();
 
 services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 services.AddDatabaseDeveloperPageExceptionFilter();

@@ -1,0 +1,8 @@
+### POST Test
+
+POST https://localhost:5001/api/Translator
+Content-Type: application/json
+
+{
+  "text": "Hello, how are you?"
+}
