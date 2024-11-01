@@ -31,7 +31,7 @@
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.DataGrid.EntityFrameworkAdapter" Version="4.10.2" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.6.0" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.10.2" />
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.25.0" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.26.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
     <PackageReference Include="VisualAcademy.Models.Archives" Version="3.0.2" />
     <PackageReference Include="VisualAcademy.Models.BriefingLogs" Version="1.0.4" />
