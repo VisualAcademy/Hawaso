@@ -27,6 +27,8 @@ CREATE TABLE [dbo].[AspNetUsers] (
 
     RegistrationDate DATETIMEOFFSET  NULL DEFAULT (SYSDATETIMEOFFSET()),
 
+    [ShowInDropdown] BIT NULL DEFAULT 0, 
+
     CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)             -- 기본키 설정
 );
 
