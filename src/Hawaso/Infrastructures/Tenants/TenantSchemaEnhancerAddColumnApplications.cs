@@ -1,4 +1,4 @@
-﻿namespace Hawaso.Infrastructures;
+﻿namespace Hawaso.Infrastructures.Tenants;
 
 public class TenantSchemaEnhancerAddColumnApplications(string masterConnectionString)
 {
@@ -44,6 +44,7 @@ public class TenantSchemaEnhancerAddColumnApplications(string masterConnectionSt
             List<(string Name, string Type)> columnsToAdd = new List<(string, string)>
             {
                 ("PortalName", "nvarchar(max) Default('Hawaso') NULL"),
+                ("Language", "nvarchar(255) Default('en-US') NULL"),
             };
 
             foreach (var column in columnsToAdd)
