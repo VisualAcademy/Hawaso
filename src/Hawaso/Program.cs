@@ -99,8 +99,8 @@ services.AddDbContext<NoteDbContext>(options =>
     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
 #region Changes 테이블 생성 
-var schemaEnhancerChanges = new TenantSchemaEnhancerCreateChangesTable(connectionString);
-schemaEnhancerChanges.CreateChangesTable();
+//var schemaEnhancerChanges = new TenantSchemaEnhancerCreateChangesTable(connectionString);
+//schemaEnhancerChanges.CreateChangesTable();
 #endregion
 
 #region AspNetUsers 테이블에 새로운 컬럼 추가 
