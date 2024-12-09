@@ -18,6 +18,15 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<Location> Locations { get; set; } = null!;
     public DbSet<Sublocation> Sublocations { get; set; } = null!;
     #endregion
+
+    public DbSet<Page> Pages { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        builder.Entity<Page>().HasKey(p => p.Id);
+        builder.Entity<Page>().Property(p => p.TenantName).HasDefaultValue("Hawaso");
+    }
 }
 
 // 원본 모양 
