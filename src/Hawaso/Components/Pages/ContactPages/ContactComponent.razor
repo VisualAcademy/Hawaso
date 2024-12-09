@@ -1,7 +1,37 @@
 ﻿@page "/contact"
 
-<h3>ContactComponent</h3>
+@using Hawaso.Data
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ApplicationDbContext _dbContext
+
+<PageTitle>Contact</PageTitle>
+
+<h1>@Page?.Title</h1>
+
+<div>
+    @Page?.Content
+</div>
 
 @code {
+    private Page? Page;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+        var tenantName = user?.TenantName ?? "Hawaso";
+
+        Page = await _dbContext.Pages
+            .Where(p => p.PageName == "Contact" && p.TenantName == tenantName)
+            .FirstOrDefaultAsync();
+
+        if (Page == null)
+        {
+            Page = await _dbContext.Pages
+                .Where(p => p.PageName == "Contact" && p.TenantName == "Hawaso")
+                .FirstOrDefaultAsync();
+        }
+    }
 }

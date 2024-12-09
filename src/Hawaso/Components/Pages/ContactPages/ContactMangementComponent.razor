@@ -1,7 +1,74 @@
 ﻿@page "/admin/contact-management"
 
-<h3>ContactMangementComponent</h3>
+@using Hawaso.Data
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ApplicationDbContext _dbContext
+@inject NavigationManager NavigationManager
+
+<PageTitle>Contact Management</PageTitle>
+
+<h1>Contact Management</h1>
+
+<EditForm Model="Page" OnValidSubmit="SaveChanges">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="Page.Title" class="form-control" />
+    </div>
+
+    <div class="mt-3">
+        <label for="content">Content</label>
+        <InputTextArea id="content" @bind-Value="Page.Content" class="form-control" rows="10" />
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+</EditForm>
 
 @code {
+    private Page Page = new Page();
 
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+        var tenantName = user?.TenantName ?? "Hawaso";
+
+        Page = await _dbContext.Pages
+            .Where(p => p.PageName == "Contact" && p.TenantName == tenantName)
+            .FirstOrDefaultAsync();
+
+        if (Page == null)
+        {
+            Page = new Page
+                {
+                    PageName = "Contact",
+                    TenantName = tenantName
+                };
+        }
+    }
+
+    private async Task SaveChanges()
+    {
+        var existingContent = await _dbContext.Pages
+            .FirstOrDefaultAsync(p => p.PageName == "Contact" && p.TenantName == Page.TenantName);
+
+        if (existingContent != null)
+        {
+            existingContent.Title = Page.Title;
+            existingContent.Content = Page.Content;
+            existingContent.LastUpdated = DateTime.Now;
+        }
+        else
+        {
+            Page.LastUpdated = DateTime.Now;
+            _dbContext.Pages.Add(Page);
+        }
+
+        await _dbContext.SaveChangesAsync();
+        NavigationManager.NavigateTo("/contact");
+    }
 }
