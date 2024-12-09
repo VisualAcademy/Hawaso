@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.SemanticKernel;
+using NoticeApp.Models;
 using Portals.Infrastructures;
 using ReplyApp.Managers;
 using VisualAcademy;
@@ -151,6 +152,11 @@ void DependencyInjectionContainer(IServiceCollection services)
     #endregion
 
     builder.Services.AddDependencyInjectionContainerForBannedTypeApp(connectionString);
+
+    /// <summary>
+    /// 공지사항(NoticeApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
+    /// </summary>
+    services.AddDependencyInjectionContainerForNoticeApp(Configuration["ConnectionStrings:DefaultConnection"]); // 또 다른 데이터베이스 연결 문자열 표현법
 }
 
 // DotNetSaleCore 관련 의존성 주입
