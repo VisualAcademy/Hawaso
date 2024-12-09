@@ -23,7 +23,8 @@
 
     <div class="mt-3">
         <label for="content">Content</label>
-        <InputTextArea id="content" @bind-Value="Page.Content" class="form-control" rows="10" />
+        @* <InputTextArea id="content" @bind-Value="Page.Content" class="form-control" rows="10" /> *@
+        <Hawaso.Components.CkEditorFourComponent @bind-Value="Page.Content"></Hawaso.Components.CkEditorFourComponent>
     </div>
 
     <button type="submit" class="btn btn-primary mt-3">Save Changes</button>

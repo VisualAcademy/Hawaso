@@ -12,7 +12,7 @@
 <h1>@Page?.Title</h1>
 
 <div>
-    @((MarkupString)Dul.HtmlUtility.EncodeWithTabAndSpace(Page?.Content))
+    @((MarkupString)Page?.Content)
 </div>
 
 @code {
