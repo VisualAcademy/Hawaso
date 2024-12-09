@@ -12,4 +12,6 @@ public class ApplicationUser : IdentityUser
 {
     [PersonalData]
     public string Address { get; set; }
+
+    public string? TenantName { get; set; } = "Hawaso"; // 기본값 Hawaso
 }

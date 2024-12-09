@@ -22,4 +22,5 @@ public class ApplicationUser : IdentityUser
     public string? Timezone { get; set; }
 
     // TODO: 필요한 추가 프로퍼티들을 여기에 선언하세요.
+    public string? TenantName { get; set; } = "Hawaso"; // 기본값 Hawaso
 }
