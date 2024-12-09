@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-
-namespace Hawaso.Apis.ApplicationsNotifications
+﻿namespace Hawaso.Apis.ApplicationsNotifications
 {
     [Route("api/[controller]")]
     [ApiController]
