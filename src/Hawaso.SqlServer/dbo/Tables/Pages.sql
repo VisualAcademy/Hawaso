@@ -1,6 +1,6 @@
 ﻿CREATE TABLE Pages (
     Id INT IDENTITY(1,1) PRIMARY KEY, -- 기본 키 (Primary Key)
-    TenantName NVARCHAR(MAX) NOT NULL DEFAULT 'Hawaso', -- 테넌트명 (예: Hawaso, Tenant1 등)
+    TenantName NVARCHAR(MAX) NOT NULL DEFAULT 'Hawaso', -- 테넌트명 (예: Hawaso, Kodee 등)
     PageName VARCHAR(50) NOT NULL DEFAULT 'Contact', -- 페이지명 (예: Contact, About 등)
     Title NVARCHAR(200) NOT NULL, -- 페이지 제목
     Content NVARCHAR(MAX) NOT NULL, -- 페이지의 본문 (HTML 또는 Plain Text)

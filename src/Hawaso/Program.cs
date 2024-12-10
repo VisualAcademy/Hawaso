@@ -232,6 +232,10 @@ var tenantSchemaEnhancerCreateAndAlter = new TenantSchemaEnhancerCreateAndAlter(
 tenantSchemaEnhancerCreateAndAlter.EnsureSchema();
 #endregion
 
+// **PageSchemaEnhancer** 인스턴스 생성
+PageSchemaEnhancer pageSchemaEnhancer = new PageSchemaEnhancer(connectionString);
+pageSchemaEnhancer.EnsurePagesTableExists();
+
 #region Partners Table 생성 및 컬럼 추가 데모
 var tenantSchemaEnhancerCreatePartnersTable = new TenantSchemaEnhancerCreatePartnersTable(Configuration.GetConnectionString("DefaultConnection"));
 tenantSchemaEnhancerCreatePartnersTable.EnhanceAllTenantDatabases();
