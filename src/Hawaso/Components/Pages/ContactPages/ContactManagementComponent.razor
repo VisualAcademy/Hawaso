@@ -7,6 +7,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @inject ApplicationDbContext _dbContext
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Contact Management</PageTitle>
 
@@ -35,7 +36,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var user = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+        //[2] var user = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(authState.User);
         var tenantName = user?.TenantName ?? "Hawaso";
 
         Page = await _dbContext.Pages

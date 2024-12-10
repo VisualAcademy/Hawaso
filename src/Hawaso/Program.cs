@@ -39,7 +39,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 var services = builder.Services;
 var Configuration = builder.Configuration;
 
-services.AddHttpContextAccessor();
+builder.Services.AddHttpContextAccessor(); //[1] services.AddHttpContextAccessor();
 
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(

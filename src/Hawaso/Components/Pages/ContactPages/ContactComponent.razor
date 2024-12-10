@@ -6,6 +6,7 @@
 @inject UserManager<ApplicationUser> UserManager
 @inject IHttpContextAccessor HttpContextAccessor
 @inject ApplicationDbContext _dbContext
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Contact</PageTitle>
 
@@ -20,7 +21,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var user = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+        // 로그인한 사용자의 TenantName을 가져오기
+        //[3] var user = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(authState.User);
         var tenantName = user?.TenantName ?? "Hawaso";
 
         Page = await _dbContext.Pages
