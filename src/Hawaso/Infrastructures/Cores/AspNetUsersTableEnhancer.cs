@@ -1,22 +1,22 @@
-﻿namespace Dalbodre.Infrastructures.Cores
+﻿namespace Dalbodre.Infrastructures.Cores;
+
+public class AspNetUsersTableEnhancer
 {
-    public class AspNetUsersTableEnhancer
+    private readonly string _connectionString;
+
+    public AspNetUsersTableEnhancer(string connectionString)
     {
-        private readonly string _connectionString;
+        _connectionString = connectionString;
+    }
 
-        public AspNetUsersTableEnhancer(string connectionString)
+    // AspNetUsers 테이블에 ShowInDropdown 컬럼이 없으면 추가하는 메서드
+    public void AddShowInDropdownColumnIfNotExists()
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
         {
-            _connectionString = connectionString;
-        }
+            connection.Open();
 
-        // AspNetUsers 테이블에 ShowInDropdown 컬럼이 없으면 추가하는 메서드
-        public void AddShowInDropdownColumnIfNotExists()
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-
-                SqlCommand cmdCheck = new SqlCommand(@"
+            SqlCommand cmdCheck = new SqlCommand(@"
                     IF NOT EXISTS (
                         SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
                         WHERE TABLE_NAME = 'AspNetUsers' AND COLUMN_NAME = 'ShowInDropdown'
@@ -25,10 +25,9 @@
                         ALTER TABLE dbo.AspNetUsers ADD ShowInDropdown BIT NULL DEFAULT 0;
                     END", connection);
 
-                cmdCheck.ExecuteNonQuery();
+            cmdCheck.ExecuteNonQuery();
 
-                connection.Close();
-            }
+            connection.Close();
         }
     }
 }
