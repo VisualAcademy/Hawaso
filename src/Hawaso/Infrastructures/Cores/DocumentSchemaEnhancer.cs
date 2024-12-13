@@ -1,13 +1,8 @@
 ﻿namespace Dalbodre.Infrastructures;
 
-public class DocumentSchemaEnhancer
+public class DocumentSchemaEnhancer(string connectionString)
 {
-    private readonly string _connectionString;
-
-    public DocumentSchemaEnhancer(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
+    private readonly string _connectionString = connectionString;
 
     public void EnsureDocumentsTableAndAlterTitleColumn()
     {
