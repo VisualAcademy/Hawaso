@@ -221,6 +221,7 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 app.MapRazorPages();
 
+// 기본 역할 및 사용자 추가 
 using (var scope = app.Services.CreateScope())
 {
     var scopedServices = scope.ServiceProvider;
