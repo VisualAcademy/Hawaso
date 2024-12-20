@@ -56,7 +56,7 @@
                     <thead class="thead-light">
                         <tr>
                             <th class="text-center">ID</th>
-                            <th class="text-center text-nowrap" @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Hawaso.Replys.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Hawaso.Replys.Components.SortOrderArrow></th>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></SortOrderArrow></th>
                             <th class="text-center text-nowrap" @onclick="@(() => SortByName())">Name <Hawaso.Replys.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Replys.Components.SortOrderArrow></th>
                             <th class="text-center text-nowrap">Created</th>
                             <th class="text-center text-nowrap">ReadCount</th>
