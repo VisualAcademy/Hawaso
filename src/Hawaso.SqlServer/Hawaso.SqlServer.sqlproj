@@ -152,5 +152,6 @@
     <Build Include="InternalAudit\Business.sql" />
     <Build Include="dbo\Tables\Documents.sql" />
     <Build Include="dbo\Tables\Pages.sql" />
+    <Build Include="Employees.sql" />
   </ItemGroup>
 </Project>
