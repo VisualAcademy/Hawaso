@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using ChartJs.Blazor.ChartJS.BarChart;
+﻿using ChartJs.Blazor.ChartJS.BarChart;
 using ChartJs.Blazor.ChartJS.BarChart.Axes;
 using ChartJs.Blazor.ChartJS.Common.Axes;
 using ChartJs.Blazor.ChartJS.Common.Axes.Ticks;
