@@ -1,6 +1,6 @@
-﻿namespace Hawaso.Services
+﻿namespace Hawaso.Services;
+
+public class AccountService
 {
-    public class AccountService
-    {
-    }
+
 }
