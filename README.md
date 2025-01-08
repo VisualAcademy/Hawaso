@@ -12,9 +12,9 @@ https://www.hawaso.com 사이트에서 실행 데모를 볼 수 있습니다.
 `C# 교과서 마스터하기` 강좌와 `ASP.NET Core Fundamentals` 과정을 선수 학습으로 알고 있다고 가정하고 강의가 진행됩니다.
 
 
-## Blazor Server with ASP.NET Core 8.0 
+## Blazor Server with ASP.NET Core 9.0 
 
-Hawaso 솔루션은 ASP.NET Core 8.0 버전과 Blazor Server 8.0을 하나의 프로젝트로 관리합니다.
+Hawaso 솔루션은 ASP.NET Core 9.0 버전과 Blazor Server 9.0을 하나의 프로젝트로 관리합니다.
 
 Visual Studio 2022를 사용하여 개발을 추천합니다. 
 
