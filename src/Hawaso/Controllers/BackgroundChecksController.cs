@@ -1,10 +1,9 @@
-﻿namespace Hawaso.Controllers
+﻿namespace Hawaso.Controllers;
+
+public class BackgroundChecksController : Controller
 {
-    public class BackgroundChecksController : Controller
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
     }
 }
