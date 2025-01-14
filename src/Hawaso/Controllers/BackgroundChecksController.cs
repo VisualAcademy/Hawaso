@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿namespace Hawaso.Controllers;
 
-namespace Hawaso.Controllers
+public class BackgroundChecksController : Controller
 {
-    public class BackgroundChecksController : Controller
-    {
-        public IActionResult Index()
-        {
-            return View();
-        }
-    }
+    public IActionResult Index() => View();
 }
