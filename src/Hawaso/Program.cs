@@ -11,6 +11,7 @@ using Hawaso.Extensions.BriefingLogs;
 using Hawaso.Extensions.Libraries;
 using Hawaso.Extensions.Memos;
 using Hawaso.Infrastructures;
+using Hawaso.Infrastructures.All.Identity;
 using Hawaso.Infrastructures.Tenants;
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
@@ -226,12 +227,24 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 app.MapRazorPages();
 
-// 기본 역할 및 사용자 추가 
+#region CreateBuiltInUsersAndRoles and ResetAdministratorPassword
+// 기본 역할 및 사용자 추가 및 관리자 암호 초기화 
 using (var scope = app.Services.CreateScope())
 {
     var scopedServices = scope.ServiceProvider;
+    var configuration = scopedServices.GetRequiredService<IConfiguration>();
+
+    // 내장 사용자 및 역할 생성
     await UserAndRoleInitializer.CreateBuiltInUsersAndRoles(scopedServices);
+
+    // 관리자 계정 암호 초기화 여부 확인
+    bool resetPassword = configuration.GetValue<bool>("PasswordReset:ResetAdministratorPassword");
+    if (resetPassword)
+    {
+        await AdministratorPasswordResetHelper.ResetAdministratorPassword(scopedServices, "hawaso.com");
+    }
 }
+#endregion
 
 #region Tenants Table 생성 및 컬럼 추가 데모
 var tenantSchemaEnhancerCreateAndAlter = new TenantSchemaEnhancerCreateAndAlter(Configuration.GetConnectionString("DefaultConnection"));
