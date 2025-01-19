@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.SemanticKernel;
 using NoticeApp.Models;
 using Portals.Infrastructures;
@@ -38,6 +39,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 var services = builder.Services;
 var Configuration = builder.Configuration;
+
 
 builder.Services.AddHttpContextAccessor(); //[1] services.AddHttpContextAccessor();
 
@@ -87,6 +89,9 @@ services.AddCors(options =>
 // HttpClient 등록
 // HttpClient 인스턴스를 DI(Dependency Injection) 컨테이너에 등록하여 재사용성을 높임
 builder.Services.AddHttpClient();
+
+// Fluent UI Blazor library add: 반드시 AddHttpClient() 확장 메서드 다음에 위치할 것
+builder.Services.AddFluentUIComponents();
 
 services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 services.AddDatabaseDeveloperPageExceptionFilter();
