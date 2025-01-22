@@ -27,6 +27,7 @@ using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.SemanticKernel;
 using NoticeApp.Models;
 using Portals.Infrastructures;
+using Portals.Infrastructures.Portals.Changes;
 using ReplyApp.Managers;
 using VisualAcademy;
 using VisualAcademy.Models.BannedTypes;
@@ -195,6 +196,26 @@ var aiConfig = builder.Configuration.GetSection("SmartComponents");
 
 
 var app = builder.Build();
+
+
+
+
+
+
+#region Create Changes table and add more columns
+var changesTableEnhancer = new ChangesTableSchemaEnhancer(connectionString);
+
+// 테이블 생성
+changesTableEnhancer.CreateChangesTable();
+// 컬럼 추가
+changesTableEnhancer.AddTenantNameColumnIfNotExists();
+#endregion
+
+
+
+
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
