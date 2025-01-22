@@ -1,64 +1,64 @@
-﻿namespace Hawaso.Infrastructures
+﻿namespace Hawaso.Infrastructures;
+
+public class TenantSchemaEnhancerCreateMemosTable
 {
-    public class TenantSchemaEnhancerCreateMemosTable
+    private string _masterConnectionString;
+
+    public TenantSchemaEnhancerCreateMemosTable(string masterConnectionString)
     {
-        private string _masterConnectionString;
+        _masterConnectionString = masterConnectionString;
+    }
 
-        public TenantSchemaEnhancerCreateMemosTable(string masterConnectionString)
+    public void EnhanceAllTenantDatabases()
+    {
+        List<string> tenantConnectionStrings = GetTenantConnectionStrings();
+
+        foreach (string connStr in tenantConnectionStrings)
         {
-            _masterConnectionString = masterConnectionString;
+            CreateMemosTableIfNotExists(connStr);
         }
+    }
 
-        public void EnhanceAllTenantDatabases()
+    private List<string> GetTenantConnectionStrings()
+    {
+        List<string> result = new List<string>();
+
+        using (SqlConnection connection = new SqlConnection(_masterConnectionString))
         {
-            List<string> tenantConnectionStrings = GetTenantConnectionStrings();
+            connection.Open();
 
-            foreach (string connStr in tenantConnectionStrings)
+            SqlCommand cmd = new SqlCommand("SELECT ConnectionString FROM dbo.Tenants", connection);
+            using (SqlDataReader reader = cmd.ExecuteReader())
             {
-                CreateMemosTableIfNotExists(connStr);
-            }
-        }
-
-        private List<string> GetTenantConnectionStrings()
-        {
-            List<string> result = new List<string>();
-
-            using (SqlConnection connection = new SqlConnection(_masterConnectionString))
-            {
-                connection.Open();
-
-                SqlCommand cmd = new SqlCommand("SELECT ConnectionString FROM dbo.Tenants", connection);
-                using (SqlDataReader reader = cmd.ExecuteReader())
+                while (reader.Read())
                 {
-                    while (reader.Read())
-                    {
-                        result.Add(reader["ConnectionString"].ToString());
-                    }
+                    result.Add(reader["ConnectionString"].ToString());
                 }
-
-                connection.Close();
             }
 
-            return result;
+            connection.Close();
         }
 
-        private void CreateMemosTableIfNotExists(string connectionString)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
+        return result;
+    }
 
-                SqlCommand cmdCheck = new SqlCommand(@"
+    private void CreateMemosTableIfNotExists(string connectionString)
+    {
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+
+            SqlCommand cmdCheck = new SqlCommand(@"
                     SELECT COUNT(*) 
                     FROM INFORMATION_SCHEMA.TABLES 
                     WHERE TABLE_SCHEMA = 'dbo' 
                     AND TABLE_NAME = 'Memos'", connection);
 
-                int tableCount = (int)cmdCheck.ExecuteScalar();
+            int tableCount = (int)cmdCheck.ExecuteScalar();
 
-                if (tableCount == 0)
-                {
-                    SqlCommand cmdCreateTable = new SqlCommand(@"
+            if (tableCount == 0)
+            {
+                SqlCommand cmdCreateTable = new SqlCommand(@"
                         CREATE TABLE [dbo].[Memos](
                             Id BIGINT IDENTITY(1,1) PRIMARY KEY,
                             ParentId BigInt Null,
@@ -97,11 +97,10 @@
                             ApplicationId Int Null Default 0
                         )", connection);
 
-                    cmdCreateTable.ExecuteNonQuery();
-                }
-
-                connection.Close();
+                cmdCreateTable.ExecuteNonQuery();
             }
+
+            connection.Close();
         }
     }
 }
