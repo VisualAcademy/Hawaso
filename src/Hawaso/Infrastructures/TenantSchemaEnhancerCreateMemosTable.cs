@@ -1,6 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-
-namespace Hawaso.Infrastructures
+﻿namespace Hawaso.Infrastructures
 {
     public class TenantSchemaEnhancerCreateMemosTable
     {
