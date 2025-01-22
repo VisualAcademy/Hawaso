@@ -201,15 +201,17 @@ var app = builder.Build();
 
 
 
+if (app.Environment.IsProduction())
+{ 
+    #region Create Changes table and add more columns
+    var changesTableEnhancer = new ChangesTableSchemaEnhancer(connectionString);
 
-#region Create Changes table and add more columns
-var changesTableEnhancer = new ChangesTableSchemaEnhancer(connectionString);
-
-// 테이블 생성
-changesTableEnhancer.CreateChangesTable();
-// 컬럼 추가
-changesTableEnhancer.AddTenantNameColumnIfNotExists();
-#endregion
+    // 테이블 생성
+    changesTableEnhancer.CreateChangesTable();
+    // 컬럼 추가
+    changesTableEnhancer.AddTenantNameColumnIfNotExists();
+    #endregion
+}
 
 
 
