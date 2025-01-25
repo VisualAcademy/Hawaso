@@ -1,6 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-
-namespace Portals.Infrastructures.Portals.Changes
+﻿namespace Portals.Infrastructures.Portals.Changes
 {
     public class ChangesTableSchemaEnhancer
     {
