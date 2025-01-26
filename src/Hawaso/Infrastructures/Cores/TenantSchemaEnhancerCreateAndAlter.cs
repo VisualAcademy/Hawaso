@@ -4,10 +4,7 @@ public class TenantSchemaEnhancerCreateAndAlter
 {
     private readonly string _connectionString;
 
-    public TenantSchemaEnhancerCreateAndAlter(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
+    public TenantSchemaEnhancerCreateAndAlter(string connectionString) => _connectionString = connectionString;
 
     // Tenants 테이블이 없으면 생성하는 메서드
     public void EnsureTenantsTableExists()
