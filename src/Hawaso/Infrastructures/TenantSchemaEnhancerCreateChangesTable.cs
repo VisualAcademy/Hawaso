@@ -1,13 +1,8 @@
 ﻿namespace Portals.Infrastructures;
 
-public class TenantSchemaEnhancerCreateChangesTable
+public class TenantSchemaEnhancerCreateChangesTable(string connectionString)
 {
-    private readonly string _connectionString;
-
-    public TenantSchemaEnhancerCreateChangesTable(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
+    private readonly string _connectionString = connectionString;
 
     public void CreateChangesTable()
     {
