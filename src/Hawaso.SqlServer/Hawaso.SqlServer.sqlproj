@@ -155,5 +155,6 @@
     <Build Include="dbo\Tables\Pages.sql" />
     <Build Include="Employees.sql" />
     <Build Include="Portals\Changes.sql" />
+    <Build Include="dbo\Tables\Divisions.sql" />
   </ItemGroup>
 </Project>
