@@ -113,7 +113,7 @@ services.AddDbContext<NoteDbContext>(options =>
 
 #region AspNetUsers 테이블에 새로운 컬럼 추가 
 var aspNetUsersTableAddColumn = new AspNetUsersTableEnhancer(Configuration.GetConnectionString("DefaultConnection"));
-aspNetUsersTableAddColumn.AddShowInDropdownColumnIfNotExists();
+aspNetUsersTableAddColumn.EnsureColumnsExist();
 #endregion
 
 // 의존성 주입 컨테이너 설정

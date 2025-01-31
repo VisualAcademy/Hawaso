@@ -1,28 +1,60 @@
-﻿namespace Dalbodre.Infrastructures.Cores;
+﻿using Microsoft.Data.SqlClient;
+using System;
 
-public class AspNetUsersTableEnhancer(string connectionString)
+namespace Dalbodre.Infrastructures.Cores
 {
-    private readonly string _connectionString = connectionString;
-
-    // AspNetUsers 테이블에 ShowInDropdown 컬럼이 없으면 추가하는 메서드
-    public void AddShowInDropdownColumnIfNotExists()
+    public class AspNetUsersTableEnhancer
     {
-        using (SqlConnection connection = new SqlConnection(_connectionString))
+        private readonly string _connectionString;
+
+        public AspNetUsersTableEnhancer(string connectionString)
         {
-            connection.Open();
+            _connectionString = connectionString;
+        }
 
-            SqlCommand cmdCheck = new SqlCommand(@"
-                    IF NOT EXISTS (
-                        SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
-                        WHERE TABLE_NAME = 'AspNetUsers' AND COLUMN_NAME = 'ShowInDropdown'
-                    ) 
-                    BEGIN
-                        ALTER TABLE dbo.AspNetUsers ADD ShowInDropdown BIT NULL DEFAULT 0;
-                    END", connection);
+        // AspNetUsers 테이블에 필요한 컬럼이 없으면 추가하는 메서드
+        public void EnsureColumnsExist()
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                try
+                {
+                    connection.Open();
 
-            cmdCheck.ExecuteNonQuery();
+                    // ShowInDropdown 컬럼 추가
+                    AddColumnIfNotExists(connection, "ShowInDropdown", "BIT NULL DEFAULT 0");
 
-            connection.Close();
+                    // RefreshToken 컬럼 추가
+                    AddColumnIfNotExists(connection, "RefreshToken", "NVARCHAR(MAX) NULL");
+
+                    // RefreshTokenExpiryTime 컬럼 추가
+                    AddColumnIfNotExists(connection, "RefreshTokenExpiryTime", "DATETIME NULL");
+
+                    connection.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error updating AspNetUsers table: {ex.Message}");
+                }
+            }
+        }
+
+        // 특정 컬럼이 존재하지 않으면 추가하는 메서드
+        private void AddColumnIfNotExists(SqlConnection connection, string columnName, string columnDefinition)
+        {
+            string query = $@"
+                IF NOT EXISTS (
+                    SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                    WHERE TABLE_NAME = 'AspNetUsers' AND COLUMN_NAME = '{columnName}'
+                ) 
+                BEGIN
+                    ALTER TABLE dbo.AspNetUsers ADD {columnName} {columnDefinition};
+                END";
+
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.ExecuteNonQuery();
+            }
         }
     }
 }
