@@ -14,4 +14,8 @@ public class ApplicationUser : IdentityUser
     public string Address { get; set; }
 
     public string? TenantName { get; set; } = "Hawaso"; // 기본값 Hawaso
+
+    public string? RefreshToken { get; set; }
+
+    public DateTime? RefreshTokenExpiryTime { get; set; }
 }
