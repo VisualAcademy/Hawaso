@@ -49,8 +49,6 @@
     <ItemGroup>
         <Folder Include="Properties\PublishProfiles\" />
         <Folder Include="Properties\ServiceDependencies\hawaso - Web Deploy\" />
-        <Folder Include="wwwroot\templates\dashboard\" />
-        <Folder Include="wwwroot\templates\landing\" />
     </ItemGroup>
 
     <ItemGroup>
