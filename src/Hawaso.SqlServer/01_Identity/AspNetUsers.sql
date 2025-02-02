@@ -29,6 +29,10 @@ CREATE TABLE [dbo].[AspNetUsers] (
 
     [ShowInDropdown] BIT NULL DEFAULT 0, 
 
+    RefreshToken NVARCHAR(MAX) NULL,
+
+    RefreshTokenExpiryTime DATETIME NULL, 
+
     CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)             -- 기본키 설정
 );
 

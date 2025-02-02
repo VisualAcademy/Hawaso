@@ -1,8 +1,9 @@
 ﻿@page "/ApplicantsTransfers/ApplicantUpload"
+@using Hawaso.Data
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.EntityFrameworkCore
-@using VisualAcademy.Data
+@using VisualAcademy.Components.Pages.ApplicantsTransfers
 @using VisualAcademy.Models
 @using Microsoft.AspNetCore.Authorization
 @inject ApplicantUploadService UploadService 
@@ -12,6 +13,8 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject UserManager<ApplicationUser> UserManager
 @inject IWebHostEnvironment Environment
+
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
 
 @rendermode InteractiveServer
 
@@ -28,7 +31,7 @@
     <EditForm EditContext="@editContext" OnValidSubmit="@FormSubmit" class="mb-3">
         <div class="form-group mb-2">
             <label for="txtFile">File</label>
-            <InputFile OnChange="@HandleSelection" class="form-control" />
+            <Microsoft.AspNetCore.Components.Forms.InputFile OnChange="@HandleSelection" class="form-control" />
         </div>
     </EditForm>
 

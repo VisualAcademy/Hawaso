@@ -1,4 +1,5 @@
-﻿using VisualAcademy.Models;
+﻿using VisualAcademy.Components.Pages.ApplicantsTransfers;
+using VisualAcademy.Models;
 
 namespace Hawaso.Data;
 
@@ -20,6 +21,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     #endregion
 
     public DbSet<Page> Pages { get; set; }
+
+    public DbSet<ApplicantTransfer> ApplicantsTransfers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
