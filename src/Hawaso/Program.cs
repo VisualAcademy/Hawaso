@@ -30,6 +30,7 @@ using Portals.Infrastructures;
 using Portals.Infrastructures.Portals.Changes;
 using ReplyApp.Managers;
 using VisualAcademy;
+using VisualAcademy.Components.Pages.ApplicantsTransfers;
 using VisualAcademy.Models.BannedTypes;
 using VisualAcademy.Models.Departments;
 using VisualAcademy.Models.Replys;
@@ -94,6 +95,12 @@ builder.Services.AddHttpClient();
 
 // Fluent UI Blazor library add: 반드시 AddHttpClient() 확장 메서드 다음에 위치할 것
 builder.Services.AddFluentUIComponents();
+
+
+
+builder.Services.AddScoped<ApplicantUploadService>();
+
+
 
 services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 services.AddDatabaseDeveloperPageExceptionFilter();
