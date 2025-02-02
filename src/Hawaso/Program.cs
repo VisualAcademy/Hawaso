@@ -290,6 +290,27 @@ var tenantSchemaEnhancerCreatePartnersTable = new TenantSchemaEnhancerCreatePart
 tenantSchemaEnhancerCreatePartnersTable.EnhanceAllTenantDatabases();
 #endregion
 
+
+
+
+
+
+
+#region Create ApplicantsTransfers Table
+if (DateTime.Now < (new DateTime(2025, 2, 10)))
+{
+    var createTenantsTransfersTable = new TenantSchemaEnhancerCreateApplicantsTransfersTable(connectionString);
+    createTenantsTransfersTable.CreateApplicantsTransfersTable();
+}
+#endregion
+
+
+
+
+
+
+
+
 app.Run();
 
 /// <summary>
