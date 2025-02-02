@@ -156,5 +156,6 @@
     <Build Include="Employees.sql" />
     <Build Include="Portals\Changes.sql" />
     <Build Include="dbo\Tables\Divisions.sql" />
+    <Build Include="dbo\Tables\ApplicantsTransfers.sql" />
   </ItemGroup>
 </Project>
