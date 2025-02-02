@@ -1,0 +1,67 @@
+﻿@if (ApplicantTransfers != null && ApplicantTransfers.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Department</th>
+                <th>Employee Id</th>
+                <th>First Name</th>
+                <th>Middle Initial</th>
+                <th>Last Name</th>
+                <th>Date of Birth</th>
+                <th>SSN</th>
+                <th>Address 1</th>
+                <th>Address 2</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip Code</th>
+                <th>Gender</th>
+                <th>Cell Phone</th>
+                <th>Primary Email</th>
+                <th>Employment Status</th>
+                <th>Date Seniority</th>
+                <th>Default Jobs (HR)</th>
+                <th>Employee Status</th>
+                <th>Tribal Nation</th>
+                <th>Gaming License Type</th>
+                <th>Date Re-Hired</th>
+                <th>Date Terminated</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var applicant in ApplicantTransfers)
+            {
+                <tr>
+                    <td>@applicant.DepartmentName</td>
+                    <td>@applicant.EmployeeId</td>
+                    <td>@applicant.FirstName</td>
+                    <td>@applicant.MiddleName</td>
+                    <td>@applicant.LastName</td>
+                    <td>@applicant.DOB</td>
+                    <td>@applicant.SSN</td>
+                    <td>@applicant.Address</td>
+                    <td>@applicant.Address2</td>
+                    <td>@applicant.City</td>
+                    <td>@applicant.State</td>
+                    <td>@applicant.PostalCode</td>
+                    <td>@applicant.Gender</td>
+                    <td>@applicant.CellPhone</td>
+                    <td>@applicant.PrimaryEmail</td>
+                    <td>@applicant.EmploymentStatus</td>
+                    <td>@applicant.DateSeniority</td>
+                    <td>@applicant.DefaultJobsHR</td>
+                    <td>@applicant.EmployeeStatus</td>
+                    <td>@applicant.TribalNation</td>
+                    <td>@applicant.GamingLicenseType</td>
+                    <td>@applicant.DateRehired</td>
+                    <td>@applicant.DateTerminated</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public List<ApplicantTransfer> ApplicantTransfers { get; set; }
+}

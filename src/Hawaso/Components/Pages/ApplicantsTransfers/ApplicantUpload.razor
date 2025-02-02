@@ -1,0 +1,313 @@
+﻿@page "/ApplicantsTransfers/ApplicantUpload"
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@using VisualAcademy.Data
+@using VisualAcademy.Models
+@using Microsoft.AspNetCore.Authorization
+@inject ApplicantUploadService UploadService 
+@inject ApplicationDbContext DbContext
+@inject IJSRuntime JSRuntime
+@* @attribute [Authorize] *@
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserManager<ApplicationUser> UserManager
+@inject IWebHostEnvironment Environment
+
+@rendermode InteractiveServer
+
+@inject NavigationManager NavigationManager
+
+<h3>Applicant Data Upload</h3>
+
+<div class="container mt-3">
+    <p>
+        Upload the template Excel file and preview it. If the data in the file matches an existing applicant, you will have the option to update their information.
+    </p>
+    <a href="/templates/ApplicantsTransfers/ApplicantsTransfers.xlsx" class="btn btn-secondary mb-3">Template Download</a>
+
+    <EditForm EditContext="@editContext" OnValidSubmit="@FormSubmit" class="mb-3">
+        <div class="form-group mb-2">
+            <label for="txtFile">File</label>
+            <InputFile OnChange="@HandleSelection" class="form-control" />
+        </div>
+    </EditForm>
+
+    @if (applicantsPreview != null)
+    {
+        <ApplicantUploadPreview ApplicantTransfers="@applicantsPreview" />
+        <button class="btn btn-success mt-2" @onclick="SaveApplicants">Save to Database</button>
+    }
+
+    @if (matchedApplicants != null && matchedApplicants.Count > 0)
+    {
+        <hr />
+        <h3>Pending Applicant Data Updates</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Field</th>
+                    <th>Old Value</th>
+                    <th>New Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var applicant in matchedApplicants)
+                {
+                    <tr>
+                        <td>@applicant.ExistingApplicant.ID</td>
+                        <td>First Name</td>
+                        <td>@applicant.ExistingApplicant.FirstName</td>
+                        <td>@applicant.NewApplicant.FirstName</td>
+                    </tr>
+                    // 추가적인 필드를 위한 로우들
+                }
+            </tbody>
+        </table>
+    }
+
+@if ((isAdministrator || isHR) && allApplicants != null && allApplicants.Count > 0)
+{
+    <hr />
+    <h3>Uploaded Data</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Department</th>
+                <th>Employee Id</th>
+                <th>First Name</th>
+                <th>Middle Initial</th>
+                <th>Last Name</th>
+                <th>Date of Birth</th>
+                <th>SSN</th>
+                <th>Address 1</th>
+                <th>Address 2</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip Code</th>
+                <th>Gender</th>
+                <th>Cell Phone</th>
+                <th>Primary Email</th>
+                <th>Employment Status</th>
+                <th>Date Seniority</th>
+                <th>Default Jobs (HR)</th>
+                <th>Employee Status</th>
+                <th>Tribal Nation</th>
+                <th>Gaming License Type</th>
+                <th>Date Re-Hired</th>
+                <th>Date Terminated</th>
+                <th>Actions</th> <!-- Actions 열 추가 -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var applicant in allApplicants)
+            {
+                <tr>
+                    <td>@applicant.ID</td>
+                    <td>@applicant.DepartmentName</td>
+                    <td>@applicant.EmployeeId</td>
+                    <td>@applicant.FirstName</td>
+                    <td>@applicant.MiddleName</td>
+                    <td>@applicant.LastName</td>
+                    <td>@applicant.DOB</td>
+                    <td>@applicant.SSN</td>
+                    <td>@applicant.Address</td>
+                    <td>@applicant.Address2</td>
+                    <td>@applicant.City</td>
+                    <td>@applicant.State</td>
+                    <td>@applicant.PostalCode</td>
+                    <td>@applicant.Gender</td>
+                    <td>@applicant.CellPhone</td>
+                    <td>@applicant.PrimaryEmail</td>
+                    <td>@applicant.EmploymentStatus</td>
+                    <td>@applicant.DateSeniority</td>
+                    <td>@applicant.DefaultJobsHR</td>
+                    <td>@applicant.EmployeeStatus</td>
+                    <td>@applicant.TribalNation</td>
+                    <td>@applicant.GamingLicenseType</td>
+                    <td>@applicant.DateRehired</td>
+                    <td>@applicant.DateTerminated</td>
+                    <td>
+                        <!-- 삭제 버튼 -->
+                        <button class="btn btn-danger" @onclick="(() => ShowConfirmation(applicant.ID))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+</div>
+
+
+<!-- 삭제 확인 모달 -->
+<div class="modal" tabindex="-1" style="display:@(showConfirmation ? "block" : "none");">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Deletion</h5>
+        <button type="button" class="btn-close" @onclick="(() => showConfirmation = false)"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this applicant?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" @onclick="(() => showConfirmation = false)">Close</button>
+        <button type="button" class="btn btn-danger" @onclick="ConfirmDeletion">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+    private List<ApplicantTransfer> applicantsPreview;
+    private EditContext editContext = new EditContext(new object());
+    private List<MatchedApplicantModel> matchedApplicants;
+
+    private List<ApplicantTransfer> allApplicants;
+
+    private bool isAdministrator = true;
+    private bool isHR = true; 
+
+    private IBrowserFile uploadedFile;
+
+
+    private bool showConfirmation = false;
+    private long deleteApplicantId;
+
+    private void ShowConfirmation(long applicantId)
+    {
+        deleteApplicantId = applicantId;
+        showConfirmation = true;
+        // 또한, 모달 또는 삭제 확인 UI를 표시하는 논리를 여기에 추가합니다.
+    }
+
+    private async Task ConfirmDeletion()
+    {
+        var applicantToDelete = allApplicants.FirstOrDefault(a => a.ID == deleteApplicantId);
+        if (applicantToDelete != null)
+        {
+            // 메모리 상의 리스트에서 항목을 제거
+            allApplicants.Remove(applicantToDelete);
+            
+            // DbContext를 사용하여 데이터베이스에서 항목을 삭제합니다.
+            DbContext.ApplicantsTransfers.Remove(applicantToDelete);
+            await DbContext.SaveChangesAsync(); // 변경 사항을 저장합니다.
+
+            showConfirmation = false; // 삭제 확인 창을 숨깁니다.
+            StateHasChanged(); // UI를 갱신하여 변경 사항을 반영합니다.
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        // if (user.Identity.IsAuthenticated)
+        // {
+        //     var appUser = await UserManager.FindByNameAsync(user.Identity.Name);
+        //     isAdministrator = await UserManager.IsInRoleAsync(appUser, "Administrators");
+        //     isHR = await UserManager.IsInRoleAsync(appUser, "HR");
+        // }
+        allApplicants = await GetApplicantTransfers();
+    }
+
+    private async Task<List<ApplicantTransfer>> GetApplicantTransfers()
+    {
+        return await DbContext.ApplicantsTransfers.ToListAsync();
+    }
+
+    private async Task HandleSelection(InputFileChangeEventArgs e)
+    {
+        uploadedFile = e.File;
+        if (uploadedFile != null)
+        {
+            using var stream = uploadedFile.OpenReadStream(maxAllowedSize: 52428800); // 예: 50MB
+
+            applicantsPreview = await UploadService.ParseExcelAsync(stream); 
+            CompareAndPrepareMatchedApplicants();
+        }
+    }
+
+    private void FormSubmit()
+    {
+        // 필요한 경우 추가 로직 구현
+    }
+
+    private async Task SaveApplicants()
+    {
+        if (applicantsPreview != null)
+        {
+            foreach (var applicant in applicantsPreview)
+            {
+                DbContext.ApplicantsTransfers.Add(applicant);
+            }
+            await DbContext.SaveChangesAsync();
+
+            if (uploadedFile != null)
+            {
+                await SaveFileToServer(uploadedFile);
+            }
+
+
+            // Navigate to the same page (or another page)
+            NavigationManager.NavigateTo("/ApplicantsTransfers/ApplicantUpload", forceLoad: true);
+
+            await JSRuntime.InvokeVoidAsync("alert", "Data and file successfully saved.");
+            //StateHasChanged(); // Refresh the UI
+        }
+    }
+
+    private void CompareAndPrepareMatchedApplicants()
+    {
+        matchedApplicants = new List<MatchedApplicantModel>();
+        // DbContext를 사용하여 비교 및 매칭 로직 구현
+    }
+
+    private async Task UpdateApplicant(ApplicantTransfer existingApplicant, ApplicantTransfer newApplicant)
+    {
+        // 변경 사항 적용 및 데이터베이스 업데이트
+    }
+
+    private string NormalizeGender(string gender)
+    {
+        return gender switch
+        {
+            "F" or "Female" => "Female",
+            "M" or "Male" => "Male",
+            "U" or "Other" => "Other",
+            _ => gender
+        };
+    }
+
+    public class MatchedApplicantModel
+    {
+        public ApplicantTransfer ExistingApplicant { get; set; }
+        public ApplicantTransfer NewApplicant { get; set; }
+    }
+
+    private async Task SaveFileToServer(IBrowserFile file)
+    {
+        var path = Path.Combine(Environment.WebRootPath, "files", "ApplicantTransfers");
+        var fileName = Path.GetFileNameWithoutExtension(file.Name);
+        var fileExtension = Path.GetExtension(file.Name);
+
+        var timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmssfff");
+        var newFileName = $"{fileName}_{timestamp}{fileExtension}";
+        var fullPath = Path.Combine(path, newFileName);
+
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        using (var stream = file.OpenReadStream())
+        {
+            using (var fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write))
+            {
+                await stream.CopyToAsync(fileStream);
+            }
+        }
+    }
+}
