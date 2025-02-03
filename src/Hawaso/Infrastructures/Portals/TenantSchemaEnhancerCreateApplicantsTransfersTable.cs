@@ -2,11 +2,9 @@
 
 public class TenantSchemaEnhancerCreateApplicantsTransfersTable(string connectionString)
 {
-    private string _connectionString = connectionString;
-
     public void CreateApplicantsTransfersTable()
     {
-        using (SqlConnection connection = new SqlConnection(_connectionString))
+        using (SqlConnection connection = new SqlConnection(connectionString))
         {
             connection.Open();
 
