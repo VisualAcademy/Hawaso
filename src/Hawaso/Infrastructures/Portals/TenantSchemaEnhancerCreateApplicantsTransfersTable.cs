@@ -2,14 +2,9 @@
 
 namespace Hawaso.Infrastructures;
 
-public class TenantSchemaEnhancerCreateApplicantsTransfersTable
+public class TenantSchemaEnhancerCreateApplicantsTransfersTable(string connectionString)
 {
-    private string _connectionString;
-
-    public TenantSchemaEnhancerCreateApplicantsTransfersTable(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
+    private string _connectionString = connectionString;
 
     public void CreateApplicantsTransfersTable()
     {
