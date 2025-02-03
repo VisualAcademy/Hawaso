@@ -1,33 +1,33 @@
 ﻿using Microsoft.Data.SqlClient;
 
-namespace Hawaso.Infrastructures
+namespace Hawaso.Infrastructures;
+
+public class TenantSchemaEnhancerCreateApplicantsTransfersTable
 {
-    public class TenantSchemaEnhancerCreateApplicantsTransfersTable
+    private string _connectionString;
+
+    public TenantSchemaEnhancerCreateApplicantsTransfersTable(string connectionString)
     {
-        private string _connectionString;
+        _connectionString = connectionString;
+    }
 
-        public TenantSchemaEnhancerCreateApplicantsTransfersTable(string connectionString)
+    public void CreateApplicantsTransfersTable()
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
         {
-            _connectionString = connectionString;
-        }
+            connection.Open();
 
-        public void CreateApplicantsTransfersTable()
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-
-                SqlCommand cmdCheck = new SqlCommand(@"
+            SqlCommand cmdCheck = new SqlCommand(@"
                     SELECT COUNT(*) 
                     FROM INFORMATION_SCHEMA.TABLES 
                     WHERE TABLE_SCHEMA = 'dbo' 
                     AND TABLE_NAME = 'ApplicantsTransfers'", connection);
 
-                int tableCount = (int)cmdCheck.ExecuteScalar();
+            int tableCount = (int)cmdCheck.ExecuteScalar();
 
-                if (tableCount == 0)
-                {
-                    SqlCommand cmdCreateTable = new SqlCommand(@"
+            if (tableCount == 0)
+            {
+                SqlCommand cmdCreateTable = new SqlCommand(@"
 
 CREATE TABLE [dbo].[ApplicantsTransfers](
     [ID] [bigint] IDENTITY(1,1) PRIMARY KEY,
@@ -119,11 +119,10 @@ CREATE TABLE [dbo].[ApplicantsTransfers](
 
                     ", connection);
 
-                    cmdCreateTable.ExecuteNonQuery();
-                }
-
-                connection.Close();
+                cmdCreateTable.ExecuteNonQuery();
             }
+
+            connection.Close();
         }
     }
 }
