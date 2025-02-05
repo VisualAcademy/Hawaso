@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+using Hawaso.Web.Components.Pages.DivisionPages.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire client integrations.
@@ -48,6 +50,13 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+
+
+// 부서 관리: 기본 CRUD 교과서 코드
+builder.Services.AddDependencyInjectionContainerForDivisionApp(connectionString);
+
+
 
 var app = builder.Build();
 
