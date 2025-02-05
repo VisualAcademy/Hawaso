@@ -2,13 +2,128 @@
 @page "/divisions/manage"
 
 @using Hawaso.Web.Components.Pages.DivisionPages.Components 
+@using Microsoft.AspNetCore.Authorization
 
-<h3>Division Manager</h3>
+@* @attribute [Authorize(Roles = "Administrators")] *@
 
-<DeleteDialog></DeleteDialog>
+<h3 class="mt-1 mb-1">Divisions <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;"></span> 
+    <button onclick="location.href = '/DivisionDownload/ExcelDown';" class="btn btn-sm btn-primary" style="float: right;">Excel Export</button></h3>
 
-<ModalForm></ModalForm>
+<div class="row">
+    <div class="col-md-12">
+        @if (models == null)
+        {
+            <div>
+                <p>
+                    Loading...
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <colgroup>
+                        <col style="width: 50px;" />
+                        <col style="width: 300px;" />
+                        <col style="width: 200px;" />
+                        <col style="width: 200px;" />
+                        <col style="width: auto;" />
+                        <col style="width: 300px;" />
+                    </colgroup>
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByName())" style="cursor: pointer;">Name <VisualAcademy.Pages.Divisions.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></VisualAcademy.Pages.Divisions.Components.SortOrderArrow></th>
+                            <th class="text-center text-nowrap">Created</th>
+                            <th class="text-center text-nowrap">Active</th>
+                            <th class="text-center text-nowrap">&nbsp;</th>
+                            <th class="text-center text-nowrap">Admin</th>
+                        </tr>
+                    </thead>
+                    @if (models.Count == 0)
+                    {
+                        <tbody>
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <p>No Data.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                    <tbody>
+                        @foreach (var m in models)
+                        {
+                            <tr>
+                                <td class="text-center" style="font-size: xx-small;">
+                                    @m.Id
+                                </td>
+                                <td style="cursor: pointer;" class="text-center">
+                                    <span class="btn-link text-nowrap">@m.Name</span>
+                                </td>
+                                <td class="text-center text-nowrap small">
+                                    @(Dul.DateTimeUtility.ShowTimeOrDate(m.CreatedAt))
+                                </td>
+                                <td class="text-center">
+                                    @if (m.Active != null && m.Active.Value)
+                                    {
+                                        <input type="checkbox" checked />
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" />
+                                    }
+                                </td>
+                                <td>&nbsp;</td>
+                                <td class="text-center">
+                                    <input type="button" name="btnEdit" value="Edit" class="btn btn-sm btn-primary" @onclick="(() => EditBy(m))" />
+                                    <input type="button" name="btnDelete" value="Del" class="btn btn-sm btn-danger" @onclick="(() => DeleteBy(m))" />
+                                    <input type="button" name="btnToggle" value="Toggle" class="btn btn-sm btn-primary" @onclick="(() => ToggleBy(m))" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+    <div class="col-md-12">
+        <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+    </div>
+    <div class="col-md-12">
+        <SearchBox placeholder="Search Divisions..." SearchQueryChanged="Search"></SearchBox>
+    </div>
+</div>
 
-<SearchBox></SearchBox>
+@*입력 또는 수정 폼 모달 다이얼로그*@
+<ModalForm @ref="EditorFormReference" ModelSender="model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit" UserName="@UserName">
+    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+</ModalForm>
 
-<SortOrderArrow></SortOrderArrow>
+@*삭제 폼 모달 다이얼로그*@
+<DeleteDialog @ref="DeleteDialogReference" OnClickCallback="DeleteClick">
+</DeleteDialog>
+
+@if (IsInlineDialogShow)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Toggle</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Do you want to toggle post #@(model.Id)?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="ToggleClick">Toggle</button>
+                    <button type="button" class="btn btn-secondary" @onclick="ToggleClose">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
