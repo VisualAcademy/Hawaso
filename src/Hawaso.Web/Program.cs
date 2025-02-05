@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 using Hawaso.Web.Components.Pages.DivisionPages.Models;
+using Dalbodre.Infrastructures.Cores;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,5 +92,34 @@ app.MapControllerRoute(
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 app.MapDefaultEndpoints();
+
+
+
+
+
+
+
+
+
+#region Divisions Table Create
+try
+{
+    DivisionTableEnsurer tableEnsurer = new DivisionTableEnsurer(connectionString);
+    // Divisions 테이블이 없으면 생성
+    tableEnsurer.EnsureDivisionsTableExists();
+}
+catch (Exception)
+{
+
+}
+#endregion
+
+
+
+
+
+
+
+
 
 app.Run();
