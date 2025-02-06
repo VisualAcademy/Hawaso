@@ -1,13 +1,8 @@
 ﻿namespace Dalbodre.Infrastructures.Cores;
 
-public class AspNetUsersTableEnhancer
+public class AspNetUsersTableEnhancer(string connectionString)
 {
-    private readonly string _connectionString;
-
-    public AspNetUsersTableEnhancer(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
+    private readonly string _connectionString = connectionString;
 
     // AspNetUsers 테이블에 필요한 컬럼이 없으면 추가하는 메서드
     public void EnsureColumnsExist()
