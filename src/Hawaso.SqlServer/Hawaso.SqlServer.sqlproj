@@ -157,5 +157,6 @@
     <Build Include="Portals\Changes.sql" />
     <Build Include="dbo\Tables\Divisions.sql" />
     <Build Include="dbo\Tables\ApplicantsTransfers.sql" />
+    <Build Include="Zero\DailyLogs.sql" />
   </ItemGroup>
 </Project>

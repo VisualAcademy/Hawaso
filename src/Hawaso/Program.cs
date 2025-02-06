@@ -12,6 +12,7 @@ using Hawaso.Extensions.Libraries;
 using Hawaso.Extensions.Memos;
 using Hawaso.Infrastructures;
 using Hawaso.Infrastructures.All.Identity;
+using Hawaso.Infrastructures.Reports;
 using Hawaso.Infrastructures.Tenants;
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
@@ -118,10 +119,22 @@ services.AddDbContext<NoteDbContext>(options =>
 //schemaEnhancerChanges.CreateChangesTable();
 #endregion
 
+
+
+
 #region AspNetUsers 테이블에 새로운 컬럼 추가 
 var aspNetUsersTableAddColumn = new AspNetUsersTableEnhancer(Configuration.GetConnectionString("DefaultConnection"));
 aspNetUsersTableAddColumn.EnsureColumnsExist();
 #endregion
+
+
+
+#region DailyLogs 테이블 생성 및 컬럼 확인
+var dailyLogsTableEnhancer = new DailyLogsTableEnhancer(Configuration.GetConnectionString("DefaultConnection"));
+dailyLogsTableEnhancer.EnsureDailyLogsTable();
+#endregion
+
+
 
 // 의존성 주입 컨테이너 설정
 DependencyInjectionContainer(services);
