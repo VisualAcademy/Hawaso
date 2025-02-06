@@ -27,6 +27,9 @@ public class AspNetUsersTableEnhancer
                 // RefreshTokenExpiryTime 컬럼 추가
                 AddColumnIfNotExists(connection, "RefreshTokenExpiryTime", "DATETIME NULL");
 
+                // DivisionId 컬럼 추가
+                AddColumnIfNotExists(connection, "DivisionId", "BigInt Null Default 0");
+
                 connection.Close();
             }
             catch (Exception ex)

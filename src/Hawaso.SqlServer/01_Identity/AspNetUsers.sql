@@ -33,6 +33,8 @@ CREATE TABLE [dbo].[AspNetUsers] (
 
     RefreshTokenExpiryTime DATETIME NULL, 
 
+    DivisionId BigInt Null Default 0, 
+
     CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)             -- 기본키 설정
 );
 
