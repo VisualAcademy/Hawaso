@@ -9,8 +9,15 @@
 
 
 
+    has_tribal_affiliation: null, 
+    tribal_affiliation_tribe: null,
+    tribal_enrollment_number: null, 
+    tribal_location: null, 
+    tribal_affiliation: [], // models.TribalAffiliation() 
 
 
+    has_family_employees: null, 
+    family_employees: [], // models.Person() 
 
 
 
