@@ -1,7 +1,4 @@
-﻿using System;
-using Microsoft.Data.SqlClient;
-
-namespace Hawaso.Infrastructures.Reports
+﻿namespace Hawaso.Infrastructures.Reports
 {
     public class DailyLogsTableEnhancer
     {
