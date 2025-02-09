@@ -1,0 +1,54 @@
+﻿/* 드롭다운 버튼 스타일 */
+.dul-btn {
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+    .dul-btn:hover, .dul-btn:focus {
+    }
+
+/* 드롭다운 컨테이너 */
+.dul-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* 드롭다운 내용 */
+.dul-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 200px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+    /* 드롭다운 링크 스타일 */
+    .dul-dropdown-content a {
+        color: black;
+        padding: 10px 12px;
+        text-decoration: none;
+        display: block;
+        font-size: 14px;
+    }
+
+        .dul-dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+/* 드롭다운이 열렸을 때 표시 */
+.dul-show {
+    display: block;
+}
+
+.dul-icon {
+    display: inline-block;
+    max-width: 100%;
+}
+
+.dul-icon-size2 {
+    height: 14px;
+    width: 14px;
+}
