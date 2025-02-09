@@ -1,54 +1,54 @@
-﻿namespace Hawaso.Infrastructures.Reports
+﻿namespace Hawaso.Infrastructures.Reports;
+
+public class DailyLogsTableEnhancer
 {
-    public class DailyLogsTableEnhancer
+    private readonly string _connectionString;
+
+    public DailyLogsTableEnhancer(string connectionString)
     {
-        private readonly string _connectionString;
+        _connectionString = connectionString;
+    }
 
-        public DailyLogsTableEnhancer(string connectionString)
+    // 테이블이 없으면 생성하고, 컬럼이 없으면 추가하는 메서드
+    public void EnsureDailyLogsTable()
+    {
+        using (SqlConnection connection = new SqlConnection(_connectionString))
         {
-            _connectionString = connectionString;
-        }
-
-        // 테이블이 없으면 생성하고, 컬럼이 없으면 추가하는 메서드
-        public void EnsureDailyLogsTable()
-        {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            try
             {
-                try
-                {
-                    connection.Open();
+                connection.Open();
 
-                    // 1. DailyLogs 테이블이 없으면 생성
-                    CreateDailyLogsTableIfNotExists(connection);
+                // 1. DailyLogs 테이블이 없으면 생성
+                CreateDailyLogsTableIfNotExists(connection);
 
-                    // 2. DailyLogs 테이블에 필요한 컬럼이 없으면 추가
-                    AddColumnIfNotExists(connection, "DivisionId", "BIGINT NULL DEFAULT 0");
-                    AddColumnIfNotExists(connection, "DivisionName", "NVARCHAR(255) NULL");
+                // 2. DailyLogs 테이블에 필요한 컬럼이 없으면 추가
+                AddColumnIfNotExists(connection, "DivisionId", "BIGINT NULL DEFAULT 0");
+                AddColumnIfNotExists(connection, "DivisionName", "NVARCHAR(255) NULL");
 
-                    connection.Close();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error updating DailyLogs table: {ex.Message}");
-                }
+                connection.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating DailyLogs table: {ex.Message}");
             }
         }
+    }
 
-        // 특정 테이블이 존재하는지 확인 후 생성하는 메서드
-        private void CreateDailyLogsTableIfNotExists(SqlConnection connection)
-        {
-            string checkTableQuery = @"
+    // 특정 테이블이 존재하는지 확인 후 생성하는 메서드
+    private void CreateDailyLogsTableIfNotExists(SqlConnection connection)
+    {
+        string checkTableQuery = @"
                 SELECT COUNT(*) 
                 FROM INFORMATION_SCHEMA.TABLES 
                 WHERE TABLE_SCHEMA = 'dbo' 
                 AND TABLE_NAME = 'DailyLogs'";
 
-            using (SqlCommand cmdCheck = new SqlCommand(checkTableQuery, connection))
+        using (SqlCommand cmdCheck = new SqlCommand(checkTableQuery, connection))
+        {
+            int tableCount = (int)cmdCheck.ExecuteScalar();
+            if (tableCount == 0)
             {
-                int tableCount = (int)cmdCheck.ExecuteScalar();
-                if (tableCount == 0)
-                {
-                    string createTableQuery = @"
+                string createTableQuery = @"
                         CREATE TABLE [dbo].[DailyLogs] (
                             [ID]                INT             IDENTITY(1,1) NOT NULL PRIMARY KEY,
                             [ParentKey]         NVARCHAR(255)   NULL,  
@@ -87,18 +87,18 @@
                             [Security]          BIT             NULL
                         )";
 
-                    using (SqlCommand cmdCreateTable = new SqlCommand(createTableQuery, connection))
-                    {
-                        cmdCreateTable.ExecuteNonQuery();
-                    }
+                using (SqlCommand cmdCreateTable = new SqlCommand(createTableQuery, connection))
+                {
+                    cmdCreateTable.ExecuteNonQuery();
                 }
             }
         }
+    }
 
-        // 특정 컬럼이 존재하지 않으면 추가하는 메서드
-        private void AddColumnIfNotExists(SqlConnection connection, string columnName, string columnDefinition)
-        {
-            string query = $@"
+    // 특정 컬럼이 존재하지 않으면 추가하는 메서드
+    private void AddColumnIfNotExists(SqlConnection connection, string columnName, string columnDefinition)
+    {
+        string query = $@"
                 IF NOT EXISTS (
                     SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
                     WHERE TABLE_NAME = 'DailyLogs' AND COLUMN_NAME = '{columnName}'
@@ -107,10 +107,9 @@
                     ALTER TABLE dbo.DailyLogs ADD {columnName} {columnDefinition};
                 END";
 
-            using (SqlCommand command = new SqlCommand(query, connection))
-            {
-                command.ExecuteNonQuery();
-            }
+        using (SqlCommand command = new SqlCommand(query, connection))
+        {
+            command.ExecuteNonQuery();
         }
     }
 }
