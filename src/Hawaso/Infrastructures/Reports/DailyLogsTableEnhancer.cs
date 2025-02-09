@@ -1,13 +1,8 @@
 ﻿namespace Hawaso.Infrastructures.Reports;
 
-public class DailyLogsTableEnhancer
+public class DailyLogsTableEnhancer(string connectionString)
 {
-    private readonly string _connectionString;
-
-    public DailyLogsTableEnhancer(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
+    private readonly string _connectionString = connectionString;
 
     // 테이블이 없으면 생성하고, 컬럼이 없으면 추가하는 메서드
     public void EnsureDailyLogsTable()
