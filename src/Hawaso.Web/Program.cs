@@ -61,12 +61,11 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 builder.Services.AddDependencyInjectionContainerForDivisionApp(connectionString);
 
 
-
-builder.Services.AddDbContext<VendorsClientsDbContext>(options => { }, ServiceLifetime.Scoped);
-builder.Services.AddScoped<VendorsClientsDbContextFactory>();
-builder.Services.AddSingleton<IUserService, UserService>();
-builder.Services.AddTransient<IVendorRepository, VendorRepository>();
-
+builder.Services.AddDependencyInjectionContainerForVendorPermanentDelete(connectionString);
+//builder.Services.AddDbContext<VendorPermanentDeleteDbContext>(options => { }, ServiceLifetime.Scoped);
+//builder.Services.AddScoped<VendorPermanentDeleteDbContextFactory>();
+//builder.Services.AddSingleton<IUserServicePermanentDelete, UserServicePermanentDelete>();
+//builder.Services.AddTransient<IVendorRepositoryPermanentDelete, VendorRepositoryPermanentDelete>();
 
 var app = builder.Build();
 

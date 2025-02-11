@@ -1,8 +1,8 @@
-﻿@page "/vendors-permanat-delete"
+﻿@page "/vendors-permanant-delete"
 @using Hawaso.Web.Components.Pages.VendorPages.Models
 
-@inject IVendorRepository VendorRepository
-@inject IUserService UserService
+@inject IVendorRepositoryPermanentDelete VendorRepository
+@inject IUserServicePermanentDelete UserService
 @inject IJSRuntime JSRuntime
 
 <div class="container">
@@ -105,8 +105,8 @@
     private bool showAddEditModal = false;
     private bool showDeleteModal = false;
     private bool isEditMode = false;
-    private Vendor currentVendor = new();
-    private List<Vendor> vendors = new();
+    private VendorPermanentDelete currentVendor = new();
+    private List<VendorPermanentDelete> vendors = new();
     private long vendorToDeleteId;
 
     protected override async Task OnInitializedAsync()
@@ -117,12 +117,12 @@
 
     private void ShowAddModal()
     {
-        currentVendor = new Vendor { Active = true };
+        currentVendor = new VendorPermanentDelete { Active = true };
         isEditMode = false;
         showAddEditModal = true;
     }
 
-    private void ShowEditModal(Vendor vendor)
+    private void ShowEditModal(VendorPermanentDelete vendor)
     {
         currentVendor = vendor;
         isEditMode = true;

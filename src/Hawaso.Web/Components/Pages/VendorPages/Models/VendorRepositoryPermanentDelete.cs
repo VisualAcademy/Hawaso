@@ -2,29 +2,29 @@
 
 namespace Hawaso.Web.Components.Pages.VendorPages.Models
 {
-    public class VendorRepository : IVendorRepository
+    public class VendorRepositoryPermanentDelete : IVendorRepositoryPermanentDelete
     {
-        private readonly VendorsClientsDbContextFactory _dbContextFactory;
+        private readonly VendorPermanentDeleteDbContextFactory _dbContextFactory;
 
-        public VendorRepository(VendorsClientsDbContextFactory dbContextFactory)
+        public VendorRepositoryPermanentDelete(VendorPermanentDeleteDbContextFactory dbContextFactory)
         {
             _dbContextFactory = dbContextFactory;
         }
 
-        public async Task AddAsync(Vendor vendor, string connectionString)
+        public async Task AddAsync(VendorPermanentDelete vendor, string connectionString)
         {
             using var context = _dbContextFactory.CreateDbContext(connectionString);
             await context.Vendors.AddAsync(vendor);
             await context.SaveChangesAsync();
         }
 
-        public async Task<List<Vendor>> GetAllAsync(string connectionString)
+        public async Task<List<VendorPermanentDelete>> GetAllAsync(string connectionString)
         {
             using var context = _dbContextFactory.CreateDbContext(connectionString);
             return await context.Vendors.ToListAsync();
         }
 
-        public async Task UpdateAsync(Vendor vendor, string connectionString)
+        public async Task UpdateAsync(VendorPermanentDelete vendor, string connectionString)
         {
             using var context = _dbContextFactory.CreateDbContext(connectionString);
             context.Entry(vendor).State = EntityState.Modified;

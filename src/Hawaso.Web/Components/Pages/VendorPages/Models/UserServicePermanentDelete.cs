@@ -1,17 +1,17 @@
 ﻿namespace Hawaso.Web.Components.Pages.VendorPages.Models
 {
-    public class UserService : IUserService
+    public class UserServicePermanentDelete : IUserServicePermanentDelete
     {
         private readonly IConfiguration _configuration;
 
-        public UserService(IConfiguration configuration)
+        public UserServicePermanentDelete(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        public Tenant GetUserNotCached()
+        public TenantPermanentDelete GetUserNotCached()
         {
-            return new Tenant
+            return new TenantPermanentDelete
             {
                 ConnectionString = _configuration.GetConnectionString("TenantDbConnection")
             };

@@ -2,29 +2,29 @@
 
 namespace Hawaso.Web.Components.Pages.VendorPages.Models
 {
-    public class VendorsClientsDbContextFactory : IDbContextFactory<VendorsClientsDbContext>
+    public class VendorPermanentDeleteDbContextFactory : IDbContextFactory<VendorPermanentDeleteDbContext>
     {
         private readonly IConfiguration _configuration;
 
-        public VendorsClientsDbContextFactory(IConfiguration configuration)
+        public VendorPermanentDeleteDbContextFactory(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        public VendorsClientsDbContext CreateDbContext(string connectionString)
+        public VendorPermanentDeleteDbContext CreateDbContext(string connectionString)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
                 connectionString = _configuration.GetConnectionString("TenantDbConnection");
             }
 
-            var optionsBuilder = new DbContextOptionsBuilder<VendorsClientsDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<VendorPermanentDeleteDbContext>();
             optionsBuilder.UseSqlServer(connectionString);
 
-            return new VendorsClientsDbContext(optionsBuilder.Options);
+            return new VendorPermanentDeleteDbContext(optionsBuilder.Options);
         }
 
-        public VendorsClientsDbContext CreateDbContext()
+        public VendorPermanentDeleteDbContext CreateDbContext()
         {
             var defaultConnectionString = _configuration.GetConnectionString("TenantDbConnection");
             return CreateDbContext(defaultConnectionString);

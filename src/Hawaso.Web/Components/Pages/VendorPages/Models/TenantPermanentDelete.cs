@@ -1,6 +1,6 @@
 ﻿namespace Hawaso.Web.Components.Pages.VendorPages.Models
 {
-    public class Tenant
+    public class TenantPermanentDelete
     {
         public string ConnectionString { get; set; }
     }

@@ -2,7 +2,7 @@
 
 namespace Hawaso.Web.Components.Pages.VendorPages.Models
 {
-    public class Vendor
+    public class VendorPermanentDelete
     {
         [Key]
         public long ID { get; set; }
