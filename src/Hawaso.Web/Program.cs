@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Hawaso.Web.Components.Pages.DivisionPages.Models;
 using Dalbodre.Infrastructures.Cores;
+using Hawaso.Web.Components.Pages.VendorPages.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +59,11 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 // 부서 관리: 기본 CRUD 교과서 코드
 builder.Services.AddDependencyInjectionContainerForDivisionApp(connectionString);
+
+
+
+// UserService 등록
+builder.Services.AddSingleton<IUserService, UserService>();
 
 
 
