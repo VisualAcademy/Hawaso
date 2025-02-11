@@ -1,0 +1,171 @@
+﻿@page "/vendors-permanant-delete"
+@using Hawaso.Web.Components.Pages.VendorPages.Models
+
+@inject IVendorRepositoryPermanentDelete VendorRepository
+@inject IUserServicePermanentDelete UserService
+@inject IJSRuntime JSRuntime
+
+<div class="container">
+    <h4>Vendors Management</h4>
+
+    <button class="btn btn-primary" @onclick="ShowAddModal">Add Vendor</button>
+
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Active</th>
+                <th>Name</th>
+                @* 
+                <th>Alias</th>
+                <th>License Number</th>
+                <th>License Date</th>
+                <th>License Renewal Date</th>
+                <th>License Expiration Date</th>
+ *@
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vendor in vendors)
+            {
+                <tr>
+                    <td>@vendor.ID</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" @onclick="() => ToggleActive(vendor.ID)">
+                            @(vendor.Active ? "Deactivate" : "Activate")
+                        </button>
+                    </td>
+                    <td>@vendor.Name</td>
+                    @* 
+                    <td>@vendor.Alias</td>
+                    <td>@vendor.LicenseNumber</td>
+                    <td>@vendor.LicenseDate?.ToString("yyyy-MM-dd")</td>
+                    <td>@vendor.LicenseRenewalDate?.ToString("yyyy-MM-dd")</td>
+                    <td>@vendor.LicenseExpirationDate?.ToString("yyyy-MM-dd")</td>
+ *@
+                    <td>
+                        <button class="btn btn-sm btn-warning" @onclick="() => ShowEditModal(vendor)">Edit</button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => ShowDeleteModal(vendor.ID)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Add/Edit Modal -->
+@if (showAddEditModal)
+{
+    <div class="modal show d-block">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@(isEditMode ? "Edit Vendor" : "Add Vendor")</h5>
+                    <button type="button" class="close" @onclick="CloseModals">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="vendorName">Name:</label>
+                        <input type="text" class="form-control" id="vendorName" placeholder="Enter Name" @bind-value="currentVendor.Name">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CloseModals">Close</button>
+                    <button class="btn btn-primary" @onclick="SaveVendor">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Delete Confirmation Modal -->
+@if (showDeleteModal)
+{
+    <div class="modal show d-block">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Vendor</h5>
+                    <button type="button" class="close" @onclick="CloseModals">×</button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this vendor?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="CloseModals">Cancel</button>
+                    <button class="btn btn-danger" @onclick="ConfirmDelete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool showAddEditModal = false;
+    private bool showDeleteModal = false;
+    private bool isEditMode = false;
+    private VendorPermanentDelete currentVendor = new();
+    private List<VendorPermanentDelete> vendors = new();
+    private long vendorToDeleteId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var connectionString = UserService.GetUserNotCached().ConnectionString;
+        vendors = await VendorRepository.GetAllAsync(connectionString);
+    }
+
+    private void ShowAddModal()
+    {
+        currentVendor = new VendorPermanentDelete { Active = true };
+        isEditMode = false;
+        showAddEditModal = true;
+    }
+
+    private void ShowEditModal(VendorPermanentDelete vendor)
+    {
+        currentVendor = vendor;
+        isEditMode = true;
+        showAddEditModal = true;
+    }
+
+    private void ShowDeleteModal(long id)
+    {
+        vendorToDeleteId = id;
+        showDeleteModal = true;
+    }
+
+    private async Task SaveVendor()
+    {
+        var connectionString = UserService.GetUserNotCached().ConnectionString;
+
+        if (isEditMode)
+            await VendorRepository.UpdateAsync(currentVendor, connectionString);
+        else
+            await VendorRepository.AddAsync(currentVendor, connectionString);
+
+        vendors = await VendorRepository.GetAllAsync(connectionString);
+        showAddEditModal = false;
+    }
+
+    private async Task ToggleActive(long id)
+    {
+        var connectionString = UserService.GetUserNotCached().ConnectionString;
+        await VendorRepository.ToggleActiveAsync(id, connectionString);
+        vendors = await VendorRepository.GetAllAsync(connectionString);
+    }
+
+    private async Task ConfirmDelete()
+    {
+        var connectionString = UserService.GetUserNotCached().ConnectionString;
+        await VendorRepository.DeleteAsync(vendorToDeleteId, connectionString);
+        vendors = await VendorRepository.GetAllAsync(connectionString);
+        showDeleteModal = false;
+    }
+
+    private void CloseModals()
+    {
+        showAddEditModal = false;
+        showDeleteModal = false;
+    }
+}

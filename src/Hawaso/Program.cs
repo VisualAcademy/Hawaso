@@ -17,6 +17,7 @@ using Hawaso.Infrastructures.Tenants;
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
 using Hawaso.Settings;
+using Hawaso.Web.Components.Pages.VendorPages.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -211,6 +212,12 @@ var aiConfig = builder.Configuration.GetSection("SmartComponents");
 //    endpoint: aiConfig["Endpoint"],
 //    new DefaultAzureCredential()); 
 #endregion
+
+
+
+
+
+services.AddDependencyInjectionContainerForVendorPermanentDelete(connectionString);
 
 
 
