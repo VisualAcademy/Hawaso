@@ -62,9 +62,10 @@ builder.Services.AddDependencyInjectionContainerForDivisionApp(connectionString)
 
 
 
-// UserService µî·Ï
+builder.Services.AddDbContext<VendorsClientsDbContext>(options => { }, ServiceLifetime.Scoped);
+builder.Services.AddScoped<VendorsClientsDbContextFactory>();
 builder.Services.AddSingleton<IUserService, UserService>();
-
+builder.Services.AddTransient<IVendorRepository, VendorRepository>();
 
 
 var app = builder.Build();
