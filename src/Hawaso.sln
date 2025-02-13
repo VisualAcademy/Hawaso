@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hawaso.Tests", "Hawaso.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hawaso.Web", "Hawaso.Web\Hawaso.Web.csproj", "{270FDAEB-5F90-4A46-8755-96185478C48D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "All", "All\All.csproj", "{587E4008-E141-47C4-A008-57A85815785D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{270FDAEB-5F90-4A46-8755-96185478C48D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{270FDAEB-5F90-4A46-8755-96185478C48D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{270FDAEB-5F90-4A46-8755-96185478C48D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{587E4008-E141-47C4-A008-57A85815785D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{587E4008-E141-47C4-A008-57A85815785D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{587E4008-E141-47C4-A008-57A85815785D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{587E4008-E141-47C4-A008-57A85815785D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
