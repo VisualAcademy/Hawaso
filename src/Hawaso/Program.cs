@@ -1,3 +1,4 @@
+using All.Services;
 using Azure.Identity;
 using Blazored.Toast;
 using Dalbodre.Infrastructures;
@@ -77,7 +78,7 @@ services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-services.AddTransient<IEmailSender, EmailSender>();
+services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailSender>();
 
 services.AddControllersWithViews();
 services.AddRazorPages();
@@ -218,6 +219,8 @@ var aiConfig = builder.Configuration.GetSection("SmartComponents");
 
 
 services.AddDependencyInjectionContainerForVendorPermanentDelete(connectionString);
+
+
 
 
 
