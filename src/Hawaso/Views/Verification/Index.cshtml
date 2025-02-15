@@ -1,5 +1,47 @@
-﻿@{
-    Layout = null;
+﻿@using Hawaso.Controllers
+@model IndexViewModel
+@{
+    ViewData["Title"] = "Manage your account";
 }
 
-<h1>Verification Page</h1>
+<h2>@ViewData["Title"].</h2>
+<p class="text-success">@ViewData["StatusMessage"]</p>
+
+<div>
+    <h4>Change your account settings</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Phone Number:</dt>
+        <dd>
+            @(Model.PhoneNumber ?? "None")
+            @if (Model.PhoneNumber != null)
+            {
+                <br />
+                <a asp-controller="Verification" asp-action="AddPhoneNumber" class="btn btn-primary">Change</a>
+                <form asp-controller="Verification" asp-action="RemovePhoneNumber" method="post">
+                    <button type="submit" class="btn btn-danger">Remove</button>
+                </form>
+            }
+            else
+            {
+                <a asp-controller="Verification" asp-action="AddPhoneNumber" class="btn btn-primary">Add</a>
+            }
+        </dd>
+
+        <dt>Two-Factor Authentication:</dt>
+        <dd>
+            @if (Model.TwoFactor)
+            {
+                <form asp-controller="Verification" asp-action="DisableTwoFactorAuthentication" method="post" class="form-horizontal">
+                    Enabled <button type="submit" class="btn btn-primary">Disable</button>
+                </form>
+            }
+            else
+            {
+                <form asp-controller="Verification" asp-action="EnableTwoFactorAuthentication" method="post" class="form-horizontal">
+                    <button type="submit" class="btn btn-primary">Enable</button> Disabled
+                </form>
+            }
+        </dd>
+    </dl>
+</div>

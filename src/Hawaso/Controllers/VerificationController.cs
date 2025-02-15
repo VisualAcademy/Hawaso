@@ -1,4 +1,5 @@
-﻿using All.Models.ManageViewModels;
+﻿using All.Models.Enums;
+using All.Models.ManageViewModels;
 using All.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +7,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hawaso.Controllers
 {
+    public class IndexViewModel
+    {
+        public bool HasPassword { get; set; }
+
+        public IList<UserLoginInfo> Logins { get; set; }
+
+        public string PhoneNumber { get; set; }
+
+        public bool TwoFactor { get; set; }
+
+        public bool BrowserRemembered { get; set; }
+    }
+
     [Authorize]
     public class VerificationController : Controller
     {
@@ -29,9 +43,33 @@ namespace Hawaso.Controllers
             _logger = loggerFactory.CreateLogger<VerificationController>();
         }
 
-        public IActionResult Index()
+        // GET: /Verification/Index
+        [HttpGet]
+        public async Task<IActionResult> Index(ManageMessageId? message = null)
         {
-            return View();
+            ViewData["StatusMessage"] =
+                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
+                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
+                : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
+                : message == ManageMessageId.Error ? "An error has occurred."
+                : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
+                : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
+                : "";
+
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return View("Error");
+            }
+            var model = new IndexViewModel
+            {
+                HasPassword = await _userManager.HasPasswordAsync(user),
+                PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
+                TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
+                Logins = await _userManager.GetLoginsAsync(user),
+                BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user)
+            };
+            return View(model);
         }
 
         [HttpGet]
