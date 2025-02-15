@@ -99,10 +99,29 @@ namespace Hawaso.Controllers
             return View();
         }
 
+        // POST: /Verification/RemovePhoneNumber
         [HttpPost]
-        public IActionResult RemovePhoneNumber()
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemovePhoneNumber()
         {
-            return RedirectToAction(nameof(Index)); 
+            // 현재 로그인한 사용자 정보를 비동기적으로 가져옴
+            var user = await GetCurrentUserAsync();
+            if (user != null)
+            {
+                // 사용자의 전화번호를 제거(null로 설정)
+                var result = await _userManager.SetPhoneNumberAsync(user, null);
+                if (result.Succeeded)
+                {
+                    // 변경된 사용자 정보를 반영하여 다시 로그인 처리
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+
+                    // 전화번호 제거 성공 메시지를 포함하여 Index 페이지로 리디렉트
+                    return RedirectToAction(nameof(Index), new { Message = ManageMessageId.RemovePhoneSuccess });
+                }
+            }
+
+            // 오류 발생 시 에러 메시지를 포함하여 Index 페이지로 리디렉트
+            return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
         }
 
         #region Helpers
