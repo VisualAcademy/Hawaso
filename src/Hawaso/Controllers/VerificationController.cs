@@ -93,7 +93,7 @@ namespace Hawaso.Controllers
             }
 
             // 새로운 인증 코드 생성
-            //var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
+            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
 
             // 사용자에게 인증 코드 전송
             //await twilioSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
