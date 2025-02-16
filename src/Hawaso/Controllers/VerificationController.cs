@@ -72,17 +72,34 @@ namespace Hawaso.Controllers
             return View(model);
         }
 
+        // GET: /Verification/AddPhoneNumber
         [HttpGet]
-        public IActionResult AddPhoneNumber()
-        {
-            return View();
-        }
+        public IActionResult AddPhoneNumber() => View();
 
+        // POST: /Verification/AddPhoneNumber
         [HttpPost]
-        public IActionResult AddPhoneNumber(AddPhoneNumberViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddPhoneNumber(AddPhoneNumberViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
-            return View();
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return View("Error");
+            }
+
+            // 새로운 인증 코드 생성
+            //var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
+
+            // 사용자에게 인증 코드 전송
+            //await twilioSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
+
+            // VerifyPhoneNumber 페이지로 이동하여 인증 코드 입력
+            return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
         }
 
         [HttpGet]
