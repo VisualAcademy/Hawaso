@@ -102,18 +102,50 @@ namespace Hawaso.Controllers
             return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
         }
 
+        // GET: /Verification/VerifyPhoneNumber
         [HttpGet]
-        public IActionResult VerifyPhoneNumber()
+        public async Task<IActionResult> VerifyPhoneNumber(string phoneNumber)
         {
-            return View();
+            var user = await GetCurrentUserAsync();
+            if (user == null)
+            {
+                return View("Error");
+            }
+
+            return phoneNumber == null 
+                ? View("Error") 
+                : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
         }
 
 
+        // 휴대폰 번호 인증을 처리하는 POST 메서드
         [HttpPost]
-        public IActionResult VerifyPhoneNumber(VerifyPhoneNumberViewModel model)
+        [ValidateAntiForgeryToken] // CSRF 공격을 방지하기 위한 토큰 검증
+        public async Task<IActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model)
         {
+            // 모델 유효성 검사 실패 시, 다시 입력 폼을 표시
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
 
-            return View();
+            // 현재 로그인한 사용자 정보를 가져옴
+            var user = await GetCurrentUserAsync();
+            if (user != null)
+            {
+                // 사용자의 휴대폰 번호를 변경하고 인증 코드 확인
+                var result = await _userManager.ChangePhoneNumberAsync(user, model.PhoneNumber, model.Code);
+                if (result.Succeeded)
+                {
+                    // 성공 시, 다시 로그인 처리 후 성공 메시지와 함께 리디렉트
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction(nameof(Index), new { Message = ManageMessageId.AddPhoneSuccess });
+                }
+            }
+
+            // 인증 실패 시, 오류 메시지를 추가하고 입력 폼을 다시 표시
+            ModelState.AddModelError(string.Empty, "휴대폰 번호 인증에 실패했습니다.");
+            return View(model);
         }
 
         // POST: /Verification/RemovePhoneNumber
