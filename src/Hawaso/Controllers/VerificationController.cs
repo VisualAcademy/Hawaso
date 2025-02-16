@@ -173,6 +173,52 @@ namespace Hawaso.Controllers
             return RedirectToAction(nameof(Index), new { Message = ManageMessageId.Error });
         }
 
+        // 2단계 인증 활성화를 처리하는 POST 메서드
+        [HttpPost]
+        [ValidateAntiForgeryToken] // CSRF 공격을 방지하기 위한 토큰 검증
+        public async Task<IActionResult> EnableTwoFactorAuthentication()
+        {
+            // 현재 로그인한 사용자 정보를 가져옴
+            var user = await GetCurrentUserAsync();
+            if (user != null)
+            {
+                // 사용자의 2단계 인증을 활성화
+                await _userManager.SetTwoFactorEnabledAsync(user, true);
+
+                // 인증 정보를 업데이트하여 다시 로그인 처리
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                // 로그 기록: 2단계 인증 활성화됨
+                _logger.LogInformation(1, "사용자가 2단계 인증을 활성화했습니다.");
+            }
+
+            // 인증 관리 페이지로 리디렉트
+            return RedirectToAction(nameof(Index), "Verification");
+        }
+
+        // 2단계 인증 비활성을 처리하는 POST 메서드
+        [HttpPost]
+        [ValidateAntiForgeryToken] // CSRF 공격을 방지하기 위한 토큰 검증
+        public async Task<IActionResult> DisableTwoFactorAuthentication()
+        {
+            // 현재 로그인한 사용자 정보를 가져옴
+            var user = await GetCurrentUserAsync();
+            if (user != null)
+            {
+                // 사용자의 2단계 인증을 비활성화
+                await _userManager.SetTwoFactorEnabledAsync(user, false);
+
+                // 인증 정보를 업데이트하여 다시 로그인 처리
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                // 로그 기록: 2단계 인증 비활성화됨
+                _logger.LogInformation(2, "사용자가 2단계 인증을 비활성화했습니다.");
+            }
+
+            // 인증 관리 페이지로 리디렉트
+            return RedirectToAction(nameof(Index), "Verification");
+        }
+
         #region Helpers
 
         private void AddErrors(IdentityResult result)
