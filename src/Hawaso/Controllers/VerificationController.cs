@@ -71,7 +71,9 @@ namespace All.Controllers
                 PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
                 TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
                 Logins = await _userManager.GetLoginsAsync(user),
-                BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user)
+                BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
+                IsEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user),
+                IsPhoneNumberConfirmed = !string.IsNullOrEmpty(user.PhoneNumber)
             };
             return View(model);
         }
