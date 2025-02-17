@@ -16,3 +16,5 @@ global using System.Net;
 global using System.Threading.Tasks;
 global using System.Timers;
 global using VisualAcademy.Models.Uploads;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.AspNetCore.Identity;

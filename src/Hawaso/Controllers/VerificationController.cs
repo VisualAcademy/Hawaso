@@ -1,11 +1,8 @@
 ﻿using All.Models.Enums;
 using All.Models.ManageViewModels;
 using All.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 
-namespace Hawaso.Controllers
+namespace All.Controllers
 {
     public class IndexViewModel
     {
@@ -25,21 +22,24 @@ namespace Hawaso.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
+        private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
+        private readonly ITwilioSender _twilioSender;
 
         public VerificationController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             //IEmailSender emailSender,
             //ISmsSender smsSender,
+            //ITwilioSender twilioSender,
             ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             //_emailSender = emailSender;
             //_smsSender = smsSender;
+            //_twilioSender = twilioSender;
             _logger = loggerFactory.CreateLogger<VerificationController>();
         }
 
@@ -220,15 +220,6 @@ namespace Hawaso.Controllers
         }
 
         #region Helpers
-
-        private void AddErrors(IdentityResult result)
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-        }
-
         private Task<ApplicationUser> GetCurrentUserAsync()
         {
             return _userManager.GetUserAsync(HttpContext.User);
