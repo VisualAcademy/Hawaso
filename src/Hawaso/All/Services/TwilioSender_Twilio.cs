@@ -8,15 +8,15 @@ namespace All.Services
     {
         public Task SendSmsAsync(string phoneNumber, string message)
         {
-            var accountPhone = "";
             var accountSid = "";
             var authToken = "";
+            var twilioPhoneNumber = "";
 
             TwilioClient.Init(accountSid, authToken);
 
             return MessageResource.CreateAsync(
               to: new PhoneNumber(phoneNumber),
-              from: new PhoneNumber(accountPhone),
+              from: new PhoneNumber(twilioPhoneNumber),
               body: message);
         }
     }
