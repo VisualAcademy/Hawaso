@@ -222,6 +222,7 @@ services.AddDependencyInjectionContainerForVendorPermanentDelete(connectionStrin
 
 
 
+services.AddTransient<ITwilioSender, TwilioSender>();
 
 
 
