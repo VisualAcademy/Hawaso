@@ -6,15 +6,19 @@ namespace All.Controllers
 {
     public class IndexViewModel
     {
-        public bool HasPassword { get; set; }
+        public bool HasPassword { get; set; } // 사용자가 비밀번호를 설정했는지 여부
 
-        public IList<UserLoginInfo> Logins { get; set; }
+        public IList<UserLoginInfo> Logins { get; set; } // 사용자의 로그인 정보 목록
 
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; } // 사용자 전화번호
 
-        public bool TwoFactor { get; set; }
+        public bool TwoFactor { get; set; } // 2단계 인증 활성화 여부
 
-        public bool BrowserRemembered { get; set; }
+        public bool BrowserRemembered { get; set; } // 브라우저가 사용자 정보를 기억하는지 여부
+
+        public bool IsEmailConfirmed { get; set; } // 이메일 확인 여부
+
+        public bool IsPhoneNumberConfirmed { get; set; } // 전화번호 확인 여부
     }
 
     [Authorize]
