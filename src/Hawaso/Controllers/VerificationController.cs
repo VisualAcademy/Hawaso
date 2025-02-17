@@ -27,23 +27,17 @@ namespace All.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger _logger;
-        private readonly IEmailSender _emailSender;
-        private readonly ISmsSender _smsSender;
         private readonly ITwilioSender _twilioSender;
 
         public VerificationController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            //IEmailSender emailSender,
-            //ISmsSender smsSender,
-            //ITwilioSender twilioSender,
+            ITwilioSender twilioSender,
             ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            //_emailSender = emailSender;
-            //_smsSender = smsSender;
-            //_twilioSender = twilioSender;
+            _twilioSender = twilioSender;
             _logger = loggerFactory.CreateLogger<VerificationController>();
         }
 
@@ -102,7 +96,7 @@ namespace All.Controllers
             var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
 
             // 사용자에게 인증 코드 전송
-            //await twilioSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
+            await _twilioSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
 
             // VerifyPhoneNumber 페이지로 이동하여 인증 코드 입력
             return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
@@ -118,11 +112,8 @@ namespace All.Controllers
                 return View("Error");
             }
 
-            return phoneNumber == null 
-                ? View("Error") 
-                : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
+            return phoneNumber == null ? View("Error") : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
         }
-
 
         // 휴대폰 번호 인증을 처리하는 POST 메서드
         [HttpPost]
@@ -202,7 +193,7 @@ namespace All.Controllers
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
                 // 로그 기록: 2단계 인증 활성화됨
-                _logger.LogInformation(1, "사용자가 2단계 인증을 활성화했습니다.");
+                _logger.LogInformation(1, "User enabled two-factor authentication.");
             }
 
             // 인증 관리 페이지로 리디렉트
@@ -225,7 +216,7 @@ namespace All.Controllers
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
                 // 로그 기록: 2단계 인증 비활성화됨
-                _logger.LogInformation(2, "사용자가 2단계 인증을 비활성화했습니다.");
+                _logger.LogInformation(2, "User disabled two-factor authentication.");
             }
 
             // 인증 관리 페이지로 리디렉트
