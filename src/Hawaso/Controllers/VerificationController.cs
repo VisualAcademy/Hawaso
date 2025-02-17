@@ -167,6 +167,13 @@ namespace All.Controllers
                 var result = await _userManager.SetPhoneNumberAsync(user, null);
                 if (result.Succeeded)
                 {
+                    // 2FA가 활성화되어 있다면 비활성화 처리
+                    if (await _userManager.GetTwoFactorEnabledAsync(user))
+                    {
+                        await _userManager.SetTwoFactorEnabledAsync(user, false);
+                        _logger.LogInformation("Two-Factor Authentication has been disabled as the phone number was removed.");
+                    }
+
                     // 변경된 사용자 정보를 반영하여 다시 로그인 처리
                     await _signInManager.SignInAsync(user, isPersistent: false);
 
