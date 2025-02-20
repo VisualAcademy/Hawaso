@@ -12,7 +12,7 @@ namespace Domain.Entities
         /// <summary>
         /// 활성 상태 표시, 기본값 true (활성)
         /// </summary>
-        public bool Active { get; set; }
+        public bool Active { get; set; } = true;
 
         /// <summary>
         /// 레코드 생성 시간
@@ -22,11 +22,11 @@ namespace Domain.Entities
         /// <summary>
         /// 레코드 생성자 이름
         /// </summary>
-        public string CreatedBy { get; set; }
+        public string CreatedBy { get; set; } = "";
 
         /// <summary>
         /// 부서명
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
     }
 }
