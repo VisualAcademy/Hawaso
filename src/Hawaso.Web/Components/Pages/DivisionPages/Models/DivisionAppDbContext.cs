@@ -48,7 +48,12 @@ namespace Hawaso.Web.Components.Pages.DivisionPages.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Divisions 테이블의 Created, PostDate 열은 자동으로 GetDate() 제약 조건을 부여하기 
+            modelBuilder.Entity<DivisionModel>().ToTable("Divisions");
+            modelBuilder.Entity<DivisionModel>().HasKey(dm => dm.Id);
+            modelBuilder.Entity<DivisionModel>().Property(dm => dm.Id)
+                .ValueGeneratedOnAdd(); // DatabaseGeneratedOption.Identity와 동일
             modelBuilder.Entity<DivisionModel>().Property(m => m.CreatedAt).HasDefaultValueSql("GetDate()");
+            modelBuilder.Entity<DivisionModel>().Property(d => d.Name).IsRequired().HasMaxLength(255);
         }
 
         /// <summary>

@@ -6,14 +6,14 @@ namespace Hawaso.Web.Components.Pages.DivisionPages.Models
     /// <summary>
     /// 테이블과 일대일로 매핑되는 모델 클래스: Division, DivisionModel, ...
     /// </summary>
-    [Table("Divisions")]
+    //[Table("Divisions")]
     public class DivisionModel
     {
         /// <summary>
         /// 부서 고유 아이디, 자동 증가
         /// </summary>
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //[Key]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
         /// <summary>
