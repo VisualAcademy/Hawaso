@@ -11,6 +11,12 @@ public partial class DeleteDialog
     /// </summary>
     [Parameter]
     public EventCallback<MouseEventArgs> OnClickCallback { get; set; }
+
+    /// <summary>
+    /// Bootstrap 5 사용 여부 (기본값: true)
+    /// </summary>
+    [Parameter]
+    public bool UseBootstrap5 { get; set; } = true;
     #endregion
 
     #region Properties
