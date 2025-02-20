@@ -7,9 +7,16 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">@EditorFormTitle</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="Hide">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    @if (UseBootstrap5)
+                    {
+                        <button type="button" class="btn-close" aria-label="Close" @onclick="Hide"></button>
+                    }
+                    else
+                    {
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="Hide">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    }
                 </div>
                 <div class="modal-body">
                     @if (ModelEdit.Id != 0)

@@ -5,26 +5,39 @@ namespace Hawaso.Web.Components.Pages.DivisionPages.Components;
 
 public partial class ModalForm : ComponentBase
 {
-    #region Properties
+    #region Parameters
     /// <summary>
-    /// (글쓰기/글수정)모달 다이얼로그를 표시할건지 여부 
+    /// (글쓰기/글수정) 모달 다이얼로그를 표시할건지 여부 
     /// </summary>
     public bool IsShow { get; set; } = false;
-    #endregion
-
-    #region Public Methods
-    /// <summary>
-    /// 폼 보이기 
-    /// </summary>
-    public void Show() => IsShow = true; // 현재 인라인 모달 폼 보이기
 
     /// <summary>
-    /// 폼 닫기
+    /// Bootstrap 5 사용 여부 (기본값: true)
     /// </summary>
-    public void Hide() => IsShow = false; // 현재 인라인 모달 폼 숨기기
-    #endregion
+    [Parameter]
+    public bool UseBootstrap5 { get; set; } = true;
 
-    #region Parameters
+    /// <summary>
+    /// 부모 컴포넌트에게 생성(Create)이 완료되었다고 보고하는 콜백
+    /// </summary>
+    [Parameter]
+    public Action CreateCallback { get; set; }
+
+    /// <summary>
+    /// 부모 컴포넌트에게 수정(Edit)이 완료되었다고 보고하는 콜백
+    /// </summary>
+    [Parameter]
+    public EventCallback<bool> EditCallback { get; set; }
+
+    /// <summary>
+    /// 부모 키
+    /// </summary>
+    [Parameter]
+    public string ParentKey { get; set; } = "";
+
+    /// <summary>
+    /// 사용자 이름
+    /// </summary>
     [Parameter]
     public string UserName { get; set; }
 
@@ -41,34 +54,6 @@ public partial class ModalForm : ComponentBase
     public DivisionModel ModelSender { get; set; }
 
     public DivisionModel ModelEdit { get; set; }
-
-    #region Lifecycle Methods
-    // 넘어온 Model 값을 수정 전용 ModelEdit에 담기 
-    protected override void OnParametersSet()
-    {
-        ModelEdit = new DivisionModel();
-        ModelEdit.Id = ModelSender.Id;
-        ModelEdit.Name = ModelSender.Name;
-        // 더 많은 정보는 여기에서...
-    }
-    #endregion
-
-    /// <summary>
-    /// 부모 컴포넌트에게 생성(Create)이 완료되었다고 보고하는 목적으로 부모 컴포넌트에게 알림
-    /// 학습 목적으로 Action 대리자 사용
-    /// </summary>
-    [Parameter]
-    public Action CreateCallback { get; set; }
-
-    /// <summary>
-    /// 부모 컴포넌트에게 수정(Edit)이 완료되었다고 보고하는 목적으로 부모 컴포넌트에게 알림
-    /// 학습 목적으로 EventCallback 구조체 사용
-    /// </summary>
-    [Parameter]
-    public EventCallback<bool> EditCallback { get; set; }
-
-    [Parameter]
-    public string ParentKey { get; set; } = "";
     #endregion
 
     #region Injectors
@@ -77,7 +62,33 @@ public partial class ModalForm : ComponentBase
     /// </summary>
     [Inject]
     public IDivisionRepository RepositoryReference { get; set; }
+    #endregion
 
+    #region Lifecycle Methods
+    /// <summary>
+    /// 넘어온 Model 값을 수정 전용 ModelEdit에 복사
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        ModelEdit = new DivisionModel
+        {
+            Id = ModelSender.Id,
+            Name = ModelSender.Name
+            // 더 많은 정보 추가 가능...
+        };
+    }
+    #endregion
+
+    #region Public Methods
+    /// <summary>
+    /// 폼 보이기 
+    /// </summary>
+    public void Show() => IsShow = true;
+
+    /// <summary>
+    /// 폼 닫기
+    /// </summary>
+    public void Hide() => IsShow = false;
     #endregion
 
     #region Event Handlers
@@ -101,6 +112,9 @@ public partial class ModalForm : ComponentBase
             await RepositoryReference.UpdateAsync(ModelSender);
             await EditCallback.InvokeAsync(true);
         }
+
+        // 모달 닫기
+        Hide();
     }
     #endregion
 }

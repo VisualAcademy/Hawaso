@@ -8,6 +8,12 @@ namespace Hawaso.Web.Components.Pages.DivisionPages;
 
 public partial class Manage : ComponentBase
 {
+    /// <summary>
+    /// Bootstrap 5 사용 여부 (기본값: true)
+    /// </summary>
+    [Parameter]
+    public bool UseBootstrap5 { get; set; } = true;
+
     #region Parameters
     [Parameter]
     public int ParentId { get; set; } = 0;

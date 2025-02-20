@@ -6,8 +6,19 @@
 
 @* @attribute [Authorize(Roles = "Administrators")] *@
 
-<h3 class="mt-1 mb-1">Divisions <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;">Add</span> 
-    <button onclick="location.href = '/DivisionDownload/ExcelDown';" class="btn btn-sm btn-primary" style="float: right;">Excel Export</button>
+<h3 class="mt-1 mb-1">
+    Divisions
+    @if (UseBootstrap5)
+    {
+        <button class="btn btn-sm btn-outline-primary" @onclick="ShowEditorForm">Add</button>
+    }
+    else
+    {
+        <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;">Add</span>
+    }
+    <button onclick="location.href = '/DivisionDownload/ExcelDown';" class="btn btn-sm btn-primary" style="float: right;">
+        Excel Export
+    </button>
 </h3>
 
 <div class="row">
@@ -112,9 +123,16 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Toggle</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    @if (UseBootstrap5)
+                    {
+                        <button type="button" class="btn-close" aria-label="Close" @onclick="ToggleClose"></button>
+                    }
+                    else
+                    {
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    }
                 </div>
                 <div class="modal-body">
                     <p>Do you want to toggle post #@(model.Id)?</p>
