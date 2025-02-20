@@ -66,7 +66,7 @@
                                     @(Dul.DateTimeUtility.ShowTimeOrDate(m.CreatedAt))
                                 </td>
                                 <td class="text-center">
-                                    @if (m.Active)
+                                    @if (m.Active != null && m.Active.Value)
                                     {
                                         <input type="checkbox" checked />
                                     }

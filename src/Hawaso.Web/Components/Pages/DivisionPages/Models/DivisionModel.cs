@@ -38,5 +38,6 @@ namespace Hawaso.Web.Components.Pages.DivisionPages.Models
         ///// </summary>
         //public string? Name { get; set; } 
         #endregion
+        public new bool? Active { get; set; }
     }
 }
