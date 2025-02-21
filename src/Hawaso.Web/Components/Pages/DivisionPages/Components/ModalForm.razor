@@ -21,16 +21,16 @@
                 <div class="modal-body">
                     @if (ModelEdit.Id != 0)
                     {
-                        <div class="form-group">
-                            <label for="id">Id: </label> @ModelEdit.Id
+                        <div class="mb-3">
+                            <label for="id" class="form-label">Id:</label> @ModelEdit.Id
                             <input type="hidden" @bind-value="@ModelEdit.Id" />
                         </div>
                     }
-                    <div class="form-group">
-                        <label for="txtName">Name</label>
+                    <div class="mb-3">
+                        <label for="txtName" class="form-label">Name</label>
                         <input type="text" @bind="@ModelEdit.Name" class="form-control" placeholder="Enter Name" />
                     </div>
-                    <div class="form-group">
+                    <div class="d-flex gap-2">
                         <button type="button" class="btn btn-primary" @onclick="CreateOrEditClick">Submit</button>
                         <button type="button" class="btn btn-secondary" @onclick="Hide">Cancel</button>
                     </div>
