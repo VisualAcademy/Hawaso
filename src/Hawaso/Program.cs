@@ -17,6 +17,7 @@ using Hawaso.Infrastructures.Reports;
 using Hawaso.Infrastructures.Tenants;
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
+using Hawaso.Services;
 using Hawaso.Settings;
 using Hawaso.Web.Components.Pages.VendorPages.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -78,7 +79,7 @@ services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailSender>();
+services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, Hawaso.Areas.Identity.Services.EmailSender>();
 
 services.AddControllersWithViews();
 services.AddRazorPages();
@@ -224,6 +225,8 @@ services.AddDependencyInjectionContainerForVendorPermanentDelete(connectionStrin
 
 services.AddTransient<ITwilioSender, TwilioSender>();
 
+
+services.AddTransient<IMailchimpEmailSender, MailchimpEmailSender>();
 
 
 var app = builder.Build();
