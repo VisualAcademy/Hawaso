@@ -1,5 +1,4 @@
 ﻿using All.Services;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Hawaso.Codes.Tests
 {
