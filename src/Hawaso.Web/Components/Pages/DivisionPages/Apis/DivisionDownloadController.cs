@@ -1,5 +1,4 @@
 ﻿using Hawaso.Web.Components.Pages.DivisionPages.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
