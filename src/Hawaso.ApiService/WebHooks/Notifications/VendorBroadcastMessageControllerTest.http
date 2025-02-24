@@ -1,0 +1,12 @@
+### 
+
+@WebApiUrl=https://localhost:7505
+
+### 
+
+GET {{WebApiUrl}}/api/VendorBroadcastMessage
+
+
+### 
+
+GET {{WebApiUrl}}/api/VendorBroadcastMessage/1234
