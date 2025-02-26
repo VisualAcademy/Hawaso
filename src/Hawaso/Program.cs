@@ -332,10 +332,9 @@ if (DateTime.Now < (new DateTime(2025, 2, 10)))
 #endregion
 
 
-
-
-
-
+// Create AllowedIPRanges table in the default database
+var defaultSchemaEnhancer = new All.Infrastructures.Cores.DefaultSchemaEnhancerCreateAllowedIPRangesTable(Configuration.GetConnectionString("DefaultConnection"));
+defaultSchemaEnhancer.EnhanceDefaultDatabase();
 
 
 app.Run();
