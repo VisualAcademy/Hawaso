@@ -1,0 +1,13 @@
+﻿@page
+@model Hawaso.Pages.AccessDeniedDueToIPModel
+@{
+    ViewData["Title"] = "Access Denied";
+    Layout = null;
+}
+
+<h1>Access Denied</h1>
+<p>Your access to this system has been restricted due to IP limitations.</p>
+<p>If you believe this is a mistake, please contact the administrator.</p>
+<hr />
+<p>Your IP Address: <strong>@ViewData["ClientIp"]</strong></p>
+<a href="~/Account/Login">Go to Login Page</a>
