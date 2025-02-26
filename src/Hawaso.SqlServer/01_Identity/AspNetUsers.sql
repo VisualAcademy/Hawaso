@@ -35,6 +35,8 @@ CREATE TABLE [dbo].[AspNetUsers] (
 
     DivisionId BigInt Null Default 0, 
 
+    [TenantId]             BIGINT             DEFAULT (CONVERT([bigint],(0))) NOT NULL,
+
     CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)             -- 기본키 설정
 );
 
