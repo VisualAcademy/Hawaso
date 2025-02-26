@@ -25,6 +25,9 @@ public class AspNetUsersTableEnhancer(string connectionString)
                 // DivisionId 컬럼 추가
                 AddColumnIfNotExists(connection, "DivisionId", "BigInt Null Default 0");
 
+                // TenantId 컬럼 추가
+                AddColumnIfNotExists(connection, "TenantId", "BigInt Null Default 0");
+
                 connection.Close();
             }
             catch (Exception ex)
