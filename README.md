@@ -59,19 +59,6 @@ https://www.hawaso.com/Memos (로그인 필요)
 
 http://www.devlec.com
 
-"Blazor Server Part 1_블레이저(Blazor)와 닷넷(.NET)을 사용한 풀스택 웹개발"
-
-https://www.youtube.com/playlist?list=PLO56HZSjrPTCQbxR12t-67YyNSBP8L-8v
-
-"Blazor Server Part 2_Blazor 게시판 프로젝트"
-
-https://www.youtube.com/playlist?list=PLO56HZSjrPTC1c1MbY72vVT0sO33G-9Od
-
-"Blazor Server Part 3_Blazor(블레이저) 회사 홈페이지(솔루션) 만들기"
-
-https://www.youtube.com/playlist?list=PLO56HZSjrPTA-EJxyqiN8HzItM7nDEb11
-
-
 ## ASP.NET Core 3.X 버전의 Hawaso 프로젝트는 다음 리포지토리에 있습니다.
 
 https://github.com/VisualAcademy/Hawaso.V3X
