@@ -250,6 +250,17 @@ if (app.Environment.IsProduction())
 
 
 
+try
+{
+    var documentsTableEnhancer = new DocumentsTableEnhancer(connectionString);
+    await documentsTableEnhancer.EnsureDocumentsTableColumnsAsync();
+}
+catch (Exception)
+{
+
+}
+
+
 
 
 
