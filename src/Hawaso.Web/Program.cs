@@ -15,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add service defaults & Aspire client integrations.
 builder.AddServiceDefaults();
 
+builder.Services.AddRazorPages(); 
 builder.Services.AddControllersWithViews();
 
 // Add services to the container.
@@ -99,7 +100,7 @@ app.MapControllerRoute(
 app.MapAdditionalIdentityEndpoints();
 app.MapDefaultEndpoints();
 
-
+app.MapRazorPages(); // Razor Pages
 
 
 
