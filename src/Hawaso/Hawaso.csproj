@@ -48,6 +48,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Areas\Conferences\Controllers\" />
+        <Folder Include="Areas\Conferences\Data\" />
+        <Folder Include="Areas\Conferences\Models\" />
+        <Folder Include="Areas\Conferences\Views\" />
         <Folder Include="Properties\PublishProfiles\" />
         <Folder Include="Properties\ServiceDependencies\hawaso - Web Deploy\" />
     </ItemGroup>
