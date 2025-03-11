@@ -49,7 +49,6 @@
 
     <ItemGroup>
         <Folder Include="Areas\Conferences\Data\" />
-        <Folder Include="Areas\Conferences\Models\" />
         <Folder Include="Properties\PublishProfiles\" />
         <Folder Include="Properties\ServiceDependencies\hawaso - Web Deploy\" />
     </ItemGroup>
