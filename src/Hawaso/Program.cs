@@ -20,6 +20,7 @@ using Hawaso.Models.Notes;
 using Hawaso.Services;
 using Hawaso.Settings;
 using Hawaso.Web.Components.Pages.VendorPages.Models;
+using Humanizer.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -33,6 +34,7 @@ using NoticeApp.Models;
 using Portals.Infrastructures;
 using Portals.Infrastructures.Portals.Changes;
 using ReplyApp.Managers;
+using System.Configuration;
 using VisualAcademy;
 using VisualAcademy.Components.Pages.ApplicantsTransfers;
 using VisualAcademy.Models.BannedTypes;
@@ -315,8 +317,27 @@ using (var scope = app.Services.CreateScope())
 #endregion
 
 #region Tenants Table 생성 및 컬럼 추가 데모
-var tenantSchemaEnhancerCreateAndAlter = new TenantSchemaEnhancerCreateAndAlter(Configuration.GetConnectionString("DefaultConnection"));
-tenantSchemaEnhancerCreateAndAlter.EnsureSchema();
+// 테넌트 테이블 생성 및 컬럼 추가
+using (var scope = app.Services.CreateScope())
+{
+    var __scopedServices = scope.ServiceProvider;
+    var __configuration = __scopedServices.GetRequiredService<IConfiguration>();
+    var logger = __scopedServices.GetRequiredService<ILogger<Program>>();
+
+    try
+    {
+        var __connectionString = __configuration.GetConnectionString("DefaultConnection");
+        var tenantSchemaEnhancer = new TenantSchemaEnhancerCreateAndAlter(__connectionString, __configuration);
+
+        tenantSchemaEnhancer.EnsureSchema(); // 테이블 생성 및 컬럼 추가
+
+        logger.LogInformation("Tenant 테이블 및 컬럼이 정상적으로 처리되었습니다.");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "enant 테이블 생성 중 오류 발생");
+    }
+}
 #endregion
 
 // **PageSchemaEnhancer** 인스턴스 생성
