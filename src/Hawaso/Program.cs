@@ -316,6 +316,9 @@ using (var scope = app.Services.CreateScope())
 }
 #endregion
 
+
+
+
 #region Tenants Table 생성 및 컬럼 추가 데모
 // 테넌트 테이블 생성 및 컬럼 추가
 using (var scope = app.Services.CreateScope())
@@ -326,7 +329,7 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
-        var __connectionString = __configuration.GetConnectionString("DefaultConnection");
+        var __connectionString = __configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("DefaultConnection 값이 설정되지 않았습니다.");
         var tenantSchemaEnhancer = new TenantSchemaEnhancerCreateAndAlter(__connectionString, __configuration);
 
         tenantSchemaEnhancer.EnsureSchema(); // 테이블 생성 및 컬럼 추가
@@ -339,6 +342,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 #endregion
+
+
+
 
 // **PageSchemaEnhancer** 인스턴스 생성
 PageSchemaEnhancer pageSchemaEnhancer = new PageSchemaEnhancer(connectionString);
