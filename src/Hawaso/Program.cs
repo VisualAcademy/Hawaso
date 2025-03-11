@@ -335,7 +335,7 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "enant 테이블 생성 중 오류 발생");
+        logger.LogError(ex, "Tenant 테이블 생성 중 오류 발생");
     }
 }
 #endregion
