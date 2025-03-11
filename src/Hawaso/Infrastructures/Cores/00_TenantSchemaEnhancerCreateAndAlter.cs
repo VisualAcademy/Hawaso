@@ -179,7 +179,7 @@ public class TenantSchemaEnhancerCreateAndAlter
             SqlCommand cmdUpdate = new SqlCommand(@"
                     UPDATE dbo.Tenants
                     SET IsMultiPortalEnabled = 1
-                    WHERE Name IN ('KodeeLite', 'ChickenRanch')", connection);
+                    WHERE Name IN ('Hawaso', 'ChickenRanch')", connection);
 
             cmdUpdate.ExecuteNonQuery();
 
