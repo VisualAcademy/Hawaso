@@ -1,4 +1,5 @@
 using All.Services;
+using Azunt.Infrastructures;
 using Azure.Identity;
 using Blazored.Toast;
 using Dalbodre.Infrastructures;
@@ -31,8 +32,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.SemanticKernel;
 using NoticeApp.Models;
-using Portals.Infrastructures;
-using Portals.Infrastructures.Portals.Changes;
 using ReplyApp.Managers;
 using System.Configuration;
 using VisualAcademy;
@@ -237,15 +236,13 @@ var app = builder.Build();
 
 
 
-if (app.Environment.IsProduction())
+//if (app.Environment.IsProduction())
 { 
     #region Create Changes table and add more columns
     var changesTableEnhancer = new ChangesTableSchemaEnhancer(connectionString);
 
-    // 테이블 생성
-    changesTableEnhancer.CreateChangesTable();
-    // 컬럼 추가
-    changesTableEnhancer.AddTenantNameColumnIfNotExists();
+    // 테이블 생성 및 컬럼 추가
+    changesTableEnhancer.EnhanceChangesTable();
     #endregion
 }
 
