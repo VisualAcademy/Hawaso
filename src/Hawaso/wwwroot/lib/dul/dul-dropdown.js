@@ -1,17 +1,29 @@
-﻿/* 드롭다운 열고 닫기 함수 */
-function dulToggleDropdown() {
-    document.getElementById("dulDropdownContent").classList.toggle("dul-show");
-}
+﻿document.addEventListener("DOMContentLoaded", function () {
+    // 모든 dul-btn 버튼에 클릭 이벤트 추가
+    document.querySelectorAll(".dul-btn").forEach(button => {
+        button.addEventListener("click", function (event) {
+            event.stopPropagation(); // 이벤트 전파 방지
 
-// 드롭다운 외부를 클릭하면 리스트 닫기
-window.onclick = function (event) {
-    if (!event.target.matches('.dul-btn')) {
-        var dropdowns = document.getElementsByClassName("dul-dropdown-content");
-        for (var i = 0; i < dropdowns.length; i++) {
-            var openDropdown = dropdowns[i];
-            if (openDropdown.classList.contains('dul-show')) {
-                openDropdown.classList.remove('dul-show');
+            // 현재 버튼과 연결된 드롭다운 찾기
+            let dropdown = this.nextElementSibling;
+            if (dropdown && dropdown.classList.contains("dul-dropdown-content")) {
+                // 모든 드롭다운 닫기 (하나만 열도록)
+                document.querySelectorAll(".dul-dropdown-content").forEach(d => {
+                    if (d !== dropdown) {
+                        d.classList.remove("dul-show");
+                    }
+                });
+
+                // 현재 드롭다운 토글
+                dropdown.classList.toggle("dul-show");
             }
-        }
-    }
-}
+        });
+    });
+
+    // 문서 클릭 시 모든 드롭다운 닫기 (외부 클릭 감지)
+    document.addEventListener("click", function () {
+        document.querySelectorAll(".dul-dropdown-content").forEach(dropdown => {
+            dropdown.classList.remove("dul-show");
+        });
+    });
+});

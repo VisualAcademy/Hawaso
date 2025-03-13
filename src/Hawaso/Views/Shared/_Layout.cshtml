@@ -13,12 +13,32 @@
 
     <link href="~/css/memoengine.pager.css" rel="stylesheet" />
     <link href="~/css/dul/dul-dropdown.css" rel="stylesheet" />
+    <link href="~/css/open-iconic/font/css/open-iconic-bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="/Home">Hawaso</a>
+            <span class="navbar-brand d-flex align-items-center gap-3" style="cursor: pointer;">
+                <!-- dul-dropdown 시작 -->
+                <span class="dul-dropdown">
+                    <button class="dul-btn">
+                        <i class="oi oi-grid-three-up text-white dul-icon" style="font-size: medium;"></i>
+                    </button>
+                    <span class="dul-dropdown-content">
+                        <a href="https://www.dotnetnote.com" target="_blank">
+                            <img src="~/images/azunt/dotnetnote-icon-blue-32px.png" style="width: 20px; height: 20px;" />
+                            <span>DotNetNote</span>
+                        </a>
+                        <a href="https://www.dotnetkorea.com" target="_blank">
+                            <img src="~/images/azunt/visualacademy-icon-blue-32px.png" style="width: 20px; height: 20px;" />
+                            <span>DotNetKorea</span>
+                        </a>
+                    </span>
+                </span>
+                <!-- dul-dropdown 종료 -->
+                <a class="navbar-brand" href="/Home">Hawaso</a>
+            </span>
             <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
