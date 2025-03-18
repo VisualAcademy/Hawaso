@@ -8,7 +8,7 @@ public partial class Index
     public IMemoRepository RepositoryReference { get; set; }
 
     [Inject]
-    public NavigationManager NavigationManagerInjector { get; set; }
+    public NavigationManager Nav { get; set; }
 
     protected List<Memo> models;
 
@@ -36,7 +36,7 @@ public partial class Index
         StateHasChanged();
     }
 
-    protected void NameClick(long id) => NavigationManagerInjector.NavigateTo($"/Memos/Details/{id}");
+    protected void NameClick(long id) => Nav.NavigateTo($"/Memos/Details/{id}");
 
     protected async void PageIndexChanged(int pageIndex)
     {

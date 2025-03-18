@@ -29,7 +29,7 @@ public partial class Create
 
     // Injector 접미사 사용해 봄 
     [Inject]
-    public NavigationManager NavigationManagerInjector { get; set; }
+    public NavigationManager Nav { get; set; }
 
     [Inject]
     public IMemoFileStorageManager FileStorageManagerInjector { get; set; }
@@ -144,7 +144,7 @@ public partial class Create
         }
 
         // Manage 컴포넌트로 이동 
-        NavigationManagerInjector.NavigateTo("/Memos");
+        Nav.NavigateTo("/Memos");
     }
 
     /// <summary>

@@ -19,7 +19,7 @@ public partial class Delete
     public IJSRuntime JSRuntimeInjector { get; set; }
 
     [Inject]
-    public NavigationManager NavigationManagerInjector { get; set; }
+    public NavigationManager Nav { get; set; }
 
     [Inject]
     public IMemoRepository RepositoryReference { get; set; }
@@ -63,7 +63,7 @@ public partial class Delete
             }
 
             await RepositoryReference.DeleteAsync(Id); // 삭제
-            NavigationManagerInjector.NavigateTo(MemoListPage); // 리스트 페이지로 이동
+            Nav.NavigateTo(MemoListPage); // 리스트 페이지로 이동
         }
         else
         {

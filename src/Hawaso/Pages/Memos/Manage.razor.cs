@@ -29,7 +29,7 @@ public partial class Manage
     // NavigationManager를 참조해서 사용하기에 Injector 접미사를 붙임 또는 _(언더스코어) 접두사 붙임 
     // public NavigationManager NavigationManager { get; set; } 형태가 기본 사용 방식임
     [Inject]
-    public NavigationManager NavigationManagerInjector { get; set; }
+    public NavigationManager Nav { get; set; }
 
     [Inject]
     public IJSRuntime JSRuntimeInjector { get; set; }
@@ -146,7 +146,7 @@ public partial class Manage
     /// <summary>
     /// 상세보기로 이동하는 링크
     /// </summary>
-    protected void NameClick(long id) => NavigationManagerInjector.NavigateTo($"/Memos/Details/{id}"); 
+    protected void NameClick(long id) => Nav.NavigateTo($"/Memos/Details/{id}"); 
     #endregion
 
     /// <summary>
@@ -236,7 +236,7 @@ public partial class Manage
         EditorFormReference.Hide(); // 모달 폼을 숨깁니다.
 
         // 현재 페이지를 강제로 리프레시합니다.
-        NavigationManagerInjector.NavigateTo(NavigationManagerInjector.Uri, forceLoad: true);
+        Nav.NavigateTo(Nav.Uri, forceLoad: true);
     } 
     #endregion
 
@@ -300,7 +300,7 @@ public partial class Manage
     {
         FileUtil.SaveAsExcel(JSRuntimeInjector, "/MemoDownload/ExcelDown");
 
-        NavigationManagerInjector.NavigateTo($"/Memos"); // 다운로드 후 현재 페이지 다시 로드
+        Nav.NavigateTo($"/Memos"); // 다운로드 후 현재 페이지 다시 로드
     }
 
     protected void DownloadExcel()

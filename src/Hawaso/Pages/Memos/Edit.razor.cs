@@ -27,7 +27,7 @@ public partial class Edit
     public IMemoRepository RepositoryReference { get; set; }
 
     [Inject]
-    public NavigationManager NavigationManagerInjector { get; set; }
+    public NavigationManager Nav { get; set; }
 
     [Inject]
     public IMemoFileStorageManager FileStorageManagerInjector { get; set; }
@@ -88,7 +88,7 @@ public partial class Edit
         #endregion
 
         await RepositoryReference.EditAsync(Model);
-        NavigationManagerInjector.NavigateTo("/Memos");
+        Nav.NavigateTo("/Memos");
     }
 
     /// <summary>
