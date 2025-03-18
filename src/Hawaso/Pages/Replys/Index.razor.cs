@@ -12,7 +12,7 @@ namespace Hawaso.Pages.Replys
         public IReplyRepository RepositoryReference { get; set; }
 
         [Inject]
-        public NavigationManager NavigationManagerInjector { get; set; }
+        public NavigationManager Nav { get; set; }
 
         protected List<Reply> models;
 
@@ -45,7 +45,7 @@ namespace Hawaso.Pages.Replys
 
         protected void NameClick(int id)
         {
-            NavigationManagerInjector.NavigateTo($"/Replys/Details/{id}");
+            Nav.NavigateTo($"/Replys/Details/{id}");
         }
 
         protected async void PageIndexChanged(int pageIndex)

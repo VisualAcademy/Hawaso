@@ -9,7 +9,7 @@ public partial class Create
     public ICustomerRepository CustomerRepositoryReference { get; set; }
 
     [Inject]
-    public NavigationManager NavigationManagerInjector { get; set; }
+    public NavigationManager Nav { get; set; }
 
     private Customer customer = new Customer();
 
@@ -19,6 +19,6 @@ public partial class Create
     {
         customer.Created = DateTime.Now; 
         await CustomerRepositoryReference.AddAsync(customer);
-        NavigationManagerInjector.NavigateTo("/Customers");
+        Nav.NavigateTo("/Customers");
     }
 }

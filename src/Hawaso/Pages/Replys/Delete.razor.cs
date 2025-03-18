@@ -17,7 +17,7 @@ namespace Hawaso.Pages.Replys
         public IJSRuntime JSRuntimeInjector { get; set; }
 
         [Inject]
-        public NavigationManager NavigationManagerInjector { get; set; } 
+        public NavigationManager Nav { get; set; } 
 
         [Inject]
         public IReplyRepository RepositoryReference { get; set; }
@@ -61,7 +61,7 @@ namespace Hawaso.Pages.Replys
                 }
 
                 await RepositoryReference.DeleteAsync(Id); // 삭제
-                NavigationManagerInjector.NavigateTo("/Replys"); // 리스트 페이지로 이동
+                Nav.NavigateTo("/Replys"); // 리스트 페이지로 이동
             }
             else
             {

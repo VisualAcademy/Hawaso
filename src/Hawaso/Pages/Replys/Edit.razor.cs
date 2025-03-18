@@ -28,7 +28,7 @@ public partial class Edit
     public IReplyRepository RepositoryReference { get; set; }
 
     [Inject]
-    public NavigationManager NavigationManagerInjector { get; set; } 
+    public NavigationManager Nav { get; set; } 
 
     [Inject]
     public IFileStorageManager FileStorageManagerInjector { get; set; }
@@ -90,7 +90,7 @@ public partial class Edit
         #endregion
 
         await RepositoryReference.EditAsync(Model);
-        NavigationManagerInjector.NavigateTo("/Replys");
+        Nav.NavigateTo("/Replys");
     }
 
     /// <summary>

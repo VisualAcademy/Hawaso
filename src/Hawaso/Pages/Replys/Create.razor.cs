@@ -30,7 +30,7 @@ public partial class Create
 
     // Injector 접미사 사용해 봄 
     [Inject]
-    public NavigationManager NavigationManagerInjector { get; set; } 
+    public NavigationManager Nav { get; set; } 
 
     [Inject]
     public IFileStorageManager FileStorageManagerInjector { get; set; }
@@ -113,7 +113,7 @@ public partial class Create
             await RepositoryReference.AddAsync(Model);
         }
 
-        NavigationManagerInjector.NavigateTo("/Replys");
+        Nav.NavigateTo("/Replys");
     }
 
     /// <summary>

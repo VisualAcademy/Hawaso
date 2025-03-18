@@ -19,7 +19,7 @@ public partial class Import
     public IReplyRepository RepositoryReference { get; set; }
 
     [Inject]
-    public NavigationManager NavigationManagerInjector { get; set; }
+    public NavigationManager Nav { get; set; }
 
     [Inject]
     public IFileStorageManager FileStorageManagerReference { get; set; } 
@@ -66,7 +66,7 @@ public partial class Import
             await RepositoryReference.AddAsync(m);
         }
 
-        NavigationManagerInjector.NavigateTo("/Replys");
+        Nav.NavigateTo("/Replys");
     }
 
     public List<Reply> Models { get; set; } = new List<Reply>(); 

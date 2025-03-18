@@ -22,7 +22,7 @@ public partial class Manage
 
     #region Injectors
     [Inject]
-    public NavigationManager NavigationManagerInjector { get; set; }
+    public NavigationManager Nav { get; set; }
 
     [Inject]
     public IJSRuntime JSRuntimeInjector { get; set; }
@@ -231,7 +231,7 @@ public partial class Manage
     {
         FileUtil.SaveAsExcel(JSRuntimeInjector, "/DepartmentDownload/ExcelDown");
 
-        NavigationManagerInjector.NavigateTo($"/Departments"); // 다운로드 후 현재 페이지 다시 로드
+        Nav.NavigateTo($"/Departments"); // 다운로드 후 현재 페이지 다시 로드
     }
 
     protected void DownloadExcel()
