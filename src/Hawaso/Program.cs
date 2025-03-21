@@ -372,6 +372,18 @@ var defaultSchemaEnhancer = new All.Infrastructures.Cores.DefaultSchemaEnhancerC
 defaultSchemaEnhancer.EnhanceDefaultDatabase();
 
 
+
+using (var scope = app.Services.CreateScope())
+{
+    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    string masterConnectionString = configuration.GetConnectionString("DefaultConnection");
+
+    var enhancer = new TenantSchemaEnhancerCreateCustomFieldTitlesTable(masterConnectionString);
+    enhancer.EnhanceAllTenantDatabases();
+}
+
+
+
 app.Run();
 
 /// <summary>
