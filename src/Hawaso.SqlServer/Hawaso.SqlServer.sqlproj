@@ -90,6 +90,7 @@
     <Folder Include="InternalAudit" />
     <Folder Include="Portals" />
     <Folder Include="dbo\Tables\Employees" />
+    <Folder Include="Vendors" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -162,5 +163,6 @@
     <Build Include="dbo\Tables\AllowedIPRanges.sql" />
     <Build Include="dbo\Tables\Employees\Employees.sql" />
     <Build Include="dbo\Tables\Employees\CustomFieldTitles.sql" />
+    <Build Include="Vendors\CertificateReports.sql" />
   </ItemGroup>
 </Project>
