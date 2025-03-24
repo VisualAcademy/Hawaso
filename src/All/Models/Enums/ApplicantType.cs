@@ -6,10 +6,10 @@ namespace All.Models.Enums
     [Flags]
     public enum ApplicantType
     {
-        [Description("Vendor")]
-        Vendor = 1, // 0001
-
-        [Description("Employee")]
-        Employee = 2 // 0010
+        None = 0,
+        Vendor = 1,      // 0001
+        Employee = 2,    // 0010
+        Manager = 4,     // 0100
+        Admin = 8        // 1000
     }
 }
