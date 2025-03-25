@@ -5,6 +5,9 @@ namespace VisualAcademy.Pages.Memos.Components;
 
 public partial class ModalForm
 {
+    private string titleErrorMessage = string.Empty;
+    private string passwordErrorMessage = string.Empty;
+
     #region Fields
     private string parentId = "";
 
@@ -123,6 +126,27 @@ public partial class ModalForm
     #region Event Handlers
     protected async void CreateOrEditClick()
     {
+        // 초기화
+        titleErrorMessage = string.Empty;
+        passwordErrorMessage = string.Empty;
+
+        // 유효성 검사
+        if (string.IsNullOrWhiteSpace(ModelEdit.Title))
+        {
+            titleErrorMessage = "제목은 필수 항목입니다.";
+        }
+
+        if (string.IsNullOrWhiteSpace(ModelEdit.Password))
+        {
+            passwordErrorMessage = "비밀번호는 필수 항목입니다.";
+        }
+
+        if (!string.IsNullOrEmpty(titleErrorMessage) || !string.IsNullOrEmpty(passwordErrorMessage))
+        {
+            StateHasChanged(); // 오류 메시지 표시를 위해 UI 갱신
+            return; // 저장 중단
+        }
+
         if (isSubmitting) return; // 이미 제출 중이면 반환
 
         isSubmitting = true; // 제출 시작 플래그 설정

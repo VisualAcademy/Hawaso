@@ -26,6 +26,10 @@
                     <div class="form-group">
                         <label for="txtTitle">Title</label>
                         <input type="text" @bind="@ModelEdit.Title" class="form-control" placeholder="Enter Title" />
+                        @if (!string.IsNullOrEmpty(titleErrorMessage))
+                        {
+                            <div class="text-danger">@titleErrorMessage</div>
+                        }
                     </div>
                     <div class="form-group">
                         <label for="txtContent">Content</label>
@@ -53,6 +57,10 @@
                     <div class="form-group">
                         <label for="txtPassword">Password</label>
                         <input type="password" id="txtPassword" class="form-control" placeholder="Enter Password" @bind="@ModelEdit.Password" />
+                        @if (!string.IsNullOrEmpty(passwordErrorMessage))
+                        {
+                            <div class="text-danger">@passwordErrorMessage</div>
+                        }
                     </div>
                     <div class="form-group">
                         <label for="txtTitle">File</label>
