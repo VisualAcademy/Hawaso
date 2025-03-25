@@ -1,12 +1,12 @@
 ﻿<div class="row text-center m-5">
     <div class="col-md-12 event-countdown text-center mb-3">
-        <h4 class="countdown-intro mb-2 text-center mb-3">Blazor Server Part 3 스트리밍 강좌 오픈까지 남은 시간:</h4>
+        <h4 class="countdown-intro mb-2 text-center mb-3">Microsoft BUILD 2025 행사까지 남은 시간</h4>
         <div id="build-countdown-box" class="countdown-box"></div>
     </div>
 </div>
 
 <script>
-    var target_date = new Date("2025-02-25").getTime();
+    var target_date = new Date("2025-05-19").getTime();
 
     var days, hours, minutes, seconds;
 
@@ -38,9 +38,9 @@
         seconds = parseInt(seconds_left % 60);
 
         days_span.innerHTML = '<span class="number">' + days + '</span>' + '<span class="unit">일</span>';
-        hours_span.innerHTML = '<span class="number">' + hours + '</span>' + '<span class="unit">시간</span>';
-        minutes_span.innerHTML = '<span class="number">' + minutes + '</span>' + '<span class="unit">분</span>';
-        secs_span.innerHTML = '<span class="number">' + seconds + '</span>' + '<span class="unit">초</span>';
+        hours_span.innerHTML = '<span class="number">' + String(hours).padStart(2, '0') + '</span>' + '<span class="unit">시간</span>';
+        minutes_span.innerHTML = '<span class="number">' + String(minutes).padStart(2, '0') + '</span>' + '<span class="unit">분</span>';
+        secs_span.innerHTML = '<span class="number">' + String(seconds).padStart(2, '0') + '</span>' + '<span class="unit">초</span>';
 
     }, 1000);
 </script>
