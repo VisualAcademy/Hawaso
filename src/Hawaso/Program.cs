@@ -1,13 +1,10 @@
 using All.Services;
 using Azunt.Infrastructures;
-using Azure.Identity;
 using Blazored.Toast;
-using Dalbodre.Infrastructures;
 using Dalbodre.Infrastructures.Cores;
 using DotNetNote.Models;
 using DotNetSaleCore.Models;
 using Hawaso.Areas.Identity;
-using Hawaso.Areas.Identity.Services;
 using Hawaso.Data;
 using Hawaso.Extensions.BriefingLogs;
 using Hawaso.Extensions.Libraries;
@@ -21,19 +18,14 @@ using Hawaso.Models.Notes;
 using Hawaso.Services;
 using Hawaso.Settings;
 using Hawaso.Web.Components.Pages.VendorPages.Models;
-using Humanizer.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
-using Microsoft.SemanticKernel;
 using NoticeApp.Models;
 using ReplyApp.Managers;
-using System.Configuration;
 using VisualAcademy;
 using VisualAcademy.Components.Pages.ApplicantsTransfers;
 using VisualAcademy.Models.BannedTypes;
@@ -237,7 +229,7 @@ var app = builder.Build();
 
 
 //if (app.Environment.IsProduction())
-{ 
+{
     #region Create Changes table and add more columns
     var changesTableEnhancer = new ChangesTableSchemaEnhancer(connectionString);
 
