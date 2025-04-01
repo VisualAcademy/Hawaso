@@ -22,11 +22,11 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
             try
             {
                 EnsureLicenseTypesTable(connStr);
-                _logger.LogInformation($"LicenseTypes 테이블 처리 완료 (테넌트 DB): {connStr}");
+                _logger.LogInformation($"LicenseTypes table processed (tenant DB): {connStr}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"[{connStr}] 테넌트 DB 처리 중 오류 발생");
+                _logger.LogError(ex, $"[{connStr}] Error processing tenant DB");
             }
         }
     }
@@ -36,11 +36,11 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
         try
         {
             EnsureLicenseTypesTable(_masterConnectionString);
-            _logger.LogInformation("LicenseTypes 테이블 처리 완료 (마스터 DB)");
+            _logger.LogInformation("LicenseTypes table processed (master DB)");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "마스터 DB 처리 중 오류 발생");
+            _logger.LogError(ex, "Error processing master DB");
         }
     }
 
@@ -92,7 +92,7 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
                         )", connection);
                 cmdCreate.ExecuteNonQuery();
 
-                _logger.LogInformation("LicenseTypes 테이블을 새로 생성했습니다.");
+                _logger.LogInformation("LicenseTypes table created.");
             }
             else
             {
@@ -125,17 +125,55 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
                             $"ALTER TABLE [dbo].[LicenseTypes] ADD [{columnName}] {columnType}", connection);
                         alterCmd.ExecuteNonQuery();
 
-                        _logger.LogInformation($"컬럼 추가됨: {columnName} ({columnType})");
+                        _logger.LogInformation($"Column added: {columnName} ({columnType})");
                     }
                 }
             }
+
+            // Insert default data only if the table is empty
+            EnsureDefaultLicenseTypes(connection);
+        }
+    }
+
+    private void EnsureDefaultLicenseTypes(SqlConnection connection)
+    {
+        // Only insert if table is completely empty
+        var cmdRowCount = new SqlCommand("SELECT COUNT(*) FROM [dbo].[LicenseTypes]", connection);
+        int rowCount = (int)cmdRowCount.ExecuteScalar();
+
+        if (rowCount > 0)
+        {
+            _logger.LogInformation("LicenseTypes table already contains data. Skipping default insert.");
+            return;
+        }
+
+        var defaultTypes = new List<(string Type, string Description)>
+        {
+            ("Temporary", "A license type issued for temporary purposes."),
+            ("Permanent", "A license type granted with full approval."),
+            ("Provisional", "A license type conditionally approved or under review.")
+        };
+
+        foreach (var (type, description) in defaultTypes)
+        {
+            var cmdInsert = new SqlCommand(@"
+                    INSERT INTO [dbo].[LicenseTypes]
+                    ([Active], [CreatedAt], [CreatedBy], [Type], [Description], [ApplicantType], [BgRequired])
+                    VALUES (1, SYSDATETIMEOFFSET(), 'System', @Type, @Description, 1, 0)", connection);
+
+            cmdInsert.Parameters.AddWithValue("@Type", type);
+            cmdInsert.Parameters.AddWithValue("@Description", description);
+
+            cmdInsert.ExecuteNonQuery();
+
+            _logger.LogInformation($"Default LicenseType inserted: {type}");
         }
     }
 
     /// <summary>
-    /// Program.cs 또는 Startup.cs에서 호출
-    /// forMaster == true : 마스터 DB만 처리
-    /// forMaster == false : 테넌트 DB들만 처리
+    /// Entry point to run from Program.cs or Startup.cs
+    /// forMaster == true: only master DB
+    /// forMaster == false: only tenant DBs
     /// </summary>
     public static void Run(IServiceProvider services, bool forMaster)
     {
@@ -159,7 +197,7 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
         catch (Exception ex)
         {
             var fallbackLogger = services.GetService<ILogger<TenantSchemaEnhancerEnsureLicenseTypesTable>>();
-            fallbackLogger?.LogError(ex, "LicenseTypes 테이블 처리 중 예외 발생");
+            fallbackLogger?.LogError(ex, "Error while processing LicenseTypes table.");
         }
     }
 }
