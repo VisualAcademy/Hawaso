@@ -286,6 +286,23 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 app.MapRazorPages();
 
+
+
+
+#region 데이터베이스 초기화 설정
+try
+{
+    SchemaInitializer.Initialize(app.Services);
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"스키마 초기화 중 오류 발생: {ex.Message}");
+}
+#endregion
+
+
+
+
 #region CreateBuiltInUsersAndRoles and ResetAdministratorPassword
 // 기본 역할 및 사용자 추가 및 관리자 암호 초기화 
 using (var scope = app.Services.CreateScope())
