@@ -14,6 +14,7 @@ public static class SchemaInitializer
 
         // LicenseTypes 테이블 생성/수정
         InitializeLicenseTypesTable(services, logger, forMaster: true); // InitializeLicenseTypesTable(services, logger, forMaster: false);
+        InitializeContactTypesTable(services, logger, forMaster: true); // 또는 true
     }
 
     private static void InitializeLicenseTypesTable(IServiceProvider services, ILogger logger, bool forMaster)
@@ -28,6 +29,21 @@ public static class SchemaInitializer
         catch (Exception ex)
         {
             logger.LogError(ex, $"{target}의 LicenseTypes 테이블 초기화 중 오류 발생");
+        }
+    }
+
+    private static void InitializeContactTypesTable(IServiceProvider services, ILogger logger, bool forMaster)
+    {
+        string target = forMaster ? "마스터 DB" : "테넌트 DB";
+
+        try
+        {
+            TenantSchemaEnhancerEnsureContactTypesTable.Run(services, forMaster);
+            logger.LogInformation($"{target}의 ContactTypes 테이블 초기화 완료");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"{target}의 ContactTypes 테이블 초기화 중 오류 발생");
         }
     }
 }
