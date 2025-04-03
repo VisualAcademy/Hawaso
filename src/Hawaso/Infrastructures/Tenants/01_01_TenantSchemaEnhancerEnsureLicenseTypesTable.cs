@@ -72,8 +72,8 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
             connection.Open();
 
             var cmdCheck = new SqlCommand(@"
-                    SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES 
-                    WHERE TABLE_NAME = 'LicenseTypes'", connection);
+                SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES 
+                WHERE TABLE_NAME = 'LicenseTypes'", connection);
 
             int tableCount = (int)cmdCheck.ExecuteScalar();
 
@@ -82,14 +82,15 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
                 var cmdCreate = new SqlCommand(@"
                     CREATE TABLE [dbo].[LicenseTypes] (
                         [ID]                    BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-                        [Active]                BIT NULL,
+                        [Active]                BIT NOT NULL DEFAULT 1,
                         [CreatedAt]             DATETIMEOFFSET(7) NULL,
                         [CreatedBy]             NVARCHAR(70) NULL,
                         [Type]                  NVARCHAR(450) NULL,
                         [Description]           NVARCHAR(MAX) NULL,
                         [ApplicantType]         INT NULL,
                         [BgRequired]            BIT NULL,
-                        [IsApplicationRequired] BIT NOT NULL DEFAULT 1
+                        [IsApplicationRequired] BIT NULL DEFAULT 1,
+                        [IsCertificateRequired] BIT NULL DEFAULT 0
                     )", connection);
 
                 cmdCreate.ExecuteNonQuery();
@@ -100,14 +101,15 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
             {
                 var expectedColumns = new Dictionary<string, string>
                 {
-                    ["Active"] = "BIT NULL",
+                    ["Active"] = "BIT NOT NULL DEFAULT 1",
                     ["CreatedAt"] = "DATETIMEOFFSET(7) NULL",
                     ["CreatedBy"] = "NVARCHAR(70) NULL",
                     ["Type"] = "NVARCHAR(450) NULL",
                     ["Description"] = "NVARCHAR(MAX) NULL",
                     ["ApplicantType"] = "INT NULL",
                     ["BgRequired"] = "BIT NULL",
-                    ["IsApplicationRequired"] = "BIT NOT NULL DEFAULT 1"
+                    ["IsApplicationRequired"] = "BIT NULL DEFAULT 1",
+                    ["IsCertificateRequired"] = "BIT NULL DEFAULT 0"
                 };
 
                 foreach (var kvp in expectedColumns)
@@ -130,38 +132,42 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
 
                         _logger.LogInformation($"Column added: {columnName} ({columnType})");
 
-                        // If the added column is IsApplicationRequired, update NULLs to 1 just in case (defensive)
                         if (columnName == "IsApplicationRequired")
                         {
-                            var updateNullsCmd = new SqlCommand(@"
+                            var updateCmd = new SqlCommand(@"
                                 UPDATE [dbo].[LicenseTypes]
                                 SET [IsApplicationRequired] = 1
                                 WHERE [IsApplicationRequired] IS NULL", connection);
+                            int updated = updateCmd.ExecuteNonQuery();
+                            _logger.LogInformation($"Updated {updated} rows: IsApplicationRequired = 1");
+                        }
 
-                            int updated = updateNullsCmd.ExecuteNonQuery();
-                            _logger.LogInformation($"Updated {updated} LicenseTypes rows with NULL IsApplicationRequired to 1.");
+                        if (columnName == "IsCertificateRequired")
+                        {
+                            var updateCmd = new SqlCommand(@"
+                                UPDATE [dbo].[LicenseTypes]
+                                SET [IsCertificateRequired] = 0
+                                WHERE [IsCertificateRequired] IS NULL", connection);
+                            int updated = updateCmd.ExecuteNonQuery();
+                            _logger.LogInformation($"Updated {updated} rows: IsCertificateRequired = 0");
                         }
                     }
                 }
 
-                // Update NULL values in Description to empty string
-                var updateNullDescriptionsCmd = new SqlCommand(@"
+                var updateDesc = new SqlCommand(@"
                     UPDATE [dbo].[LicenseTypes]
                     SET [Description] = ''
                     WHERE [Description] IS NULL", connection);
-
-                int updatedDescriptions = updateNullDescriptionsCmd.ExecuteNonQuery();
+                int updatedDescriptions = updateDesc.ExecuteNonQuery();
                 _logger.LogInformation($"Updated {updatedDescriptions} LicenseTypes rows with NULL Description to empty string.");
             }
 
-            // Insert default data only if the table is empty
             EnsureDefaultLicenseTypes(connection);
         }
     }
 
     private void EnsureDefaultLicenseTypes(SqlConnection connection)
     {
-        // Only insert if table is completely empty
         var cmdRowCount = new SqlCommand("SELECT COUNT(*) FROM [dbo].[LicenseTypes]", connection);
         int rowCount = (int)cmdRowCount.ExecuteScalar();
 
@@ -183,13 +189,12 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
         foreach (var (type, description) in defaultTypes)
         {
             var cmdInsert = new SqlCommand(@"
-                    INSERT INTO [dbo].[LicenseTypes]
-                    ([Active], [CreatedAt], [CreatedBy], [Type], [Description], [ApplicantType], [BgRequired])
-                    VALUES (1, SYSDATETIMEOFFSET(), 'System', @Type, @Description, 1, 0)", connection);
+                INSERT INTO [dbo].[LicenseTypes]
+                ([Active], [CreatedAt], [CreatedBy], [Type], [Description], [ApplicantType], [BgRequired], [IsApplicationRequired], [IsCertificateRequired])
+                VALUES (1, SYSDATETIMEOFFSET(), 'System', @Type, @Description, 1, 0, 1, 0)", connection);
 
             cmdInsert.Parameters.AddWithValue("@Type", type);
             cmdInsert.Parameters.AddWithValue("@Description", description);
-
             cmdInsert.ExecuteNonQuery();
 
             _logger.LogInformation($"Default LicenseType inserted: {type}");
