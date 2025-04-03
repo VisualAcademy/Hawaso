@@ -143,6 +143,15 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
                         }
                     }
                 }
+
+                // Update NULL values in Description to empty string
+                var updateNullDescriptionsCmd = new SqlCommand(@"
+                    UPDATE [dbo].[LicenseTypes]
+                    SET [Description] = ''
+                    WHERE [Description] IS NULL", connection);
+
+                int updatedDescriptions = updateNullDescriptionsCmd.ExecuteNonQuery();
+                _logger.LogInformation($"Updated {updatedDescriptions} LicenseTypes rows with NULL Description to empty string.");
             }
 
             // Insert default data only if the table is empty
