@@ -116,8 +116,8 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
                     var columnType = kvp.Value;
 
                     var cmdColumnCheck = new SqlCommand(@"
-                SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
-                WHERE TABLE_NAME = 'LicenseTypes' AND COLUMN_NAME = @ColumnName", connection);
+                        SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
+                        WHERE TABLE_NAME = 'LicenseTypes' AND COLUMN_NAME = @ColumnName", connection);
                     cmdColumnCheck.Parameters.AddWithValue("@ColumnName", columnName);
 
                     int colExists = (int)cmdColumnCheck.ExecuteScalar();
@@ -134,9 +134,9 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
                         if (columnName == "IsApplicationRequired")
                         {
                             var updateNullsCmd = new SqlCommand(@"
-                    UPDATE [dbo].[LicenseTypes]
-                    SET [IsApplicationRequired] = 1
-                    WHERE [IsApplicationRequired] IS NULL", connection);
+                                UPDATE [dbo].[LicenseTypes]
+                                SET [IsApplicationRequired] = 1
+                                WHERE [IsApplicationRequired] IS NULL", connection);
 
                             int updated = updateNullsCmd.ExecuteNonQuery();
                             _logger.LogInformation($"Updated {updated} LicenseTypes rows with NULL IsApplicationRequired to 1.");
