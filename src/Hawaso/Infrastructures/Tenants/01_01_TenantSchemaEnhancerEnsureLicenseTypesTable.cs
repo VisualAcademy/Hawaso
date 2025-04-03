@@ -80,16 +80,18 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
             if (tableCount == 0)
             {
                 var cmdCreate = new SqlCommand(@"
-                        CREATE TABLE [dbo].[LicenseTypes] (
-                            [ID]            BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-                            [Active]        BIT NULL,
-                            [CreatedAt]     DATETIMEOFFSET(7) NULL,
-                            [CreatedBy]     NVARCHAR(70) NULL,
-                            [Type]          NVARCHAR(450) NULL,
-                            [Description]   NVARCHAR(MAX) NULL,
-                            [ApplicantType] INT NULL,
-                            [BgRequired]    BIT NULL
-                        )", connection);
+                    CREATE TABLE [dbo].[LicenseTypes] (
+                        [ID]                    BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+                        [Active]                BIT NULL,
+                        [CreatedAt]             DATETIMEOFFSET(7) NULL,
+                        [CreatedBy]             NVARCHAR(70) NULL,
+                        [Type]                  NVARCHAR(450) NULL,
+                        [Description]           NVARCHAR(MAX) NULL,
+                        [ApplicantType]         INT NULL,
+                        [BgRequired]            BIT NULL,
+                        [IsApplicationRequired] BIT NOT NULL DEFAULT 1
+                    )", connection);
+
                 cmdCreate.ExecuteNonQuery();
 
                 _logger.LogInformation("LicenseTypes table created.");
@@ -104,7 +106,8 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
                     ["Type"] = "NVARCHAR(450) NULL",
                     ["Description"] = "NVARCHAR(MAX) NULL",
                     ["ApplicantType"] = "INT NULL",
-                    ["BgRequired"] = "BIT NULL"
+                    ["BgRequired"] = "BIT NULL",
+                    ["IsApplicationRequired"] = "BIT NOT NULL DEFAULT 1"
                 };
 
                 foreach (var kvp in expectedColumns)
