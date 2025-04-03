@@ -149,6 +149,8 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
 
         var defaultTypes = new List<(string Type, string Description)>
         {
+            ("Exempt", "A license type that is not subject to standard licensing requirements."),
+            ("Registration", "A license type for entities that only require registration."),
             ("Temporary", "A license type issued for temporary purposes."),
             ("Permanent", "A license type granted with full approval."),
             ("Provisional", "A license type conditionally approved or under review.")
