@@ -1,6 +1,7 @@
 ﻿using All.Models.Enums;
 using All.Models.ManageViewModels;
 using All.Services;
+using Hawaso.Data;
 
 namespace All.Controllers
 {

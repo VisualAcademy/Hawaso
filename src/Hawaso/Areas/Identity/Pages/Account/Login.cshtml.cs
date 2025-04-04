@@ -1,4 +1,4 @@
-﻿using Hawaso.Models;
+﻿using Hawaso.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

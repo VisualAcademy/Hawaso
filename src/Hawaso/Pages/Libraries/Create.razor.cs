@@ -1,4 +1,5 @@
 ﻿using BlazorInputFile;
+using Hawaso.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;

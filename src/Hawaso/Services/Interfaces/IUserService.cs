@@ -1,4 +1,6 @@
-﻿namespace Hawaso.Services.Interfaces
+﻿using Hawaso.Data;
+
+namespace Hawaso.Services.Interfaces
 {
     public interface IUserService
     {
