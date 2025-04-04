@@ -91,6 +91,7 @@
     <Folder Include="Portals" />
     <Folder Include="dbo\Tables\Employees" />
     <Folder Include="Vendors" />
+    <Folder Include="All" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -166,5 +167,6 @@
     <Build Include="Vendors\CertificateReports.sql" />
     <Build Include="dbo\Tables\LicenseTypes.sql" />
     <Build Include="Vendors\ContactTypes.sql" />
+    <Build Include="All\Alls.sql" />
   </ItemGroup>
 </Project>
