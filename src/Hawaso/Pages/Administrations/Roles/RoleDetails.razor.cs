@@ -1,4 +1,4 @@
-﻿using Hawaso.Models;
+﻿using Hawaso.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;

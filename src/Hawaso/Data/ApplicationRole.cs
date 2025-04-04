@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Hawaso.Models;
+namespace Hawaso.Data;
 
 /// <summary>
 /// ASP.NET Core Identity 인증과 권한 
@@ -10,5 +10,5 @@ namespace Hawaso.Models;
 /// </summary>
 public class ApplicationRole : IdentityRole
 {
-    public string Description { get; set; }
+    public string Description { get; set; } = "";
 }
