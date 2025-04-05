@@ -23,7 +23,7 @@ CREATE TABLE [dbo].[AspNetUsers] (
 	[LastName] [nvarchar](max) NULL,
 	[Timezone] [nvarchar](max) NULL,
 
-    [TenantName]               NVARCHAR (MAX)     Default('Kodee'),
+    [TenantName]               NVARCHAR (MAX)     Default('Azunt'),
 
     RegistrationDate DATETIMEOFFSET  NULL DEFAULT (SYSDATETIMEOFFSET()),
 

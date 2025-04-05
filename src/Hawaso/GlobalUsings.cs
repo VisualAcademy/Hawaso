@@ -1,4 +1,5 @@
-﻿global using Hawaso.Models;
+﻿global using Hawaso.Data;
+global using Hawaso.Models;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Hosting;
 global using Microsoft.AspNetCore.Identity;

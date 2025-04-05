@@ -1,4 +1,4 @@
-using All.Services;
+ï»¿using All.Services;
 using Azunt.Infrastructures;
 using Blazored.Toast;
 using Dalbodre.Infrastructures.Cores;
@@ -48,7 +48,7 @@ services.AddDbContext<ApplicationDbContext>(options =>
         Configuration.GetConnectionString("DefaultConnection"),
         options => options.EnableRetryOnFailure()));
 
-// ASP.NET Core Identity ¼³Á¤
+// ASP.NET Core Identity ì„¤ì •
 services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
@@ -79,18 +79,18 @@ services.AddRazorPages();
 services.AddServerSideBlazor()
     .AddCircuitOptions(options => { options.DetailedErrors = true; });
 
-// CORS ¼³Á¤
+// CORS ì„¤ì •
 services.AddCors(options =>
 {
     options.AddPolicy("AllowAnyOrigin",
         builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
-// HttpClient µî·Ï
-// HttpClient ÀÎ½ºÅÏ½º¸¦ DI(Dependency Injection) ÄÁÅ×ÀÌ³Ê¿¡ µî·ÏÇÏ¿© Àç»ç¿ë¼ºÀ» ³ôÀÓ
+// HttpClient ë“±ë¡
+// HttpClient ì¸ìŠ¤í„´ìŠ¤ë¥¼ DI(Dependency Injection) ì»¨í…Œì´ë„ˆì— ë“±ë¡í•˜ì—¬ ì¬ì‚¬ìš©ì„±ì„ ë†’ì„
 builder.Services.AddHttpClient();
 
-// Fluent UI Blazor library add: ¹İµå½Ã AddHttpClient() È®Àå ¸Ş¼­µå ´ÙÀ½¿¡ À§Ä¡ÇÒ °Í
+// Fluent UI Blazor library add: ë°˜ë“œì‹œ AddHttpClient() í™•ì¥ ë©”ì„œë“œ ë‹¤ìŒì— ìœ„ì¹˜í•  ê²ƒ
 builder.Services.AddFluentUIComponents();
 
 
@@ -110,7 +110,7 @@ services.AddDbContext<DotNetNoteContext>(options =>
 services.AddDbContext<NoteDbContext>(options =>
     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-#region Changes Å×ÀÌºí »ı¼º 
+#region Changes í…Œì´ë¸” ìƒì„± 
 //var schemaEnhancerChanges = new TenantSchemaEnhancerCreateChangesTable(connectionString);
 //schemaEnhancerChanges.CreateChangesTable();
 #endregion
@@ -118,28 +118,28 @@ services.AddDbContext<NoteDbContext>(options =>
 
 
 
-#region AspNetUsers Å×ÀÌºí¿¡ »õ·Î¿î ÄÃ·³ Ãß°¡ 
+#region AspNetUsers í…Œì´ë¸”ì— ìƒˆë¡œìš´ ì»¬ëŸ¼ ì¶”ê°€ 
 var aspNetUsersTableAddColumn = new AspNetUsersTableEnhancer(Configuration.GetConnectionString("DefaultConnection"));
 aspNetUsersTableAddColumn.EnsureColumnsExist();
 #endregion
 
 
 
-#region DailyLogs Å×ÀÌºí »ı¼º ¹× ÄÃ·³ È®ÀÎ
+#region DailyLogs í…Œì´ë¸” ìƒì„± ë° ì»¬ëŸ¼ í™•ì¸
 var dailyLogsTableEnhancer = new DailyLogsTableEnhancer(Configuration.GetConnectionString("DefaultConnection"));
 dailyLogsTableEnhancer.EnsureDailyLogsTable();
 #endregion
 
 
 
-// ÀÇÁ¸¼º ÁÖÀÔ ÄÁÅ×ÀÌ³Ê ¼³Á¤
+// ì˜ì¡´ì„± ì£¼ì… ì»¨í…Œì´ë„ˆ ì„¤ì •
 DependencyInjectionContainer(services);
 
 services.AddTransient<IFileStorageManager, ReplyAppFileStorageManager>();
 
 services.AddDependencyInjectionContainerForPurgeApp(Configuration.GetConnectionString("DefaultConnection"));
 
-// ÀÇÁ¸¼º ÁÖÀÔ ¸Ş¼­µå Á¤ÀÇ
+// ì˜ì¡´ì„± ì£¼ì… ë©”ì„œë“œ ì •ì˜
 void DependencyInjectionContainer(IServiceCollection services)
 {
     services.AddSingleton<IConfiguration>(Configuration);
@@ -153,39 +153,39 @@ void DependencyInjectionContainer(IServiceCollection services)
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
     services.AddTransient<ICommonValueRepository, CommonValueRepository>();
 
-    // ManufacturerApp °ü·Ã ÀÇÁ¸¼º ÁÖÀÔ
+    // ManufacturerApp ê´€ë ¨ ì˜ì¡´ì„± ì£¼ì…
     services.AddDependencyInjectionContainerForManufacturer(Configuration.GetConnectionString("DefaultConnection"));
 
     // Blazored.Toast
     services.AddBlazoredToast();
 
-    // MemoApp °ü·Ã ÀÇÁ¸¼º ÁÖÀÔ
+    // MemoApp ê´€ë ¨ ì˜ì¡´ì„± ì£¼ì…
     services.AddDependencyInjectionContainerForMemoApp(Configuration.GetConnectionString("DefaultConnection"));
 
     // Upload Feature
     services.AddDiForLibries(Configuration.GetConnectionString("DefaultConnection"));
     services.AddDiForBriefingLogs(Configuration.GetConnectionString("DefaultConnection"));
 
-    // ArchiveApp °ü·Ã ÀÇÁ¸¼º ÁÖÀÔ
+    // ArchiveApp ê´€ë ¨ ì˜ì¡´ì„± ì£¼ì…
     services.AddDependencyInjectionContainerForArchiveApp(Configuration.GetConnectionString("DefaultConnection"));
 
     #region VisualAcademy.Models.Departments.dll 
-    // DepartmentApp °ü·Ã ÀÇÁ¸¼º ÁÖÀÔ
+    // DepartmentApp ê´€ë ¨ ì˜ì¡´ì„± ì£¼ì…
     services.AddDependencyInjectionContainerForDepartmentApp(Configuration.GetConnectionString("DefaultConnection"));
     #endregion
 
     builder.Services.AddDependencyInjectionContainerForBannedTypeApp(connectionString);
 
     /// <summary>
-    /// °øÁö»çÇ×(NoticeApp) °ü·Ã ÀÇÁ¸¼º(Á¾¼Ó¼º) ÁÖÀÔ °ü·Ã ÄÚµå¸¸ µû·Î ¸ğ¾Æ¼­ °ü¸® 
+    /// ê³µì§€ì‚¬í•­(NoticeApp) ê´€ë ¨ ì˜ì¡´ì„±(ì¢…ì†ì„±) ì£¼ì… ê´€ë ¨ ì½”ë“œë§Œ ë”°ë¡œ ëª¨ì•„ì„œ ê´€ë¦¬ 
     /// </summary>
-    services.AddDependencyInjectionContainerForNoticeApp(Configuration["ConnectionStrings:DefaultConnection"]); // ¶Ç ´Ù¸¥ µ¥ÀÌÅÍº£ÀÌ½º ¿¬°á ¹®ÀÚ¿­ Ç¥Çö¹ı
+    services.AddDependencyInjectionContainerForNoticeApp(Configuration["ConnectionStrings:DefaultConnection"]); // ë˜ ë‹¤ë¥¸ ë°ì´í„°ë² ì´ìŠ¤ ì—°ê²° ë¬¸ìì—´ í‘œí˜„ë²•
 }
 
-// DotNetSaleCore °ü·Ã ÀÇÁ¸¼º ÁÖÀÔ
+// DotNetSaleCore ê´€ë ¨ ì˜ì¡´ì„± ì£¼ì…
 AddDependencyInjectionContainerForDotNetSaleCore(services, Configuration);
 
-// µ¥ÀÌÅÍº£ÀÌ½º ÃÊ±âÈ­ ¹× ¸¶ÀÌ±×·¹ÀÌ¼Ç
+// ë°ì´í„°ë² ì´ìŠ¤ ì´ˆê¸°í™” ë° ë§ˆì´ê·¸ë ˆì´ì…˜
 try
 {
     await DatabaseHelper.AddOrUpdateRegistrationDate(connectionString);
@@ -233,7 +233,7 @@ var app = builder.Build();
     #region Create Changes table and add more columns
     var changesTableEnhancer = new ChangesTableSchemaEnhancer(connectionString);
 
-    // Å×ÀÌºí »ı¼º ¹× ÄÃ·³ Ãß°¡
+    // í…Œì´ë¸” ìƒì„± ë° ì»¬ëŸ¼ ì¶”ê°€
     changesTableEnhancer.EnhanceChangesTable();
     #endregion
 }
@@ -288,42 +288,50 @@ app.MapRazorPages();
 
 
 
-#region »ç¿ëÀÚ ¹× ¿ªÇÒ µ¥ÀÌÅÍº£ÀÌ½º ÃÊ±âÈ­ ¼³Á¤
-try
+
+
+
+
+
+
+
+
+#region ë°ì´í„°ë² ì´ìŠ¤ ë° ì¸ì¦ ìŠ¤í‚¤ë§ˆ ì´ˆê¸°í™”
+var config = app.Services.GetRequiredService<IConfiguration>();
+bool initializeDatabase = config.GetValue<bool>("Database:InitializeOnStartup");
+
+if (initializeDatabase)
 {
-    AuthSchemaInitializer.Initialize(app.Services);
+    DatabaseInitializer.Initialize(app.Services);
 }
-catch (Exception ex)
+else
 {
-    Console.WriteLine($"½ºÅ°¸¶ ÃÊ±âÈ­ Áß ¿À·ù ¹ß»ı: {ex.Message}");
+    Console.WriteLine("Database initialization is skipped (Database:InitializeOnStartup = false)");
 }
 #endregion
 
-#region µ¥ÀÌÅÍº£ÀÌ½º ÃÊ±âÈ­ ¼³Á¤
-try
-{
-    SchemaInitializer.Initialize(app.Services);
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"½ºÅ°¸¶ ÃÊ±âÈ­ Áß ¿À·ù ¹ß»ı: {ex.Message}");
-}
-#endregion
+
+
+
+
+
+
+
 
 
 
 
 #region CreateBuiltInUsersAndRoles and ResetAdministratorPassword
-// ±âº» ¿ªÇÒ ¹× »ç¿ëÀÚ Ãß°¡ ¹× °ü¸®ÀÚ ¾ÏÈ£ ÃÊ±âÈ­ 
+// ê¸°ë³¸ ì—­í•  ë° ì‚¬ìš©ì ì¶”ê°€ ë° ê´€ë¦¬ì ì•”í˜¸ ì´ˆê¸°í™” 
 using (var scope = app.Services.CreateScope())
 {
     var scopedServices = scope.ServiceProvider;
     var configuration = scopedServices.GetRequiredService<IConfiguration>();
 
-    // ³»Àå »ç¿ëÀÚ ¹× ¿ªÇÒ »ı¼º
+    // ë‚´ì¥ ì‚¬ìš©ì ë° ì—­í•  ìƒì„±
     await UserAndRoleInitializer.CreateBuiltInUsersAndRoles(scopedServices);
 
-    // °ü¸®ÀÚ °èÁ¤ ¾ÏÈ£ ÃÊ±âÈ­ ¿©ºÎ È®ÀÎ
+    // ê´€ë¦¬ì ê³„ì • ì•”í˜¸ ì´ˆê¸°í™” ì—¬ë¶€ í™•ì¸
     bool resetPassword = configuration.GetValue<bool>("PasswordReset:ResetAdministratorPassword");
     if (resetPassword)
     {
@@ -335,8 +343,8 @@ using (var scope = app.Services.CreateScope())
 
 
 
-#region Tenants Table »ı¼º ¹× ÄÃ·³ Ãß°¡ µ¥¸ğ
-// Å×³ÍÆ® Å×ÀÌºí »ı¼º ¹× ÄÃ·³ Ãß°¡
+#region Tenants Table ìƒì„± ë° ì»¬ëŸ¼ ì¶”ê°€ ë°ëª¨
+// í…Œë„ŒíŠ¸ í…Œì´ë¸” ìƒì„± ë° ì»¬ëŸ¼ ì¶”ê°€
 using (var scope = app.Services.CreateScope())
 {
     var __scopedServices = scope.ServiceProvider;
@@ -345,16 +353,16 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
-        var __connectionString = __configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("DefaultConnection °ªÀÌ ¼³Á¤µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+        var __connectionString = __configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("DefaultConnection ê°’ì´ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
         var tenantSchemaEnhancer = new TenantSchemaEnhancerCreateAndAlter(__connectionString, __configuration);
 
-        tenantSchemaEnhancer.EnsureSchema(); // Å×ÀÌºí »ı¼º ¹× ÄÃ·³ Ãß°¡
+        tenantSchemaEnhancer.EnsureSchema(); // í…Œì´ë¸” ìƒì„± ë° ì»¬ëŸ¼ ì¶”ê°€
 
-        logger.LogInformation("Tenant Å×ÀÌºí ¹× ÄÃ·³ÀÌ Á¤»óÀûÀ¸·Î Ã³¸®µÇ¾ú½À´Ï´Ù.");
+        logger.LogInformation("Tenant í…Œì´ë¸” ë° ì»¬ëŸ¼ì´ ì •ìƒì ìœ¼ë¡œ ì²˜ë¦¬ë˜ì—ˆìŠµë‹ˆë‹¤.");
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "Tenant Å×ÀÌºí »ı¼º Áß ¿À·ù ¹ß»ı");
+        logger.LogError(ex, "Tenant í…Œì´ë¸” ìƒì„± ì¤‘ ì˜¤ë¥˜ ë°œìƒ");
     }
 }
 #endregion
@@ -362,11 +370,11 @@ using (var scope = app.Services.CreateScope())
 
 
 
-// **PageSchemaEnhancer** ÀÎ½ºÅÏ½º »ı¼º
+// **PageSchemaEnhancer** ì¸ìŠ¤í„´ìŠ¤ ìƒì„±
 PageSchemaEnhancer pageSchemaEnhancer = new PageSchemaEnhancer(connectionString);
 pageSchemaEnhancer.EnsurePagesTableExists();
 
-#region Partners Table »ı¼º ¹× ÄÃ·³ Ãß°¡ µ¥¸ğ
+#region Partners Table ìƒì„± ë° ì»¬ëŸ¼ ì¶”ê°€ ë°ëª¨
 var tenantSchemaEnhancerCreatePartnersTable = new TenantSchemaEnhancerCreatePartnersTable(Configuration.GetConnectionString("DefaultConnection"));
 tenantSchemaEnhancerCreatePartnersTable.EnhanceAllTenantDatabases();
 #endregion
@@ -406,7 +414,7 @@ using (var scope = app.Services.CreateScope())
 app.Run();
 
 /// <summary>
-/// ¼îÇÎ¸ô(DotNetSaleCore) °ü·Ã ÀÇÁ¸¼º(Á¾¼Ó¼º) ÁÖÀÔ °ü·Ã ÄÚµå¸¸ µû·Î ¸ğ¾Æ¼­ °ü¸®
+/// ì‡¼í•‘ëª°(DotNetSaleCore) ê´€ë ¨ ì˜ì¡´ì„±(ì¢…ì†ì„±) ì£¼ì… ê´€ë ¨ ì½”ë“œë§Œ ë”°ë¡œ ëª¨ì•„ì„œ ê´€ë¦¬
 /// </summary>
 void AddDependencyInjectionContainerForDotNetSaleCore(IServiceCollection services, IConfiguration configuration)
 {

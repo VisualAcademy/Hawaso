@@ -1,6 +1,6 @@
 ﻿using Azunt.Infrastructures.Tenants;
 
-namespace Azunt.Infrastructures;
+namespace Hawaso.Infrastructures.Initializers;
 
 public static class SchemaInitializer
 {
