@@ -1,0 +1,2 @@
+### Test api/foo without auth
+GET https://localhost:5001/api/foo
