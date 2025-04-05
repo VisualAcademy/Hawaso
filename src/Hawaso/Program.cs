@@ -411,6 +411,17 @@ using (var scope = app.Services.CreateScope())
 
 
 
+app.MapGet("api/foo", () =>
+{
+    return new[]
+    {
+        new { Id = 1, Name = "Foo" },
+        new { Id = 2, Name = "Bar" }
+    };
+});
+
+
+
 app.Run();
 
 /// <summary>
