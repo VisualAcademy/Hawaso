@@ -288,6 +288,16 @@ app.MapRazorPages();
 
 
 
+#region 사용자 및 역할 데이터베이스 초기화 설정
+try
+{
+    AuthSchemaInitializer.Initialize(app.Services);
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"스키마 초기화 중 오류 발생: {ex.Message}");
+}
+#endregion
 
 #region 데이터베이스 초기화 설정
 try
