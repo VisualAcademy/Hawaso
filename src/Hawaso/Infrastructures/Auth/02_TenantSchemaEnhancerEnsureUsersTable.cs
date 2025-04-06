@@ -57,7 +57,11 @@ public class TenantSchemaEnhancerEnsureUsersTable
             {
                 while (reader.Read())
                 {
-                    result.Add(reader["ConnectionString"].ToString());
+                    var connectionString = reader["ConnectionString"]?.ToString();
+                    if (!string.IsNullOrEmpty(connectionString))
+                    {
+                        result.Add(connectionString);
+                    }
                 }
             }
         }
@@ -179,6 +183,10 @@ public class TenantSchemaEnhancerEnsureUsersTable
             var logger = services.GetRequiredService<ILogger<TenantSchemaEnhancerEnsureUsersTable>>();
             var config = services.GetRequiredService<IConfiguration>();
             var masterConnectionString = config.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(masterConnectionString))
+            {
+                throw new InvalidOperationException("Master connection string 'DefaultConnection' is not configured.");
+            }
 
             var enhancer = new TenantSchemaEnhancerEnsureUsersTable(masterConnectionString, logger);
 
