@@ -175,7 +175,7 @@ public class TenantSchemaEnhancerEnsureRolesTable
         {
             var logger = services.GetRequiredService<ILogger<TenantSchemaEnhancerEnsureRolesTable>>();
             var config = services.GetRequiredService<IConfiguration>();
-            var masterConnectionString = config.GetConnectionString("DefaultConnection");
+            var masterConnectionString = config.GetConnectionString("DefaultConnection")!;
 
             var enhancer = new TenantSchemaEnhancerEnsureRolesTable(masterConnectionString, logger);
 
