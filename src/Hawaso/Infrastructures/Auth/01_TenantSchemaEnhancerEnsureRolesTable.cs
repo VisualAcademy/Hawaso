@@ -57,7 +57,11 @@ public class TenantSchemaEnhancerEnsureRolesTable
             {
                 while (reader.Read())
                 {
-                    result.Add(reader["ConnectionString"].ToString());
+                    var connectionString = reader["ConnectionString"]?.ToString();
+                    if (!string.IsNullOrEmpty(connectionString))
+                    {
+                        result.Add(connectionString);
+                    }
                 }
             }
         }
