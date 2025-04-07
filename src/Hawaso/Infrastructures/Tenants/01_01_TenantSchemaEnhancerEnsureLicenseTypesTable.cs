@@ -57,7 +57,11 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
             {
                 while (reader.Read())
                 {
-                    result.Add(reader["ConnectionString"].ToString());
+                    var connectionString = reader["ConnectionString"]?.ToString();
+                    if (!string.IsNullOrEmpty(connectionString))
+                    {
+                        result.Add(connectionString);
+                    }
                 }
             }
         }
@@ -213,6 +217,10 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
             var logger = services.GetRequiredService<ILogger<TenantSchemaEnhancerEnsureLicenseTypesTable>>();
             var config = services.GetRequiredService<IConfiguration>();
             var masterConnectionString = config.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrEmpty(masterConnectionString))
+            {
+                throw new InvalidOperationException("DefaultConnection is not configured in appsettings.json.");
+            }
 
             var enhancer = new TenantSchemaEnhancerEnsureLicenseTypesTable(masterConnectionString, logger);
 
