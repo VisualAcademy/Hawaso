@@ -50,12 +50,12 @@ public class TenantSchemaEnhancerEnsureDefaultUsers
         }
 
         // 3. appsettings.json 에서 기본 사용자 정보 읽기
-        string adminEmail = config["DefaultUsers:AdministratorEmail"];
-        string adminPassword = config["DefaultUsers:AdministratorPassword"];
-        string guestEmail = config["DefaultUsers:GuestEmail"];
-        string guestPassword = config["DefaultUsers:GuestPassword"];
-        string anonymousEmail = config["DefaultUsers:AnonymousEmail"];
-        string anonymousPassword = config["DefaultUsers:AnonymousPassword"];
+        string adminEmail = config["DefaultUsers:AdministratorEmail"] ?? throw new InvalidOperationException("AdministratorEmail is not configured.");
+        string adminPassword = config["DefaultUsers:AdministratorPassword"] ?? throw new InvalidOperationException("AdministratorPassword is not configured.");
+        string guestEmail = config["DefaultUsers:GuestEmail"] ?? throw new InvalidOperationException("GuestEmail is not configured.");
+        string guestPassword = config["DefaultUsers:GuestPassword"] ?? throw new InvalidOperationException("GuestPassword is not configured.");
+        string anonymousEmail = config["DefaultUsers:AnonymousEmail"] ?? throw new InvalidOperationException("AnonymousEmail is not configured.");
+        string anonymousPassword = config["DefaultUsers:AnonymousPassword"] ?? throw new InvalidOperationException("AnonymousPassword is not configured.");
 
         // 4. 기본 사용자 생성
         await CreateUserIfNotExists(userManager, logger, adminEmail, adminPassword,
