@@ -192,16 +192,20 @@ public class TenantSchemaEnhancerEnsureLicenseTypesTable
 
         foreach (var (type, description) in defaultTypes)
         {
-            var cmdInsert = new SqlCommand(@"
-                INSERT INTO [dbo].[LicenseTypes]
-                ([Active], [CreatedAt], [CreatedBy], [Type], [Description], [ApplicantType], [BgRequired], [IsApplicationRequired], [IsCertificateRequired])
-                VALUES (1, SYSDATETIMEOFFSET(), 'System', @Type, @Description, 1, 0, 1, 0)", connection);
+            foreach (var applicantType in new[] { 1, 2 })
+            {
+                var cmdInsert = new SqlCommand(@"
+            INSERT INTO [dbo].[LicenseTypes]
+            ([Active], [CreatedAt], [CreatedBy], [Type], [Description], [ApplicantType], [BgRequired], [IsApplicationRequired], [IsCertificateRequired])
+            VALUES (1, SYSDATETIMEOFFSET(), 'System', @Type, @Description, @ApplicantType, 0, 1, 0)", connection);
 
-            cmdInsert.Parameters.AddWithValue("@Type", type);
-            cmdInsert.Parameters.AddWithValue("@Description", description);
-            cmdInsert.ExecuteNonQuery();
+                cmdInsert.Parameters.AddWithValue("@Type", type);
+                cmdInsert.Parameters.AddWithValue("@Description", description);
+                cmdInsert.Parameters.AddWithValue("@ApplicantType", applicantType);
+                cmdInsert.ExecuteNonQuery();
 
-            _logger.LogInformation($"Default LicenseType inserted: {type}");
+                _logger.LogInformation($"Default LicenseType inserted: {type} (ApplicantType: {applicantType})");
+            }
         }
     }
 
