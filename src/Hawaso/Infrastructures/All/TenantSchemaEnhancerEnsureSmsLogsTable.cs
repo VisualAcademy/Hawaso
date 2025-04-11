@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
 
-namespace Azunt.Infrastructures.Tenants;
+namespace Azunt.Web.Infrastructures.All;
 
 public class TenantSchemaEnhancerEnsureSmsLogsTable
 {
