@@ -63,7 +63,14 @@ public class TenantSchemaEnhancerEnsureSmsLogsTable
             {
                 while (reader.Read())
                 {
-                    result.Add(reader["ConnectionString"].ToString());
+                    var connectionString = reader["ConnectionString"] != DBNull.Value
+                        ? reader["ConnectionString"].ToString()
+                        : null;
+
+                    if (!string.IsNullOrWhiteSpace(connectionString))
+                    {
+                        result.Add(connectionString);
+                    }
                 }
             }
         }
@@ -168,6 +175,11 @@ public class TenantSchemaEnhancerEnsureSmsLogsTable
             var logger = services.GetRequiredService<ILogger<TenantSchemaEnhancerEnsureSmsLogsTable>>();
             var config = services.GetRequiredService<IConfiguration>();
             var masterConnectionString = config.GetConnectionString("DefaultConnection");
+
+            if (string.IsNullOrEmpty(masterConnectionString))
+            {
+                throw new InvalidOperationException("DefaultConnection is not configured in appsettings.json.");
+            }
 
             var enhancer = new TenantSchemaEnhancerEnsureSmsLogsTable(masterConnectionString, logger);
 
