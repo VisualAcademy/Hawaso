@@ -12,7 +12,6 @@ public static class SchemaInitializer
         var config = services.GetRequiredService<IConfiguration>();
         var masterConnectionString = config.GetConnectionString("DefaultConnection");
 
-        // LicenseTypes 테이블 생성/수정
         InitializeLicenseTypesTable(services, logger, forMaster: true); // InitializeLicenseTypesTable(services, logger, forMaster: false);
         InitializeContactTypesTable(services, logger, forMaster: true); // 또는 true
         InitializeAllsTable(services, logger, forMaster: true); // Alls 테이블
