@@ -1,4 +1,5 @@
 ﻿using Azunt.Infrastructures.Tenants;
+using Azunt.Web.Infrastructures.All;
 
 namespace Hawaso.Infrastructures.Initializers;
 
