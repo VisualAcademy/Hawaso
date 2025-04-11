@@ -12,10 +12,11 @@ public static class SchemaInitializer
         var config = services.GetRequiredService<IConfiguration>();
         var masterConnectionString = config.GetConnectionString("DefaultConnection");
 
-        InitializeLicenseTypesTable(services, logger, forMaster: true); // InitializeLicenseTypesTable(services, logger, forMaster: false);
-        InitializeContactTypesTable(services, logger, forMaster: true); // 또는 true
-        InitializeAllsTable(services, logger, forMaster: true); // Alls 테이블
-        InitializeLicenseStatusesTable(services, logger, forMaster: true); // LicenseStatuses 테이블
+        InitializeLicenseTypesTable(services, logger, forMaster: true);
+        InitializeContactTypesTable(services, logger, forMaster: true);
+        InitializeAllsTable(services, logger, forMaster: true);
+        InitializeLicenseStatusesTable(services, logger, forMaster: true);
+        InitializeSmsLogsTable(services, logger, forMaster: true);
     }
 
     private static void InitializeLicenseTypesTable(IServiceProvider services, ILogger logger, bool forMaster)
@@ -75,6 +76,21 @@ public static class SchemaInitializer
         catch (Exception ex)
         {
             logger.LogError(ex, $"{target}의 LicenseStatuses 테이블 초기화 중 오류 발생");
+        }
+    }
+
+    private static void InitializeSmsLogsTable(IServiceProvider services, ILogger logger, bool forMaster)
+    {
+        string target = forMaster ? "마스터 DB" : "테넌트 DB";
+
+        try
+        {
+            TenantSchemaEnhancerEnsureSmsLogsTable.Run(services, forMaster);
+            logger.LogInformation($"{target}의 SmsLogs 테이블 초기화 완료");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"{target}의 SmsLogs 테이블 초기화 중 오류 발생");
         }
     }
 }
