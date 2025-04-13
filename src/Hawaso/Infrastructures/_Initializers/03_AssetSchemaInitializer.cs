@@ -1,4 +1,5 @@
 ﻿using Azunt.Infrastructures.Tenants;
+using Azunt.Web.Infrastructures.Assets.Tenants;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -18,6 +19,7 @@ public static class AssetSchemaInitializer
 
         // 테이블마다 forMaster 지정 (유연하게)
         InitializeProjectsMachinesTable(services, logger, forMaster: true); // 또는 false
+        InitializeManufacturersTable(services, logger, forMaster: true);
     }
 
     private static void InitializeProjectsMachinesTable(IServiceProvider services, ILogger logger, bool forMaster)
@@ -32,6 +34,21 @@ public static class AssetSchemaInitializer
         catch (Exception ex)
         {
             logger.LogError(ex, $"{target}의 ProjectsMachines 테이블 초기화 중 오류 발생");
+        }
+    }
+
+    private static void InitializeManufacturersTable(IServiceProvider services, ILogger logger, bool forMaster)
+    {
+        string target = forMaster ? "마스터 DB" : "테넌트 DB";
+
+        try
+        {
+            TenantSchemaEnhancerEnsureManufacturersTable.Run(services, forMaster);
+            logger.LogInformation($"{target}의 Manufacturers 테이블 초기화 완료");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"{target}의 Manufacturers 테이블 초기화 중 오류 발생");
         }
     }
 }
