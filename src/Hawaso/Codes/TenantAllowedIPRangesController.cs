@@ -62,7 +62,7 @@
 
 //    [HttpPost]
 //    [ValidateAntiForgeryToken]
-//    public async Task<IActionResult> Create([Bind("StartIPRange,EndIPRange,Description")] AllowedIPRange allowedIPRange)
+//    public async Task<IActionResult> Create([Bind("StartIPRange,EndIPRange,Description")] AllowedIpRange allowedIPRange)
 //    {
 //        var tenantId = await GetCurrentTenantId();
 //        if (tenantId == null)
@@ -107,7 +107,7 @@
 
 //    [HttpPost]
 //    [ValidateAntiForgeryToken]
-//    public async Task<IActionResult> Edit(int id, [Bind("Id,StartIPRange,EndIPRange,Description")] AllowedIPRange allowedIPRange)
+//    public async Task<IActionResult> Edit(int id, [Bind("Id,StartIPRange,EndIPRange,Description")] AllowedIpRange allowedIPRange)
 //    {
 //        if (id != allowedIPRange.Id)
 //        {

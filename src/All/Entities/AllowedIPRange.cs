@@ -2,7 +2,7 @@
 
 namespace All.Entities
 {
-    public class AllowedIPRange
+    public class AllowedIpRange
     {
         public int Id { get; set; }
         public string StartIPRange { get; set; }
