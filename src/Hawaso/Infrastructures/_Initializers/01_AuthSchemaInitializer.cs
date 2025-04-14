@@ -1,6 +1,6 @@
 ﻿using Azunt.Infrastructures.Auth;
 
-namespace Hawaso.Infrastructures.Initializers;
+namespace Azunt.Web.Infrastructures._Initializers;
 
 public static class AuthSchemaInitializer
 {
