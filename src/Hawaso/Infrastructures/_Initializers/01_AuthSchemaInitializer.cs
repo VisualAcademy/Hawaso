@@ -9,9 +9,9 @@ public static class AuthSchemaInitializer
         var loggerFactory = services.GetRequiredService<ILoggerFactory>();
         var logger = loggerFactory.CreateLogger("AuthSchemaInitializer");
 
-        InitializeRolesTable(services, logger, forMaster: true); // InitializeRolesTable(services, logger, forMaster: false);
+        InitializeRolesTable(services, logger, forMaster: true);
 
-        InitializeUsersTable(services, logger, forMaster: true); // InitializeUsersTable(services, logger, forMaster: false);
+        InitializeUsersTable(services, logger, forMaster: true);
 
         InitializeDefaultUsers(services, logger);
     }
@@ -62,4 +62,3 @@ public static class AuthSchemaInitializer
         }
     }
 }
-
