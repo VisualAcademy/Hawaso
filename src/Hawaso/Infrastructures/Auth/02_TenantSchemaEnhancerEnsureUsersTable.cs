@@ -1,10 +1,19 @@
-﻿namespace Azunt.Infrastructures.Auth;
+﻿namespace Azunt.Web.Infrastructures.Auth;
 
+/// <summary>
+/// 테넌트 및 마스터 데이터베이스에 AspNetUsers 테이블을 생성 및 보강하고,
+/// 필요한 컬럼들을 추가하는 클래스입니다.
+/// </summary>
 public class TenantSchemaEnhancerEnsureUsersTable
 {
     private readonly string _masterConnectionString;
     private readonly ILogger<TenantSchemaEnhancerEnsureUsersTable> _logger;
 
+    /// <summary>
+    /// 생성자: 마스터 연결 문자열과 로거를 받아 초기화합니다.
+    /// </summary>
+    /// <param name="masterConnectionString">마스터 데이터베이스 연결 문자열</param>
+    /// <param name="logger">로깅을 위한 ILogger 인스턴스</param>
     public TenantSchemaEnhancerEnsureUsersTable(
         string masterConnectionString,
         ILogger<TenantSchemaEnhancerEnsureUsersTable> logger)
@@ -13,6 +22,10 @@ public class TenantSchemaEnhancerEnsureUsersTable
         _logger = logger;
     }
 
+    /// <summary>
+    /// 모든 테넌트 데이터베이스에서 AspNetUsers 테이블이 존재하는지 확인하고,
+    /// 존재하지 않으면 생성하며, 누락된 컬럼이 있다면 추가합니다.
+    /// </summary>
     public void EnhanceTenantDatabases()
     {
         var tenantConnectionStrings = GetTenantConnectionStrings();
@@ -31,6 +44,9 @@ public class TenantSchemaEnhancerEnsureUsersTable
         }
     }
 
+    /// <summary>
+    /// 마스터 데이터베이스에서 AspNetUsers 테이블을 보장하고 컬럼을 보강합니다.
+    /// </summary>
     public void EnhanceMasterDatabase()
     {
         try
@@ -44,6 +60,10 @@ public class TenantSchemaEnhancerEnsureUsersTable
         }
     }
 
+    /// <summary>
+    /// 마스터 데이터베이스에서 모든 테넌트의 연결 문자열을 조회합니다.
+    /// </summary>
+    /// <returns>테넌트 연결 문자열 리스트</returns>
     private List<string> GetTenantConnectionStrings()
     {
         var result = new List<string>();
@@ -69,13 +89,17 @@ public class TenantSchemaEnhancerEnsureUsersTable
         return result;
     }
 
+    /// <summary>
+    /// 주어진 연결 문자열에 대해 AspNetUsers 테이블 및 필수 컬럼을 보장합니다.
+    /// </summary>
+    /// <param name="connectionString">데이터베이스 연결 문자열</param>
     private void EnsureUsersTable(string connectionString)
     {
         using (var connection = new SqlConnection(connectionString))
         {
             connection.Open();
 
-            // 테이블 존재 여부 확인
+            // AspNetUsers 테이블 존재 여부 확인
             var cmdCheckTable = new SqlCommand(@"
                     SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES 
                     WHERE TABLE_NAME = 'AspNetUsers'", connection);
@@ -84,7 +108,7 @@ public class TenantSchemaEnhancerEnsureUsersTable
 
             if (tableExists == 0)
             {
-                // 테이블 생성
+                // 테이블이 없으면 생성
                 var createCmd = new SqlCommand(@"
                         CREATE TABLE [dbo].[AspNetUsers] (
                             [Id] NVARCHAR(450) NOT NULL PRIMARY KEY,
@@ -128,7 +152,7 @@ public class TenantSchemaEnhancerEnsureUsersTable
             }
             else
             {
-                // 필수 컬럼 존재 여부 및 추가
+                // 누락된 컬럼이 있다면 추가
                 var expectedColumns = new Dictionary<string, string>
                 {
                     ["Address"] = "NVARCHAR(MAX) NULL",
@@ -149,6 +173,7 @@ public class TenantSchemaEnhancerEnsureUsersTable
                     var columnName = kvp.Key;
                     var columnType = kvp.Value;
 
+                    // 컬럼 존재 여부 확인
                     var cmdCheckColumn = new SqlCommand(@"
                             SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
                             WHERE TABLE_NAME = 'AspNetUsers' AND COLUMN_NAME = @ColumnName", connection);
@@ -158,6 +183,7 @@ public class TenantSchemaEnhancerEnsureUsersTable
 
                     if (columnExists == 0)
                     {
+                        // 컬럼 추가
                         var alterCmd = new SqlCommand(
                             $"ALTER TABLE [dbo].[AspNetUsers] ADD [{columnName}] {columnType}", connection);
                         alterCmd.ExecuteNonQuery();
@@ -167,14 +193,14 @@ public class TenantSchemaEnhancerEnsureUsersTable
                 }
             }
 
-            // 기본 유저는 DbContext 기반으로 생성하므로 이 클래스에서는 테이블과 컬럼만 책임집니다.
+            // 기본 사용자 데이터 삽입은 외부에서 수행하므로 여기서는 생략
         }
     }
 
     /// <summary>
-    /// Entry point to run from Program.cs or Startup.cs
-    /// forMaster == true: only master DB
-    /// forMaster == false: only tenant DBs
+    /// Program.cs 또는 Startup.cs에서 호출되는 진입점입니다.
+    /// - <c>forMaster == true</c>: 마스터 DB만 처리
+    /// - <c>forMaster == false</c>: 테넌트 DB들만 처리
     /// </summary>
     public static void Run(IServiceProvider services, bool forMaster)
     {

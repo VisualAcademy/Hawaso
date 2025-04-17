@@ -1,4 +1,4 @@
-﻿namespace Azunt.Infrastructures.Auth;
+﻿namespace Azunt.Web.Infrastructures.Auth;
 
 /// <summary>
 /// 테넌트 및 마스터 데이터베이스에 AspNetRoles 테이블을 생성 및 보강하고,
