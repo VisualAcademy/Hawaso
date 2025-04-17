@@ -1,4 +1,4 @@
-﻿namespace Azunt.Infrastructures.Tenants;
+﻿namespace Azunt.Web.Infrastructures.Tenants;
 
 public class TenantSchemaEnhancerEnsureLicenseTypesTable
 {
