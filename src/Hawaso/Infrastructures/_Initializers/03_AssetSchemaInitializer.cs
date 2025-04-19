@@ -1,9 +1,5 @@
 ﻿using Azunt.Infrastructures.Tenants;
 using Azunt.Web.Infrastructures.Assets.Tenants;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System;
 
 namespace Hawaso.Infrastructures.Initializers;
 
