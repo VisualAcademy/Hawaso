@@ -1,5 +1,6 @@
 ﻿@page "/counter"
 @rendermode InteractiveServer
+@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
 
 <PageTitle>Counter</PageTitle>
 
@@ -8,6 +9,12 @@
 <p role="status">Current count: @currentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<FluentCard>
+    <h2>Hello World!</h2>
+    <FluentButton Appearance="@Appearance.Accent"
+                  IconStart="@(new Icons.Regular.Size16.Globe())">Click Me</FluentButton>
+</FluentCard>
 
 @code {
     private int currentCount = 0;

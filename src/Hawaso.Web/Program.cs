@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Hawaso.Web.Components.Pages.DivisionPages.Models;
 using Dalbodre.Infrastructures.Cores;
 using Hawaso.Web.Components.Pages.VendorPages.Models;
+using Microsoft.FluentUI.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
 // Add services to the container.
+builder.Services.AddFluentUIComponents();
+builder.Services.AddHttpClient();
+
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
