@@ -5,7 +5,6 @@ using Dalbodre.Infrastructures.Cores;
 using DotNetNote.Models;
 using DotNetSaleCore.Models;
 using Hawaso.Areas.Identity;
-using Hawaso.Data;
 using Hawaso.Extensions.BriefingLogs;
 using Hawaso.Extensions.Libraries;
 using Hawaso.Extensions.Memos;
@@ -21,7 +20,6 @@ using Hawaso.Web.Components.Pages.VendorPages.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using NoticeApp.Models;
@@ -114,15 +112,6 @@ services.AddDbContext<NoteDbContext>(options =>
 //var schemaEnhancerChanges = new TenantSchemaEnhancerCreateChangesTable(connectionString);
 //schemaEnhancerChanges.CreateChangesTable();
 #endregion
-
-
-
-
-#region AspNetUsers 테이블에 새로운 컬럼 추가 
-var aspNetUsersTableAddColumn = new AspNetUsersTableEnhancer(Configuration.GetConnectionString("DefaultConnection"));
-aspNetUsersTableAddColumn.EnsureColumnsExist();
-#endregion
-
 
 
 #region DailyLogs 테이블 생성 및 컬럼 확인
