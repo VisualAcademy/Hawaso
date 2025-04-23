@@ -72,17 +72,20 @@ namespace All.Controllers
             return View(model);
         }
 
-        // GET: /Verification/AddPhoneNumber
         [HttpGet]
-        public IActionResult AddPhoneNumber() => View();
+        public IActionResult AddPhoneNumber(string returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
 
-        // POST: /Verification/AddPhoneNumber
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPhoneNumber(AddPhoneNumberViewModel model)
+        public async Task<IActionResult> AddPhoneNumber(AddPhoneNumberViewModel model, string returnUrl = null)
         {
             if (!ModelState.IsValid)
             {
+                ViewData["ReturnUrl"] = returnUrl;
                 return View(model);
             }
 
@@ -92,19 +95,15 @@ namespace All.Controllers
                 return View("Error");
             }
 
-            // 새로운 인증 코드 생성
             var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
-
-            // 사용자에게 인증 코드 전송
             await _twilioSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
 
-            // VerifyPhoneNumber 페이지로 이동하여 인증 코드 입력
-            return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber });
+            return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber, returnUrl });
         }
 
         // GET: /Verification/VerifyPhoneNumber
         [HttpGet]
-        public async Task<IActionResult> VerifyPhoneNumber(string phoneNumber)
+        public async Task<IActionResult> VerifyPhoneNumber(string phoneNumber, string returnUrl = null)
         {
             var user = await GetCurrentUserAsync();
             if (user == null)
@@ -112,36 +111,42 @@ namespace All.Controllers
                 return View("Error");
             }
 
-            return phoneNumber == null ? View("Error") : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
+            ViewData["ReturnUrl"] = returnUrl;
+
+            return phoneNumber == null
+                ? View("Error")
+                : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
         }
 
         // 휴대폰 번호 인증을 처리하는 POST 메서드
         [HttpPost]
-        [ValidateAntiForgeryToken] // CSRF 공격을 방지하기 위한 토큰 검증
-        public async Task<IActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model, string returnUrl = null)
         {
-            // 모델 유효성 검사 실패 시, 다시 입력 폼을 표시
             if (!ModelState.IsValid)
             {
+                ViewData["ReturnUrl"] = returnUrl;
                 return View(model);
             }
 
-            // 현재 로그인한 사용자 정보를 가져옴
             var user = await GetCurrentUserAsync();
             if (user != null)
             {
-                // 사용자의 휴대폰 번호를 변경하고 인증 코드 확인
                 var result = await _userManager.ChangePhoneNumberAsync(user, model.PhoneNumber, model.Code);
                 if (result.Succeeded)
                 {
-                    // 성공 시, 다시 로그인 처리 후 성공 메시지와 함께 리디렉트
                     await _signInManager.SignInAsync(user, isPersistent: false);
+                    if (!string.IsNullOrEmpty(returnUrl))
+                    {
+                        return LocalRedirect(returnUrl);
+                    }
+
                     return RedirectToAction(nameof(Index), new { Message = ManageMessageId.AddPhoneSuccess });
                 }
             }
 
-            // 인증 실패 시, 오류 메시지를 추가하고 입력 폼을 다시 표시
-            ModelState.AddModelError(string.Empty, "휴대폰 번호 인증에 실패했습니다.");
+            ModelState.AddModelError(string.Empty, "Failed to verify the phone number.");
+            ViewData["ReturnUrl"] = returnUrl;
             return View(model);
         }
 
