@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Azunt" Version="1.0.0" />
+        <PackageReference Include="Azunt" Version="1.0.1" />
         <PackageReference Include="Azure.Identity" Version="1.13.2" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
         <PackageReference Include="Blazored.Toast" Version="4.2.1" />
@@ -56,7 +56,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\All\All.csproj" />
         <ProjectReference Include="..\Hawaso.Models\Hawaso.Models.csproj" />
     </ItemGroup>
 

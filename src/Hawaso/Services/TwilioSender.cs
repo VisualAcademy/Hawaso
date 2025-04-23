@@ -1,4 +1,4 @@
-﻿namespace All.Services
+﻿namespace Azunt.Services
 {
     public class TwilioSender : ITwilioSender
     {

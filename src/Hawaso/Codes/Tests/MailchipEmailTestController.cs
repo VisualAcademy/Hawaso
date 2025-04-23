@@ -1,4 +1,4 @@
-﻿using All.Services;
+﻿using Azunt.Services;
 
 namespace Hawaso.Codes.Tests
 {

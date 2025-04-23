@@ -3,7 +3,7 @@ using System.Net.Mail;
 
 namespace Hawaso.Services;
 
-public class EmailSender : All.Services.IEmailSender
+public class EmailSender : Azunt.Services.IEmailSender
 {
     public Task SendEmailAsync(string email, string subject, string message, bool isBodyHtml = true)
     {
@@ -12,7 +12,7 @@ public class EmailSender : All.Services.IEmailSender
     }
 }
 
-public class MailchimpEmailSender : All.Services.IMailchimpEmailSender
+public class MailchimpEmailSender : Azunt.Services.IMailchimpEmailSender
 {
     private const string REPLY_TO_EMAIL = "support@hawaso.com";
     private const string REPLY_TO_NAME = "Hawaso Team";
