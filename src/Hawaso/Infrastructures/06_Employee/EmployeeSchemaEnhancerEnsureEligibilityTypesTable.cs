@@ -86,9 +86,9 @@ public class EmployeeSchemaEnhancerEnsureEligibilityTypesTable
         {
             var createCmd = new SqlCommand(@"
                 CREATE TABLE [dbo].[EligibilityTypes](
-	                [ID] [bigint] IDENTITY(1,1) NOT NULL,
-	                  NULL,
-	                [Value] [nvarchar](max) NULL,
+                    [ID] [bigint] IDENTITY(1,1) NOT NULL,
+                    [Label] [nvarchar](255) NULL,
+                    [Value] [nvarchar](max) NULL,
                     CONSTRAINT [PK_EligibilityTypes] PRIMARY KEY CLUSTERED ([ID] ASC)
                 );", connection);
 
