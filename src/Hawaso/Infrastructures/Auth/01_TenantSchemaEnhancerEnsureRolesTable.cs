@@ -153,45 +153,41 @@ public class TenantSchemaEnhancerEnsureRolesTable
     }
 
     /// <summary>
-    /// AspNetRoles 테이블에 필요한 기본 역할(Administrators, Everyone, Users, Guests)이
-    /// 존재하지 않으면 삽입합니다.
+    /// AspNetRoles 테이블이 비어 있을 경우에만 기본 역할(Administrators, Everyone, Users, Guests)을 삽입합니다.
     /// </summary>
     /// <param name="connection">열려 있는 SQL 연결 객체</param>
     private void EnsureDefaultRoles(SqlConnection connection)
     {
-        var existingRoles = new HashSet<string>();
+        // 현재 테이블에 등록된 역할 개수 확인
+        var cmdCountRoles = new SqlCommand("SELECT COUNT(*) FROM [dbo].[AspNetRoles]", connection);
+        int roleCount = (int)cmdCountRoles.ExecuteScalar();
 
-        var cmdGetRoles = new SqlCommand("SELECT [Name] FROM [dbo].[AspNetRoles]", connection);
-        using (var reader = cmdGetRoles.ExecuteReader())
+        if (roleCount > 0)
         {
-            while (reader.Read())
-            {
-                existingRoles.Add(reader.GetString(0));
-            }
+            _logger.LogInformation("AspNetRoles table already has roles. Skipping default role insertion.");
+            return; // 하나라도 있으면 아무것도 추가하지 않고 바로 리턴
         }
 
+        // 테이블이 비어있을 경우 기본 역할 삽입
         var defaultRoles = new List<(string Name, string Description)>
-        {
-            ("Administrators", "응용 프로그램을 총 관리하는 관리 그룹 계정"),
-            ("Everyone", "응용 프로그램을 사용하는 모든 사용자 그룹 계정"),
-            ("Users", "일반 사용자 그룹 계정"),
-            ("Guests", "게스트 사용자 그룹 계정")
-        };
+    {
+        ("Administrators", "응용 프로그램을 총 관리하는 관리 그룹 계정"),
+        ("Everyone", "응용 프로그램을 사용하는 모든 사용자 그룹 계정"),
+        ("Users", "일반 사용자 그룹 계정"),
+        ("Guests", "게스트 사용자 그룹 계정")
+    };
 
         foreach (var (name, description) in defaultRoles)
         {
-            if (!existingRoles.Contains(name))
-            {
-                var cmdInsert = new SqlCommand(@"
-                        INSERT INTO [dbo].[AspNetRoles] ([Id], [Name], [NormalizedName], [ConcurrencyStamp], [Description])
-                        VALUES (NEWID(), @Name, UPPER(@Name), NEWID(), @Description)", connection);
+            var cmdInsert = new SqlCommand(@"
+                INSERT INTO [dbo].[AspNetRoles] ([Id], [Name], [NormalizedName], [ConcurrencyStamp], [Description])
+                VALUES (NEWID(), @Name, UPPER(@Name), NEWID(), @Description)", connection);
 
-                cmdInsert.Parameters.AddWithValue("@Name", name);
-                cmdInsert.Parameters.AddWithValue("@Description", description);
+            cmdInsert.Parameters.AddWithValue("@Name", name);
+            cmdInsert.Parameters.AddWithValue("@Description", description);
 
-                cmdInsert.ExecuteNonQuery();
-                _logger.LogInformation($"Default role inserted: {name}");
-            }
+            cmdInsert.ExecuteNonQuery();
+            _logger.LogInformation($"Default role inserted: {name}");
         }
     }
 
