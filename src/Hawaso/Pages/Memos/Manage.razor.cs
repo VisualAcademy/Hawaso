@@ -441,14 +441,30 @@ public partial class Manage
 
     private async Task GetUserIdAndUserName()
     {
+        if (AuthenticationStateProviderRef == null || UserManagerRef == null)
+        {
+            UserId = "";
+            UserName = "Anonymous";
+            return;
+        }
+
         var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        if (user.Identity.IsAuthenticated)
+        if (user?.Identity?.IsAuthenticated == true)
         {
             var currentUser = await UserManagerRef.GetUserAsync(user);
-            UserId = currentUser.Id;
-            UserName = user.Identity.Name;
+
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id;
+                UserName = user.Identity?.Name ?? "Anonymous";  // Name이 null일 가능성 대비
+            }
+            else
+            {
+                UserId = "";
+                UserName = "Anonymous";
+            }
         }
         else
         {
