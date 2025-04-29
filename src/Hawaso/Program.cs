@@ -29,11 +29,54 @@ using VisualAcademy.Components.Pages.ApplicantsTransfers;
 using VisualAcademy.Models.BannedTypes;
 using VisualAcademy.Models.Departments;
 using VisualAcademy.Models.Replys;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+
+
+#region GlobalAdministrators Policy 설정
+// GlobalAdministrators 이메일 목록 읽기
+// - appsettings.json의 "AuthorizationSettings:GlobalAdministrators" 배열을 읽어옵니다.
+// - 값이 없으면 빈 리스트로 초기화하여 NullReferenceException을 방지합니다.
+var globalAdminEmails = builder.Configuration.GetSection("AuthorizationSettings:GlobalAdministrators").Get<List<string>>() ?? new List<string>();
+#endregion
+
+#region Authorization Policy Configuration
+// 애플리케이션의 권한 정책(Policy)들을 정의합니다.
+builder.Services.AddAuthorization(options =>
+{
+    // "AdminOnly" 정책:
+    // - "Administrators" 역할을 가진 사용자만 접근 허용
+    options.AddPolicy("AdminOnly", policy =>
+        policy.RequireRole("Administrators"));
+
+    // "ManagerOnly" 정책:
+    // - "Managers" 역할을 가진 사용자만 접근 허용
+    options.AddPolicy("ManagerOnly", policy =>
+        policy.RequireRole("Managers"));
+
+    #region GlobalAdministrators Policy 설정
+    // "GlobalAdministrators" 정책 정의
+    // - 조건 1: "Administrators" 역할(Role)에 속해야 함
+    // - 조건 2: 이메일(ClaimTypes.Email)이 globalAdminEmails 리스트에 포함되어야 함
+    options.AddPolicy("GlobalAdministrators", policy =>
+        policy.RequireAssertion(context =>
+            context.User.IsInRole("Administrators") && // 역할 검사
+            context.User.HasClaim(c =>
+                c.Type == ClaimTypes.Email && // 이메일 Claim 존재 여부 검사
+                globalAdminEmails.Contains(c.Value, StringComparer.OrdinalIgnoreCase)) // 이메일 리스트 포함 여부 검사
+        )
+    );
+    #endregion
+
+});
+#endregion
+
+
 
 var services = builder.Services;
 var Configuration = builder.Configuration;
