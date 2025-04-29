@@ -38,6 +38,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 
 
+
 #region GlobalAdministrators Policy 설정
 // GlobalAdministrators 이메일 목록 읽기
 // - appsettings.json의 "AuthorizationSettings:GlobalAdministrators" 배열을 읽어옵니다.
@@ -45,7 +46,13 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 var globalAdminEmails = builder.Configuration.GetSection("AuthorizationSettings:GlobalAdministrators").Get<List<string>>() ?? new List<string>();
 #endregion
 
+
+
+
 #region Authorization Policy Configuration
+// 정책 기반 권한 설정
+// 참조: https://dul.me/docs/aspnet/core/security/add-authorization-policies/
+
 // 애플리케이션의 권한 정책(Policy)들을 정의합니다.
 builder.Services.AddAuthorization(options =>
 {
@@ -75,6 +82,7 @@ builder.Services.AddAuthorization(options =>
 
 });
 #endregion
+
 
 
 
