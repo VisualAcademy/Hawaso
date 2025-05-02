@@ -32,7 +32,7 @@ CREATE TABLE [dbo].[Alls]
     --------------------------------------------------------------------------------------------------
     --[0] Auditable
     [CreatedBy]     NVarChar(255) NULL,                         -- 등록자 (NOT NULL recommended)
-    [Created]       DateTimeOffset DEFAULT(GetDate()) NULL,     -- 생성일 (NOT NULL recommended)
+    [Created]       DateTimeOffset DEFAULT(SYSDATETIMEOFFSET()) NULL, -- 생성일 (NOT NULL recommended)
     [ModifiedBy]    NVarChar(255) NULL,                         -- 수정자
     [Modified]      DateTimeOffset NULL,                        -- 수정일
 
@@ -74,7 +74,7 @@ CREATE TABLE [dbo].[Alls]
     --------------------------------------------------------------------------------------------------
     --[!] 추가 항목들
     [Status]        NVarChar(255) NULL,                         -- 상태 (draft, final, archive)
-    TenantId        Int DEFAULT 0 NULL,
+    TenantId        BigInt DEFAULT 0 NULL,
     TenantName      NVarChar(255) NULL,
     AppId           Int DEFAULT 0 NULL,
     AppName         NVarChar(255) NULL,
@@ -130,6 +130,8 @@ CREATE TABLE [dbo].[Alls]
     ApprovalBy      NVarChar(255) NULL,                         -- 승인자
     ApprovalDate    DateTimeOffset NULL,                        -- 승인 일자
 
+    Active          Bit DEFAULT 1 NULL,                         -- 활성 상태 (기본값: true)
+
     --------------------------------------------------------------------------------------------------
     --[+] ★ 확장 추가: 사용자 추적 정보
     UserAgent       NVarChar(512) NULL,                         -- 브라우저/OS 정보
@@ -150,6 +152,35 @@ CREATE TABLE [dbo].[Alls]
 
     --------------------------------------------------------------------------------------------------
     --[+] ★ 확장 추가: 다국어 지원
-    Culture         NVarChar(10) NULL                           -- 다국어 코드 (ko-KR, en-US 등)
+    Culture         NVarChar(10) NULL,                           -- 다국어 코드 (ko-KR, en-US 등)
+
+    --------------------------------------------------------------------------------------------------
+    --[+] ★ 확장 추가: 고정값/상수 관리용 구분자
+    IsSystem        Bit DEFAULT 0 NULL,                         -- 시스템 항목 여부 (예: 삭제 불가, 수정 제한)
+
+    --------------------------------------------------------------------------------------------------
+    --[+] ★ 확장 추가: 검색/정렬 최적화용 인덱싱 컬럼
+    SearchKeywords  NVarChar(1024) NULL,                       -- 검색 키워드용 통합 텍스트
+    SortKey         NVarChar(255) NULL,                         -- 사용자 지정 정렬 키
+
+    --------------------------------------------------------------------------------------------------
+    --[+] ★ 확장 추가: 버전 관리/히스토리
+    Version         Int DEFAULT 1 NULL,                         -- 버전 번호 (예: 문서 개정)
+    HistoryGroupId  UniqueIdentifier NULL,                     -- 동일 문서 그룹 구분자 (버전 관리 시)
+
+    --------------------------------------------------------------------------------------------------
+    --[+] ★ 확장 추가: 알림/구독 관련
+    IsNotified      Bit DEFAULT 0 NULL,                         -- 알림 여부 (예: 관리자 확인)
+    IsSubscribed    Bit DEFAULT 0 NULL,                         -- 사용자 구독 여부
+
+    --------------------------------------------------------------------------------------------------
+    --[+] ★ 확장 추가: 외부 연동 또는 확장
+    ExternalId      NVarChar(255) NULL,                         -- 외부 시스템 연동용 ID
+    ExternalUrl     NVarChar(1024) NULL,                        -- 외부 리소스 링크
+
+    --------------------------------------------------------------------------------------------------
+    --[+] ★ 확장 추가: 모바일/앱/API 구분
+    SourceType      NVarChar(50) NULL,                          -- 작성 원본 (Web, Mobile, API 등)
+    IsMobile        Bit DEFAULT 0 NULL,                         -- 모바일 작성 여부
 )
 GO

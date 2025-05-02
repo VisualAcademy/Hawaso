@@ -77,6 +77,7 @@ public class TenantSchemaEnhancerEnsureAllsTable
         {
             connection.Open();
 
+            // Check if 'Alls' table exists
             var cmdCheck = new SqlCommand(@"
                 SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES 
                 WHERE TABLE_NAME = 'Alls'", connection);
@@ -85,6 +86,7 @@ public class TenantSchemaEnhancerEnsureAllsTable
 
             if (tableCount == 0)
             {
+                // Create 'Alls' table if it doesn't exist
                 var cmdCreate = new SqlCommand(@"
                     CREATE TABLE [dbo].[Alls] (
                         [Id] BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
