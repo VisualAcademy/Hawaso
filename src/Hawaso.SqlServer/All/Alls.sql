@@ -140,7 +140,7 @@ CREATE TABLE [dbo].[Alls]
 
     --------------------------------------------------------------------------------------------------
     --[+] ★ 확장 추가: 노출 제어 및 태그
-    DisplayOrder    Int DEFAULT 0 NULL,                         -- 노출 순서
+    DisplayOrder    Int DEFAULT 0 NULL,                         -- 노출 순서 (SortOrder)
     ViewRoles       NVarChar(255) NULL,                         -- 열람 권한 (복수 역할)
     Tags            NVarChar(255) NULL,                         -- 태그
 
