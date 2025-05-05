@@ -18,6 +18,8 @@ public static class AssetSchemaInitializer
         InitializeManufacturersTable(services, logger, forMaster: true);
         InitializeInstallsTable(services, logger, forMaster: true);
         InitializeReasonsTable(services, logger, forMaster: true);
+
+        InitializeMediaThemesTable(services, logger, forMaster: true);
     }
 
     private static void InitializeProjectsMachinesTable(IServiceProvider services, ILogger logger, bool forMaster)
@@ -77,6 +79,22 @@ public static class AssetSchemaInitializer
         catch (Exception ex)
         {
             logger.LogError(ex, $"{target}의 Reasons 테이블 초기화 중 오류 발생");
+        }
+    }
+
+
+    private static void InitializeMediaThemesTable(IServiceProvider services, ILogger logger, bool forMaster)
+    {
+        string target = forMaster ? "마스터 DB" : "테넌트 DB";
+
+        try
+        {
+            Azunt.MediaThemeManagement.MediaThemesTableBuilder.Run(services, forMaster);
+            logger.LogInformation($"{target}의 MediaThemes 테이블 초기화 완료");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"{target}의 MediaThemes 테이블 초기화 중 오류 발생");
         }
     }
 }
