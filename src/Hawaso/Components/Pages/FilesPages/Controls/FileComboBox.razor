@@ -1,0 +1,58 @@
+﻿@namespace Azunt.Web.Components.Pages.Files.Controls
+@using Azunt.FileManagement
+@inject IFileRepository FileRepository
+
+<div>
+    <!-- 드롭다운 리스트 -->
+    <select class="form-control mb-2" @onchange="OnSelectChanged">
+        <option value="">-- Select a File --</option>
+        @foreach (var file in FileList)
+        {
+            <option value="@file" selected="@(file == SelectedFile)">
+                @file
+            </option>
+        }
+    </select>
+
+    <!-- 직접 입력용 텍스트박스: 필요없으면 제거 -->
+    <!-- 텍스트박스 입력 시에도 SelectedFileChanged 호출 -->
+    <input class="form-control" type="text" placeholder="Or type a new file..."
+           @bind="SelectedFile"
+           @oninput="OnInputChanged" />
+</div>
+
+@code {
+    [Parameter]
+    public string SelectedFile { get; set; } = "";
+
+    [Parameter]
+    public EventCallback<string> SelectedFileChanged { get; set; }
+
+    private List<string> FileList { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var files = await FileRepository.GetAllAsync();
+        FileList = files
+            .Select(d => d.Name ?? "")
+            .Where(n => !string.IsNullOrWhiteSpace(n))
+            .Distinct()
+            .ToList();
+    }
+
+    private async Task OnSelectChanged(ChangeEventArgs e)
+    {
+        var selected = e.Value?.ToString();
+        if (!string.IsNullOrWhiteSpace(selected))
+        {
+            SelectedFile = selected;
+            await SelectedFileChanged.InvokeAsync(SelectedFile);
+        }
+    }
+
+    private async Task OnInputChanged(ChangeEventArgs e)
+    {
+        SelectedFile = e.Value?.ToString() ?? "";
+        await SelectedFileChanged.InvokeAsync(SelectedFile);
+    }
+}

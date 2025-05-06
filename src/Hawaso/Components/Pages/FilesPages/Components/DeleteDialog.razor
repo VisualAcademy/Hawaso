@@ -1,0 +1,22 @@
+﻿@namespace Azunt.Web.Components.Pages.Files.Components
+
+@if (IsShow)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">DELETE</h5>
+                    <button type="button" class="btn-close" @onclick="Hide" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="OnClickCallback">Yes</button>
+                    <button type="button" class="btn btn-secondary" @onclick="Hide">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

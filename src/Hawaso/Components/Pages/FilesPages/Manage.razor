@@ -1,0 +1,154 @@
+﻿@page "/Files"
+@page "/Files/Manage"
+
+@namespace Azunt.Web.Pages.Files
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Web
+@rendermode InteractiveServer
+
+<h3 class="mt-1 mb-1">
+    Files
+    <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;"></span>
+    <button onclick="location.href = '/api/FileDownload/ExcelDown';" class="btn btn-sm btn-primary" style="float: right;">Excel Export</button>
+</h3>
+
+<div class="row">
+    <div class="col-md-12">
+        @if (models == null)
+        {
+            <p>Loading...</p>
+        }
+        else
+        {
+            <div class="table-responsive" style="min-height: 450px;">
+                <table class="table table-bordered table-hover">
+                    <colgroup>
+                        <col style="width: 400px;" />    @* Name (most wide) *@
+                        <col style="width: 100px;" />    @* Download *@
+                        @if (!SimpleMode)
+                        {
+                            <col style="width: 100px;" /> @* Created *@
+                            <col style="width: 100px;" /> @* Active *@
+                            <col style="width: auto;" />  @* (Empty column or other) *@
+                        }
+                        <col style="width: 300px;" />    @* Action (narrow) *@
+                    </colgroup>
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="text-center text-nowrap" @onclick="SortByName" style="cursor: pointer;">
+                                Name <Azunt.Web.Components.Pages.Files.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder" />
+                            </th>
+
+                            <th class="text-center">Download</th>
+
+                            @if (!SimpleMode)
+                            {
+                                <th class="text-center text-nowrap">Created</th>
+                                <th class="text-center text-nowrap">Active</th>
+                                <th class="text-center text-nowrap"></th>
+                            }
+
+                            <th class="text-center text-nowrap">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (models.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="@(SimpleMode ? 3 : 6)" class="text-center">
+                                    No Data.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var m in models)
+                            {
+                                <tr>
+                                    <!-- Name Column -->
+                                    <td class="text-nowrap">@m.Name</td>
+
+                                    <!-- DownLoad Link Column -->
+                                    <td class="text-center text-nowrap">
+                                        @if (!string.IsNullOrEmpty(m.FileName))
+                                        {
+                                            <a href="@($"/api/FileDownload/{System.Net.WebUtility.UrlEncode(m.FileName)}")" target="_blank">
+                                                <span class="oi oi-data-transfer-download me-1 text-primary"></span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span>No File</span>
+                                        }
+                                    </td>
+
+                                    @if (!SimpleMode)
+                                    {
+                                        <td class="text-center text-nowrap small">@Dul.DateTimeUtility.ShowTimeOrDate(m.Created.UtcDateTime.AddMinutes(-timeZoneOffsetMinutes))</td>
+                                        <td class="text-center"><input type="checkbox" checked="@(m.Active ?? false)" disabled /></td>
+                                        <td></td>
+                                    }
+
+                                    @if (!SimpleMode)
+                                    {
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-primary" @onclick="@(() => EditBy(m))">Edit</button>
+                                            <button class="btn btn-sm btn-danger" @onclick="@(() => DeleteBy(m))">Del</button>
+                                            <button class="btn btn-sm btn-warning" @onclick="@(() => ToggleBy(m))">Change Active</button>
+                                            <button class="btn btn-sm btn-light" @onclick="@(() => MoveUp(m.Id))"><span class="oi oi-chevron-top"></span></button>
+                                            <button class="btn btn-sm btn-light" @onclick="@(() => MoveDown(m.Id))"><span class="oi oi-chevron-bottom"></span></button>
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-primary" @onclick="@(() => EditBy(m))">Edit</button>
+                                            <button class="btn btn-sm btn-danger" @onclick="@(() => DeleteBy(m))">Del</button>
+                                            <button class="btn btn-sm btn-light" @onclick="@(() => MoveUp(m.Id))"><span class="oi oi-chevron-top"></span></button>
+                                            <button class="btn btn-sm btn-light" @onclick="@(() => MoveDown(m.Id))"><span class="oi oi-chevron-bottom"></span></button>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-12">
+        <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged" />
+    </div>
+
+    <div class="col-md-12">
+        <Azunt.Web.Components.Pages.Files.Components.SearchBox placeholder="Search Files..." SearchQueryChanged="Search" />
+    </div>
+</div>
+
+<Azunt.Web.Components.Pages.Files.Components.ModalForm @ref="EditorFormReference" ModelSender="model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit" UserName="@UserName" ParentId="@ParentId" ParentKey="@ParentKey">
+    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+</Azunt.Web.Components.Pages.Files.Components.ModalForm>
+
+<Azunt.Web.Components.Pages.Files.Components.DeleteDialog @ref="DeleteDialogReference" OnClickCallback="DeleteClick" />
+
+@if (IsInlineDialogShow)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content shadow">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Active State</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="ToggleClose"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Do you want to change the Active state of <strong>@model.Name</strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="ToggleClick">Yes, Change</button>
+                    <button type="button" class="btn btn-secondary" @onclick="ToggleClose">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

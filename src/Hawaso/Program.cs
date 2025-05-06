@@ -30,6 +30,7 @@ using VisualAcademy.Models.BannedTypes;
 using VisualAcademy.Models.Departments;
 using VisualAcademy.Models.Replys;
 using System.Security.Claims;
+using Azunt.FileManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -260,6 +261,16 @@ services.AddTransient<ITwilioSender, TwilioSender>();
 
 
 services.AddTransient<IMailchimpEmailSender, MailchimpEmailSender>();
+
+
+
+var defaultConnStr = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("DefaultConnection is missing in configuration.");
+
+builder.Services.AddDependencyInjectionContainerForFileApp(defaultConnStr);
+builder.Services.AddTransient<FileAppDbContextFactory>();
+
+builder.Services.AddScoped<IFileStorageService, Azunt.Web.Components.Pages.FilesPages.Services.AzureBlobStorageService>();
 
 
 var app = builder.Build();
