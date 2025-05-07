@@ -6,9 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Azunt" Version="1.0.5" />
+        <PackageReference Include="Azunt" Version="1.0.6" />
         <PackageReference Include="Azunt.DepotManagement" Version="1.0.0" />
-        <PackageReference Include="Azunt.FileManagement" Version="1.0.0" />
+        <PackageReference Include="Azunt.FileManagement" Version="1.0.1" />
         <PackageReference Include="Azunt.MediaThemeManagement" Version="1.0.0" />
         <PackageReference Include="Azure.Identity" Version="1.13.2" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.23.0" />
