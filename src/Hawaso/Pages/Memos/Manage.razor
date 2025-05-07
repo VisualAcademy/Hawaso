@@ -78,8 +78,10 @@
                     <thead class="thead-light">
                         <tr>
                             <th class="text-center">ID</th>
-                            <th class="text-center text-nowrap" @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <VisualAcademy.Pages.Memos.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></VisualAcademy.Pages.Memos.Components.SortOrderArrow></th>
-                            <th class="text-center text-nowrap" @onclick="@(() => SortByName())">Name <VisualAcademy.Pages.Memos.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></VisualAcademy.Pages.Memos.Components.SortOrderArrow></th>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title 
+                                    <Azunt.Components.Sorting.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Azunt.Components.Sorting.SortOrderArrow></th>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByName())">Name 
+                                    <VisualAcademy.Pages.Memos.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></VisualAcademy.Pages.Memos.Components.SortOrderArrow></th>
                             <th class="text-center text-nowrap" @onclick="@(() => SortByCreate())">Create <VisualAcademy.Pages.Memos.Components.SortOrderArrow SortColumn="Create" SortOrder="@sortOrder"></VisualAcademy.Pages.Memos.Components.SortOrderArrow></th>
                             <th class="text-center text-nowrap">Read</th>
                             <th class="text-center text-nowrap">Actions</th>
