@@ -313,11 +313,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-#region Tenants Update
-// Enhance tenant databases on startup
-//EnhanceTenantDatabases(app.Services, app.Configuration); 
-#endregion
-
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
@@ -398,15 +393,10 @@ using (var scope = app.Services.CreateScope())
 PageSchemaEnhancer pageSchemaEnhancer = new PageSchemaEnhancer(connectionString);
 pageSchemaEnhancer.EnsurePagesTableExists();
 
-#region Partners Table 생성 및 컬럼 추가 데모
-var tenantSchemaEnhancerCreatePartnersTable = new TenantSchemaEnhancerCreatePartnersTable(Configuration.GetConnectionString("DefaultConnection"));
-tenantSchemaEnhancerCreatePartnersTable.EnhanceAllTenantDatabases();
-#endregion
-
-
-
-
-
+//#region Partners Table 생성 및 컬럼 추가 데모
+//var tenantSchemaEnhancerCreatePartnersTable = new TenantSchemaEnhancerCreatePartnersTable(Configuration.GetConnectionString("DefaultConnection"));
+//tenantSchemaEnhancerCreatePartnersTable.EnhanceAllTenantDatabases();
+//#endregion
 
 
 #region Create ApplicantsTransfers Table
@@ -424,14 +414,14 @@ defaultSchemaEnhancer.EnhanceDefaultDatabase();
 
 
 
-using (var scope = app.Services.CreateScope())
-{
-    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-    string masterConnectionString = configuration.GetConnectionString("DefaultConnection");
+//using (var scope = app.Services.CreateScope())
+//{
+//    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+//    string masterConnectionString = configuration.GetConnectionString("DefaultConnection");
 
-    var enhancer = new TenantSchemaEnhancerCreateCustomFieldTitlesTable(masterConnectionString);
-    enhancer.EnhanceAllTenantDatabases();
-}
+//    var enhancer = new TenantSchemaEnhancerCreateCustomFieldTitlesTable(masterConnectionString);
+//    enhancer.EnhanceAllTenantDatabases();
+//}
 
 
 

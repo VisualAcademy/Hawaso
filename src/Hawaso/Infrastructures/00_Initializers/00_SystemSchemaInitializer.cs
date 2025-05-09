@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Azunt.Web.Infrastructures._Initializers
+namespace Azunt.Web.Infrastructures.Initializers
 {
     /// <summary>
     /// 시스템 관련 테이블 초기화 작업을 담당하는 초기화 클래스입니다.
@@ -37,7 +37,7 @@ namespace Azunt.Web.Infrastructures._Initializers
 
             try
             {
-                //Azunt.TenantManagement.TenantsTableBuilder.Run(services, forMaster);
+                Azunt.TenantManagement.TenantsTableBuilder.Run(services, forMaster);
                 logger.LogInformation($"{target}의 Tenants 테이블 초기화 완료");
             }
             catch (Exception ex)
