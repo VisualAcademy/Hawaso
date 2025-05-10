@@ -168,5 +168,6 @@
     <Build Include="dbo\Tables\LicenseTypes.sql" />
     <Build Include="Vendors\ContactTypes.sql" />
     <Build Include="All\Alls.sql" />
+    <Build Include="dbo\Tables\Posts.sql" />
   </ItemGroup>
 </Project>
