@@ -1,4 +1,5 @@
-﻿using BlazorUtils;
+﻿using Azunt.Components.Dialogs;
+using BlazorUtils;
 using Hawaso.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -45,7 +46,7 @@ public partial class Manage
     /// <summary>
     /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
     /// </summary>
-    public Components.DeleteDialog DeleteDialogReference { get; set; }
+    public DeleteDialog DeleteDialogReference { get; set; }
 
     /// <summary>
     /// 현재 페이지에서 리스트로 사용되는 모델 리스트 
