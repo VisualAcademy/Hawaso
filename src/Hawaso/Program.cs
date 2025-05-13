@@ -31,6 +31,8 @@ using VisualAcademy.Models.Departments;
 using VisualAcademy.Models.Replys;
 using System.Security.Claims;
 using Azunt.FileManagement;
+using Azunt.ReasonManagement;
+using Azunt.Models.Enums;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -221,6 +223,9 @@ void DependencyInjectionContainer(IServiceCollection services)
     /// 공지사항(NoticeApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
     /// </summary>
     services.AddDependencyInjectionContainerForNoticeApp(Configuration["ConnectionStrings:DefaultConnection"]); // 또 다른 데이터베이스 연결 문자열 표현법
+
+    services.AddDependencyInjectionContainerForReasonApp(connectionString, RepositoryMode.EfCore);
+    services.AddTransient<ReasonAppDbContextFactory>();
 }
 
 // DotNetSaleCore 관련 의존성 주입
