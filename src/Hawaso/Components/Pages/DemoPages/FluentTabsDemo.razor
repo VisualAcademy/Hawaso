@@ -2,13 +2,12 @@
 
 @using Microsoft.FluentUI.AspNetCore.Components
 
-<h3>FluentTabsDemo</h3>
+<h3>FluentTabs Demo</h3>
 
 <FluentTabs>
     <FluentTab Id="attachment">
-        <Header>
-            <FluentIcon Value="@(new Icons.Regular.Size24.Attach())" />
-            <h4>Attachment</h4>
+        <Header>            
+            <h4><FluentIcon Value="@(new Icons.Regular.Size24.Attach())" /> Attachment</h4>
         </Header>
         <Content>
             <FluentCard Height="500px">
@@ -18,8 +17,7 @@
     </FluentTab>
     <FluentTab Id="software-install">
         <Header>
-            <FluentIcon Value="@(new Icons.Regular.Size24.AppGeneric())" Color="@Color.Success" />
-            <h4>Software Install</h4>
+            <h4><FluentIcon Value="@(new Icons.Regular.Size24.AppGeneric())" Color="@Color.Success" /> Software Install</h4>
         </Header>
         <Content>
             <FluentCard Height="500px">
@@ -29,8 +27,7 @@
     </FluentTab>
     <FluentTab Id="hardware-history">
         <Header>
-            <FluentIcon Value="@(new Icons.Regular.Size24.History())" Color="@Color.Error" />
-            <h4>History</h4>
+            <h4><FluentIcon Value="@(new Icons.Regular.Size24.History())" Color="@Color.Error" /> History</h4>
         </Header>
         <Content>
             <FluentCard Height="500px">
@@ -39,7 +36,3 @@
         </Content>
     </FluentTab>
 </FluentTabs>
-
-@code {
-
-}
