@@ -5,15 +5,38 @@
 <h3>FluentTabsDemo</h3>
 
 <FluentTabs>
-    <FluentTab Label="Attachment">
-        <FluentCard Height="500px">
-            Attachment List 1
-        </FluentCard>
+    <FluentTab Id="attachment">
+        <Header>
+            <FluentIcon Value="@(new Icons.Regular.Size24.Attach())" />
+            <h4>Attachment</h4>
+        </Header>
+        <Content>
+            <FluentCard Height="500px">
+                Attachment List 1
+            </FluentCard>
+        </Content>
     </FluentTab>
-    <FluentTab Label="Attachment2">
-        <FluentCard>
-            Attachment List 2
-        </FluentCard>
+    <FluentTab Id="software-install">
+        <Header>
+            <FluentIcon Value="@(new Icons.Regular.Size24.AppGeneric())" Color="@Color.Success" />
+            <h4>Software Install</h4>
+        </Header>
+        <Content>
+            <FluentCard Height="500px">
+                Attachment List 2
+            </FluentCard>
+        </Content>
+    </FluentTab>
+    <FluentTab Id="hardware-history">
+        <Header>
+            <FluentIcon Value="@(new Icons.Regular.Size24.History())" Color="@Color.Error" />
+            <h4>History</h4>
+        </Header>
+        <Content>
+            <FluentCard Height="500px">
+                Attachment List 2
+            </FluentCard>
+        </Content>
     </FluentTab>
 </FluentTabs>
 
