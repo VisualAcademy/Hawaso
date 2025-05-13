@@ -18,10 +18,11 @@ public static class AssetSchemaInitializer
         InitializeProjectsMachinesTable(services, logger, forMaster: true); // 또는 false
         InitializeManufacturersTable(services, logger, forMaster: true);
         InitializeInstallsTable(services, logger, forMaster: true);
-        InitializeReasonsTable(services, logger, forMaster: true);
 
         InitializeMediaThemesTable(services, logger, forMaster: true);
         InitializeFilesTable(services, logger, forMaster: true);
+
+        InitializeReasonsTable(services, logger, forMaster: true);
     }
 
     private static void InitializeProjectsMachinesTable(IServiceProvider services, ILogger logger, bool forMaster)
@@ -69,20 +70,7 @@ public static class AssetSchemaInitializer
         }
     }
 
-    private static void InitializeReasonsTable(IServiceProvider services, ILogger logger, bool forMaster)
-    {
-        string target = forMaster ? "마스터 DB" : "테넌트 DB";
 
-        try
-        {
-            TenantSchemaEnhancerEnsureReasonsTable.Run(services, forMaster);
-            logger.LogInformation($"{target}의 Reasons 테이블 초기화 완료");
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, $"{target}의 Reasons 테이블 초기화 중 오류 발생");
-        }
-    }
 
 
     private static void InitializeMediaThemesTable(IServiceProvider services, ILogger logger, bool forMaster)
@@ -114,4 +102,20 @@ public static class AssetSchemaInitializer
             logger.LogError(ex, $"{target}의 Files 테이블 초기화 중 오류 발생");
         }
     }
+
+    private static void InitializeReasonsTable(IServiceProvider services, ILogger logger, bool forMaster)
+    {
+        string target = forMaster ? "마스터 DB" : "테넌트 DB";
+
+        try
+        {
+            Azunt.ReasonManagement.ReasonsTableBuilder.Run(services, forMaster); // Azunt.ReasonManagement.dll
+            logger.LogInformation($"{target}의 Reasons 테이블 초기화 완료");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, $"{target}의 Reasons 테이블 초기화 중 오류 발생");
+        }
+    }
 }
+
