@@ -178,6 +178,26 @@ public partial class Manage : ComponentBase
         await DisplayData();
     }
 
+    #region SortByXXX 
+    protected async void SortBy(string fieldName)
+    {
+        if (sortOrder == "")
+        {
+            sortOrder = fieldName;
+        }
+        else if (sortOrder == fieldName)
+        {
+            sortOrder = fieldName + "Desc";
+        }
+        else
+        {
+            sortOrder = "";
+        }
+
+        await DisplayData();
+    } 
+    #endregion
+
     protected async void SortByName()
     {
         sortOrder = sortOrder switch
