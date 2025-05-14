@@ -7,14 +7,14 @@
 
     <ItemGroup>
         <PackageReference Include="Azunt" Version="1.0.7" />
-        <PackageReference Include="Azunt.Components" Version="1.0.1" />
-        <PackageReference Include="Azunt.DepotManagement" Version="1.0.0" />
-        <PackageReference Include="Azunt.FileManagement" Version="1.0.1" />
+        <PackageReference Include="Azunt.Components" Version="1.0.2" />
+        <PackageReference Include="Azunt.DepotManagement" Version="1.0.1" />
+        <PackageReference Include="Azunt.FileManagement" Version="1.0.2" />
         <PackageReference Include="Azunt.MediaThemeManagement" Version="1.0.0" />
         <PackageReference Include="Azunt.ReasonManagement" Version="1.0.1" />
         <PackageReference Include="Azunt.ResourceManagement" Version="1.0.0" />
         <PackageReference Include="Azunt.TenantManagement" Version="1.0.1" />
-        <PackageReference Include="Azure.Identity" Version="1.13.2" />
+        <PackageReference Include="Azure.Identity" Version="1.14.0" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.24.0" />
         <PackageReference Include="Blazored.Toast" Version="4.2.1" />
         <PackageReference Include="ChartJs.Blazor" Version="1.1.0" />
@@ -27,25 +27,25 @@
         <PackageReference Include="DulPager" Version="1.0.2" />
         <PackageReference Include="EPPlus" Version="7.5.3" />
         <PackageReference Include="MatBlazor" Version="2.10.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.4" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.4" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.4" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.4" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.4" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.4" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.4">
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.5" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4" />
-        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.8" />
-        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.DataGrid.EntityFrameworkAdapter" Version="4.11.8" />
-        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.11.8" />
-        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.8" />
-        <PackageReference Include="Microsoft.SemanticKernel" Version="1.48.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.5" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.9" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.DataGrid.EntityFrameworkAdapter" Version="4.11.9" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.11.9" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.9" />
+        <PackageReference Include="Microsoft.SemanticKernel" Version="1.49.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="Twilio" Version="7.11.0" />
+        <PackageReference Include="Twilio" Version="7.11.1" />
         <PackageReference Include="VisualAcademy.Models.Archives" Version="3.0.2" />
         <PackageReference Include="VisualAcademy.Models.BriefingLogs" Version="1.0.4" />
         <PackageReference Include="VisualAcademy.Models.Departments" Version="8.0.2" />
