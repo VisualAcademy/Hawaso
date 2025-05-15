@@ -22,12 +22,12 @@ CREATE TABLE [dbo].[Alls]
 (
     --------------------------------------------------------------------------------------------------
     --[1] 공통 기본 키
-    [Id]            BIGINT NOT NULL PRIMARY KEY Identity(1, 1), -- [1][일련번호], Serial Number
+    [Id]            BIGINT NOT NULL PRIMARY KEY Identity(1, 1), -- [1][일련번호], Serial Number, 고유 ID
     --------------------------------------------------------------------------------------------------
 
     --[0] Parent 관련
-    [ParentId]      BIGINT NULL,                                -- ParentId, AppId, SiteId, ProductId, CategoryId, ...
-    [ParentKey]     NVarChar(255) NULL,                         -- ParentKey == 부모의 GUID, UserId, RoleId, ...
+    [ParentId]      BIGINT NULL,                                -- 연관 부모 ID, ParentId, AppId, SiteId, ProductId, CategoryId, ... 
+    [ParentKey]     NVarChar(255) NULL,                         -- 연관 부모 키, ParentKey == 부모의 GUID, UserId, RoleId, ...
 
     --------------------------------------------------------------------------------------------------
     --[0] Auditable
@@ -60,16 +60,16 @@ CREATE TABLE [dbo].[Alls]
     --------------------------------------------------------------------------------------------------
     --[2] 자료실(Upload, BBS) 게시판 관련 주요 컬럼
     FileName        NVarChar(255) NULL,                         -- 파일명
-    FileSize        Int DEFAULT 0 NULL,                         -- 파일크기
+    FileSize        Int DEFAULT 0 NULL,                         -- 파일 크기 (bytes)
     DownCount       Int DEFAULT 0 NULL,                         -- 다운수
 
     --------------------------------------------------------------------------------------------------
     --[3] 답변형(Reply, Qna) 게시판 관련 주요 컬럼
-    Ref             Int DEFAULT 0 NULL,                         -- 참조(부모글), Group (Default: 0) (NOT NULL recommended)
-    Step            Int DEFAULT 0 NULL,                         -- 답변깊이 (Default: 0)
-    RefOrder        Int DEFAULT 0 NULL,                         -- 답변순서 (Default: 0)
-    AnswerNum       Int DEFAULT 0 NULL,                         -- 답변수 (Default: 0)
-    ParentNum       Int DEFAULT 0 NULL,                         -- 부모글번호 (Default: 0)
+    Ref             Int DEFAULT 0 NULL,                         -- 참조(부모글, 그룹 번호), Group (Default: 0) (NOT NULL recommended)
+    Step            Int DEFAULT 0 NULL,                         -- 답변 깊이(들여쓰기 단계) (Default: 0)
+    RefOrder        Int DEFAULT 0 NULL,                         -- 답변 순서(그롭 내 정렬 순서) (Default: 0)
+    AnswerNum       Int DEFAULT 0 NULL,                         -- 답변 개수 (Default: 0)
+    ParentNum       Int DEFAULT 0 NULL,                         -- 부모 글 번호 (Default: 0)
 
     --------------------------------------------------------------------------------------------------
     --[!] 추가 항목들
