@@ -23,6 +23,7 @@ namespace Azunt.Web.Infrastructures.Initializers
 
             // 마스터 DB 및 테넌트 DB에서 Tenants 테이블 생성 및 보강
             InitializeTenantsTable(services, logger, forMaster: true);
+            InitializePostsTable(services, logger, forMaster: true);
         }
 
         /// <summary>
@@ -43,6 +44,21 @@ namespace Azunt.Web.Infrastructures.Initializers
             catch (Exception ex)
             {
                 logger.LogError(ex, $"{target}의 Tenants 테이블 초기화 중 오류 발생");
+            }
+        }
+
+        private static void InitializePostsTable(IServiceProvider services, ILogger logger, bool forMaster)
+        {
+            string target = forMaster ? "마스터 DB" : "테넌트 DB";
+
+            try
+            {
+                Azunt.PostManagement.PostsTableBuilder.Run(services, forMaster);
+                logger.LogInformation($"{target}의 Posts 테이블 초기화 완료");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{target}의 Posts 테이블 초기화 중 오류 발생");
             }
         }
     }
