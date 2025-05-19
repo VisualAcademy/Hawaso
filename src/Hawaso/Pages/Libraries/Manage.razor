@@ -41,8 +41,8 @@
                 <thead class="thead-light">
                     <tr>
                         <th>ID</th>
-                        <th @onclick="@(() => SortByName())" style="cursor: pointer;">Name <Hawaso.Pages.Uploads.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Pages.Uploads.Components.SortOrderArrow></th>
-                        <th @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Hawaso.Pages.Uploads.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Hawaso.Pages.Uploads.Components.SortOrderArrow></th>
+                        <th @onclick="@(() => SortByName())" style="cursor: pointer;">Name <Azunt.Components.Sorting.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Azunt.Components.Sorting.SortOrderArrow></th>
+                        <th @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Azunt.Components.Sorting.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Azunt.Components.Sorting.SortOrderArrow></th>
                         <th>Created</th>
                         <th>IsPinned</th>
                         <th>Actions</th>
@@ -83,7 +83,6 @@
                                 <input type="button" name="btnEdit" value="Edit with Modal" class="btn btn-primary" @onclick="(() => EditBy(m))" />
                                 <input type="button" name="btnDelete" value="Delete with Modal" class="btn btn-primary" @onclick="(() => DeleteBy(m))" />
                                 <input type="button" name="btnToggle" value="Toggle with Modal" class="btn btn-primary" @onclick="(() => ToggleBy(m))" />
-                                @*<input type="button" name="btnDownload" value="Download" class="btn btn-primary" @onclick="(() => DownloadBy(m))" />*@
                                 <a href="/LibraryDownload/FileDown/@m.Id" class="btn btn-primary">다운로드</a>
                             </td>
                         </tr>
