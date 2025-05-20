@@ -170,12 +170,12 @@ public class TenantSchemaEnhancerEnsureRolesTable
 
         // 테이블이 비어있을 경우 기본 역할 삽입
         var defaultRoles = new List<(string Name, string Description)>
-    {
-        ("Administrators", "응용 프로그램을 총 관리하는 관리 그룹 계정"),
-        ("Everyone", "응용 프로그램을 사용하는 모든 사용자 그룹 계정"),
-        ("Users", "일반 사용자 그룹 계정"),
-        ("Guests", "게스트 사용자 그룹 계정")
-    };
+        {
+            ("Administrators", "응용 프로그램을 총 관리하는 관리 그룹 계정"),
+            ("Everyone", "응용 프로그램을 사용하는 모든 사용자 그룹 계정"),
+            ("Users", "일반 사용자 그룹 계정"),
+            ("Guests", "게스트 사용자 그룹 계정")
+        };
 
         foreach (var (name, description) in defaultRoles)
         {

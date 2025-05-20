@@ -35,10 +35,10 @@ public class TenantSchemaEnhancerEnsureDefaultUsers
 
         // 2. 기본 Role 정의 및 생성
         string[] requiredRoles = {
-            Dul.Roles.Administrators.ToString(),
-            Dul.Roles.Everyone.ToString(),
-            Dul.Roles.Users.ToString(),
-            Dul.Roles.Guests.ToString()
+            Azunt.Models.Enums.Roles.Administrators.ToString(),
+            Azunt.Models.Enums.Roles.Everyone.ToString(),
+            Azunt.Models.Enums.Roles.Users.ToString(),
+            Azunt.Models.Enums.Roles.Guests.ToString()
         };
 
         foreach (var roleName in requiredRoles)
@@ -71,13 +71,16 @@ public class TenantSchemaEnhancerEnsureDefaultUsers
 
         // 4. 기본 사용자 생성
         await CreateUserIfNotExists(userManager, logger, adminEmail, adminPassword,
-            new[] { Dul.Roles.Administrators.ToString(), Dul.Roles.Users.ToString() }, emailConfirmed: true);
+            new[] {
+                Azunt.Models.Enums.Roles.Administrators.ToString(),
+                Azunt.Models.Enums.Roles.Users.ToString()
+            }, emailConfirmed: true);
 
         await CreateUserIfNotExists(userManager, logger, guestEmail, guestPassword,
-            new[] { Dul.Roles.Guests.ToString() });
+            new[] { Azunt.Models.Enums.Roles.Guests.ToString() });
 
         await CreateUserIfNotExists(userManager, logger, anonymousEmail, anonymousPassword,
-            new[] { Dul.Roles.Guests.ToString() });
+            new[] { Azunt.Models.Enums.Roles.Guests.ToString() });
     }
 
     /// <summary>

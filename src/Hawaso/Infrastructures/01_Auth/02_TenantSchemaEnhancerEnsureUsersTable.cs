@@ -247,9 +247,10 @@ public class TenantSchemaEnhancerEnsureUsersTable
 
                 // 멀티테넌시/권한 정보
                 ["TenantID"] = "BIGINT NULL DEFAULT(0)",
-                ["TenantName"] = "NVARCHAR(MAX) DEFAULT('Hawaso')",
+                ["TenantName"] = "NVARCHAR(MAX) DEFAULT('Azunt')",
                 ["RoleID"] = "BIGINT NULL",
                 ["DivisionId"] = "BIGINT NULL DEFAULT(0)",
+                ["DivisionName"] = "NVARCHAR(255) NULL DEFAULT('')",
 
                 // 기타
                 ["CriminalHistory"] = "NVARCHAR(MAX) NULL",
