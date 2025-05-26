@@ -37,7 +37,18 @@ public static class DatabaseInitializer
 
         try
         {
-            // 2. 공통 테이블 초기화 (Alls, ContactTypes, LicenseTypes 등)
+            // 2. 보안(Security) 관련 테이블 초기화
+            SecurityInitializer.Initialize(services, forMaster: true);
+            logger.LogInformation("보안 관련 테이블 초기화 완료");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "보안 관련 테이블 초기화 중 오류 발생");
+        }
+
+        try
+        {
+            // 3. 공통 테이블 초기화
             SchemaInitializer.Initialize(services);
             logger.LogInformation("공통 테이블 초기화 완료");
         }
@@ -48,13 +59,24 @@ public static class DatabaseInitializer
 
         try
         {
-            // 3. 자산(Asset) 관련 테이블 초기화
+            // 4. 자산(Asset) 관련 테이블 초기화
             AssetSchemaInitializer.Initialize(services);
             logger.LogInformation("자산 관련 테이블 초기화 완료");
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "자산 관련 테이블 초기화 중 오류 발생");
+        }
+
+        try
+        {
+            // 5. 커뮤니티 관련 테이블 초기화
+            CommunitySchemaInitializer.Initialize(services);
+            logger.LogInformation("커뮤니티 관련 테이블 초기화 완료");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "커뮤니티 관련 테이블 초기화 중 오류 발생");
         }
 
         try
