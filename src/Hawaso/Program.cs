@@ -1,5 +1,9 @@
-﻿using Azunt.Services;
+﻿using Azunt.FileManagement;
 using Azunt.Infrastructures;
+using Azunt.Models.Enums;
+using Azunt.ReasonManagement;
+using Azunt.ResourceManagement;
+using Azunt.Services;
 using Blazored.Toast;
 using Dalbodre.Infrastructures.Cores;
 using DotNetNote.Models;
@@ -24,15 +28,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using NoticeApp.Models;
 using ReplyApp.Managers;
+using System.Security.Claims;
 using VisualAcademy;
 using VisualAcademy.Components.Pages.ApplicantsTransfers;
 using VisualAcademy.Models.BannedTypes;
 using VisualAcademy.Models.Departments;
 using VisualAcademy.Models.Replys;
-using System.Security.Claims;
-using Azunt.FileManagement;
-using Azunt.ReasonManagement;
-using Azunt.Models.Enums;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -226,6 +227,13 @@ void DependencyInjectionContainer(IServiceCollection services)
 
     services.AddDependencyInjectionContainerForReasonApp(connectionString, RepositoryMode.EfCore);
     services.AddTransient<ReasonAppDbContextFactory>();
+
+
+    #region ResourceManagement 
+    // Resource 모듈 등록
+    services.AddDependencyInjectionContainerForResourceApp(connectionString, Azunt.Models.Enums.RepositoryMode.EfCore);
+    services.AddTransient<ResourceAppDbContextFactory>();
+    #endregion
 }
 
 // DotNetSaleCore 관련 의존성 주입
