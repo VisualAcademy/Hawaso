@@ -323,10 +323,10 @@ catch (Exception)
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    app.UseHsts();
+    app.UseHsts(); // 브라우저에 HTTPS만 사용하도록 지시하는 보안 헤더 추가
 }
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection(); // HTTP 요청을 HTTPS로 자동 리디렉션
 
 app.UseStaticFiles();
 
