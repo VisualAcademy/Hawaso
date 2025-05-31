@@ -1,0 +1,148 @@
+﻿@page "/DivisionManager"
+
+@namespace Azunt.Web.Components.Pages.Divisions
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Web
+@rendermode InteractiveServer
+
+@* @attribute [Authorize(Roles = "Administrators")] *@
+
+<h3 class="mt-1 mb-1">
+    Divisions
+    <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;">+</span>
+    <button onclick="location.href = '/api/DivisionExport/Excel';" class="btn btn-sm btn-primary" style="float: right;">Excel Export</button>
+</h3>
+
+<div class="row">
+    <div class="col-md-12">
+        @if (models == null)
+        {
+            <div>
+                <p>Loading...</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <colgroup>
+                        @if (!SimpleMode)
+                        {
+                            <col style="width: 300px;" />
+                            <col style="width: 200px;" />
+                            <col style="width: 200px;" />
+                            <col style="width: auto;" />
+                        }
+                        else
+                        {
+                            <col style="width: auto;" />
+                        }
+                        <col style="width: 300px;" />
+                    </colgroup>
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByName())" style="cursor: pointer;">
+                                Name <Azunt.Components.Sorting.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Azunt.Components.Sorting.SortOrderArrow>
+                            </th>
+
+                            @if (!SimpleMode)
+                            {
+                                <th class="text-center text-nowrap">Created</th>
+                                <th class="text-center text-nowrap">Active</th>
+                                <th class="text-center text-nowrap">&nbsp;</th>
+                            }
+
+                            <th class="text-center text-nowrap">Admin</th>
+                        </tr>
+                    </thead>
+                    @if (models.Count == 0)
+                    {
+                        <tbody>
+                            <tr>
+                                <td colspan="@(SimpleMode ? 2 : 5)" class="text-center">
+                                    <p>No Data.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                    else
+                    {
+                        <tbody>
+                            @foreach (var m in models)
+                            {
+                                <tr>
+                                    <td class="text-center text-nowrap">
+                                        <span class="btn-link">@m.Name</span>
+                                    </td>
+
+                                    @if (!SimpleMode)
+                                    {
+                                        <td class="text-center text-nowrap small">
+                                            @(Dul.DateTimeUtility.ShowTimeOrDate(m.CreatedAt))
+                                        </td>
+                                        <td class="text-center">
+                                            @if (m.Active != null && m.Active.Value)
+                                            {
+                                                <input type="checkbox" checked disabled />
+                                            }
+                                            else
+                                            {
+                                                <input type="checkbox" disabled />
+                                            }
+                                        </td>
+                                        <td>&nbsp;</td>
+                                    }
+
+                                    <td class="text-center">
+                                        <input type="button" name="btnEdit" value="Edit" class="btn btn-sm btn-primary" @onclick="(() => EditBy(m))" />
+                                        <input type="button" name="btnDelete" value="Del" class="btn btn-sm btn-danger" @onclick="(() => DeleteBy(m))" />
+                                        <input type="button" name="btnToggle" value="Change Active" class="btn btn-sm btn-warning" @onclick="(() => ToggleBy(m))" />
+                                        @if (!SimpleMode)
+                                        {
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    }
+                </table>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-12">
+        <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+    </div>
+    <div class="col-md-12">
+        <Azunt.Components.Search.SearchBox placeholder="Search Divisions..." SearchQueryChanged="Search"></Azunt.Components.Search.SearchBox>
+    </div>
+</div>
+
+<Azunt.Web.Pages.Divisions.Components.ModalForm @ref="EditorFormReference" ModelSender="model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit" UserName="@UserName">
+    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+</Azunt.Web.Pages.Divisions.Components.ModalForm>
+
+<Azunt.Components.Dialogs.DeleteDialog @ref="DeleteDialogReference" OnClickCallback="DeleteClick">
+</Azunt.Components.Dialogs.DeleteDialog>
+
+@if (IsInlineDialogShow)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content shadow">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Active State</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="ToggleClose"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Do you want to change the Active state of <strong>@model.Name</strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="ToggleClick">Yes, Change</button>
+                    <button type="button" class="btn btn-secondary" @onclick="ToggleClose">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

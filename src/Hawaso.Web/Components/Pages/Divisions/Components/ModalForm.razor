@@ -1,0 +1,29 @@
+﻿@namespace Azunt.Web.Pages.Divisions.Components
+
+@if (IsShow)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@EditorFormTitle</h5>
+                    <button type="button" class="btn-close" @onclick="Hide" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @* ID를 화면에 표시하지 않고 hidden input만 남김 *@
+                    <input type="hidden" @bind-value="@ModelEdit.Id" />
+
+                    <div class="mb-3">
+                        <label for="txtName" class="form-label">Name</label>
+                        <input id="txtName" type="text" @bind="@ModelEdit.Name" class="form-control" placeholder="Enter Name" />
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary me-2" @onclick="CreateOrEditClick">Submit</button>
+                        <button type="button" class="btn btn-secondary" @onclick="Hide">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

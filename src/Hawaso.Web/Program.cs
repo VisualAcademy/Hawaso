@@ -11,6 +11,8 @@ using Dalbodre.Infrastructures.Cores;
 using Hawaso.Web.Components.Pages.VendorPages.Models;
 using Microsoft.FluentUI.AspNetCore.Components;
 
+using Azunt.DivisionManagement;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire client integrations.
@@ -72,6 +74,15 @@ builder.Services.AddDependencyInjectionContainerForVendorPermanentDelete(connect
 //builder.Services.AddScoped<VendorPermanentDeleteDbContextFactory>();
 //builder.Services.AddSingleton<IUserServicePermanentDelete, UserServicePermanentDelete>();
 //builder.Services.AddTransient<IVendorRepositoryPermanentDelete, VendorRepositoryPermanentDelete>();
+
+
+
+// 디비전 관리: 기본 CRUD 교과서 코드
+builder.Services.AddDependencyInjectionContainerForDivisionApp(connectionString, Azunt.Models.Enums.RepositoryMode.EfCore);
+builder.Services.AddTransient<DivisionDbContextFactory>();
+
+
+
 
 var app = builder.Build();
 
