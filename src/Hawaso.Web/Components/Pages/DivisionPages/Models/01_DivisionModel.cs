@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Azunt.DivisionManagement;
 
 namespace Hawaso.Web.Components.Pages.DivisionPages.Models
 {
