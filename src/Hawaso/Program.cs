@@ -1,9 +1,11 @@
 ﻿using Azunt.FileManagement;
 using Azunt.Infrastructures;
 using Azunt.Models.Enums;
+using Azunt.NoteManagement;
 using Azunt.ReasonManagement;
 using Azunt.ResourceManagement;
 using Azunt.Services;
+using Azunt.Web.Components.Pages.Notes.Services;
 using Blazored.Toast;
 using Dalbodre.Infrastructures.Cores;
 using DotNetNote.Models;
@@ -160,7 +162,7 @@ services.Configure<DotNetNoteSettings>(Configuration.GetSection("DotNetNoteSetti
 
 services.AddDbContext<DotNetNoteContext>(options =>
     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-services.AddDbContext<NoteDbContext>(options =>
+services.AddDbContext<DotNetNote.Models.NoteDbContext>(options =>
     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
 #region Changes 테이블 생성 
@@ -188,7 +190,7 @@ void DependencyInjectionContainer(IServiceCollection services)
 {
     services.AddSingleton<IConfiguration>(Configuration);
 
-    services.AddTransient<INoteRepository, NoteRepository>();
+    services.AddTransient<Hawaso.Models.Notes.INoteRepository, Hawaso.Models.Notes.NoteRepository>();
     services.AddTransient<INoteCommentRepository, NoteCommentRepository>();
 
     services.AddDbContext<HawasoDbContext>(options =>
@@ -284,6 +286,14 @@ builder.Services.AddDependencyInjectionContainerForFileApp(defaultConnStr);
 builder.Services.AddTransient<FileAppDbContextFactory>();
 
 builder.Services.AddScoped<IFileStorageService, Azunt.Web.Components.Pages.FilesPages.Services.AzureBlobStorageService>();
+
+
+
+#region NoteManagement
+builder.Services.AddDependencyInjectionContainerForNoteApp(connectionString, Azunt.Models.Enums.RepositoryMode.EfCore);
+builder.Services.AddTransient<Azunt.NoteManagement.NoteDbContextFactory>();
+builder.Services.AddScoped<Azunt.NoteManagement.INoteStorageService, NoOpNoteStorageService>();
+#endregion
 
 
 var app = builder.Build();
