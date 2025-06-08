@@ -2,16 +2,9 @@
 using Azunt.Components.Paging;
 using Azunt.NoteManagement;
 using Azunt.Web.Components.Pages.Notes.Components;
-using Azunt.Web.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using NoteModel = Azunt.NoteManagement.Note;
 
 namespace Azunt.Web.Pages.Notes;
@@ -30,7 +23,7 @@ public partial class NoteManager : ComponentBase
     #endregion
 
     #region Injectors
-    [Inject] public NavigationManager NavigationManagerInjector { get; set; } = null!;
+    [Inject] public NavigationManager Nav { get; set; } = null!;
     [Inject] public IJSRuntime JSRuntimeInjector { get; set; } = null!;
     [Inject] public INoteRepository RepositoryReference { get; set; } = null!;
     [Inject] public IConfiguration Configuration { get; set; } = null!;
@@ -249,5 +242,10 @@ public partial class NoteManager : ComponentBase
     {
         await RepositoryReference.MoveDownAsync(id);
         await DisplayData();
+    }
+
+    private void ExportExcel()
+    {
+        Nav.NavigateTo("/api/NoteExport/Excel", forceLoad: true);
     }
 }

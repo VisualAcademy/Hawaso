@@ -7,10 +7,24 @@
 @using Microsoft.AspNetCore.Components.Web
 @rendermode InteractiveServer
 
-<h3 class="mt-1 mb-1">
-    Notes
-    <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;"></span>
-    <button onclick="location.href = '/api/NoteExport/Excel';" class="btn btn-sm btn-primary" style="float: right;">Excel Export</button>
+@using Microsoft.FluentUI.AspNetCore.Components
+
+<h3 class="mt-1 mb-1 d-flex justify-content-between align-items-center">
+    <span class="d-flex align-items-center">
+        Notes
+        <span class="oi oi-plus text-primary align-baseline ms-2" @onclick="ShowEditorForm" style="cursor: pointer;"></span>
+    </span>
+
+    <span class="d-flex align-items-center">
+        @*<button onclick="location.href = '/api/NoteExport/Excel';" class="btn btn-sm btn-primary me-2 align-middle">Excel Export</button>*@
+        <FluentButton IconEnd="@(new Icons.Regular.Size16.Table())"
+                      Appearance="Appearance.Accent"
+                      OnClick="ExportExcel"
+                      Class="align-middle"
+                      Style="height: 32px; padding-top: 4px;">
+            Excel Export
+        </FluentButton>
+    </span>
 </h3>
 
 <div class="row">
