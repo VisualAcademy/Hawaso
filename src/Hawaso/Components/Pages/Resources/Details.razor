@@ -1,0 +1,75 @@
+﻿@page "/Resources/Manage/Details/{Id:int}"
+@namespace Azunt.Web.Components.Pages.Resources
+@using Azunt.ResourceManagement
+@using Microsoft.AspNetCore.Authorization
+@* @attribute [Authorize(Roles = "Administrators")] *@
+
+@inject NavigationManager NavigationManagerInjector
+
+@* 
+<DulBreadcrumbsSimple>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active">Permissions</li>
+        <LoginDisplay></LoginDisplay>
+    </ol>
+</DulBreadcrumbsSimple>
+ *@
+
+@* <DulMainWithCardSimple> *@
+
+<div class="d-flex justify-content-between align-items-center mt-2 mb-2">
+    <h2 class="mb-0">Resource Details - @Model.Alias</h2>
+    <a class="btn btn-sm btn-outline-primary" href="/Resources/Manage">Back to List</a>
+</div>
+
+<hr />
+
+    @if (Model != null && Model.Id != 0)
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Alias</th>
+                        <td>@Model.Alias</td>
+                    </tr>
+                    <tr>
+                        <th>Route</th>
+                        <td>
+                            @if (!string.IsNullOrEmpty(Model.Route))
+                            {
+                                <a href="@Model.Route" target="_blank">@Model.Route</a>
+                            }
+                            else
+                            {
+                                <text>-</text>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Title</th>
+                        <td>@Model.Title</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>@Model.Description</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <hr />
+
+        @* Model.Id가 준비된 후에만 Manage 컴포넌트 출력 *@
+        <h5>ResourcesRules 모듈 들어오는 곳</h5>
+        @* <ResourcesRules.Manage ParentId="@Model.Id"></ResourcesRules.Manage> *@
+    }
+    else
+    {
+        <p>Loading...</p>
+    }
+
+@* </DulMainWithCardSimple> *@

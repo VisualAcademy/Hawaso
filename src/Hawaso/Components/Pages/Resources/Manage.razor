@@ -1,0 +1,128 @@
+﻿@page "/Resources/Manage"
+@namespace Azunt.Web.Components.Pages.Resources
+@using Microsoft.AspNetCore.Authorization
+@rendermode InteractiveServer
+
+@* @attribute [Authorize(Roles = "Administrators")] *@
+
+<h3 class="mt-1 mb-1">
+    Resource Permission Management
+    <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;"></span>
+    <button onclick="location.href = '/ResourceDownload/ExcelDown';" class="btn btn-sm btn-primary" style="float: right;">Excel Export</button>
+</h3>
+
+<div class="row">
+    <div class="col-md-12">
+        @if (models == null)
+        {
+            <div>
+                <p>Loading...</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <colgroup>
+                        <col style="width: 200px;" />
+                        <col style="width: 200px;" />
+                        <col style="width: 200px;" />
+                        <col style="width: auto;" />
+                        <col style="width: 200px;" />
+                    </colgroup>
+                    <thead class="thead-light">
+                        <tr>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByAlias())" style="cursor: pointer;">
+                                Resource Key @* <Azunt.Components.Sorting.SortOrderArrow SortColumn="Alias" SortOrder="@sortOrder"></Azunt.Components.Sorting.SortOrderArrow> *@
+                            </th>
+                            <th class="text-center text-nowrap">Page Link</th>
+                            <th class="text-center text-nowrap">Display Title</th>
+                            <th class="text-center text-nowrap">Details</th>
+                            <th class="text-center text-nowrap">Actions</th>
+                        </tr>
+                    </thead>
+                    @if (models.Count == 0)
+                    {
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <p>No Data.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                    else
+                    {
+                        <tbody>
+                            @foreach (var m in models)
+                            {
+                                <tr>
+                                    <td class="text-nowrap">
+                                        @if (m.Alias == "Incident-AddApproved" || m.Alias == "Incident-AddReviewed" || m.Alias == "Incident-AddWritten" || m.Alias == "Incident-ArchiveReport")
+                                        {
+                                            <text>&nbsp;&nbsp;&nbsp;&nbsp;</text>
+                                        }
+                                        @m.Alias
+                                    </td>
+                                    <td class="text-nowrap">
+                                        @if (!string.IsNullOrEmpty(m.Route))
+                                        {
+                                            <a href="@m.Route" target="_blank">@m.Route</a>
+                                        }
+                                        else
+                                        {
+                                            <text>-</text>
+                                        }
+                                    </td>
+                                    <td class="text-nowrap">@m.Title</td>
+                                    <td class="">@m.Description</td>
+                                    <td class="text-center text-nowrap">
+                                        <a href="/Resources/Manage/Details/@m.Id" class="btn btn-sm btn-primary">Edit Permissions</a>
+                                        <input type="button" name="btnEdit" value="Edit" class="btn btn-sm btn-primary" @onclick="(() => EditBy(m))" />
+                                        <input type="button" name="btnDelete" value="Del" class="btn btn-sm btn-danger" @onclick="(() => DeleteBy(m))" />
+                                        <button class="btn btn-sm btn-light" @onclick="() => MoveUp(m.Id)"><span class="oi oi-chevron-top"></span></button>
+                                        <button class="btn btn-sm btn-light" @onclick="() => MoveDown(m.Id)"><span class="oi oi-chevron-bottom"></span></button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    }
+                </table>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-12">
+        <Azunt.Components.Paging.Pager Model="pager" PageIndexChanged="PageIndexChanged"></Azunt.Components.Paging.Pager>
+    </div>
+    <div class="col-md-12">
+        <Azunt.Components.Search.SearchBox placeholder="Search Resources..." SearchQueryChanged="Search"></Azunt.Components.Search.SearchBox>
+    </div>
+</div>
+
+<Azunt.Web.Components.Pages.Resources.Components.ModalForm @ref="EditorFormReference" ModelSender="model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit" UserName="@UserName">
+    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+</Azunt.Web.Components.Pages.Resources.Components.ModalForm>
+
+<Azunt.Components.Dialogs.DeleteDialog @ref="DeleteDialogReference" OnClickCallback="DeleteClick"></Azunt.Components.Dialogs.DeleteDialog>
+
+@if (IsInlineDialogShow)
+{
+    <div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content shadow">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Active State</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="ToggleClose"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Do you want to change the Active state of <strong>@model.Alias</strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="ToggleClick">Yes, Change</button>
+                    <button type="button" class="btn btn-secondary" @onclick="ToggleClose">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

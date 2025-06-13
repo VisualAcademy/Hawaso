@@ -1,0 +1,24 @@
+﻿@namespace Azunt.Web.Components.Pages.Resources.Controls
+@using Azunt.ResourceManagement
+@using Microsoft.AspNetCore.Components
+
+<select class="form-select"
+        @bind-Value="SelectedValue"
+        @bind-Value:event="onchange">
+    <option value="">-- Select Resource --</option>
+    @foreach (var resource in Resources)
+    {
+        <option value="@resource.Id">@resource.Alias</option>
+    }
+</select>
+
+@code {
+    [Parameter]
+    public long SelectedValue { get; set; }
+
+    [Parameter]
+    public EventCallback<long> SelectedValueChanged { get; set; }
+
+    [Parameter]
+    public List<Resource> Resources { get; set; } = new();
+}
