@@ -1,5 +1,4 @@
 ﻿using Azunt.ResourceManagement;
-using Azunt.ResourceManagement.Initializers;
 using Azunt.Web.Infrastructures.All;
 
 namespace Azunt.Web.Infrastructures.Initializers;
