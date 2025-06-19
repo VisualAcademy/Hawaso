@@ -6,6 +6,6 @@ namespace BlazorApp.Models
     {
         [Required(ErrorMessage = "이름은 필수입니다.")]
         [StringLength(10, ErrorMessage = "이름을 10자 이하로 입력하세요.")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }
