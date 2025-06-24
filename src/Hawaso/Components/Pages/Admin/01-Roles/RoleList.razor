@@ -1,6 +1,9 @@
 ﻿@page "/Administrations/Roles"
 @page "/Administrations/Roles/RoleList"
 
+@namespace Azunt.Web.Components.Pages.Admin._01_Roles
+@using Microsoft.AspNetCore.Authorization
+
 @attribute [Authorize(Roles = "Administrators")]
 
 <h3>Role List <a href="/Administrations/Roles/RoleCreate"><span class="oi oi-plus"></span></a></h3>
@@ -16,9 +19,8 @@
             <table class="table table-bordered table-hover">
                 <thead class="thead-light">
                     <tr>
-                        @*<th>ID</th>*@
-                        <th>Name</th>
-                        <th>Action</th>
+                        <th class="text-center">Name</th>
+                        <th class="text-center">Action</th>
                     </tr>
                 </thead>
                 @if (models.Count == 0)
@@ -26,7 +28,7 @@
                     <tbody>
                         <tr>
                             <td colspan="2" class="text-center">
-                                <p>데이터가 없습니다.</p>
+                                <p>No data available.</p>
                             </td>
                         </tr>
                     </tbody>
@@ -37,12 +39,11 @@
                         @foreach (var m in models)
                         {
                             <tr>
-                                @*<td>@m.Id</td>*@
-                                <td>@m.Name</td>
-                                <td>
-                                    <a href="/Administrations/Roles/RoleDetails/@m.Id" class="btn btn-light">Details</a>
-                                    <a href="/Administrations/Roles/RoleEdit/@m.Id" class="btn btn-light">Edit</a>
-                                    <a href="/Administrations/Roles/RoleDelete/@m.Id" class="btn btn-light">Delete</a>
+                                <td class="text-center @(IsSystemRole(m.Name) ? "bg-light font-weight-bold" : "")">@m.Name</td>
+                                <td class="text-center @(IsSystemRole(m.Name) ? "bg-light" : "")">
+                                    <a href="/Administrations/Roles/RoleDetails/@m.Id" class="btn btn-primary w-50">Details</a>
+                                    <a href="@EditLink(m)" class="btn btn-sm btn-success ml-1 @(IsSystemRole(m.Name) ? "disabled" : "")">Edit</a>
+                                    <a href="@DeleteLink(m)" class="btn btn-sm btn-danger @(IsSystemRole(m.Name) ? "disabled" : "")">Delete</a>
                                 </td>
                             </tr>
                         }
