@@ -23,7 +23,7 @@
         <PackageReference Include="Azunt.RuleManagement" Version="1.0.2" />
         <PackageReference Include="Azunt.SubcategoryManagement" Version="1.0.1" />
         <PackageReference Include="Azunt.TenantManagement" Version="1.0.3" />
-        <PackageReference Include="Azure.Identity" Version="1.14.0" />
+        <PackageReference Include="Azure.Identity" Version="1.14.1" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.24.1" />
         <PackageReference Include="Blazored.Toast" Version="4.2.1" />
         <PackageReference Include="ChartJs.Blazor" Version="1.1.0" />
