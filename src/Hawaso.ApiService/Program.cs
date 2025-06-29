@@ -18,7 +18,13 @@ app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.MapOpenApi(); // /openapi/{name}.json 엔드포인트 등록
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "weather api");
+        //options.RoutePrefix = string.Empty; // 루트에서 UI 노출
+        //options.InjectStylesheet("/swagger-ui/custom.css");
+    });
 }
 
 string[] summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
