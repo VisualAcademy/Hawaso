@@ -450,6 +450,9 @@ defaultSchemaEnhancer.EnhanceDefaultDatabase();
 
 
 
+#region Minimal API - GET /api/foo
+
+// minimal-api-getting-started Program 파일에서 Foo 이름의 Minimal API 만들고 테스트하기: https://youtu.be/DROgDGtGdYU
 app.MapGet("api/foo", () =>
 {
     return new[]
@@ -458,6 +461,9 @@ app.MapGet("api/foo", () =>
         new { Id = 2, Name = "Bar" }
     };
 });
+
+#endregion
+
 
 
 
