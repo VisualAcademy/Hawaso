@@ -1,7 +1,222 @@
 ﻿@page "/Admin/UserRoles"
 
-<h3>UserRoles</h3>
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+
+@inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<ApplicationRole> RoleManager
+@inject IJSRuntime JsRuntime
+
+@attribute [Authorize(Roles = "Administrators")]
+
+<DulBreadcrumbsSimple>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="/">Dashboard</a>
+        </li>
+        <li class="breadcrumb-item active">User Roles Management</li>
+        <LoginDisplay></LoginDisplay>
+    </ol>
+</DulBreadcrumbsSimple>
+
+<DulMainWithCardSimple>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="mb-0">User Roles Management</h3>
+        <div>
+            <a class="btn btn-success btn-sm me-2" href="/Administrations/Users">
+                <span class="oi oi-plus"></span> New User
+            </a>
+            <a class="btn btn-success btn-sm" href="/Administrations/Roles">
+                <span class="oi oi-plus"></span> New Role
+            </a>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <p>Loading users...</p>
+    }
+    else
+    {
+        <table class="table table-striped table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Roles</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Users)
+                {
+                    <tr>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.Email</td>
+                        <td>@string.Join(", ", user.Roles)</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" @onclick="() => OpenRoleModal(user)">Manage Roles</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+</DulMainWithCardSimple>
+
+@if (showRoleModal && selectedUser != null)
+{
+    <div class="modal fade show" style="display:block;" tabindex="-1" role="dialog" aria-modal="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Manage Roles for @selectedUser.Email</h5>
+                    <button type="button" class="btn-close" @onclick="CloseRoleModal"></button>
+                </div>
+                <div class="modal-body">
+                    @if (RoleEditModels != null)
+                    {
+                        @foreach (var role in RoleEditModels)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" @bind="role.Selected" />
+                                <label class="form-check-label">@role.RoleName</label>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>Loading roles...</p>
+                    }
+                    <div class="text-danger mt-2">@errorMessage</div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" @onclick="SaveRoles">Save</button>
+                    <button class="btn btn-secondary" @onclick="CloseRoleModal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
 
 @code {
+    private List<UserRoleListViewModel> Users = new();
+    private ApplicationUser? selectedUser = null;
+    private List<UserRoleEditViewModel> RoleEditModels = new();
+    private bool showRoleModal = false;
+    private bool isLoading = true;
+    private string errorMessage = "";
 
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        isLoading = true;
+        var users = await UserManager.Users.ToListAsync();
+        Users = new List<UserRoleListViewModel>();
+
+        foreach (var user in users)
+        {
+            Users.Add(new UserRoleListViewModel
+            {
+                UserId = user.Id ?? "",
+                Email = user.Email ?? "",
+                FirstName = user.FirstName ?? "",
+                LastName = user.LastName ?? "",
+                Roles = await GetUserRoles(user)
+            });
+        }
+        isLoading = false;
+    }
+
+    private async Task<List<string>> GetUserRoles(ApplicationUser user)
+    {
+        var roles = await UserManager.GetRolesAsync(user);
+        return roles.ToList();
+    }
+
+    private async void OpenRoleModal(UserRoleListViewModel user)
+    {
+        var userEntity = await UserManager.FindByIdAsync(user.UserId);
+        if (userEntity == null)
+        {
+            errorMessage = "User not found.";
+            return;
+        }
+
+        selectedUser = userEntity;
+
+        var allRoles = await RoleManager.Roles.ToListAsync();
+        var userRoles = await UserManager.GetRolesAsync(selectedUser);
+
+        RoleEditModels = allRoles.Select(role => new UserRoleEditViewModel
+        {
+            RoleId = role.Id ?? "",
+            RoleName = role.Name ?? "",
+            Selected = !string.IsNullOrEmpty(role.Name) && userRoles.Contains(role.Name)
+        }).ToList();
+
+        showRoleModal = true;
+        errorMessage = "";
+        StateHasChanged();
+    }
+
+    private async Task SaveRoles()
+    {
+        if (selectedUser == null)
+        {
+            errorMessage = "User not found.";
+            return;
+        }
+
+        var existingRoles = await UserManager.GetRolesAsync(selectedUser);
+        var removeResult = await UserManager.RemoveFromRolesAsync(selectedUser, existingRoles);
+        if (!removeResult.Succeeded)
+        {
+            errorMessage = "Failed to remove existing roles.";
+            return;
+        }
+
+        var selectedRoles = RoleEditModels.Where(r => r.Selected).Select(r => r.RoleName);
+        var addResult = await UserManager.AddToRolesAsync(selectedUser, selectedRoles);
+        if (!addResult.Succeeded)
+        {
+            errorMessage = "Failed to add new roles.";
+            return;
+        }
+
+        showRoleModal = false;
+        await LoadUsers();
+    }
+
+    private void CloseRoleModal()
+    {
+        showRoleModal = false;
+        errorMessage = "";
+    }
+
+    public class UserRoleEditViewModel
+    {
+        public string RoleId { get; set; } = "";
+        public string RoleName { get; set; } = "";
+        public bool Selected { get; set; }
+    }
+
+    public class UserRoleListViewModel
+    {
+        public string UserId { get; set; } = "";
+        public string FirstName { get; set; } = "";
+        public string LastName { get; set; } = "";
+        public string Email { get; set; } = "";
+        public IEnumerable<string> Roles { get; set; } = new List<string>();
+    }
 }
