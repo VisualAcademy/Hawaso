@@ -169,5 +169,6 @@
     <Build Include="Vendors\ContactTypes.sql" />
     <Build Include="All\Alls.sql" />
     <Build Include="dbo\Tables\Posts.sql" />
+    <Build Include="dbo\Tables\Logs.sql" />
   </ItemGroup>
 </Project>
