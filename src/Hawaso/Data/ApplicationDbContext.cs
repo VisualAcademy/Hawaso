@@ -1,4 +1,5 @@
-﻿using VisualAcademy.Components.Pages.ApplicantsTransfers;
+﻿using Microsoft.EntityFrameworkCore;
+using VisualAcademy.Components.Pages.ApplicantsTransfers;
 using VisualAcademy.Models;
 
 namespace Hawaso.Data;
@@ -24,11 +25,15 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
 
     public DbSet<ApplicantTransfer> ApplicantsTransfers { get; set; }
 
+    public DbSet<KnownUser> KnownUsers { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
         builder.Entity<Page>().HasKey(p => p.Id);
         builder.Entity<Page>().Property(p => p.TenantName).HasDefaultValue("Hawaso");
+
+        builder.Entity<KnownUser>().ToTable("KnownUsers");
     }
 }
 
