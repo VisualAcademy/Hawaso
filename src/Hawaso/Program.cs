@@ -11,6 +11,7 @@ using Dalbodre.Infrastructures.Cores;
 using DotNetNote.Models;
 using DotNetSaleCore.Models;
 using Hawaso.Areas.Identity;
+using Hawaso.Endpoints;
 using Hawaso.Extensions.BriefingLogs;
 using Hawaso.Extensions.Libraries;
 using Hawaso.Extensions.Memos;
@@ -466,8 +467,16 @@ app.MapGet("api/foo", () =>
 
 
 
+// 엔드포인트 등록
+app.MapIsoCountriesEndpoint();
+
+
 
 app.Run();
+
+
+
+
 
 /// <summary>
 /// 쇼핑몰(DotNetSaleCore) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리
