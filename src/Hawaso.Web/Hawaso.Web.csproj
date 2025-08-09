@@ -24,6 +24,7 @@
         <PackageReference Include="Azunt.ReasonManagement" Version="1.0.1" />
         <PackageReference Include="Azunt.ResourceManagement" Version="1.0.5" />
         <PackageReference Include="Azunt.RuleManagement" Version="1.0.2" />
+        <PackageReference Include="Azunt.TechnicianManagement" Version="1.0.1" />
         <PackageReference Include="Azunt.TenantManagement" Version="1.0.3" />
 		<ProjectReference Include="..\Hawaso.ServiceDefaults\Hawaso.ServiceDefaults.csproj" />
 		<PackageReference Include="Dul" Version="1.3.4" />
