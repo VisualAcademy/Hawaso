@@ -1,27 +1,32 @@
 {
-  "version": "1.0",
-  "defaultProvider": "cdnjs",
-  "libraries": [
-    {
-      "library": "jquery@3.4.1",
-      "files": [ "jquery.js" ],
-      "destination": "wwwroot/lib"
-    },
-    {
-      "provider": "jsdelivr",
-      "library": "bootstrap@4.4.1",
-      "files": [ "dist/js/bootstrap.js" ],
-      "destination": "wwwroot/lib"
-    },
-    {
-      "library": "toastr.js@2.1.4",
-      "destination": "wwwroot/lib/toastr",
-      "files": [ "toastr.min.js", "toastr.min.css", "toastr.css", "toastr.js.map" ]
-    },
-    {
-      "library": "bootbox.js@5.5.2",
-      "destination": "wwwroot/lib/bootbox",
-      "files": [ "bootbox.js", "bootbox.min.js" ]
-    }
-  ]
+    "version": "3.0",
+    "defaultProvider": "cdnjs",
+    "libraries": [
+        {
+            "library": "jquery@3.4.1",
+            "files": [ "jquery.js" ],
+            "destination": "wwwroot/lib"
+        },
+        {
+            "provider": "jsdelivr",
+            "library": "bootstrap@4.4.1",
+            "files": [ "dist/js/bootstrap.js" ],
+            "destination": "wwwroot/lib"
+        },
+        {
+            "library": "toastr.js@2.1.4",
+            "destination": "wwwroot/lib/toastr",
+            "files": [ "toastr.min.js", "toastr.min.css", "toastr.css", "toastr.js.map" ]
+        },
+        {
+            "library": "bootbox.js@5.5.2",
+            "destination": "wwwroot/lib/bootbox",
+            "files": [ "bootbox.js", "bootbox.min.js" ]
+        },
+        {
+            "library": "jszip@3.10.1",
+            "destination": "wwwroot/lib/jszip",
+            "files": [ "jszip.min.js", "jszip.js" ]
+        }
+    ]
 }
