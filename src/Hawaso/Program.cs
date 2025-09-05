@@ -1,4 +1,5 @@
-﻿using Azunt.FileManagement;
+﻿using Azunt.Endpoints;
+using Azunt.FileManagement;
 using Azunt.Infrastructures;
 using Azunt.Models.Enums;
 using Azunt.NoteManagement;
@@ -31,6 +32,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using NoticeApp.Models;
 using ReplyApp.Managers;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using VisualAcademy;
 using VisualAcademy.Components.Pages.ApplicantsTransfers;
@@ -299,6 +301,18 @@ builder.Services.AddScoped<Azunt.NoteManagement.INoteStorageService, NoOpNoteSto
 #endregion
 
 
+
+// 최신 권장 방식: HttpClientFactory 등록
+builder.Services.AddHttpClient("egress-ip", client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(5);
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("Azunt-EgressIp/1.0");
+    client.DefaultRequestHeaders.Accept.Clear();
+    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
+});
+
+
+
 var app = builder.Build();
 
 
@@ -470,6 +484,9 @@ app.MapGet("api/foo", () =>
 // 엔드포인트 등록
 app.MapIsoCountriesEndpoint();
 
+
+// Diagnostics 엔드포인트 매핑
+app!.MapDiagnosticsEndpoints();
 
 
 app.Run();
