@@ -7,6 +7,8 @@ using Azunt.ReasonManagement;
 using Azunt.ResourceManagement;
 using Azunt.Services;
 using Azunt.Web.Components.Pages.Notes.Services;
+using Azunt.Web.Policies;
+using Azunt.Web.Settings;
 using Blazored.Toast;
 using Dalbodre.Infrastructures.Cores;
 using DotNetNote.Models;
@@ -311,6 +313,15 @@ builder.Services.AddHttpClient("egress-ip", client =>
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
 });
 
+
+#region Background Service
+// appsettings.json 바인딩
+builder.Services.Configure<BackgroundScreeningOptions>(
+    builder.Configuration.GetSection("BackgroundScreening"));
+
+// 정책 서비스 DI 
+builder.Services.AddScoped<IBackgroundScreeningPolicy, BackgroundScreeningPolicy>();
+#endregion
 
 
 var app = builder.Build();
