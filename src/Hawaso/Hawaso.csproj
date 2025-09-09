@@ -44,7 +44,7 @@
         <PackageReference Include="Dul" Version="1.3.4" />
         <PackageReference Include="Dul.NoticeApp.Models" Version="1.0.2" />
         <PackageReference Include="DulPager" Version="1.0.2" />
-        <PackageReference Include="EPPlus" Version="8.1.0" />
+        <PackageReference Include="EPPlus" Version="8.1.1" />
         <PackageReference Include="MatBlazor" Version="2.10.0" />
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
