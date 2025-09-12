@@ -66,10 +66,25 @@
                         <label for="txtTitle">File</label>
                         <BlazorInputFile.InputFile OnChange="HandleSelection"></BlazorInputFile.InputFile>
                     </div>
-                    <div class="form-group">
-                        <button type="button" class="btn btn-primary" @onclick="CreateOrEditClick" disabled="@isSubmitting">@submitButtonText</button>
-                        <button type="button" class="btn btn-secondary" @onclick="Hide">Cancel</button>
+
+                    <!-- 버튼 영역: Submit / Cancel (왼쪽) + Skip Upload (오른쪽) -->
+                    <div class="form-group d-flex align-items-center">
+                        <div class="d-flex align-items-center">
+                            <button type="button" class="btn btn-primary mr-2" @onclick="CreateOrEditClick" disabled="@isSubmitting">@submitButtonText</button>
+                            <button type="button" class="btn btn-secondary" @onclick="Hide">Cancel</button>
+                        </div>
+
+                        <div class="ml-auto">
+                            <button type="button"
+                                    class="btn btn-outline-danger btn-sm"
+                                    title="Skip this upload (a placeholder image will be used)"
+                                    @onclick="SkipUploadAsync"
+                                    disabled="@isSubmitting">
+                                Skip Upload
+                            </button>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>

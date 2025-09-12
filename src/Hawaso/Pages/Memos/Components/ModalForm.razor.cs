@@ -1,5 +1,7 @@
 ﻿using BlazorInputFile;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using System.Text.RegularExpressions;
 
 namespace VisualAcademy.Pages.Memos.Components;
 
@@ -18,6 +20,8 @@ public partial class ModalForm
     /// 첨부 파일 리스트 보관
     /// </summary>
     private IFileListEntry[] selectedFiles;
+
+    private const string PlaceholderRelativePath = "images/skip-upload-placeholder.png";
     #endregion
 
     #region Properties
@@ -121,6 +125,9 @@ public partial class ModalForm
 
     [Inject]
     public IMemoFileStorageManager FileStorageManagerReference { get; set; }
+
+    [Inject] public IJSRuntime JS { get; set; }                     
+    [Inject] public IWebHostEnvironment WebHostEnv { get; set; }    
     #endregion
 
     #region Event Handlers
@@ -219,5 +226,76 @@ public partial class ModalForm
     }
 
     protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
+    #endregion
+
+    #region Skip Upload (placeholder 업로드)
+    protected async Task SkipUploadAsync()
+    {
+        if (isSubmitting) return;
+
+        var ok = await JS.InvokeAsync<bool>("confirm",
+            "This will attach a placeholder image instead of a real file.\n\n" +
+            "(A blank/placeholder image will be attached instead of a file upload.)\n\nContinue?");
+        if (!ok) return;
+
+        try
+        {
+            isSubmitting = true;
+            submitButtonText = "Uploading...";
+
+            // 필드 매핑
+            ModelSender.Name = ModelEdit.Name;
+            ModelSender.Title = ModelEdit.Title;
+            ModelSender.Content = ModelEdit.Content;
+            ModelSender.Password = ModelEdit.Password;
+            ModelSender.Encoding = ModelEdit.Encoding;
+
+            // wwwroot 경로 + placeholder 파일 경로
+            var webRoot = WebHostEnv.WebRootPath ?? "wwwroot";
+            var placeholderFullPath = Path.Combine(webRoot, PlaceholderRelativePath);
+
+            if (!System.IO.File.Exists(placeholderFullPath))
+            {
+                await JS.InvokeVoidAsync("alert", $"Placeholder file not found:\n{placeholderFullPath}");
+                return;
+            }
+
+            using var fs = System.IO.File.OpenRead(placeholderFullPath);
+
+            // 업로드 파일명: Title 기반 간단 생성
+            string sanitizedTitle = Regex.Replace(ModelSender.Title ?? "", "[\\\\/:*?\"<>|]+", "-").TrimEnd('.').Replace(" ", "-");
+            if (sanitizedTitle.Length > 10) sanitizedTitle = sanitizedTitle.Substring(0, 10);
+            string fileName = $"{sanitizedTitle}{DateTime.Now:yyyyMMddHHmmss}-skip.png";
+
+            await FileStorageManagerReference.UploadAsync(fs, fileName, "Memos", true);
+
+            var fileInfo = new System.IO.FileInfo(placeholderFullPath);
+            ModelSender.FileName = fileName;
+            ModelSender.FileSize = (int)fileInfo.Length;
+
+            if (!int.TryParse(parentId, out int newParentId)) newParentId = 0;
+            ModelSender.ParentId = newParentId;
+            ModelSender.ParentKey = ModelSender.ParentKey;
+
+            if (ModelSender.Id == 0)
+            {
+                await RepositoryReference.AddAsync(ModelSender);
+                CreateCallback?.Invoke();
+            }
+            else
+            {
+                await RepositoryReference.UpdateAsync(ModelSender);
+                await EditCallback.InvokeAsync(true);
+            }
+
+            // 필요 시 모달 닫기
+            // Hide();
+        }
+        finally
+        {
+            isSubmitting = false;
+            submitButtonText = "Submit";
+        }
+    }
     #endregion
 }
