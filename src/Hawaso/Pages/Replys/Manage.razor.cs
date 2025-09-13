@@ -1,11 +1,23 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using BlazorUtils;
-using OfficeOpenXml;
-using System.Drawing;
-using OfficeOpenXml.Style;
+// EPPlus 제거
+// using OfficeOpenXml;
+// using System.Drawing;
+// using OfficeOpenXml.Style;
+
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+
 using VisualAcademy.Models.Replys;
 using Hawaso.Pages.Replys.Components;
+
+// Open XML SDK 추가
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace Hawaso.Pages.Replys;
 
@@ -20,36 +32,23 @@ public partial class Manage
     #endregion
 
     #region Injectors
-    [Inject]
-    public NavigationManager Nav { get; set; }
-
-    [Inject]
-    public IJSRuntime JSRuntimeInjector { get; set; }
-
-    [Inject]
-    public IReplyRepository RepositoryReference { get; set; }
-
-    [Inject]
-    public IFileStorageManager FileStorageManagerReference { get; set; }
+    [Inject] public NavigationManager Nav { get; set; }
+    [Inject] public IJSRuntime JSRuntimeInjector { get; set; }
+    [Inject] public IReplyRepository RepositoryReference { get; set; }
+    [Inject] public IFileStorageManager FileStorageManagerReference { get; set; }
     #endregion
 
     #region Properties
-    /// <summary>
-    /// 글쓰기 또는 수정하기 폼의 제목에 전달할 문자열(태그 포함 가능)
-    /// </summary>
+    /// <summary>글쓰기 또는 수정하기 폼의 제목</summary>
     public string EditorFormTitle { get; set; } = "CREATE";
     #endregion
 
-    /// <summary>
-    /// EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기
-    /// </summary>
+    /// <summary>모달로 글쓰기 또는 수정하기</summary>
     public Components.EditorForm EditorFormReference { get; set; }
 
-    /// <summary>
-    /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
-    /// </summary>
+    /// <summary>모달로 항목 삭제</summary>
     public DeleteDialog DeleteDialogReference { get; set; }
-    
+
     protected List<Reply> models;
 
     protected Reply model = new Reply();
@@ -63,9 +62,6 @@ public partial class Manage
     };
 
     #region Lifecycle Methods
-    /// <summary>
-    /// 페이지 초기화 이벤트 처리기
-    /// </summary>
     protected override async Task OnInitializedAsync() => await DisplayData();
     #endregion
 
@@ -106,34 +102,24 @@ public partial class Manage
         StateHasChanged();
     }
 
-
     #region Event Handlers
-    /// <summary>
-    /// 글쓰기 모달 폼 띄우기 
-    /// </summary>
     protected void ShowEditorForm()
     {
         EditorFormTitle = "CREATE";
-        this.model = new Reply(); // 모델 초기화
-        this.model.ParentKey = ParentKey; // 
-        EditorFormReference.Show(); 
-    } 
-
-    /// <summary>
-    /// 관리자 전용: 모달 폼으로 선택 항목 수정
-    /// </summary>
-    protected void EditBy(Reply model)
-    {
-        EditorFormTitle = "EDIT";
-        this.model = new Reply(); // 모델 초기화
-        this.model = model;
-        this.model.ParentKey = ParentKey; // 
+        this.model = new Reply();
+        this.model.ParentKey = ParentKey;
         EditorFormReference.Show();
     }
 
-    /// <summary>
-    /// 관리자 전용: 모달 폼으로 선택 항목 삭제
-    /// </summary>
+    protected void EditBy(Reply model)
+    {
+        EditorFormTitle = "EDIT";
+        this.model = new Reply();
+        this.model = model;
+        this.model.ParentKey = ParentKey;
+        EditorFormReference.Show();
+    }
+
     protected void DeleteBy(Reply model)
     {
         this.model = model;
@@ -152,24 +138,18 @@ public partial class Manage
                 model.DownCount = model.DownCount + 1;
                 await RepositoryReference.EditAsync(model);
 
-                await FileUtil.SaveAs(JSRuntimeInjector, model.FileName, fileBytes); 
+                await FileUtil.SaveAs(JSRuntimeInjector, model.FileName, fileBytes);
             }
         }
     }
 
-    /// <summary>
-    /// 모델 초기화 및 모달 폼 닫기
-    /// </summary>
     protected async void CreateOrEdit()
     {
         EditorFormReference.Hide();
         this.model = new Reply();
-        await DisplayData();            
+        await DisplayData();
     }
 
-    /// <summary>
-    /// 삭제 모달 폼에서 현재 선택한 항목 삭제
-    /// </summary>
     protected async void DeleteClick()
     {
         if (!string.IsNullOrEmpty(model?.FileName))
@@ -185,9 +165,6 @@ public partial class Manage
     }
 
     #region Toggle with Inline Dialog
-    /// <summary>
-    /// 인라인 폼을 띄울건지 여부 
-    /// </summary>
     public bool IsInlineDialogShow { get; set; } = false;
 
     protected void ToggleClose()
@@ -196,9 +173,6 @@ public partial class Manage
         this.model = new Reply();
     }
 
-    /// <summary>
-    /// 토글: Pinned
-    /// </summary>
     protected async void ToggleClick()
     {
         this.model.IsPinned = (this.model?.IsPinned == true) ? false : true;
@@ -212,14 +186,11 @@ public partial class Manage
         await DisplayData(); // 다시 로드
     }
 
-    /// <summary>
-    /// ToggleBy(PinnedBy)
-    /// </summary>
     protected void ToggleBy(Reply model)
     {
         this.model = model;
         IsInlineDialogShow = true;
-    } 
+    }
     #endregion
 
     #region Search
@@ -239,42 +210,117 @@ public partial class Manage
     protected void DownloadExcelWithWebApi()
     {
         FileUtil.SaveAsExcel(JSRuntimeInjector, "/ReplyDownload/ExcelDown");
-
         Nav.NavigateTo($"/Replys"); // 다운로드 후 현재 페이지 다시 로드
     }
 
+    // EPPlus -> Open XML SDK 로 교체
     protected void DownloadExcel()
     {
-        using (var package = new ExcelPackage())
+        var list = models ?? new List<Reply>();
+        if (list.Count == 0) return;
+
+        byte[] bytes;
+        using (var ms = new MemoryStream())
         {
-            var worksheet = package.Workbook.Worksheets.Add("Replys");
+            using (var doc = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
+            {
+                var wbPart = doc.AddWorkbookPart();
+                wbPart.Workbook = new Workbook();
 
-            var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
-                (from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName })
-                , true);
+                var wsPart = wbPart.AddNewPart<WorksheetPart>();
+                var sheetData = new SheetData();
+                wsPart.Worksheet = new Worksheet(sheetData);
 
-            var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
+                var sheets = wbPart.Workbook.AppendChild(new Sheets());
+                sheets.Append(new Sheet
+                {
+                    Id = wbPart.GetIdOfPart(wsPart),
+                    SheetId = 1U,
+                    Name = "Replys"
+                });
 
-            // 그라데이션 효과 부여
-            var rule = uploadCol.ConditionalFormatting.AddThreeColorScale();
-            rule.LowValue.Color = Color.SkyBlue;
-            rule.MiddleValue.Color = Color.White;
-            rule.HighValue.Color = Color.Red;
+                // 헤더
+                uint headerRowIndex = 1;
+                var headerRow = new Row { RowIndex = headerRowIndex };
+                sheetData.Append(headerRow);
 
-            var header = worksheet.Cells["B2:F2"];
-            worksheet.DefaultColWidth = 25;
-            worksheet.Cells[3, 2, models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
-            tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-            tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
-            tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
-            tableBody.Style.Border.BorderAround(ExcelBorderStyle.Medium);
-            header.Style.Font.Bold = true;
-            header.Style.Font.Color.SetColor(Color.White);
-            header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
+                string[] headers = { "Created", "Name", "Title", "DownCount", "FileName" };
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    headerRow.Append(TextCell(Ref(i + 1, (int)headerRowIndex), headers[i]));
+                }
 
-            FileUtil.SaveAs(JSRuntimeInjector, $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_Replys.xlsx", package.GetAsByteArray());
+                // 데이터
+                uint rowIndex = 2;
+                foreach (var m in list)
+                {
+                    var row = new Row { RowIndex = rowIndex };
+                    sheetData.Append(row);
+
+                    // Created 안전 변환 (DateTime 또는 DateTimeOffset 모두 대응)
+                    string createdStr = string.Empty;
+                    // DateTime? 형태라면
+                    if (m.Created is DateTime dt)
+                    {
+                        createdStr = dt.ToLocalTime().ToString("yyyy MMM d ddd", CultureInfo.InvariantCulture);
+                    }
+                    createdStr = m.Created?.ToString() ?? string.Empty;
+
+                    // DownCount는 int 또는 int? 둘 다 대응
+                    string downCountStr = (m.DownCount is int dc ? dc : 0).ToString(CultureInfo.InvariantCulture);
+
+                    var values = new[]
+                    {
+                        createdStr,
+                        m.Name ?? string.Empty,
+                        m.Title ?? string.Empty,
+                        downCountStr,
+                        m.FileName ?? string.Empty
+                    };
+
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        row.Append(TextCell(Ref(i + 1, (int)rowIndex), values[i]));
+                    }
+
+                    rowIndex++;
+                }
+
+                wsPart.Worksheet.Save();
+                wbPart.Workbook.Save();
+            }
+
+            bytes = ms.ToArray();
         }
-    } 
+
+        var fileName = $"{System.DateTime.Now:yyyyMMddHHmmss}_Replys.xlsx";
+        FileUtil.SaveAs(JSRuntimeInjector, fileName, bytes);
+    }
+
+    // ===== OpenXML helpers =====
+    private static Cell TextCell(string cellRef, string text) =>
+        new Cell
+        {
+            CellReference = cellRef,
+            DataType = CellValues.String,
+            CellValue = new CellValue(text ?? string.Empty)
+        };
+
+    private static string Ref(int col1Based, int row) => $"{ColName(col1Based)}{row}";
+
+    private static string ColName(int index)
+    {
+        // 1 -> A, 2 -> B, ... 26 -> Z, 27 -> AA ...
+        var dividend = index;
+        string col = string.Empty;
+        while (dividend > 0)
+        {
+            var modulo = (dividend - 1) % 26;
+            col = (char)('A' + modulo) + col;
+            dividend = (dividend - modulo) / 26;
+        }
+        return col;
+    }
     #endregion
 
     #region Sorting
@@ -314,6 +360,6 @@ public partial class Manage
         }
 
         await DisplayData();
-    } 
+    }
     #endregion
 }

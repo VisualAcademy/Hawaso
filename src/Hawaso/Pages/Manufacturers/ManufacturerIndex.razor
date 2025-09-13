@@ -1,24 +1,18 @@
 ﻿@page "/Manufacturers"
 @using Hawaso.Models
 @inject IManufacturerRepository repository
-
 @inject IJSRuntime JS
-
 @using Dul.Web
 
-@using System.Drawing
+@* Open XML SDK *@
+@using DocumentFormat.OpenXml
+@using DocumentFormat.OpenXml.Packaging
+@using DocumentFormat.OpenXml.Spreadsheet
 
 @attribute [AllowAnonymous]
 @attribute [Authorize(Roles = "Administrators")]
 
 @inject IToastService toastService
-@*<DulBreadcrumbsSimple>
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item active">Manufacturer List</li>
-
-            <LoginDisplay></LoginDisplay>
-        </ol>
-    </DulBreadcrumbsSimple>*@
 
 <PageTitle>제조사 리스트 | Hawaso</PageTitle>
 
@@ -76,9 +70,7 @@
                     </div>
                 }
 
-
                 <ManufacturerPager Model="pager" PageIndexChanged="PageIndexChanged"></ManufacturerPager>
-
 
                 <div>
                     <input type="button" value="Add"
@@ -134,7 +126,6 @@
         manufacturers = pagingData.Records.ToList();
         manufacturer = new Manufacturer(); // 선택 항목 초기화
 
-        //toastService.ShowError("삭제되었습니다.", "삭제 완료");
         toastService.ShowError("삭제되었습니다.");
     }
 
@@ -165,48 +156,106 @@
         pager.PageIndex = pageIndex;
         pager.PageNumber = (pageIndex + 1);
 
-
         var pagingData = await repository.GetAllByPageAsync(pager.PageIndex, pager.PageSize);
         manufacturers = pagingData.Records.ToList();
 
         StateHasChanged(); // 현재 컴포넌트 재로드
     }
 
+    // ===== Excel (OpenXML) =====
     private void DownloadFile()
     {
-        using (var package = new ExcelPackage())
+        if (manufacturers is null || manufacturers.Count == 0)
         {
-            var worksheet = package.Workbook.Worksheets.Add("Manufacturers");
-
-            // Use LINQ to project data into the worksheet
-            var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
-                from project in manufacturers
-                select new { project.Id, project.Name, project.ManufacturerCode, project.Comment }, true);
-
-            // Add conditional formatting based on temperature
-            var temperatureCol = tableBody.Offset(1, 1, manufacturers.Count, 1);
-            var rule = temperatureCol.ConditionalFormatting.AddThreeColorScale();
-            rule.LowValue.Color = Color.SkyBlue;
-            rule.MiddleValue.Color = Color.White;
-            rule.HighValue.Color = Color.Red;
-
-            //// Add Temperature (F) computed via formula
-            //worksheet.Cells[3, 4, projects.Count + 2, 4].Formula = "C3 * 1.8 + 32";
-            //worksheet.Calculate();
-
-            // Formatting
-            var header = worksheet.Cells["B2:E2"];
-            worksheet.DefaultColWidth = 25;
-            //worksheet.Cells[3, 2, manufacturers.Count + 2, 2].Style.Numberformat.Format = "DDD d MMM yyyy";
-            tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-            tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
-            tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
-            tableBody.Style.Border.BorderAround(ExcelBorderStyle.Medium);
-            header.Style.Font.Bold = true;
-            header.Style.Font.Color.SetColor(Color.White);
-            header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
-
-            FileUtil.SaveAs(JS, $"{DateTime.Now.ToString("yyyyMMddhhmmss")}Manufacturers.xlsx", package.GetAsByteArray());
+            toastService?.ShowWarning("내려받을 데이터가 없습니다.");
+            return;
         }
+
+        byte[] bytes;
+        using (var ms = new MemoryStream())
+        {
+            using (var doc = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
+            {
+                var wbPart = doc.AddWorkbookPart();
+                wbPart.Workbook = new Workbook();
+
+                var wsPart = wbPart.AddNewPart<WorksheetPart>();
+                var sheetData = new SheetData();
+                wsPart.Worksheet = new Worksheet(sheetData);
+
+                var sheets = wbPart.Workbook.AppendChild(new Sheets());
+                sheets.Append(new Sheet
+                {
+                    Id = wbPart.GetIdOfPart(wsPart),
+                    SheetId = 1U,
+                    Name = "Manufacturers"
+                });
+
+                // Header
+                uint headerRowIndex = 1;
+                var headerRow = new Row { RowIndex = headerRowIndex };
+                sheetData.Append(headerRow);
+
+                string[] headers = { "Id", "Name", "ManufacturerCode", "Comment" };
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    headerRow.Append(TextCell(Ref(i + 1, (int)headerRowIndex), headers[i]));
+                }
+
+                // Data
+                uint rowIndex = 2;
+                foreach (var m in manufacturers)
+                {
+                    var row = new Row { RowIndex = rowIndex };
+                    sheetData.Append(row);
+
+                    var values = new[]
+                    {
+                        m.Id.ToString(),
+                        m.Name ?? string.Empty,
+                        m.ManufacturerCode ?? string.Empty,
+                        m.Comment ?? string.Empty
+                    };
+
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        row.Append(TextCell(Ref(i + 1, (int)rowIndex), values[i]));
+                    }
+
+                    rowIndex++;
+                }
+
+                wsPart.Worksheet.Save();
+                wbPart.Workbook.Save();
+            }
+
+            bytes = ms.ToArray();
+        }
+
+        FileUtil.SaveAs(JS, $"{DateTime.Now:yyyyMMddhhmmss}_Manufacturers.xlsx", bytes);
+    }
+
+    // OpenXML helpers
+    private static Cell TextCell(string cellRef, string text) =>
+        new Cell
+        {
+            CellReference = cellRef,
+            DataType = CellValues.String,
+            CellValue = new CellValue(text ?? string.Empty)
+        };
+
+    private static string Ref(int col1Based, int row) => $"{ColName(col1Based)}{row}";
+
+    private static string ColName(int index)
+    {
+        var dividend = index; // 1 -> A
+        string col = string.Empty;
+        while (dividend > 0)
+        {
+            var modulo = (dividend - 1) % 26;
+            col = (char)('A' + modulo) + col;
+            dividend = (dividend - modulo) / 26;
+        }
+        return col;
     }
 }

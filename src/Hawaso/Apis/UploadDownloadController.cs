@@ -1,99 +1,202 @@
-﻿using OfficeOpenXml;
-using OfficeOpenXml.Style;
-using System.Drawing;
-using VisualAcademy.Models.Replys;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.Globalization;
 
-namespace Hawaso.Apis;
+using VisualAcademy.Models.Replys; 
 
-public class UploadDownloadController : Controller
+namespace Hawaso.Apis
 {
-    private readonly IWebHostEnvironment _environment;
-    private readonly IUploadRepository _repository;
-    private readonly IFileStorageManager _fileStorageManager;
-
-    public UploadDownloadController(IWebHostEnvironment environment, IUploadRepository repository, IFileStorageManager fileStorageManager)
+    public class UploadDownloadController : Controller
     {
-        _environment = environment;
-        _repository = repository;
-        _fileStorageManager = fileStorageManager;
-    }
+        private readonly IWebHostEnvironment _environment;
+        private readonly IUploadRepository _repository;
+        private readonly IFileStorageManager _fileStorageManager;
 
-    /// <summary>
-    /// 게시판 파일 강제 다운로드 기능(/BoardDown/:Id)
-    /// </summary>
-    public async Task<IActionResult> FileDown(int id)
-    {
-        var model = await _repository.GetByIdAsync(id);
-
-        if (model == null)
+        public UploadDownloadController(
+            IWebHostEnvironment environment,
+            IUploadRepository repository,
+            IFileStorageManager fileStorageManager)
         {
-            return null;
+            _environment = environment;
+            _repository = repository;
+            _fileStorageManager = fileStorageManager;
         }
-        else
-        {
-            if (!string.IsNullOrEmpty(model.FileName))
-            {
-                byte[] fileBytes = await _fileStorageManager.DownloadAsync(model.FileName, "");
-                if (fileBytes != null)
-                {
-                    // DownCount
-                    model.DownCount = model.DownCount + 1;
-                    await _repository.EditAsync(model);
 
-                    return File(fileBytes, "application/octet-stream", model.FileName);
-                }
-                else
-                {
-                    return Redirect("/");
-                }
+        /// <summary>
+        /// 게시판 파일 강제 다운로드 기능(/UploadDownload/FileDown/:id)
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> FileDown(int id)
+        {
+            var model = await _repository.GetByIdAsync(id);
+            if (model is null)
+            {
+                return NotFound();
             }
 
-            return Redirect("/");
-        }
-    }
-
-    /// <summary>
-    /// 엑셀 파일 강제 다운로드 기능(/ExcelDown)
-    /// </summary>
-    public async Task<IActionResult> ExcelDown()
-    {
-        var results = await _repository.GetAllAsync(0, 100);
-
-        var models = results.Records.ToList();
-
-        if (models != null)
-        {
-            using (var package = new ExcelPackage())
+            if (string.IsNullOrWhiteSpace(model.FileName))
             {
-                var worksheet = package.Workbook.Worksheets.Add("Uploads");
-
-                var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
-                    from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName }
-                    , true);
-
-                var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
-
-                // 그라데이션 효과 부여 
-                var rule = uploadCol.ConditionalFormatting.AddThreeColorScale();
-                rule.LowValue.Color = Color.SkyBlue;
-                rule.MiddleValue.Color = Color.White;
-                rule.HighValue.Color = Color.Red;
-
-                var header = worksheet.Cells["B2:F2"];
-                worksheet.DefaultColWidth = 25;
-                worksheet.Cells[3, 2, models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
-                tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
-                tableBody.Style.Border.BorderAround(ExcelBorderStyle.Medium);
-                header.Style.Font.Bold = true;
-                header.Style.Font.Color.SetColor(Color.White);
-                header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
-
-                return File(package.GetAsByteArray(), "application/octet-stream", $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_Uploads.xlsx");
+                return NotFound("No file attached.");
             }
 
+            // 원본 코드와 동일하게 컨테이너는 빈 문자열 사용
+            var fileBytes = await _fileStorageManager.DownloadAsync(model.FileName, "");
+            if (fileBytes is not null && fileBytes.Length > 0)
+            {
+                model.DownCount = (model.DownCount) + 1; // Upload.DownCount는 int (non-nullable)
+                await _repository.EditAsync(model);
+
+                var encoded = WebUtility.UrlEncode(model.FileName);
+                return File(fileBytes, "application/octet-stream", encoded);
+            }
+
+            // 저장소에서 파일을 찾지 못한 경우 placeholder 제공(있다면)
+            var webRoot = _environment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var placeholderPath = Path.Combine(webRoot, "images", "file-not-found.png");
+            if (System.IO.File.Exists(placeholderPath))
+            {
+                var placeholderBytes = await System.IO.File.ReadAllBytesAsync(placeholderPath);
+                return File(placeholderBytes, "image/png", "file-not-found.png");
+            }
+
+            return NotFound("File not found in storage.");
         }
-        return Redirect("/");
+
+        /// <summary>
+        /// 엑셀 파일 강제 다운로드 기능(/UploadDownload/ExcelDown) - Open XML SDK
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> ExcelDown()
+        {
+            var results = await _repository.GetAllAsync(0, 100);
+            var models = (results.Records ?? Enumerable.Empty<Upload>()).ToList();
+            if (models.Count == 0)
+            {
+                return NotFound("No records to export.");
+            }
+
+            // 투영: 필요한 컬럼만
+            var rows = models.Select(m => new
+            {
+                m.Created,
+                m.Name,
+                m.Title,
+                m.DownCount,
+                m.FileName
+            }).ToList();
+
+            byte[] bytes;
+            using (var ms = new MemoryStream())
+            {
+                using (var doc = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
+                {
+                    var wbPart = doc.AddWorkbookPart();
+                    wbPart.Workbook = new Workbook();
+
+                    // 스타일 파트(옵션): 기본 텍스트 스타일만 사용
+                    var styles = wbPart.AddNewPart<WorkbookStylesPart>();
+                    styles.Stylesheet = new Stylesheet();
+                    styles.Stylesheet.Save();
+
+                    var wsPart = wbPart.AddNewPart<WorksheetPart>();
+                    var sheetData = new SheetData();
+                    wsPart.Worksheet = new Worksheet(
+                        new Columns(
+                            // 대략적 열 너비: Created, Name, Title, DownCount, FileName
+                            new Column { Min = 1, Max = 1, Width = 22, CustomWidth = true },
+                            new Column { Min = 2, Max = 2, Width = 18, CustomWidth = true },
+                            new Column { Min = 3, Max = 3, Width = 40, CustomWidth = true },
+                            new Column { Min = 4, Max = 4, Width = 12, CustomWidth = true },
+                            new Column { Min = 5, Max = 5, Width = 40, CustomWidth = true }
+                        ),
+                        sheetData
+                    );
+
+                    var sheets = wbPart.Workbook.AppendChild(new Sheets());
+                    sheets.Append(new Sheet
+                    {
+                        Id = wbPart.GetIdOfPart(wsPart),
+                        SheetId = 1U,
+                        Name = "Uploads"
+                    });
+
+                    // 헤더
+                    uint headerRowIndex = 1;
+                    var header = new Row { RowIndex = headerRowIndex };
+                    sheetData.Append(header);
+                    string[] headers = { "Created", "Name", "Title", "DownCount", "FileName" };
+                    for (int i = 0; i < headers.Length; i++)
+                    {
+                        header.Append(TextCell(Ref(i + 1, (int)headerRowIndex), headers[i]));
+                    }
+
+                    // 데이터
+                    uint rowIndex = 2;
+                    foreach (var r in rows)
+                    {
+                        var row = new Row { RowIndex = rowIndex };
+                        sheetData.Append(row);
+
+                        var values = new[]
+                        {
+                            ToLocalDateTimeString(r.Created),
+                            r.Name ?? string.Empty,
+                            r.Title ?? string.Empty,
+                            r.DownCount.ToString(CultureInfo.InvariantCulture),
+                            r.FileName ?? string.Empty
+                        };
+
+                        for (int i = 0; i < values.Length; i++)
+                        {
+                            row.Append(TextCell(Ref(i + 1, (int)rowIndex), values[i]));
+                        }
+
+                        rowIndex++;
+                    }
+
+                    wsPart.Worksheet.Save();
+                    wbPart.Workbook.Save();
+                }
+
+                bytes = ms.ToArray();
+            }
+
+            var fileName = $"{DateTime.Now:yyyyMMddHHmmss}_Uploads.xlsx";
+            return File(bytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                fileName);
+        }
+
+        // ===== Helpers =====
+
+        private static string ToLocalDateTimeString(DateTime? dt)
+            => dt.HasValue
+                ? dt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
+                : string.Empty;
+
+        private static Cell TextCell(string cellRef, string text) =>
+            new Cell
+            {
+                CellReference = cellRef,
+                DataType = CellValues.String,
+                CellValue = new CellValue(text ?? string.Empty)
+            };
+
+        private static string Ref(int col1Based, int row) => $"{ColName(col1Based)}{row}";
+
+        private static string ColName(int index)
+        {
+            // 1->A, 2->B, ... 26->Z, 27->AA ...
+            var dividend = index;
+            string col = string.Empty;
+            while (dividend > 0)
+            {
+                var modulo = (dividend - 1) % 26;
+                col = (char)('A' + modulo) + col;
+                dividend = (dividend - modulo) / 26;
+            }
+            return col;
+        }
     }
 }

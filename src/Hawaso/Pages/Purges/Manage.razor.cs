@@ -1,118 +1,80 @@
 ﻿using BlazorUtils;
-using Hawaso.Data;
+// Open XML SDK
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
-using OfficeOpenXml;
-using OfficeOpenXml.Style;
-using System.Drawing;
+using System.Globalization;
 
 namespace VisualAcademy.Pages.Purges;
 
 public partial class Manage
 {
     #region Parameters
-    [Parameter]
-    public int ParentId { get; set; } = 0;
-
-    [Parameter]
-    public string ParentKey { get; set; } = "";
+    [Parameter] public int ParentId { get; set; } = 0;
+    [Parameter] public string ParentKey { get; set; } = "";
     #endregion
 
     #region Injectors
-    [Inject]
-    public NavigationManager Nav { get; set; }
-
-    [Inject]
-    public IJSRuntime JSRuntimeInjector { get; set; }
-
-    [Inject]
-    public IPurgeRepository RepositoryReference { get; set; }
-
-    [Inject]
-    public IPurgeFileStorageManager FileStorageManagerReference { get; set; }
+    [Inject] public NavigationManager Nav { get; set; }
+    [Inject] public IJSRuntime JSRuntimeInjector { get; set; }
+    [Inject] public IPurgeRepository RepositoryReference { get; set; }
+    [Inject] public IPurgeFileStorageManager FileStorageManagerReference { get; set; }
     #endregion
 
     #region Properties
-    /// <summary>
-    /// 글쓰기 또는 수정하기 폼의 제목에 전달할 문자열(태그 포함 가능)
-    /// </summary>
     public string EditorFormTitle { get; set; } = "CREATE";
-    #endregion
-
-    /// <summary>
-    /// EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기
-    /// </summary>
-    //public Components.EditorForm EditorFormReference { get; set; }
-    //public Components.ModalForm EditorFormReference { get; set; }
-
-    /// <summary>
-    /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
-    /// </summary>
     public Components.DeleteDialog DeleteDialogReference { get; set; }
-
-    /// <summary>
-    /// 현재 페이지에서 리스트로 사용되는 모델 리스트 
-    /// </summary>
-    //protected List<Purge> models = new List<Purge>();
     protected List<Purge> models = new();
-
-    /// <summary>
-    /// 현재 페이지에서 선택된 단일 데이터를 나타내는 모델 클래스 
-    /// </summary>
-    //protected Purge model = new Purge();
     protected Purge model = new();
 
-    /// <summary>
-    /// 페이저 설정
-    /// </summary>
-    protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase()
+    protected DulPager.DulPagerBase pager = new()
     {
         PageNumber = 1,
         PageIndex = 0,
         PageSize = 10,
         PagerButtonCount = 5
     };
+    #endregion
 
-    #region Lifecycle Methods
-    /// <summary>
-    /// 페이지 초기화 이벤트 처리기
-    /// </summary>
+    #region Lifecycle
     protected override async Task OnInitializedAsync()
     {
         if (UserId == "" && UserName == "")
         {
             await GetUserIdAndUserName();
         }
-
         await DisplayData();
     }
     #endregion
 
     private async Task DisplayData()
     {
-        // ParentKey와 ParentId를 사용하는 목적은 특정 부모의 Details 페이지에서 리스트로 표현하기 위함
-        if (ParentKey != "")
+        if (!string.IsNullOrEmpty(ParentKey))
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<string>(pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, ParentKey);
+            var articleSet = await RepositoryReference.GetArticlesAsync<string>(
+                pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, ParentKey);
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else if (ParentId != 0)
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, ParentId);
+            var articleSet = await RepositoryReference.GetArticlesAsync<int>(
+                pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, ParentId);
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, parentIdentifier: 0);
+            var articleSet = await RepositoryReference.GetArticlesAsync<int>(
+                pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, parentIdentifier: 0);
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
 
-        StateHasChanged(); // Refresh
+        StateHasChanged();
     }
 
     protected void NameClick(long id) => Nav.NavigateTo($"/Purges/Details/{id}");
@@ -121,46 +83,21 @@ public partial class Manage
     {
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
-
         await DisplayData();
-
         StateHasChanged();
     }
 
     #region Event Handlers
-    /// <summary>
-    /// 글쓰기 모달 폼 띄우기 
-    /// </summary>
     protected void ShowEditorForm()
     {
-        //EditorFormTitle = "CREATE";
-        //this.model = new Purge(); // 모델 초기화
-        //this.model.ParentId = model.ParentId;
-        //this.model.ParentKey = model.ParentKey;
-
-        //model.Name = UserName; // 로그인 사용자 이름을 기본으로 제공
-
-        //EditorFormReference.Show();
+        // 현재 템플릿에서는 모달 사용 안 함(주석 유지)
     }
 
-    /// <summary>
-    /// 관리자 전용: 모달 폼으로 선택 항목 수정
-    /// </summary>
     protected void EditBy(Purge model)
     {
-        //EditorFormTitle = "EDIT";
-        //this.model = new Purge(); // 모델 초기화
-        //this.model = model;
-        ////this.model.ParentId = ParentId;
-        //this.model.ParentId = model.ParentId;
-        ////this.model.ParentKey = ParentKey; 
-        //this.model.ParentKey = model.ParentKey;
-        //EditorFormReference.Show();
+        // 현재 템플릿에서는 모달 사용 안 함(주석 유지)
     }
 
-    /// <summary>
-    /// 관리자 전용: 모달 폼으로 선택 항목 삭제
-    /// </summary>
     protected void DeleteBy(Purge model)
     {
         this.model = model;
@@ -172,10 +109,11 @@ public partial class Manage
     {
         if (!string.IsNullOrEmpty(model.FileName))
         {
-            byte[] fileBytes = await FileStorageManagerReference.DownloadAsync(model.FileName, "Purges");
+            var fileBytes = await FileStorageManagerReference.DownloadAsync(model.FileName, "Purges");
             if (fileBytes != null)
             {
-                model.DownCount = model.DownCount + 1;
+                // DownCount: int? → null-safe 증가
+                model.DownCount = (model.DownCount ?? 0) + 1;
                 await RepositoryReference.EditAsync(model);
 
                 await FileUtil.SaveAs(JSRuntimeInjector, model.FileName, fileBytes);
@@ -183,27 +121,20 @@ public partial class Manage
         }
     }
 
-    /// <summary>
-    /// 삭제 모달 폼에서 현재 선택한 항목 삭제
-    /// </summary>
     protected async void DeleteClick()
     {
         if (!string.IsNullOrEmpty(model?.FileName))
         {
-            // 첨부 파일 삭제 
             await FileStorageManagerReference.DeleteAsync(model.FileName, "Purges");
         }
 
         await RepositoryReference.DeleteAsync(this.model.Id);
         DeleteDialogReference.Hide();
-        this.model = new Purge(); // 선택했던 모델 초기화
-        await DisplayData(); // 다시 로드
+        this.model = new Purge();
+        await DisplayData();
     }
 
     #region Toggle with Inline Dialog
-    /// <summary>
-    /// 인라인 폼을 띄울건지 여부 
-    /// </summary>
     public bool IsInlineDialogShow { get; set; } = false;
 
     protected void ToggleClose()
@@ -212,25 +143,18 @@ public partial class Manage
         this.model = new Purge();
     }
 
-    /// <summary>
-    /// 토글: Pinned
-    /// </summary>
     protected async void ToggleClick()
     {
         this.model.IsPinned = (this.model?.IsPinned == true) ? false : true;
 
-        // 변경된 내용 업데이트
         await RepositoryReference.UpdateAsync(this.model);
 
-        IsInlineDialogShow = false; // 표시 속성 초기화
-        this.model = new Purge(); // 선택한 모델 초기화 
+        IsInlineDialogShow = false;
+        this.model = new Purge();
 
-        await DisplayData(); // 다시 로드
+        await DisplayData();
     }
 
-    /// <summary>
-    /// ToggleBy(PinnedBy)
-    /// </summary>
     protected void ToggleBy(Purge model)
     {
         this.model = model;
@@ -244,52 +168,119 @@ public partial class Manage
     protected async void Search(string query)
     {
         pager.PageIndex = 0;
-
         this.searchQuery = query;
-
         await DisplayData();
     }
     #endregion
 
-    #region Excel
-    protected void DownloadExcelWithWebApi()
-    {
-        FileUtil.SaveAsExcel(JSRuntimeInjector, "/PurgeDownload/ExcelDown");
-
-        Nav.NavigateTo($"/Purges"); // 다운로드 후 현재 페이지 다시 로드
-    }
-
+    #region Excel (OpenXML, 컴포넌트 내 직접 생성)
+    // 서버로 위임하지 않고(OpenXML로) 엑셀을 메모리에서 생성하여 바로 다운로드
     protected void DownloadExcel()
     {
-        using (var package = new ExcelPackage())
+        if (models.Count == 0)
         {
-            var worksheet = package.Workbook.Worksheets.Add("Purges");
-
-            var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
-                (from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName })
-                , true);
-
-            var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
-
-            // 그라데이션 효과 부여
-            var rule = uploadCol.ConditionalFormatting.AddThreeColorScale();
-            rule.LowValue.Color = Color.SkyBlue;
-            rule.MiddleValue.Color = Color.White;
-            rule.HighValue.Color = Color.Red;
-
-            var header = worksheet.Cells["B2:F2"];
-            worksheet.DefaultColWidth = 25;
-            worksheet.Cells[3, 2, models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
-            tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-            tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
-            tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
-            tableBody.Style.Border.BorderAround(ExcelBorderStyle.Medium);
-            header.Style.Font.Bold = true;
-            header.Style.Font.Color.SetColor(Color.White);
-            header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
-
-            FileUtil.SaveAs(JSRuntimeInjector, $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_Purges.xlsx", package.GetAsByteArray());
+            // 비어있어도 빈 파일을 만들 수 있지만, UX상 여기선 그냥 리턴
+            return;
         }
+
+        byte[] bytes;
+        using (var ms = new MemoryStream())
+        {
+            using (var doc = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
+            {
+                var wbPart = doc.AddWorkbookPart();
+                wbPart.Workbook = new Workbook();
+
+                var wsPart = wbPart.AddNewPart<WorksheetPart>();
+                var sheetData = new SheetData();
+                wsPart.Worksheet = new Worksheet(sheetData);
+
+                var sheets = wbPart.Workbook.AppendChild(new Sheets());
+                sheets.Append(new Sheet
+                {
+                    Id = wbPart.GetIdOfPart(wsPart),
+                    SheetId = 1U,
+                    Name = "Purges"
+                });
+
+                // Header
+                uint headerRowIndex = 1;
+                var headerRow = new Row { RowIndex = headerRowIndex };
+                sheetData.Append(headerRow);
+
+                // 필요한 컬럼: Created, Name, Title, DownCount, FileName
+                string[] headers = { "Created", "Name", "Title", "DownCount", "FileName" };
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    headerRow.Append(TextCell(CellRef(i + 1, (int)headerRowIndex), headers[i]));
+                }
+
+                // Data rows
+                uint rowIndex = 2;
+                foreach (var m in models)
+                {
+                    var row = new Row { RowIndex = rowIndex };
+                    sheetData.Append(row);
+
+                    var createdStr = m.Created.HasValue
+                        ? m.Created.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture)
+                        : string.Empty;
+
+                    // DownCount: int? → 문자열
+                    var downCountStr = (m.DownCount ?? 0).ToString(CultureInfo.InvariantCulture);
+
+                    var values = new[]
+                    {
+                        createdStr,
+                        m.Name ?? string.Empty,
+                        m.Title ?? string.Empty,
+                        downCountStr,
+                        m.FileName ?? string.Empty
+                    };
+
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        row.Append(TextCell(CellRef(i + 1, (int)rowIndex), values[i]));
+                    }
+
+                    rowIndex++;
+                }
+
+                wsPart.Worksheet.Save();
+                wbPart.Workbook.Save();
+            }
+
+            bytes = ms.ToArray();
+        }
+
+        var fileName = $"{DateTime.Now:yyyyMMddHHmmss}_Purges.xlsx";
+        FileUtil.SaveAs(JSRuntimeInjector,
+            fileName,
+            bytes);
+    }
+
+    // === OpenXML helper ===
+    private static Cell TextCell(string cellRef, string text) => new Cell
+    {
+        CellReference = cellRef,
+        DataType = CellValues.String,
+        CellValue = new CellValue(text ?? string.Empty)
+    };
+
+    private static string CellRef(int col1Based, int row) => $"{ColName(col1Based)}{row}";
+
+    private static string ColName(int idx)
+    {
+        // 1 -> A, 2 -> B, ... 26 -> Z, 27 -> AA
+        var dividend = idx;
+        string col = string.Empty;
+        while (dividend > 0)
+        {
+            var modulo = (dividend - 1) % 26;
+            col = (char)('A' + modulo) + col;
+            dividend = (dividend - modulo) / 26;
+        }
+        return col;
     }
     #endregion
 
@@ -298,95 +289,74 @@ public partial class Manage
 
     protected async void SortByCreate()
     {
-        if (!sortOrder.Contains("Create"))
+        if (!sortOrder.Contains("Create")) sortOrder = "";
+        sortOrder = sortOrder switch
         {
-            sortOrder = "";
-        }
-
-        if (sortOrder == "")
-        {
-            sortOrder = "Create";
-        }
-        else if (sortOrder == "Create")
-        {
-            sortOrder = "CreateDesc";
-        }
-        else
-        {
-            sortOrder = "";
-        }
-
+            "" => "Create",
+            "Create" => "CreateDesc",
+            _ => ""
+        };
         await DisplayData();
     }
 
     protected async void SortByName()
     {
-        if (!sortOrder.Contains("Name"))
+        if (!sortOrder.Contains("Name")) sortOrder = "";
+        sortOrder = sortOrder switch
         {
-            sortOrder = "";
-        }
-
-        if (sortOrder == "")
-        {
-            sortOrder = "Name";
-        }
-        else if (sortOrder == "Name")
-        {
-            sortOrder = "NameDesc";
-        }
-        else
-        {
-            sortOrder = "";
-        }
-
+            "" => "Name",
+            "Name" => "NameDesc",
+            _ => ""
+        };
         await DisplayData();
     }
 
     protected async void SortByTitle()
     {
-        if (!sortOrder.Contains("Title"))
+        if (!sortOrder.Contains("Title")) sortOrder = "";
+        sortOrder = sortOrder switch
         {
-            sortOrder = "";
-        }
-
-        if (sortOrder == "")
-        {
-            sortOrder = "Title";
-        }
-        else if (sortOrder == "Title")
-        {
-            sortOrder = "TitleDesc";
-        }
-        else
-        {
-            sortOrder = "";
-        }
-
+            "" => "Title",
+            "Title" => "TitleDesc",
+            _ => ""
+        };
         await DisplayData();
     }
     #endregion
 
-    #region Get UserId and UserName: Blazor에서 현재 로그인 사용자 이름 획득하기
-    [Parameter]
-    public string UserId { get; set; } = "";
-
-    [Parameter]
-    public string UserName { get; set; } = "";
+    #region Get UserId and UserName
+    [Parameter] public string UserId { get; set; } = "";
+    [Parameter] public string UserName { get; set; } = "";
 
     [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; }
-
     [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; }
 
     private async Task GetUserIdAndUserName()
     {
+        // 널-안전 가드
+        if (AuthenticationStateProviderRef is null || UserManagerRef is null)
+        {
+            UserId = "";
+            UserName = "Anonymous";
+            return;
+        }
+
         var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        if (user.Identity.IsAuthenticated)
+        if (user?.Identity?.IsAuthenticated == true)
         {
             var currentUser = await UserManagerRef.GetUserAsync(user);
-            UserId = currentUser.Id;
-            UserName = user.Identity.Name;
+            if (currentUser != null)
+            {
+                UserId = currentUser.Id ?? "";
+                UserName = user.Identity?.Name ?? currentUser.UserName ?? "Anonymous";
+            }
+            else
+            {
+                UserId = "";
+                UserName = "Anonymous";
+            }
         }
         else
         {

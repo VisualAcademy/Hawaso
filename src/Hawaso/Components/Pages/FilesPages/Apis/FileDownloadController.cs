@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using OfficeOpenXml;
-using OfficeOpenXml.Style;
-using System.Drawing;
-using Azunt.FileManagement;
-using System.Threading.Tasks;
-using System.Linq;
-using System;
-using System.IO;
+﻿using Azunt.FileManagement;
+// Open XML SDK
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.Globalization;
 
 namespace Azunt.Apis.Files
 {
@@ -19,8 +16,8 @@ namespace Azunt.Apis.Files
 
         public FileDownloadController(IFileRepository repository, IFileStorageService fileStorage)
         {
-            _repository = repository;
-            _fileStorage = fileStorage;
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _fileStorage = fileStorage ?? throw new ArgumentNullException(nameof(fileStorage));
         }
 
         /// <summary>
@@ -30,47 +27,81 @@ namespace Azunt.Apis.Files
         [HttpGet("ExcelDown")]
         public async Task<IActionResult> ExcelDown()
         {
-            var items = await _repository.GetAllAsync();
-
-            if (!items.Any())
+            var items = (await _repository.GetAllAsync()).ToList();
+            if (items.Count == 0)
             {
                 return NotFound("No file records found.");
             }
 
-            using var package = new ExcelPackage();
-            var sheet = package.Workbook.Worksheets.Add("Files");
-
-            var range = sheet.Cells["B2"].LoadFromCollection(
-                items.Select(m => new
+            byte[] content;
+            using (var ms = new MemoryStream())
+            {
+                using (var doc = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
                 {
-                    m.Id,
-                    m.Name,
-                    Created = m.Created.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss"),
-                    m.Active,
-                    m.CreatedBy
-                }),
-                PrintHeaders: true
+                    var wbPart = doc.AddWorkbookPart();
+                    wbPart.Workbook = new Workbook();
+
+                    var wsPart = wbPart.AddNewPart<WorksheetPart>();
+                    var sheetData = new SheetData();
+                    wsPart.Worksheet = new Worksheet(sheetData);
+
+                    var sheets = wbPart.Workbook.AppendChild(new Sheets());
+                    sheets.Append(new Sheet
+                    {
+                        Id = wbPart.GetIdOfPart(wsPart),
+                        SheetId = 1U,
+                        Name = "Files"
+                    });
+
+                    // Header
+                    var header = new Row { RowIndex = 1U };
+                    sheetData.Append(header);
+                    string[] headers = { "Id", "Name", "Created", "Active", "CreatedBy" };
+                    for (int i = 0; i < headers.Length; i++)
+                    {
+                        header.Append(TextCell(Ref(i + 1, 1), headers[i]));
+                    }
+
+                    // Rows
+                    uint rowIndex = 2;
+                    foreach (var m in items)
+                    {
+                        var row = new Row { RowIndex = rowIndex };
+                        sheetData.Append(row);
+
+                        var created = m.Created.ToLocalTime()
+                                              .ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                        var active = (m.Active ?? false) ? "True" : "False";
+
+                        string[] values =
+                        {
+                            m.Id.ToString(CultureInfo.InvariantCulture),
+                            m.Name ?? string.Empty,
+                            created,
+                            active,
+                            m.CreatedBy ?? string.Empty
+                        };
+
+                        for (int i = 0; i < values.Length; i++)
+                        {
+                            row.Append(TextCell(Ref(i + 1, (int)rowIndex), values[i]));
+                        }
+
+                        rowIndex++;
+                    }
+
+                    wsPart.Worksheet.Save();
+                    wbPart.Workbook.Save();
+                }
+
+                content = ms.ToArray();
+            }
+
+            return File(
+                content,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                $"{DateTime.Now:yyyyMMddHHmmss}_Files.xlsx"
             );
-
-            var header = sheet.Cells["B2:F2"];
-            sheet.DefaultColWidth = 22;
-            range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-            range.Style.Fill.PatternType = ExcelFillStyle.Solid;
-            range.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
-            range.Style.Border.BorderAround(ExcelBorderStyle.Medium);
-
-            header.Style.Font.Bold = true;
-            header.Style.Font.Color.SetColor(Color.White);
-            header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
-
-            var activeCol = range.Offset(1, 3, items.Count(), 1);
-            var rule = activeCol.ConditionalFormatting.AddThreeColorScale();
-            rule.LowValue.Color = Color.Red;
-            rule.MiddleValue.Color = Color.White;
-            rule.HighValue.Color = Color.Green;
-
-            var content = package.GetAsByteArray();
-            return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{DateTime.Now:yyyyMMddHHmmss}_Files.xlsx");
         }
 
         /// <summary>
@@ -80,9 +111,13 @@ namespace Azunt.Apis.Files
         [HttpGet("{fileName}")]
         public async Task<IActionResult> Download(string fileName)
         {
+            if (string.IsNullOrWhiteSpace(fileName))
+                return BadRequest("fileName is required.");
+
             try
             {
                 var stream = await _fileStorage.DownloadAsync(fileName);
+                if (stream.CanSeek) stream.Position = 0;
                 return File(stream, "application/octet-stream", fileName);
             }
             catch (FileNotFoundException)
@@ -93,6 +128,31 @@ namespace Azunt.Apis.Files
             {
                 return StatusCode(500, $"Download error: {ex.Message}");
             }
+        }
+
+        // ===== OpenXML helpers =====
+        private static Cell TextCell(string cellRef, string text) =>
+            new Cell
+            {
+                CellReference = cellRef,
+                DataType = CellValues.String,
+                CellValue = new CellValue(text ?? string.Empty)
+            };
+
+        private static string Ref(int col1Based, int row) => $"{ColName(col1Based)}{row}";
+
+        private static string ColName(int index)
+        {
+            // 1 -> A, 26 -> Z, 27 -> AA ...
+            var dividend = index;
+            string col = string.Empty;
+            while (dividend > 0)
+            {
+                var modulo = (dividend - 1) % 26;
+                col = (char)('A' + modulo) + col;
+                dividend = (dividend - modulo) / 26;
+            }
+            return col;
         }
     }
 }

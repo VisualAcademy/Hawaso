@@ -1,44 +1,35 @@
 ﻿using BlazorUtils;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using OfficeOpenXml;
-using OfficeOpenXml.Style;
-using System.Drawing;
+using System.Globalization;
 using Zero.Models;
+
+// Open XML SDK
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace Hawaso.Pages.BriefingLogs;
 
 public partial class Manage
 {
-    [Parameter]
-    public int ParentId { get; set; } = 0;
+    [Parameter] public int ParentId { get; set; } = 0;
+    [Parameter] public string ParentKey { get; set; } = "";
 
-    [Parameter]
-    public string ParentKey { get; set; } = "";
+    [Inject] public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; } = default!;
+    [Inject] public NavigationManager NavigationManagerReference { get; set; } = default!;
+    [Inject] public IJSRuntime JSRuntime { get; set; } = default!;
+    [Inject] public IBriefingLogFileStorageManager FileStorageManager { get; set; } = default!;
 
-    [Inject]
-    public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; }
+    /// <summary>EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기</summary>
+    public Components.EditorForm EditorFormReference { get; set; } = default!;
 
-    [Inject]
-    public NavigationManager NavigationManagerReference { get; set; }
+    /// <summary>DeleteDialog에 대한 참조: 모달로 항목 삭제하기</summary>
+    public Components.DeleteDialog DeleteDialogReference { get; set; } = default!;
 
-    /// <summary>
-    /// EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기
-    /// </summary>
-    public Components.EditorForm EditorFormReference { get; set; }
+    protected List<BriefingLog> models = new();
+    protected BriefingLog model = new();
 
-    /// <summary>
-    /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
-    /// </summary>
-    public Components.DeleteDialog DeleteDialogReference { get; set; }
-
-    protected List<BriefingLog> models;
-
-    protected BriefingLog model = new BriefingLog();
-
-    /// <summary>
-    /// 공지사항으로 올리기 폼을 띄울건지 여부 
-    /// </summary>
+    /// <summary>공지사항으로 올리기 폼을 띄울건지 여부</summary>
     public bool IsInlineDialogShow { get; set; } = false;
 
     protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase()
@@ -53,7 +44,7 @@ public partial class Manage
 
     private async Task DisplayData()
     {
-        if (ParentKey != "")
+        if (!string.IsNullOrEmpty(ParentKey))
         {
             var articleSet = await UploadRepositoryAsyncReference.GetArticles<string>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentKey);
             pager.RecordCount = articleSet.TotalCount;
@@ -81,9 +72,7 @@ public partial class Manage
     {
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
-
         await DisplayData();
-
         StateHasChanged();
     }
 
@@ -92,17 +81,15 @@ public partial class Manage
     protected void ShowEditorForm()
     {
         EditorFormTitle = "CREATE";
-        this.model = new BriefingLog();
-        this.model.ParentKey = ParentKey; // 
+        this.model = new BriefingLog { ParentKey = ParentKey };
         EditorFormReference.Show();
     }
 
     protected void EditBy(BriefingLog model)
     {
         EditorFormTitle = "EDIT";
-        this.model = new BriefingLog();
         this.model = model;
-        this.model.ParentKey = ParentKey; // 
+        this.model.ParentKey = ParentKey;
         EditorFormReference.Show();
     }
 
@@ -125,20 +112,12 @@ public partial class Manage
             byte[] fileBytes = await FileStorageManager.DownloadAsync(model.FileName, "");
             if (fileBytes != null)
             {
-                // DownCount
                 model.DownCount = model.DownCount + 1;
                 await UploadRepositoryAsyncReference.EditAsync(model);
-
                 await FileUtil.SaveAs(JSRuntime, model.FileName, fileBytes);
             }
         }
     }
-
-    [Inject]
-    public IJSRuntime JSRuntime { get; set; }
-
-    [Inject]
-    public IBriefingLogFileStorageManager FileStorageManager { get; set; }
 
     protected async void CreateOrEdit()
     {
@@ -151,7 +130,6 @@ public partial class Manage
     {
         if (!string.IsNullOrEmpty(model?.FileName))
         {
-            // 첨부 파일 삭제 
             await FileStorageManager.DeleteAsync(model.FileName, "");
         }
 
@@ -170,7 +148,6 @@ public partial class Manage
     protected async void ToggleClick()
     {
         this.model.IsPinned = (this.model?.IsPinned == true) ? false : true;
-
         await UploadRepositoryAsyncReference.EditAsync(this.model);
         IsInlineDialogShow = false;
         this.model = new BriefingLog();
@@ -183,44 +160,110 @@ public partial class Manage
     protected async void Search(string query)
     {
         pager.PageIndex = 0;
-
         this.searchQuery = query;
-
         await DisplayData();
-
         StateHasChanged();
     }
     #endregion
 
+    // ===== EPPlus 제거: Open XML SDK로 대체 =====
     protected void DownloadExcel()
     {
-        using (var package = new ExcelPackage())
+        // 데이터가 없으면 바로 종료
+        if (models == null || models.Count == 0) return;
+
+        using var ms = new MemoryStream();
+        using (var doc = SpreadsheetDocument.Create(ms, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook, true))
         {
-            var worksheet = package.Workbook.Worksheets.Add("BriefingLogs");
+            var wbPart = doc.AddWorkbookPart();
+            wbPart.Workbook = new Workbook();
 
-            var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
-                (from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName })
-                , true);
+            var wsPart = wbPart.AddNewPart<WorksheetPart>();
+            var sheetData = new SheetData();
+            wsPart.Worksheet = new Worksheet(sheetData);
 
-            var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
-            var rule = uploadCol.ConditionalFormatting.AddThreeColorScale();
-            rule.LowValue.Color = Color.SkyBlue;
-            rule.MiddleValue.Color = Color.White;
-            rule.HighValue.Color = Color.Red;
+            var sheets = wbPart.Workbook.AppendChild(new Sheets());
+            sheets.Append(new Sheet
+            {
+                Id = wbPart.GetIdOfPart(wsPart),
+                SheetId = 1U,
+                Name = "BriefingLogs"
+            });
 
-            var header = worksheet.Cells["B2:F2"];
-            worksheet.DefaultColWidth = 25;
-            worksheet.Cells[3, 2, models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
-            tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-            tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
-            tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
-            tableBody.Style.Border.BorderAround(ExcelBorderStyle.Medium);
-            header.Style.Font.Bold = true;
-            header.Style.Font.Color.SetColor(Color.White);
-            header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
+            // Header
+            uint rowIndex = 1;
+            var header = new Row { RowIndex = rowIndex };
+            sheetData.Append(header);
 
-            FileUtil.SaveAs(JSRuntime, $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_BriefingLogs.xlsx", package.GetAsByteArray());
+            string[] headers = { "Created", "Name", "Title", "DownCount", "FileName" };
+            for (int i = 0; i < headers.Length; i++)
+                header.Append(TextCell(Ref(i + 1, (int)rowIndex), headers[i]));
+
+            // Rows
+            rowIndex = 2;
+            foreach (var m in models)
+            {
+                var row = new Row { RowIndex = rowIndex };
+                sheetData.Append(row);
+
+                // Created: DateTime / DateTimeOffset / string 등 대응
+                string createdStr = string.Empty;
+                var createdObj = (object?)m.Created;
+                if (createdObj is DateTimeOffset dto)
+                    createdStr = dto.LocalDateTime.ToString("yyyy MMM d ddd", CultureInfo.InvariantCulture);
+                else if (createdObj is DateTime dt)
+                    createdStr = dt.ToLocalTime().ToString("yyyy MMM d ddd", CultureInfo.InvariantCulture);
+                else if (createdObj != null)
+                    createdStr = createdObj.ToString() ?? string.Empty;
+
+                var downObj = (object?)m.DownCount;
+                string downStr = downObj?.ToString() ?? "0";
+
+                var values = new[]
+                {
+                    createdStr,
+                    m.Name ?? string.Empty,
+                    m.Title ?? string.Empty,
+                    downStr,
+                    m.FileName ?? string.Empty
+                };
+
+                for (int i = 0; i < values.Length; i++)
+                    row.Append(TextCell(Ref(i + 1, (int)rowIndex), values[i]));
+
+                rowIndex++;
+            }
+
+            wsPart.Worksheet.Save();
+            wbPart.Workbook.Save();
         }
+
+        var fileName = $"{DateTime.Now:yyyyMMddHHmmss}_BriefingLogs.xlsx";
+        FileUtil.SaveAs(JSRuntime, fileName, ms.ToArray());
+    }
+
+    // ===== OpenXML helpers =====
+    private static Cell TextCell(string cellRef, string text) =>
+        new Cell
+        {
+            CellReference = cellRef,
+            DataType = CellValues.String,
+            CellValue = new CellValue(text ?? string.Empty)
+        };
+
+    private static string Ref(int col1Based, int row) => $"{ColName(col1Based)}{row}";
+
+    private static string ColName(int index)
+    {
+        var dividend = index;
+        string col = string.Empty;
+        while (dividend > 0)
+        {
+            var modulo = (dividend - 1) % 26;
+            col = (char)('A' + modulo) + col;
+            dividend = (dividend - modulo) / 26;
+        }
+        return col;
     }
 
     #region Sorting
@@ -228,36 +271,18 @@ public partial class Manage
 
     protected async void SortByName()
     {
-        if (sortOrder == "")
-        {
-            sortOrder = "Name";
-        }
-        else if (sortOrder == "Name")
-        {
-            sortOrder = "NameDesc";
-        }
-        else
-        {
-            sortOrder = "";
-        }
+        if (sortOrder == "") sortOrder = "Name";
+        else if (sortOrder == "Name") sortOrder = "NameDesc";
+        else sortOrder = "";
 
         await DisplayData();
     }
 
     protected async void SortByTitle()
     {
-        if (sortOrder == "")
-        {
-            sortOrder = "Title";
-        }
-        else if (sortOrder == "Title")
-        {
-            sortOrder = "TitleDesc";
-        }
-        else
-        {
-            sortOrder = "";
-        }
+        if (sortOrder == "") sortOrder = "Title";
+        else if (sortOrder == "Title") sortOrder = "TitleDesc";
+        else sortOrder = "";
 
         await DisplayData();
     }

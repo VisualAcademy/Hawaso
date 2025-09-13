@@ -132,7 +132,7 @@ public partial class Manage
         }
     }
 
-    protected async Task CreateOrEdit()
+    protected async void CreateOrEdit()
     {
         EditorFormReference?.Hide();
         model = new Archive();

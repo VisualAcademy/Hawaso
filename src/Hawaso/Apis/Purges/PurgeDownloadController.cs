@@ -1,85 +1,191 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using OfficeOpenXml;
-using OfficeOpenXml.Style;
-using System.Drawing;
+﻿// Open XML SDK
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.Globalization;
 
-namespace Hawaso.Controllers;
-
-[Authorize]
-public class PurgeDownloadController(IPurgeRepository repository, IPurgeFileStorageManager fileStorageManager) : Controller
+namespace Hawaso.Controllers
 {
-    /// <summary>
-    /// 게시판 파일 강제 다운로드 기능(/BoardDown/:Id)
-    /// </summary>
-    public async Task<IActionResult> FileDown(int id)
+    [Authorize]
+    public class PurgeDownloadController : Controller
     {
-        var model = await repository.GetByIdAsync(id);
+        private readonly IPurgeRepository repository;
+        private readonly IPurgeFileStorageManager fileStorageManager;
 
-        if (model == null)
+        private const string ModuleName = "Purges";
+
+        public PurgeDownloadController(IPurgeRepository repository, IPurgeFileStorageManager fileStorageManager)
         {
-            return null;
+            this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            this.fileStorageManager = fileStorageManager ?? throw new ArgumentNullException(nameof(fileStorageManager));
         }
-        else
-        {
-            if (!string.IsNullOrEmpty(model.FileName))
-            {
-                byte[] fileBytes = await fileStorageManager.DownloadAsync(model.FileName, "Purges");
-                if (fileBytes != null)
-                {
-                    model.DownCount = model.DownCount + 1;
-                    await repository.EditAsync(model);
 
-                    return File(fileBytes, "application/octet-stream", model.FileName);
-                }
-                else
-                {
-                    return Redirect("/");
-                }
+        /// <summary>
+        /// 게시판 파일 강제 다운로드 기능(/PurgeDownload/FileDown/:id)
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> FileDown(int id)
+        {
+            var model = await repository.GetByIdAsync(id);
+            if (model is null)
+            {
+                return NotFound();
             }
 
-            return Redirect("/");
-        }
-    }
-
-    /// <summary>
-    /// 엑셀 파일 강제 다운로드 기능(/ExcelDown)
-    /// </summary>
-    public async Task<IActionResult> ExcelDown()
-    {
-        var results = await repository.GetAllAsync(0, 100);
-
-        var models = results.Records.ToList();
-
-        if (models != null)
-        {
-            using (var package = new ExcelPackage())
+            if (string.IsNullOrWhiteSpace(model.FileName))
             {
-                var worksheet = package.Workbook.Worksheets.Add("Purges");
-
-                var tableBody = worksheet.Cells["A1:A1"].LoadFromCollection((from m in models select new { m.Id, Created = m.Created?.LocalDateTime.ToString(), m.Name, m.Title, m.DownCount, m.FileName }), true);
-
-                var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
-
-                // 그라데이션 효과 부여 
-                var rule = uploadCol.ConditionalFormatting.AddThreeColorScale();
-                rule.LowValue.Color = Color.SkyBlue;
-                rule.MiddleValue.Color = Color.White;
-                rule.HighValue.Color = Color.Red;
-
-                var header = worksheet.Cells["B2:F2"];
-                worksheet.DefaultColWidth = 25;
-                worksheet.Cells[3, 2, models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
-                tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
-                tableBody.Style.Border.BorderAround(ExcelBorderStyle.Medium);
-                header.Style.Font.Bold = true;
-                header.Style.Font.Color.SetColor(Color.White);
-                header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
-
-                return File(package.GetAsByteArray(), "application/octet-stream", $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_Purges.xlsx");
+                return NotFound();
             }
+
+            var fileBytes = await fileStorageManager.DownloadAsync(model.FileName, ModuleName);
+            if (fileBytes is { Length: > 0 })
+            {
+                // DownCount 증가 (null-safe)
+                model.DownCount = (model.DownCount ?? 0) + 1;
+                await repository.EditAsync(model);
+
+                // 원본 파일명으로 전송 (필요 시 URL 인코딩)
+                var encoded = WebUtility.UrlEncode(model.FileName);
+                return File(fileBytes, "application/octet-stream", encoded);
+            }
+
+            // 스토리지에 실제 파일이 없으면 placeholder 반환(있을 때)
+            var placeholderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", "file-not-found.png");
+            if (System.IO.File.Exists(placeholderPath))
+            {
+                var placeholderBytes = await System.IO.File.ReadAllBytesAsync(placeholderPath);
+                return File(placeholderBytes, "image/png", "file-not-found.png");
+            }
+
+            return NotFound();
         }
-        return Redirect("/");
+
+        /// <summary>
+        /// 엑셀 파일 강제 다운로드 기능(/PurgeDownload/ExcelDown) - Open XML SDK 버전
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> ExcelDown()
+        {
+            var results = await repository.GetAllAsync(0, 100);
+            var models = (results.Records ?? Enumerable.Empty<Purge>()).ToList();
+
+            if (models.Count == 0)
+            {
+                return NotFound();
+            }
+
+            byte[] bytes;
+            using (var ms = new MemoryStream())
+            {
+                using (var doc = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
+                {
+                    var wbPart = doc.AddWorkbookPart();
+                    wbPart.Workbook = new Workbook();
+
+                    var wsPart = wbPart.AddNewPart<WorksheetPart>();
+                    var sheetData = new SheetData();
+                    wsPart.Worksheet = new Worksheet(sheetData);
+
+                    var sheets = wbPart.Workbook.AppendChild(new Sheets());
+                    sheets.Append(new Sheet
+                    {
+                        Id = wbPart.GetIdOfPart(wsPart),
+                        SheetId = 1U,
+                        Name = ModuleName
+                    });
+
+                    // ===== 헤더 =====
+                    // Id, Created, Name, Title, DownCount, FileName
+                    uint headerRowIndex = 1;
+                    var header = new Row { RowIndex = headerRowIndex };
+                    sheetData.Append(header);
+
+                    string[] headers = { "Id", "Created", "Name", "Title", "DownCount", "FileName" };
+                    for (int i = 0; i < headers.Length; i++)
+                    {
+                        header.Append(TextCell(Ref(i + 1, (int)headerRowIndex), headers[i]));
+                    }
+
+                    // ===== 데이터 =====
+                    uint rowIndex = 2;
+                    foreach (var m in models)
+                    {
+                        var row = new Row { RowIndex = rowIndex };
+                        sheetData.Append(row);
+
+                        // Created: DateTimeOffset? -> 문자열(로컬시간)로 출력
+                        string createdStr = ToLocalDateTimeString(m.Created);
+
+                        var values = new[]
+                        {
+                            m.Id.ToString(CultureInfo.InvariantCulture),
+                            createdStr,
+                            m.Name ?? string.Empty,
+                            m.Title ?? string.Empty,
+                            (m.DownCount ?? 0).ToString(CultureInfo.InvariantCulture),
+                            m.FileName ?? string.Empty
+                        };
+
+                        for (int i = 0; i < values.Length; i++)
+                        {
+                            row.Append(TextCell(Ref(i + 1, (int)rowIndex), values[i]));
+                        }
+
+                        rowIndex++;
+                    }
+
+                    wsPart.Worksheet.Save();
+                    wbPart.Workbook.Save();
+                }
+
+                bytes = ms.ToArray();
+            }
+
+            var fileName = $"{DateTime.Now:yyyyMMddHHmmss}_{ModuleName}.xlsx";
+            return File(
+                bytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                fileName);
+        }
+
+        // ===== Helpers =====
+
+        private static string ToLocalDateTimeString(object? value)
+        {
+            // Purge.Created는 DateTimeOffset? 형식
+            if (value is DateTimeOffset dto)
+            {
+                return dto.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            }
+            if (value is DateTime dt)
+            {
+                return dt.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            }
+            return string.Empty;
+        }
+
+        private static Cell TextCell(string cellRef, string text) =>
+            new Cell
+            {
+                CellReference = cellRef,
+                DataType = CellValues.String,
+                CellValue = new CellValue(text ?? string.Empty)
+            };
+
+        private static string Ref(int col1Based, int row) => $"{ColName(col1Based)}{row}";
+
+        private static string ColName(int index)
+        {
+            // 1->A, 2->B, ... 26->Z, 27->AA ...
+            var dividend = index;
+            string col = string.Empty;
+            while (dividend > 0)
+            {
+                var modulo = (dividend - 1) % 26;
+                col = (char)('A' + modulo) + col;
+                dividend = (dividend - modulo) / 26;
+            }
+            return col;
+        }
     }
 }

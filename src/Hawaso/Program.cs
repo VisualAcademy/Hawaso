@@ -33,7 +33,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using NoticeApp.Models;
-using OfficeOpenXml;
 using ReplyApp.Managers;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -532,6 +531,3 @@ void EnhanceTenantDatabases(IServiceProvider services, IConfiguration configurat
     var schemaEnhancerApplications = new TenantSchemaEnhancerAddColumnApplications(masterConnectionString);
     schemaEnhancerApplications.EnhanceAllTenantDatabases();
 }
-
-// EPPlus 라이선스 설정
-ExcelPackage.License.SetNonCommercialPersonal("Hawaso");

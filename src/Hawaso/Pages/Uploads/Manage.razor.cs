@@ -1,45 +1,34 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using BlazorUtils;
-using OfficeOpenXml;
-using System.Drawing;
-using OfficeOpenXml.Style;
 using VisualAcademy.Models.Replys;
+using System.Globalization;
+using System.Linq;
+
+// Open XML SDK
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace Hawaso.Pages.Uploads;
 
 public partial class Manage
 {
-    [Parameter]
-    public int ParentId { get; set; } = 0;
+    [Parameter] public int ParentId { get; set; } = 0;
+    [Parameter] public string ParentKey { get; set; } = "";
 
-    [Parameter]
-    public string ParentKey { get; set; } = "";
+    [Inject] public IUploadRepository UploadRepositoryAsyncReference { get; set; }
+    [Inject] public NavigationManager NavigationManagerReference { get; set; }
+    [Inject] public IJSRuntime JSRuntime { get; set; }
+    [Inject] public IFileStorageManager FileStorageManager { get; set; }
 
-    [Inject]
-    public IUploadRepository UploadRepositoryAsyncReference { get; set; }
-
-    [Inject]
-    public NavigationManager NavigationManagerReference { get; set; }
-
-    /// <summary>
-    /// EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기
-    /// </summary>
     public Hawaso.Pages.Uploads.Components.EditorForm EditorFormReference { get; set; }
-
-    /// <summary>
-    /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
-    /// </summary>
     public Hawaso.Pages.Uploads.Components.DeleteDialog DeleteDialogReference { get; set; }
-    
-    protected List<Upload> models;
 
+    protected List<Upload> models;
     protected Upload model = new Upload();
 
-    /// <summary>
-    /// 공지사항으로 올리기 폼을 띄울건지 여부 
-    /// </summary>
-    public bool IsInlineDialogShow { get; set; } = false; 
+    public bool IsInlineDialogShow { get; set; } = false;
 
     protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase()
     {
@@ -75,18 +64,13 @@ public partial class Manage
         StateHasChanged();
     }
 
-    protected void NameClick(int id)
-    {
-        NavigationManagerReference.NavigateTo($"/Uploads/Details/{id}");
-    }
+    protected void NameClick(int id) => NavigationManagerReference.NavigateTo($"/Uploads/Details/{id}");
 
     protected async void PageIndexChanged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
-
         await DisplayData();
-
         StateHasChanged();
     }
 
@@ -95,17 +79,15 @@ public partial class Manage
     protected void ShowEditorForm()
     {
         EditorFormTitle = "CREATE";
-        this.model = new Upload();
-        this.model.ParentKey = ParentKey; // 
+        this.model = new Upload { ParentKey = ParentKey };
         EditorFormReference.Show();
     }
 
     protected void EditBy(Upload model)
     {
         EditorFormTitle = "EDIT";
-        this.model = new Upload();
         this.model = model;
-        this.model.ParentKey = ParentKey; // 
+        this.model.ParentKey = ParentKey;
         EditorFormReference.Show();
     }
 
@@ -118,7 +100,7 @@ public partial class Manage
     protected void ToggleBy(Upload model)
     {
         this.model = model;
-        IsInlineDialogShow = true; 
+        IsInlineDialogShow = true;
     }
 
     protected async void DownloadBy(Upload model)
@@ -128,54 +110,44 @@ public partial class Manage
             byte[] fileBytes = await FileStorageManager.DownloadAsync(model.FileName, "");
             if (fileBytes != null)
             {
-                // DownCount
                 model.DownCount = model.DownCount + 1;
                 await UploadRepositoryAsyncReference.EditAsync(model);
-
-                await FileUtil.SaveAs(JSRuntime, model.FileName, fileBytes); 
+                await FileUtil.SaveAs(JSRuntime, model.FileName, fileBytes);
             }
         }
     }
-
-    [Inject]
-    public IJSRuntime JSRuntime { get; set; }
-
-    [Inject]
-    public IFileStorageManager FileStorageManager { get; set; }
 
     protected async void CreateOrEdit()
     {
         EditorFormReference.Hide();
         this.model = new Upload();
-        await DisplayData();            
+        await DisplayData();
     }
 
     protected async void DeleteClick()
     {
         if (!string.IsNullOrEmpty(model?.FileName))
         {
-            // 첨부 파일 삭제 
             await FileStorageManager.DeleteAsync(model.FileName, "");
         }
 
         await UploadRepositoryAsyncReference.DeleteAsync(this.model.Id);
         DeleteDialogReference.Hide();
-        this.model = new Upload(); 
+        this.model = new Upload();
         await DisplayData();
     }
 
     protected void ToggleClose()
     {
         IsInlineDialogShow = false;
-        this.model = new Upload(); 
+        this.model = new Upload();
     }
 
     protected async void ToggleClick()
     {
-        this.model.IsPinned = (this.model?.IsPinned == true) ? false : true; 
-
+        this.model.IsPinned = (this.model?.IsPinned == true) ? false : true;
         await UploadRepositoryAsyncReference.EditAsync(this.model);
-        IsInlineDialogShow = false; 
+        IsInlineDialogShow = false;
         this.model = new Upload();
         await DisplayData();
     }
@@ -186,44 +158,114 @@ public partial class Manage
     protected async void Search(string query)
     {
         pager.PageIndex = 0;
-
         this.searchQuery = query;
-
         await DisplayData();
-
         StateHasChanged();
-    } 
+    }
     #endregion
 
+    // ===== EPPlus 제거: OpenXML로 엑셀 생성 =====
     protected void DownloadExcel()
     {
-        using (var package = new ExcelPackage())
+        if (models == null || models.Count == 0)
         {
-            var worksheet = package.Workbook.Worksheets.Add("Uploads");
-
-            var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
-                (from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName })
-                , true);
-
-            var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
-            var rule = uploadCol.ConditionalFormatting.AddThreeColorScale();
-            rule.LowValue.Color = Color.SkyBlue;
-            rule.MiddleValue.Color = Color.White;
-            rule.HighValue.Color = Color.Red;
-
-            var header = worksheet.Cells["B2:F2"];
-            worksheet.DefaultColWidth = 25;
-            worksheet.Cells[3, 2, models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
-            tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-            tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
-            tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
-            tableBody.Style.Border.BorderAround(ExcelBorderStyle.Medium);
-            header.Style.Font.Bold = true;
-            header.Style.Font.Color.SetColor(Color.White);
-            header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
-
-            FileUtil.SaveAs(JSRuntime, $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_Uploads.xlsx", package.GetAsByteArray());
+            return;
         }
+
+        byte[] bytes;
+        using (var ms = new MemoryStream())
+        {
+            using (var doc = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
+            {
+                var wbPart = doc.AddWorkbookPart();
+                wbPart.Workbook = new Workbook();
+
+                var wsPart = wbPart.AddNewPart<WorksheetPart>();
+                var sheetData = new SheetData();
+                wsPart.Worksheet = new Worksheet(sheetData);
+
+                var sheets = wbPart.Workbook.AppendChild(new Sheets());
+                sheets.Append(new Sheet
+                {
+                    Id = wbPart.GetIdOfPart(wsPart),
+                    SheetId = 1U,
+                    Name = "Uploads"
+                });
+
+                // Header
+                uint headerRowIndex = 1;
+                var headerRow = new Row { RowIndex = headerRowIndex };
+                sheetData.Append(headerRow);
+
+                string[] headers = { "Created", "Name", "Title", "DownCount", "FileName" };
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    headerRow.Append(TextCell(Ref(i + 1, (int)headerRowIndex), headers[i]));
+                }
+
+                // Rows
+                uint rowIndex = 2;
+                foreach (var m in models)
+                {
+                    var row = new Row { RowIndex = rowIndex };
+                    sheetData.Append(row);
+
+                    // Created: DateTime? 또는 DateTimeOffset? 모두 지원(각 모델 타입에 맞게 컴파일됨)
+                    var createdStr = m.Created?.ToLocalTime()
+                        .ToString("yyyy MMM d ddd", CultureInfo.InvariantCulture) ?? string.Empty;
+
+                    var downStr = Convert.ToString(m.DownCount, CultureInfo.InvariantCulture) ?? "0";
+
+                    var values = new[]
+                    {
+                        createdStr,
+                        m.Name ?? string.Empty,
+                        m.Title ?? string.Empty,
+                        downStr,
+                        m.FileName ?? string.Empty
+                    };
+
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        row.Append(TextCell(Ref(i + 1, (int)rowIndex), values[i]));
+                    }
+
+                    rowIndex++;
+                }
+
+                wsPart.Worksheet.Save();
+                wbPart.Workbook.Save();
+            }
+
+            bytes = ms.ToArray();
+        }
+
+        FileUtil.SaveAs(JSRuntime, $"{DateTime.Now:yyyyMMddHHmmss}_Uploads.xlsx",
+            bytes);
+    }
+
+    // ===== OpenXML helpers =====
+    private static Cell TextCell(string cellRef, string text) =>
+        new Cell
+        {
+            CellReference = cellRef,
+            DataType = CellValues.String,
+            CellValue = new CellValue(text ?? string.Empty)
+        };
+
+    private static string Ref(int col1Based, int row) => $"{ColName(col1Based)}{row}";
+
+    private static string ColName(int index)
+    {
+        var dividend = index; // 1 -> A
+        string col = string.Empty;
+        while (dividend > 0)
+        {
+            var modulo = (dividend - 1) % 26;
+            col = (char)('A' + modulo) + col;
+            dividend = (dividend - modulo) / 26;
+        }
+        return col;
     }
 
     #region Sorting
@@ -231,38 +273,18 @@ public partial class Manage
 
     protected async void SortByName()
     {
-        if (sortOrder == "")
-        {
-            sortOrder = "Name";
-        }
-        else if (sortOrder == "Name")
-        {
-            sortOrder = "NameDesc";
-        }
-        else
-        {
-            sortOrder = "";
-        }
-
+        if (sortOrder == "") sortOrder = "Name";
+        else if (sortOrder == "Name") sortOrder = "NameDesc";
+        else sortOrder = "";
         await DisplayData();
     }
 
     protected async void SortByTitle()
     {
-        if (sortOrder == "")
-        {
-            sortOrder = "Title";
-        }
-        else if (sortOrder == "Title")
-        {
-            sortOrder = "TitleDesc";
-        }
-        else
-        {
-            sortOrder = "";
-        }
-
+        if (sortOrder == "") sortOrder = "Title";
+        else if (sortOrder == "Title") sortOrder = "TitleDesc";
+        else sortOrder = "";
         await DisplayData();
-    } 
+    }
     #endregion
 }
