@@ -1,88 +1,160 @@
-﻿using OfficeOpenXml;
-using OfficeOpenXml.Style;
-using System.Drawing;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Zero.Models;
 
-namespace Hawaso.Apis.BriefingLogs;
+// Open XML SDK
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 
-public class BriefingLogDownloadController(IBriefingLogRepository repository, IBriefingLogFileStorageManager fileStorageManager) : Controller
+namespace Hawaso.Apis.BriefingLogs
 {
-    /// <summary>
-    /// 게시판 파일 강제 다운로드 기능(/BoardDown/:Id)
-    /// </summary>
-    public async Task<IActionResult> FileDown(int id)
+    public class BriefingLogDownloadController : Controller
     {
-        var model = await repository.GetByIdAsync(id);
+        private readonly IBriefingLogRepository _repository;
+        private readonly IBriefingLogFileStorageManager _fileStorageManager;
 
-        if (model == null)
+        public BriefingLogDownloadController(
+            IBriefingLogRepository repository,
+            IBriefingLogFileStorageManager fileStorageManager)
         {
-            return null;
+            _repository = repository;
+            _fileStorageManager = fileStorageManager;
         }
-        else
-        {
-            if (!string.IsNullOrEmpty(model.FileName))
-            {
-                byte[] fileBytes = await fileStorageManager.DownloadAsync(model.FileName, "BriefingLogs");
-                if (fileBytes != null)
-                {
-                    // DownCount
-                    model.DownCount = model.DownCount + 1;
-                    await repository.EditAsync(model);
 
-                    return File(fileBytes, "application/octet-stream", model.FileName);
-                }
-                else
+        /// <summary>
+        /// 게시판 파일 강제 다운로드 기능(/BriefingLogs/BoardDown/{id})
+        /// </summary>
+        [HttpGet("/BriefingLogs/BoardDown/{id:int}")]
+        public async Task<IActionResult> FileDown(int id)
+        {
+            var model = await _repository.GetByIdAsync(id);
+            if (model == null)
+                return NotFound();
+
+            if (string.IsNullOrEmpty(model.FileName))
+                return NotFound("No file to download.");
+
+            var fileBytes = await _fileStorageManager.DownloadAsync(model.FileName, "BriefingLogs");
+            if (fileBytes == null)
+                return NotFound("Stored file not found.");
+
+            // 다운로드 카운트 증가
+            model.DownCount = model.DownCount + 1;
+            await _repository.EditAsync(model);
+
+            return File(fileBytes, "application/octet-stream", model.FileName);
+        }
+
+        /// <summary>
+        /// 엑셀 파일 강제 다운로드 기능(/BriefingLogs/ExcelDown)
+        /// </summary>
+        [HttpGet("/BriefingLogs/ExcelDown")]
+        public async Task<IActionResult> ExcelDown()
+        {
+            var results = await _repository.GetAllAsync(0, 100);
+
+            // null 안전 처리: Records가 null이면 빈 컬렉션
+            var models = (results.Records ?? Enumerable.Empty<BriefingLog>()).ToList();
+            if (models.Count == 0)
+                return NotFound("No briefing log records found.");
+
+            byte[] bytes;
+            using (var ms = new MemoryStream())
+            {
+                using (var doc = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
                 {
-                    return Redirect("/");
+                    var wbPart = doc.AddWorkbookPart();
+                    wbPart.Workbook = new Workbook();
+
+                    var wsPart = wbPart.AddNewPart<WorksheetPart>();
+                    var sheetData = new SheetData();
+                    wsPart.Worksheet = new Worksheet(sheetData);
+
+                    var sheets = wbPart.Workbook.AppendChild(new Sheets());
+                    sheets.Append(new Sheet
+                    {
+                        Id = wbPart.GetIdOfPart(wsPart),
+                        SheetId = 1U,
+                        Name = "BriefingLogs"
+                    });
+
+                    // ----- Header: A1~E1 (Created, Name, Title, DownCount, FileName)
+                    uint headerRowIndex = 1;
+                    var headerRow = new Row { RowIndex = headerRowIndex };
+                    sheetData.Append(headerRow);
+
+                    string[] headers = { "Created", "Name", "Title", "DownCount", "FileName" };
+                    for (int i = 0; i < headers.Length; i++)
+                        headerRow.Append(TextCell(Ref(i + 1, (int)headerRowIndex), headers[i]));
+
+                    // ----- Data: from A2
+                    uint rowIndex = 2;
+                    foreach (var m in models)
+                    {
+                        var row = new Row { RowIndex = rowIndex };
+                        sheetData.Append(row);
+
+                        // Created: DateTime? → string (원 코드 포맷 유지: "yyyy MMM d ddd")
+                        var createdStr = m.Created?.ToString("yyyy MMM d ddd", CultureInfo.InvariantCulture) ?? string.Empty;
+
+                        var values = new[]
+                        {
+                            createdStr,
+                            m.Name ?? string.Empty,
+                            m.Title ?? string.Empty,
+                            m.DownCount.ToString(CultureInfo.InvariantCulture),
+                            m.FileName ?? string.Empty
+                        };
+
+                        for (int i = 0; i < values.Length; i++)
+                            row.Append(TextCell(Ref(i + 1, (int)rowIndex), values[i]));
+
+                        rowIndex++;
+                    }
+
+                    wsPart.Worksheet.Save();
+                    wbPart.Workbook.Save();
                 }
+
+                bytes = ms.ToArray();
             }
 
-            return Redirect("/");
+            var fileName = $"{DateTime.Now:yyyyMMddHHmmss}_BriefingLogs.xlsx";
+            return File(
+                bytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                fileName
+            );
         }
-    }
 
-    /// <summary>
-    /// 엑셀 파일 강제 다운로드 기능(/ExcelDown)
-    /// </summary>
-    public async Task<IActionResult> ExcelDown()
-    {
-        var results = await repository.GetAllAsync(0, 100);
-
-        var models = results.Records.ToList();
-
-        if (models != null)
-        {
-            using (var package = new ExcelPackage())
+        // ===== OpenXML helpers =====
+        private static Cell TextCell(string cellRef, string text) =>
+            new Cell
             {
-                var worksheet = package.Workbook.Worksheets.Add("BriefingLogs");
+                CellReference = cellRef,
+                DataType = CellValues.String,
+                CellValue = new CellValue(text ?? string.Empty)
+            };
 
-                var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
-                    from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName }
-                    , true);
+        private static string Ref(int col1Based, int row) => $"{ColName(col1Based)}{row}";
 
-                var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
-
-                // 그라데이션 효과 부여 
-                var rule = uploadCol.ConditionalFormatting.AddThreeColorScale();
-                rule.LowValue.Color = Color.SkyBlue;
-                rule.MiddleValue.Color = Color.White;
-                rule.HighValue.Color = Color.Red;
-
-                var header = worksheet.Cells["B2:F2"];
-                worksheet.DefaultColWidth = 25;
-                worksheet.Cells[3, 2, models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
-                tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-                tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
-                tableBody.Style.Border.BorderAround(ExcelBorderStyle.Medium);
-                header.Style.Font.Bold = true;
-                header.Style.Font.Color.SetColor(Color.White);
-                header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
-
-                return File(package.GetAsByteArray(), "application/octet-stream", $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_BriefingLogs.xlsx");
+        private static string ColName(int index)
+        {
+            var dividend = index; // 1 -> A
+            string col = string.Empty;
+            while (dividend > 0)
+            {
+                var modulo = (dividend - 1) % 26;
+                col = (char)('A' + modulo) + col;
+                dividend = (dividend - modulo) / 26;
             }
-
+            return col;
         }
-        return Redirect("/");
     }
 }
