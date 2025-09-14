@@ -1,5 +1,4 @@
-﻿// Open XML SDK
-using DocumentFormat.OpenXml;
+﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.Globalization;
@@ -112,8 +111,7 @@ namespace Hawaso.Controllers
                         var row = new Row { RowIndex = rowIndex };
                         sheetData.Append(row);
 
-                        // Created: DateTime?, DateTimeOffset? 모두 대응 (CS8121 방지: object로 박싱 후 판별)
-                        var createdObj = (object?)m.Created;
+                        DateTimeOffset? createdObj = m.Created;
                         string createdStr = ToLocalDateTimeString(createdObj);
 
                         var values = new[]
@@ -150,16 +148,18 @@ namespace Hawaso.Controllers
 
         // ===== Helpers =====
 
-        private static string ToLocalDateTimeString(object? value)
+        private static string ToLocalDateTimeString(DateTimeOffset? dto, DateTime? dt = null)
         {
-            if (value is DateTimeOffset dto)
+            if (dto.HasValue)
             {
-                return dto.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                return dto.Value.LocalDateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
             }
-            if (value is DateTime dt)
+
+            if (dt.HasValue)
             {
-                return dt.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                return dt.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
             }
+
             return string.Empty;
         }
 
