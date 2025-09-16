@@ -62,7 +62,7 @@
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.12.1" />
         <PackageReference Include="Microsoft.SemanticKernel" Version="1.65.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="Twilio" Version="7.13.0" />
         <PackageReference Include="VisualAcademy.Models.Archives" Version="3.0.2" />
         <PackageReference Include="VisualAcademy.Models.BriefingLogs" Version="1.0.4" />
