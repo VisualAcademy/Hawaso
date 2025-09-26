@@ -7,6 +7,7 @@ using Azunt.NoteManagement;
 using Azunt.ReasonManagement;
 using Azunt.ResourceManagement;
 using Azunt.Services;
+using Azunt.TenantSettingManagement;
 using Azunt.Web.Components.Pages.Notes.Services;
 using Azunt.Web.Policies;
 using Azunt.Web.Settings;
@@ -323,6 +324,12 @@ builder.Services.Configure<BackgroundScreeningOptions>(
 // 정책 서비스 DI 
 builder.Services.AddScoped<IBackgroundScreeningPolicy, BackgroundScreeningPolicy>();
 #endregion
+
+
+
+// 기본 연결 문자열로 모듈 등록 (Service/DbContextFactory 등)
+builder.Services.AddTenantSettingsModule(builder.Configuration);
+
 
 
 var app = builder.Build();
