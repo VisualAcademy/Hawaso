@@ -9,6 +9,7 @@ using Azunt.ResourceManagement;
 using Azunt.Services;
 using Azunt.TenantSettingManagement;
 using Azunt.Web.Components.Pages.Notes.Services;
+using Azunt.Web.Infrastructure.Extensions;
 using Azunt.Web.Policies;
 using Azunt.Web.Settings;
 using Blazored.Toast;
@@ -330,7 +331,8 @@ builder.Services.AddScoped<IBackgroundScreeningPolicy, BackgroundScreeningPolicy
 // 기본 연결 문자열로 모듈 등록 (Service/DbContextFactory 등)
 builder.Services.AddTenantSettingsModule(builder.Configuration);
 
-
+// 공통 DI 묶음
+builder.Services.AddAzuntWeb(builder.Configuration);
 
 var app = builder.Build();
 
@@ -546,6 +548,10 @@ catch (Exception ex)
 
 
 
+
+
+// Minimal APIs
+app.MapAzuntMinimalApis();
 
 
 
