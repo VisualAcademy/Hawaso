@@ -213,7 +213,7 @@ public class TenantSchemaEnhancerEnsureUsersTable
                 ["LicenseNumber"] = "NVARCHAR(35) NULL",
 
                 // 시스템/보안
-                ["IsEnrollment"] = "BIT NOT NULL DEFAULT(0)",
+                ["IsEnrollment"] = "BIT NOT NULL DEFAULT(0) WITH VALUES",
                 ["IsEnabled"] = "BIT NULL",
                 ["IsPrimary"] = "BIT NULL",
                 ["IsKodeeSupport"] = "BIT NULL",
@@ -247,17 +247,20 @@ public class TenantSchemaEnhancerEnsureUsersTable
 
                 // 멀티테넌시/권한 정보
                 ["TenantID"] = "BIGINT NULL DEFAULT(0)",
-                ["TenantName"] = "NVARCHAR(MAX) DEFAULT('Azunt')",
+                ["TenantName"] = "NVARCHAR(MAX) DEFAULT(N'Azunt')",
                 ["RoleID"] = "BIGINT NULL",
                 ["DivisionId"] = "BIGINT NULL DEFAULT(0)",
-                ["DivisionName"] = "NVARCHAR(255) NULL DEFAULT('')",
+                ["DivisionName"] = "NVARCHAR(255) NULL DEFAULT(N'')",
+
+                // 신규 플래그: 여러 테넌트 이력/후보 보유 여부 (NULL 허용, 기본값 0)
+                ["HasMultipleTenants"] = "BIT NULL",
 
                 // 기타
                 ["CriminalHistory"] = "NVARCHAR(MAX) NULL",
                 ["Name"] = "NVARCHAR(MAX) NULL",
                 ["RegistrationDate"] = "DATETIMEOFFSET NULL DEFAULT SYSDATETIMEOFFSET()",
                 ["ShowInDropdown"] = "BIT NULL DEFAULT(0)",
-                ["ConcurrencyToken"] = "ROWVERSION NULL"
+                ["ConcurrencyToken"] = "ROWVERSION"
             };
 
             foreach (var kvp in expectedColumns)
@@ -281,6 +284,12 @@ public class TenantSchemaEnhancerEnsureUsersTable
                     _logger.LogInformation($"Column added: {columnName} ({columnType})");
                 }
             }
+
+            // RegistrationDate 기본값/백필 보장
+            EnsureRegistrationDateDefaultAndBackfill(connection);
+
+            // HasMultipleTenants 기본값/백필 보장 (NULL 허용 + DEFAULT(0) + 기존 NULL은 0으로 백필)
+            EnsureHasMultipleTenantsDefaultAndBackfill(connection);
         }
     }
 
@@ -315,6 +324,111 @@ public class TenantSchemaEnhancerEnsureUsersTable
         {
             var fallbackLogger = services.GetService<ILogger<TenantSchemaEnhancerEnsureUsersTable>>();
             fallbackLogger?.LogError(ex, "Error while processing AspNetUsers table.");
+        }
+    }
+
+    /// <summary>
+    /// AspNetUsers.RegistrationDate 컬럼의 기본값(DEFAULT)과 기존 NULL 값 백필을 보장합니다.
+    /// </summary>
+    private void EnsureRegistrationDateDefaultAndBackfill(SqlConnection connection)
+    {
+        // 1) 컬럼 없으면 추가 (방어적)
+        using (var addColumnCmd = new SqlCommand(@"
+        IF NOT EXISTS (
+            SELECT 1
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_NAME = N'AspNetUsers' AND COLUMN_NAME = N'RegistrationDate'
+        )
+        BEGIN
+            ALTER TABLE [dbo].[AspNetUsers]
+            ADD [RegistrationDate] DATETIMEOFFSET NULL;
+        END
+    ", connection))
+        {
+            addColumnCmd.ExecuteNonQuery();
+        }
+
+        // 2) DEFAULT 제약 없으면 추가 (SYSDATETIMEOFFSET)
+        using (var addDefaultCmd = new SqlCommand(@"
+        IF NOT EXISTS (
+            SELECT 1
+            FROM sys.default_constraints dc
+            INNER JOIN sys.columns c ON dc.parent_object_id = c.object_id AND dc.parent_column_id = c.column_id
+            INNER JOIN sys.tables t ON t.object_id = c.object_id
+            WHERE t.name = N'AspNetUsers' AND c.name = N'RegistrationDate'
+        )
+        BEGIN
+            ALTER TABLE [dbo].[AspNetUsers]
+            ADD CONSTRAINT [DF_AspNetUsers_RegistrationDate] DEFAULT (SYSDATETIMEOFFSET()) FOR [RegistrationDate];
+        END
+    ", connection))
+        {
+            addDefaultCmd.ExecuteNonQuery();
+        }
+
+        // 3) 기존 NULL 값 백필
+        using (var updateNullsCmd = new SqlCommand(@"
+        UPDATE [dbo].[AspNetUsers]
+        SET [RegistrationDate] = SYSDATETIMEOFFSET()
+        WHERE [RegistrationDate] IS NULL;
+    ", connection))
+        {
+            var affected = updateNullsCmd.ExecuteNonQuery();
+            _logger.LogInformation($"AspNetUsers.RegistrationDate backfilled: {affected} row(s).");
+        }
+    }
+
+    /// <summary>
+    /// AspNetUsers.HasMultipleTenants 컬럼의 DEFAULT(0)과 기존 NULL 값 백필을 보장합니다.
+    /// - 컬럼은 NULL 허용(Bit)로 유지
+    /// - DEFAULT 제약이 없으면 추가
+    /// - 기존 NULL 값은 0(false)로 백필
+    /// </summary>
+    private void EnsureHasMultipleTenantsDefaultAndBackfill(SqlConnection connection)
+    {
+        // 1) 컬럼 없으면 추가 (방어적) — NULL 허용
+        using (var addColumnCmd = new SqlCommand(@"
+        IF NOT EXISTS (
+            SELECT 1
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_NAME = N'AspNetUsers' AND COLUMN_NAME = N'HasMultipleTenants'
+        )
+        BEGIN
+            ALTER TABLE [dbo].[AspNetUsers]
+            ADD [HasMultipleTenants] BIT NULL;
+        END
+    ", connection))
+        {
+            addColumnCmd.ExecuteNonQuery();
+        }
+
+        // 2) DEFAULT 제약 없으면 추가 (0)
+        using (var addDefaultCmd = new SqlCommand(@"
+        IF NOT EXISTS (
+            SELECT 1
+            FROM sys.default_constraints dc
+            INNER JOIN sys.columns c ON dc.parent_object_id = c.object_id AND dc.parent_column_id = c.column_id
+            INNER JOIN sys.tables t ON t.object_id = c.object_id
+            WHERE t.name = N'AspNetUsers' AND c.name = N'HasMultipleTenants'
+        )
+        BEGIN
+            ALTER TABLE [dbo].[AspNetUsers]
+            ADD CONSTRAINT [DF_AspNetUsers_HasMultipleTenants] DEFAULT (0) FOR [HasMultipleTenants];
+        END
+    ", connection))
+        {
+            addDefaultCmd.ExecuteNonQuery();
+        }
+
+        // 3) 기존 NULL 값 백필 → 0(false)
+        using (var updateNullsCmd = new SqlCommand(@"
+        UPDATE [dbo].[AspNetUsers]
+        SET [HasMultipleTenants] = 0
+        WHERE [HasMultipleTenants] IS NULL;
+    ", connection))
+        {
+            var affected = updateNullsCmd.ExecuteNonQuery();
+            _logger.LogInformation($"AspNetUsers.HasMultipleTenants backfilled to 0: {affected} row(s).");
         }
     }
 }
