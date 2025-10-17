@@ -160,7 +160,6 @@ public partial class Manage : ComponentBase
     protected async void CreateOrEdit()
     {
         EditorFormReference.Hide();
-        this.model = null;
         this.model = new DivisionModel();
 
         await DisplayData();
