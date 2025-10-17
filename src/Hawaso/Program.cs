@@ -37,6 +37,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using NoticeApp.Models;
 using ReplyApp.Managers;
+using Serilog;
+using Serilog.Sinks.MSSqlServer;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using VisualAcademy;
@@ -333,6 +335,49 @@ builder.Services.AddTenantSettingsModule(builder.Configuration);
 
 // 공통 DI 묶음
 builder.Services.AddAzuntWeb(builder.Configuration);
+
+
+
+
+
+#region Serilog
+// 1. Serilog 컬럼 옵션 정의
+var columnOptions = new ColumnOptions
+{
+    Store = new List<StandardColumn>
+            {
+                StandardColumn.Message,
+                StandardColumn.MessageTemplate,
+                StandardColumn.Level,
+                StandardColumn.TimeStamp,
+                StandardColumn.Exception,
+                StandardColumn.Properties
+            }
+};
+
+// 2. 로그 구성
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .WriteTo.MSSqlServer(
+        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
+        sinkOptions: new MSSqlServerSinkOptions
+        {
+            TableName = "AppLogs",
+            AutoCreateSqlTable = true // 이미 테이블이 존재하므로 false
+        },
+        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error,
+        columnOptions: columnOptions
+    )
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+// 3. Serilog를 ASP.NET Core 로그로 사용하도록 등록
+builder.Host.UseSerilog();
+#endregion
+
+
+
 
 var app = builder.Build();
 
