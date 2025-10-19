@@ -355,8 +355,8 @@ var columnOptions = new ColumnOptions
             }
 };
 
-// 2. 로그 구성
-Log.Logger = new LoggerConfiguration()
+// 2. Serilog 로거 구성
+Serilog.Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
     .WriteTo.Console()
     .WriteTo.MSSqlServer(
@@ -372,7 +372,7 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .CreateLogger();
 
-// 3. Serilog를 ASP.NET Core 로그로 사용하도록 등록
+// 3. ASP.NET Core 로깅 시스템에 Serilog를 등록
 builder.Host.UseSerilog();
 #endregion
 
