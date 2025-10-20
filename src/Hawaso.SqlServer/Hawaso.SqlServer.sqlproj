@@ -92,6 +92,7 @@
     <Folder Include="dbo\Tables\Employees" />
     <Folder Include="Vendors" />
     <Folder Include="All" />
+    <Folder Include="dbo\Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="DotNetNote\Stored Procedures\DNN_DeleteNote.sql" />
@@ -173,5 +174,9 @@
     <Build Include="dbo\Tables\KnownUsers.sql" />
     <Build Include="dbo\Tables\SignIns.sql" />
     <Build Include="dbo\Tables\AnonymousSignIns.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dbo\Scripts\Employee_FormData_References_Extract.sql" />
+    <None Include="dbo\Scripts\Employee_FormData_OtherAddresses_Extract.sql" />
   </ItemGroup>
 </Project>
