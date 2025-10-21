@@ -378,6 +378,10 @@ builder.Host.UseSerilog();
 
 
 
+builder.Services.AddDbContext<Azunt.Data.LogsDbContext>(opt =>
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 
 var app = builder.Build();
 
