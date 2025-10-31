@@ -41,10 +41,10 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.13.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.DataGrid.EntityFrameworkAdapter" Version="4.13.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.13.0" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.13.0" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.13.1" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.DataGrid.EntityFrameworkAdapter" Version="4.13.1" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.13.1" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.13.1" />
 	</ItemGroup>
 
 </Project>

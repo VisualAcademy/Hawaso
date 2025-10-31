@@ -58,17 +58,17 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.10" />
-        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.13.0" />
-        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.DataGrid.EntityFrameworkAdapter" Version="4.13.0" />
-        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.13.0" />
-        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.13.0" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.13.1" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.DataGrid.EntityFrameworkAdapter" Version="4.13.1" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.13.1" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.13.1" />
         <PackageReference Include="Microsoft.Identity.Web" Version="4.0.1" />
         <PackageReference Include="Microsoft.SemanticKernel" Version="1.66.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
         <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="9.0.1" />
-        <PackageReference Include="Stripe.net" Version="49.0.0" />
+        <PackageReference Include="Stripe.net" Version="49.1.0" />
         <PackageReference Include="Twilio" Version="7.13.5" />
         <PackageReference Include="VisualAcademy.Models.Archives" Version="3.0.2" />
         <PackageReference Include="VisualAcademy.Models.BriefingLogs" Version="1.0.4" />
