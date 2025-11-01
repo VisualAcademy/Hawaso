@@ -77,3 +77,8 @@ https://github.com/VisualAcademy/Hawaso.V60
 ## ASP.NET Core 8.0 버전의 Hawaso 프로젝트는 다음 리포지토리에 있습니다.
 
 https://github.com/VisualAcademy/Hawaso.V80
+
+
+## ASP.NET Core 9.0 버전의 Hawaso 프로젝트는 다음 리포지토리에 있습니다.
+
+https://github.com/VisualAcademy/Hawaso.V90
