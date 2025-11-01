@@ -12,16 +12,16 @@ https://www.hawaso.com 사이트에서 실행 데모를 볼 수 있습니다.
 `C# 교과서 마스터하기` 강좌와 `ASP.NET Core Fundamentals` 과정을 선수 학습으로 알고 있다고 가정하고 강의가 진행됩니다.
 
 
-## Blazor Server with ASP.NET Core 9.0 
+## Blazor Server with ASP.NET Core 10.0 
 
-Hawaso 솔루션은 ASP.NET Core 9.0 버전과 Blazor Server 9.0을 하나의 프로젝트로 관리합니다.
+Hawaso 솔루션은 ASP.NET Core 10.0 버전과 Blazor Server 10.0을 하나의 프로젝트로 관리합니다.
 
-Visual Studio 2022를 사용하여 개발을 추천합니다. 
+Visual Studio 2026를 사용하여 개발을 추천합니다. 
 
 
-## Blazor Server 9.0 전체 강의 소스
+## Blazor Server 10.0 전체 강의 소스
 
-박용준 강사가 진행하는 Blazor Server 9.0(이전 버전 포함) 강의의 전체 소스는 현재 리포지토리에 들어 있습니다. 
+박용준 강사가 진행하는 Blazor Server 10.0(이전 버전 포함) 강의의 전체 소스는 현재 리포지토리에 들어 있습니다. 
 
 
 ## Hawaso 솔루션에서 참조하는 NuGet 패키지 소스들
@@ -36,11 +36,11 @@ Visual Studio 2022를 사용하여 개발을 추천합니다.
 * https://github.com/VisualAcademy/VisualAcademy.Models.Notes
 * https://github.com/VisualAcademy/VisualAcademy.Models.Departments
 * https://github.com/VisualAcademy/VisualAcademy.Models.Libraries
-
+* 기타 더 많은 강의용 패키지들
 
 ## 강의 데모 사이트: 하와소닷컴
 
-다음 링크를 통해서 현재 소스의 실제 실행되는 모양을 볼 수 있습니다.
+다음 링크를 통해서 현재 소스의 실제 실행되는 모양을 볼 수 있습니다. (서버 비용이 많이 들면 사이트 운영이 중지됩니다.)
 
 https://www.hawaso.com
 
@@ -63,22 +63,23 @@ http://www.devlec.com
 
 https://github.com/VisualAcademy/Hawaso.V3X
 
-
 ## ASP.NET Core 5.0 버전의 Hawaso 프로젝트는 다음 리포지토리에 있습니다.
 
 https://github.com/VisualAcademy/Hawaso.V50
-
 
 ## ASP.NET Core 6.0 버전의 Hawaso 프로젝트는 다음 리포지토리에 있습니다.
 
 https://github.com/VisualAcademy/Hawaso.V60
 
-
 ## ASP.NET Core 8.0 버전의 Hawaso 프로젝트는 다음 리포지토리에 있습니다.
 
 https://github.com/VisualAcademy/Hawaso.V80
 
-
 ## ASP.NET Core 9.0 버전의 Hawaso 프로젝트는 다음 리포지토리에 있습니다.
 
 https://github.com/VisualAcademy/Hawaso.V90
+
+## 마무리
+
+제 강의를 찾아 이곳까지 와주신 여러분 모두 감사드립니다.
+
