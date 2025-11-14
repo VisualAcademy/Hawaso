@@ -33,6 +33,7 @@ using Hawaso.Web.Components.Pages.VendorPages.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using NoticeApp.Models;
@@ -127,15 +128,51 @@ services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 4;
 });
 
+
+
 services.ConfigureApplicationCookie(options =>
 {
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+
+    // 로그인 유지 시간: 30분
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+
     options.LoginPath = "/Identity/Account/Login";
     options.LogoutPath = "/Identity/Account/Logout";
     options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+
+    // SlidingExpiration = true 이면
+    //    - 사용자가 30분 안에 계속 요청을 보내면 만료 시간이 밀립니다 (30분 "무활동" 시 로그아웃)
+    //    - 정확히 로그인 후 30분에 무조건 끊고 싶으면 false 로 바꾸면 됩니다.
     options.SlidingExpiration = true;
+
+    // 1) 리다이렉트 커스터마이징 (/auth/ping은 401만)
+    options.Events.OnRedirectToLogin = context =>
+    {
+        if (context.Request.Path.StartsWithSegments("/auth/ping"))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        }
+
+        context.Response.Redirect(context.RedirectUri);
+        return Task.CompletedTask;
+    };
+
+    // 2) 쿠키 재발급(슬라이딩) 커스터마이징
+    options.Events.OnValidatePrincipal = context =>
+    {
+        // /auth/ping 에 대해서는 SlidingExpiration으로 인한 재발급(갱신)을 막는다
+        if (context.Request.Path.StartsWithSegments("/auth/ping"))
+        {
+            context.ShouldRenew = false;   // 여기 포인트
+        }
+
+        return Task.CompletedTask;
+    };
 });
+
+
 
 services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, Hawaso.Areas.Identity.Services.EmailSender>();
 
