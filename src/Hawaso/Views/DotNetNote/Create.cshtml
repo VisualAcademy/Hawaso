@@ -14,7 +14,6 @@
             </form>
         </div>
     </div>
-
 </div>
 
 @section Scripts {
@@ -22,95 +21,112 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    <!-- Auto-save reminder modal -->
+    <!-- 자동 저장 경고 모달 -->
     <div class="modal fade" id="autosaveReminderModal" tabindex="-1" role="dialog" aria-labelledby="autosaveReminderLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header py-2">
-                    <h5 class="modal-title" id="autosaveReminderLabel">Unsaved changes</h5>
+                    <h5 class="modal-title" id="autosaveReminderLabel">미저장 변경 사항</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
-                    You haven't saved for over 1 minute. Save now?
+                    7분 이상 저장하지 않았습니다. 지금 저장하시겠습니까?
+                    <br />
+                    <small class="text-muted">
+                        아무 행동도 하지 않으면 10분 후 자동으로 저장됩니다.
+                    </small>
                 </div>
                 <div class="modal-footer py-2">
-                    <button type="button" class="btn btn-secondary btn-sm" id="btnRemindLater" data-dismiss="modal">Later</button>
-                    <button type="button" class="btn btn-primary btn-sm" id="btnReminderSaveNow">Save now</button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnRemindLater" data-dismiss="modal">나중에</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="btnReminderSaveNow">지금 저장</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
+    <script type="text/javascript">
         (function () {
             var FORM_ID = 'boardCreateForm';
             var FORM_SEL = '#' + FORM_ID;
 
-            var CHECK_INTERVAL_MS = 5000;     // 5초마다 체크
-            var REMIND_EVERY_MS  = 60000;     // 1분마다 리마인드
-            var isDirty = false;              // 미저장 변경 여부
-            var lastSavedAt = Date.now();     // 마지막 저장 시각
-            var lastPromptAt = 0;             // 마지막 경고 시각
-            var modalShown = false;
+            var CHECK_INTERVAL_MS   = 5000;              // 5초마다 주기적으로 검사
+            var WARN_AFTER_MS       = 7 * 60 * 1000;     // 7분 경과 시 경고 모달 표시
+            var AUTO_SAVE_AFTER_MS  = 10 * 60 * 1000;    // 10분 경과 시 자동 저장
 
-            // 폼 내부 입력 변경 시 미저장 표시
+            var isDirty       = false;   // 미저장 변경이 있는지 여부
+            var lastChangedAt = 0;       // 마지막으로 변경이 발생한 시각
+            var modalShown    = false;   // 경고 모달이 현재 표시 중인지 여부
+
+            // 폼 내부 입력이 변경되면 미저장 상태로 플래그 설정 + 시각 기록
             $(document).on('input change', FORM_SEL + ' :input', function () {
-                // 파일 입력 등도 포함
                 isDirty = true;
+                lastChangedAt = Date.now();
             });
 
-            // 폼 제출(저장) 시 상태 리셋
-            $(FORM_SEL).on('submit', function () {
-                isDirty = false;
-                lastSavedAt = Date.now();
-                lastPromptAt = 0;
-                modalShown = false;
-                $('#autosaveReminderModal').modal('hide');
-            });
-
-            // Save now → 표준 제출(검증 포함)
-            function submitNow() {
+            // 실제 폼 제출 함수
+            function submitFormNow() {
                 var form = document.getElementById(FORM_ID);
                 if (!form) return;
 
                 $('#autosaveReminderModal').modal('hide');
 
+                // 중복 제출 방지를 위해 submit 버튼 비활성화
+                $(form).find(':input[type=submit]').prop('disabled', true);
+
+                // 브라우저 표준 제출 (검증 포함)
                 if (typeof form.requestSubmit === 'function') {
-                    form.requestSubmit();      // ✅ 브라우저 검증 + submit 이벤트
+                    form.requestSubmit();
                     return;
                 }
-                // 폴백: 활성 submit 버튼 클릭
-                var btn = form.querySelector('button[type=submit]:not([disabled]),input[type=submit]:not([disabled])');
-                if (btn) { btn.click(); return; }
 
-                // 최후 폴백: 직접 제출(검증 생략)
+                // 폴백: 활성화된 submit 버튼 클릭
+                var btn = form.querySelector('button[type=submit]:not([disabled]),input[type=submit]:not([disabled])');
+                if (btn) {
+                    btn.click();
+                    return;
+                }
+
+                // 최후 폴백: form.submit() (브라우저 검증은 건너뛸 수 있음)
                 form.submit();
             }
 
-            // 버튼 바인딩
-            $('#btnReminderSaveNow').off('click').on('click', submitNow);
+            // "지금 저장" 버튼 클릭 시 즉시 제출
+            $('#btnReminderSaveNow').off('click').on('click', submitFormNow);
+
+            // "나중에" 버튼 클릭 시 → 타이머 재시작
             $('#btnRemindLater').off('click').on('click', function () {
-                lastPromptAt = Date.now();
-                modalShown = false;
+                modalShown    = false;
+                lastChangedAt = Date.now();   // 이 시점을 기준으로 7/10분 다시 계산
             });
 
-            // 페이지 비가시 상태(백그라운드 탭)일 땐 알림 생략
-            function isPageVisible() { return document.visibilityState === 'visible'; }
+            // 폼이 정상 제출되면 상태 초기화
+            $(FORM_SEL).on('submit', function () {
+                isDirty       = false;
+                lastChangedAt = 0;
+                modalShown    = false;
+            });
 
-            // 1분 경과 시 모달 표시
+            // 주기적으로 자동 저장 및 경고 조건 검사
             setInterval(function () {
-                if (!isDirty) return;
-                if (!isPageVisible()) return;
+                if (!isDirty) return;        // 변경 사항이 없으면 검사 생략
+                if (!lastChangedAt) return;  // 기준 시각이 없으면 검사 생략
 
-                var now = Date.now();
-                var sinceSave = now - lastSavedAt;
-                var sincePrompt = now - lastPromptAt;
+                var now         = Date.now();
+                var sinceChange = now - lastChangedAt;
 
-                if (sinceSave >= REMIND_EVERY_MS && sincePrompt >= REMIND_EVERY_MS && !modalShown) {
+                // 10분 이상 경과 → 무조건 자동 저장
+                if (sinceChange >= AUTO_SAVE_AFTER_MS) {
+                    submitFormNow();
+                    return;
+                }
+
+                // 7분 이상 경과 & 아직 모달을 띄우지 않았다면 → 경고 모달
+                if (sinceChange >= WARN_AFTER_MS && !modalShown) {
                     modalShown = true;
-                    lastPromptAt = now;
                     $('#autosaveReminderModal').modal('show')
-                        .on('hidden.bs.modal', function(){ modalShown = false; });
+                        .on('hidden.bs.modal', function () {
+                            modalShown = false;
+                        });
                 }
             }, CHECK_INTERVAL_MS);
         })();
