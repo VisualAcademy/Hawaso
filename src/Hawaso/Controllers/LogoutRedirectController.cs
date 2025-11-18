@@ -3,29 +3,28 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 
-namespace Hawaso.Controllers
+namespace Hawaso.Controllers;
+
+[IgnoreAntiforgeryToken]
+public class LogoutRedirectController : Controller
 {
-    [IgnoreAntiforgeryToken]
-    public class LogoutRedirectController : Controller
+    private readonly SignInManager<ApplicationUser> _signInManager;
+
+    public LogoutRedirectController(SignInManager<ApplicationUser> signInManager)
     {
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        _signInManager = signInManager;
+    }
 
-        public LogoutRedirectController(SignInManager<ApplicationUser> signInManager)
+    [HttpGet("/LogoutRedirect")]
+    public async Task<IActionResult> Index(string returnUrl = "/")
+    {
+        if (_signInManager.IsSignedIn(User))
         {
-            _signInManager = signInManager;
+            await _signInManager.SignOutAsync();
         }
 
-        [HttpGet("/LogoutRedirect")]
-        public async Task<IActionResult> Index(string returnUrl = "/")
-        {
-            if (_signInManager.IsSignedIn(User))
-            {
-                await _signInManager.SignOutAsync();
-            }
+        var loginUrl = $"/Identity/Account/Login?returnUrl={Uri.EscapeDataString(returnUrl)}";
 
-            var loginUrl = $"/Identity/Account/Login?returnUrl={Uri.EscapeDataString(returnUrl)}";
-
-            return Redirect(loginUrl);
-        }
+        return Redirect(loginUrl);
     }
 }
