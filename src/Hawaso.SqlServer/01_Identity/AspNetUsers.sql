@@ -12,7 +12,7 @@ CREATE TABLE [dbo].[AspNetUsers] (
     [PasswordHash]         NVARCHAR (MAX)     NULL,                          -- 비밀번호 해시값
     [SecurityStamp]        NVARCHAR (MAX)     NULL,                          -- 보안 스탬프
     [ConcurrencyStamp]     NVARCHAR (MAX)     NULL,                          -- 동시성 스탬프
-    [PhoneNumber]          NVARCHAR (MAX)     NULL,                          -- 전화번호
+    [PhoneNumber]          NVARCHAR (256)     NULL,                          -- 전화번호
     [PhoneNumberConfirmed] BIT                NOT NULL,                      -- 전화번호 확인 여부
     [TwoFactorEnabled]     BIT                NOT NULL,                      -- 이중 인증 활성화 여부
     [LockoutEnd]           DATETIMEOFFSET (7) NULL,                          -- 계정 잠금 해제 일시
