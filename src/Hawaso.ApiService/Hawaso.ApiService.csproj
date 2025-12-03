@@ -12,13 +12,13 @@
 
   <ItemGroup>
       <PackageReference Include="Mapster" Version="7.4.0" />
-      <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.10" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.10" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.10">
+      <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.6" />
+      <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>
