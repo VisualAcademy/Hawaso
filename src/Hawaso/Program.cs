@@ -35,11 +35,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.FluentUI.AspNetCore.Components;
 using NoticeApp.Models;
 using ReplyApp.Managers;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
+using Stripe;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using VisualAcademy;
@@ -49,6 +51,18 @@ using VisualAcademy.Models.Departments;
 using VisualAcademy.Models.Replys;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+
+// -------------------------------------------------
+// 1) Stripe 설정 바인딩 (Settings/StripeSettings.cs)
+// -------------------------------------------------
+builder.Services.Configure<StripeSettings>(
+    builder.Configuration.GetSection("Stripe"));
+
+
+
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -421,6 +435,22 @@ builder.Services.AddDbContext<Azunt.Data.LogsDbContext>(opt =>
 
 
 var app = builder.Build();
+
+
+
+
+
+// -------------------------------------------------
+// 2) Stripe SecretKey 전역 설정 (StripeConfiguration.ApiKey)
+// -------------------------------------------------
+using (var scope = app.Services.CreateScope())
+{
+var stripeOptions = scope.ServiceProvider
+    .GetRequiredService<IOptions<StripeSettings>>().Value;
+
+StripeConfiguration.ApiKey = stripeOptions.SecretKey;
+}
+
 
 
 
