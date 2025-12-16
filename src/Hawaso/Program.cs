@@ -63,6 +63,11 @@ builder.Services.Configure<StripeSettings>(
 
 
 
+// QuestPDF license
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
+
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
