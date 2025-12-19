@@ -178,6 +178,7 @@
     <Build Include="01_Identity\AspNetUserPasskeys.sql" />
     <Build Include="dbo\Tables\Devices.sql" />
     <Build Include="dbo\Tables\Clients.sql" />
+    <Build Include="dbo\Tables\InvoiceItemTemplates.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Scripts\Employee_FormData_References_Extract.sql" />
