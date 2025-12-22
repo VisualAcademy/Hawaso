@@ -62,9 +62,9 @@
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.DataGrid.EntityFrameworkAdapter" Version="4.13.2" />
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.13.2" />
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.13.2" />
-        <PackageReference Include="Microsoft.Identity.Web" Version="4.1.1" />
+        <PackageReference Include="Microsoft.Identity.Web" Version="4.2.0" />
         <PackageReference Include="Microsoft.SemanticKernel" Version="1.68.0" />
-        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.1" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
         <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="9.0.2" />
@@ -78,7 +78,7 @@
         <PackageReference Include="VisualAcademy.Models.Replys" Version="1.0.1" />
         <PackageReference Include="VisualAcademy.Models.Uploads" Version="1.0.1" />
 
-        <PackageReference Include="QuestPDF" Version="2024.7.0" />
+        <PackageReference Include="QuestPDF" Version="2025.12.0" />
     </ItemGroup>
 
     <ItemGroup>
