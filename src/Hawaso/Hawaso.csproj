@@ -78,7 +78,7 @@
         <PackageReference Include="VisualAcademy.Models.Replys" Version="1.0.1" />
         <PackageReference Include="VisualAcademy.Models.Uploads" Version="1.0.1" />
 
-        <PackageReference Include="QuestPDF" Version="2025.12.0" />
+        <PackageReference Include="QuestPDF" Version="2025.12.1" />
     </ItemGroup>
 
     <ItemGroup>
