@@ -60,7 +60,8 @@ namespace DotNetSaleCore.Models.Tests
             {
                 var repository = new CategoryRepository(context, factory);
                 var models = await repository.GetAllAsync();
-                Assert.AreEqual(3, models.Count);
+                //Assert.AreEqual(3, models.Count);
+                Assert.HasCount(3, models);
             }
 
             //[3] GetByIdAsync() Method Test
