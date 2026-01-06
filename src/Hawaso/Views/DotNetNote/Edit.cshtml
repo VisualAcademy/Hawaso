@@ -8,8 +8,11 @@
 
     <div class="row">
         <div class="col-md-offset-2 col-md-8 col-md-offset-2">
-            <form asp-controller="DotNetNote" asp-action="Edit"
-                  enctype="multipart/form-data" method="post" id="boardEditForm">
+            <form asp-controller="DotNetNote"
+                  asp-action="Edit"
+                  enctype="multipart/form-data"
+                  method="post"
+                  id="boardEditForm">
                 @await Html.PartialAsync("_BoardEditorForm")
             </form>
         </div>
@@ -27,7 +30,9 @@
             <div class="modal-content">
                 <div class="modal-header py-2">
                     <h5 class="modal-title" id="autosaveReminderLabel">미저장 변경 사항</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     7분 이상 저장하지 않았습니다. 지금 저장하시겠습니까?
@@ -46,7 +51,7 @@
 
     <script type="text/javascript">
         (function () {
-            var FORM_ID = 'boardEditForm';
+            var FORM_ID  = 'boardEditForm';
             var FORM_SEL = '#' + FORM_ID;
 
             var CHECK_INTERVAL_MS   = 5000;              // 5초마다 주기적으로 검사
@@ -57,33 +62,80 @@
             var lastChangedAt = 0;       // 마지막 변경 시각
             var modalShown    = false;   // 경고 모달 표시 여부
 
+            // 새로 추가: 실제 제출 진행 여부(중복 제출 방지용)
+            var isSubmitting  = false;
+
             // 폼 내부의 입력이 변경되면 미저장 상태로 설정
             $(document).on('input change', FORM_SEL + ' :input', function () {
                 isDirty       = true;
                 lastChangedAt = Date.now();
             });
 
-            // 실제 제출 처리
+            // 공통: 제출 버튼, 텍스트 상태 관리
+            function setSubmitButtonState(disabled, text) {
+                var $form   = $(FORM_SEL);
+                var $submit = $form.find(':input[type=submit]').first();
+
+                if ($submit.length === 0) {
+                    return;
+                }
+
+                // 원래 텍스트 저장 (한 번만)
+                if (!$submit.data('original-text')) {
+                    var orig = ($submit.val() || $submit.text() || '').trim();
+                    $submit.data('original-text', orig || '저장');
+                }
+
+                // disabled 상태 설정
+                $submit.prop('disabled', !!disabled);
+
+                // 텍스트 설정
+                if (text) {
+                    if ($submit.is('input[type=submit]')) {
+                        $submit.val(text);
+                    } else {
+                        $submit.text(text);
+                    }
+                } else {
+                    // 원래 텍스트 복원
+                    var originalText = $submit.data('original-text');
+                    if ($submit.is('input[type=submit]')) {
+                        $submit.val(originalText);
+                    } else {
+                        $submit.text(originalText);
+                    }
+                }
+            }
+
+            // 실제 제출 처리 (자동저장 + 수동저장 모두 여기로)
             function submitFormNow() {
+                if (isSubmitting) {
+                    return; // 중복 제출 방지
+                }
+
                 var form = document.getElementById(FORM_ID);
                 if (!form) return;
 
+                isSubmitting = true;
+
+                // 버튼 상태: 비활성화 + "Saving..."
+                setSubmitButtonState(true, 'Saving...');
+
                 $('#autosaveReminderModal').modal('hide');
 
-                // 중복 제출 방지
-                $(form).find(':input[type=submit]').prop('disabled', true);
+                // jQuery validate가 실패했을 때 버튼을 다시 살려주기 위한 훅
+                // (invalid-form.validate 이벤트는 유효성 실패 시 발생)
+                $(form).one('invalid-form.validate', function () {
+                    isSubmitting = false;
+                    setSubmitButtonState(false, null); // 원래 텍스트 복원
+                });
 
                 if (typeof form.requestSubmit === 'function') {
-                    form.requestSubmit();
+                    form.requestSubmit();  // 브라우저 표준 제출 (검증 포함)
                     return;
                 }
 
-                var btn = form.querySelector('button[type=submit]:not([disabled]),input[type=submit]:not([disabled])');
-                if (btn) {
-                    btn.click();
-                    return;
-                }
-
+                // 최종 폴백
                 form.submit();
             }
 
@@ -101,12 +153,23 @@
                 isDirty       = false;
                 lastChangedAt = 0;
                 modalShown    = false;
+                // 서버로 넘어가는 시점이라 isSubmitting은 그대로 둬도 무방
             });
+
+            // 수동 "저장" 버튼 클릭도 모두 submitFormNow()로 통일
+            $(FORM_SEL)
+                .find(':input[type=submit]')
+                .off('click.boardEditSubmit')
+                .on('click.boardEditSubmit', function (e) {
+                    e.preventDefault(); // 기본 submit 막고
+                    submitFormNow();    // 공통 로직으로 진행
+                });
 
             // 주기적으로 경고/자동 저장 조건 검사
             setInterval(function () {
                 if (!isDirty) return;
                 if (!lastChangedAt) return;
+                if (isSubmitting) return; // 이미 제출 중이면 동작 안 함
 
                 var now         = Date.now();
                 var sinceChange = now - lastChangedAt;
