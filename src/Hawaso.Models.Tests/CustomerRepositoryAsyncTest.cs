@@ -39,7 +39,7 @@ namespace DotNetSaleCore.Models.Tests
             using (var context = new DotNetSaleCoreDbContext(options))
             {
                 //[!] Assert
-                Assert.AreEqual(1, await context.Customers.CountAsync());
+                Assert.HasCount(1, await context.Customers.ToListAsync());
                 var model = await context.Customers.Where(m => m.CustomerId == 1).SingleOrDefaultAsync();
                 Assert.AreEqual("[1] 고객이름", model?.CustomerName);
             }
@@ -60,7 +60,7 @@ namespace DotNetSaleCore.Models.Tests
             {
                 var repository = new CustomerRepository(context, factory);
                 var models = await repository.GetAllAsync();
-                Assert.AreEqual(3, models.Count);
+                Assert.HasCount(3, models);
             }
 
             //[3] GetByIdAsync() Method Test
@@ -72,7 +72,7 @@ namespace DotNetSaleCore.Models.Tests
             {
                 var repository = new CustomerRepository(context, factory);
                 var model = await repository.GetByIdAsync(2);
-                Assert.IsTrue(model.CustomerName.Contains("길동"));
+                StringAssert.Contains(model.CustomerName, "길동");
                 Assert.AreEqual("[2] 홍길동", model.CustomerName);
             }
 
