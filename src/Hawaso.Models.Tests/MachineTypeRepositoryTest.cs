@@ -62,7 +62,9 @@ namespace MachineTypeApp.Models.Tests
             {
                 var repository = new MachineTypeRepository(context);
                 var models = await repository.GetMachineTypesAsync();
-                Assert.AreEqual(3, models.Count); // true
+                
+                //Assert.AreEqual(3, models.Count); // true
+                Assert.HasCount(3, models); // true
             }
 
             //[3] GetByIdAsync() Method Test
@@ -74,7 +76,8 @@ namespace MachineTypeApp.Models.Tests
             {
                 var repository = new MachineTypeRepository(context);
                 var model = await repository.GetMachineTypeAsync(2);
-                Assert.IsTrue(model.Name.Contains("Machine Type"));
+                //Assert.IsTrue(model.Name.Contains("Machine Type"));
+                Assert.Contains("Machine Type", model.Name);
                 Assert.AreEqual("[2] Machine Type", model.Name);
             }
 
