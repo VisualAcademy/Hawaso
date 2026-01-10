@@ -73,7 +73,8 @@ namespace DotNetSaleCore.Models.Tests
             {
                 var repository = new CategoryRepository(context, factory);
                 var model = await repository.GetByIdAsync(2);
-                Assert.IsTrue(model.CategoryName.Contains("책"));
+                //Assert.IsTrue(model.CategoryName.Contains("책"));
+                Assert.Contains("책", model.CategoryName);
                 Assert.AreEqual("[2] 책", model.CategoryName);
             }
 
