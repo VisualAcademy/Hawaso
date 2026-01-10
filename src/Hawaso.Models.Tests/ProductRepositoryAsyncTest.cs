@@ -68,7 +68,8 @@ namespace DotNetSaleCore.Models.Tests
             {
                 var repository = new ProductRepositoryAsync(context, factory);
                 var models = await repository.GetAllAsync();
-                Assert.AreEqual(3, models.Count);
+                //Assert.AreEqual(3, models.Count);
+                Assert.HasCount(3, models);
             } 
             #endregion
 
@@ -82,7 +83,8 @@ namespace DotNetSaleCore.Models.Tests
             {
                 var repository = new ProductRepositoryAsync(context, factory);
                 var model = await repository.GetByIdAsync(2);
-                Assert.IsTrue(model.ModelName.Contains("길동"));
+                //Assert.IsTrue(model.ModelName.Contains("길동"));
+                Assert.Contains("길동", model.ModelName);
                 Assert.AreEqual("[2] 홍길동", model.ModelName);
             }
             #endregion
