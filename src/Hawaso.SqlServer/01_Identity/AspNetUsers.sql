@@ -56,6 +56,9 @@ CREATE TABLE [dbo].[AspNetUsers] (
     -- Profile picture (user avatar image stored as binary)
     [ProfilePicture]          VARBINARY(MAX)    NULL,
 
+    -- Signature image (user handwritten signature, JPG binary)
+    [SignatureImage] VARBINARY(MAX) NULL,
+
     CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)             -- 기본키 설정
 );
 
