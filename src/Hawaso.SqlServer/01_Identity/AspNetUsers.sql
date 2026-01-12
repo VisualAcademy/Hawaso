@@ -53,6 +53,9 @@ CREATE TABLE [dbo].[AspNetUsers] (
     [AdditionalEmploymentEndDate] DATETIME2(7) NULL, -- 추가 근무 종료일
     [AdditionalEmploymentLocation] NVARCHAR(255) NULL, -- 추가 근무 장소
 
+    -- Profile picture (user avatar image stored as binary)
+    [ProfilePicture]          VARBINARY(MAX)    NULL,
+
     CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED ([Id] ASC)             -- 기본키 설정
 );
 
