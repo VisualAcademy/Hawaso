@@ -8,9 +8,9 @@ namespace All.Controllers
     {
         public bool HasPassword { get; set; } // 사용자가 비밀번호를 설정했는지 여부
 
-        public IList<UserLoginInfo> Logins { get; set; } // 사용자의 로그인 정보 목록
+        public IList<UserLoginInfo> Logins { get; set; } = new List<UserLoginInfo>(); // 사용자의 로그인 정보 목록
 
-        public string PhoneNumber { get; set; } // 사용자 전화번호
+        public string? PhoneNumber { get; set; } // 사용자 전화번호
 
         public bool TwoFactor { get; set; } // 2단계 인증 활성화 여부
 
