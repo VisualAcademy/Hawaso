@@ -88,7 +88,8 @@ namespace MemoApp.Models.Tests
             {
                 var repository = new MemoRepository(context, loggerFactory);
                 var model = await repository.GetByIdAsync(2);
-                Assert.IsTrue(model.Name.Contains("길동"));
+                //Assert.IsTrue(model.Name.Contains("길동"));      
+                Assert.Contains("길동", model.Name);
                 Assert.AreEqual("[2] 홍길동", model.Name);
             }
             #endregion
@@ -109,7 +110,8 @@ namespace MemoApp.Models.Tests
 
                 var updateModel = await repository.GetByIdAsync(2);
 
-                Assert.IsTrue(updateModel.Name.Contains("꺽정"));
+                //Assert.IsTrue(updateModel.Name.Contains("꺽정"));
+                Assert.Contains("꺽정", updateModel.Name);
                 Assert.AreEqual("[2] 임꺽정", updateModel.Name);
                 Assert.AreEqual("[2] 임꺽정",
                     (await context.Memos.Where(m => m.Id == 2).SingleOrDefaultAsync())?.Name);
