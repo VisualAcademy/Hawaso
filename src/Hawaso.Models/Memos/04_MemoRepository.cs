@@ -750,7 +750,7 @@ namespace Hawaso.Models
             }
             #endregion
 
-            if (from != null && to != null)
+            if (from != DateTime.MinValue && to != DateTime.MinValue)
             {
                 items = items.Where(it => (it.PostDate == null) || it.PostDate >= from && it.PostDate <= to);
             }
