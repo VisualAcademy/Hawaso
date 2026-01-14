@@ -2,7 +2,8 @@
 
 namespace Hawaso.Web.Components.Pages.VendorPages.Models
 {
-    public class VendorPermanentDeleteDbContextFactory : IDbContextFactory<VendorPermanentDeleteDbContext>
+    public class VendorPermanentDeleteDbContextFactory
+        : IDbContextFactory<VendorPermanentDeleteDbContext>
     {
         private readonly IConfiguration _configuration;
 
@@ -11,14 +12,16 @@ namespace Hawaso.Web.Components.Pages.VendorPages.Models
             _configuration = configuration;
         }
 
-        public VendorPermanentDeleteDbContext CreateDbContext(string connectionString)
+        public VendorPermanentDeleteDbContext CreateDbContext(string? connectionString)
         {
-            if (string.IsNullOrWhiteSpace(connectionString))
-            {
-                connectionString = _configuration.GetConnectionString("TenantDbConnection");
-            }
+            connectionString ??=
+                _configuration.GetConnectionString("TenantDbConnection")
+                ?? throw new InvalidOperationException(
+                    "TenantDbConnection connection string is not configured.");
 
-            var optionsBuilder = new DbContextOptionsBuilder<VendorPermanentDeleteDbContext>();
+            var optionsBuilder =
+                new DbContextOptionsBuilder<VendorPermanentDeleteDbContext>();
+
             optionsBuilder.UseSqlServer(connectionString);
 
             return new VendorPermanentDeleteDbContext(optionsBuilder.Options);
@@ -26,8 +29,7 @@ namespace Hawaso.Web.Components.Pages.VendorPages.Models
 
         public VendorPermanentDeleteDbContext CreateDbContext()
         {
-            var defaultConnectionString = _configuration.GetConnectionString("TenantDbConnection");
-            return CreateDbContext(defaultConnectionString);
+            return CreateDbContext(null);
         }
     }
 }
