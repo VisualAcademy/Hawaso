@@ -312,7 +312,7 @@ public partial class Manage : ComponentBase
         var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        if (user.Identity.IsAuthenticated)
+        if (user?.Identity?.IsAuthenticated == true)
         {
             //var currentUser = await UserManagerRef.GetUserAsync(user);
             //UserId = currentUser.Id;
