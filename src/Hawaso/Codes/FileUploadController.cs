@@ -58,7 +58,7 @@ public class FileUploadController(IWebHostEnvironment environment, IConfiguratio
 
             // 해당 디렉터리 생성
             var directoryName = Path.GetDirectoryName(downloadPath);
-            if (!Directory.Exists(directoryName))
+            if (!string.IsNullOrEmpty(directoryName) && !Directory.Exists(directoryName))
             {
                 Directory.CreateDirectory(directoryName);
             }
