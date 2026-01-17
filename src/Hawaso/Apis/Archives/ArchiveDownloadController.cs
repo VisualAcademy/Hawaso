@@ -109,7 +109,7 @@ namespace Hawaso.Controllers
 
                         for (int i = 0; i < values.Length; i++)
                         {
-                            row.Append(TextCell(Ref(i + 1, (int)rowIndex), values[i]));
+                            row.Append(TextCell(Ref(i + 1, (int)rowIndex), values[i] ?? string.Empty));
                         }
 
                         rowIndex++;
