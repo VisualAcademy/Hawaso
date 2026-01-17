@@ -73,7 +73,7 @@ namespace All.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddPhoneNumber(string returnUrl = null)
+        public IActionResult AddPhoneNumber(string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
