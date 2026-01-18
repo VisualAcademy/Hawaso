@@ -127,7 +127,7 @@ var services = builder.Services;
 var Configuration = builder.Configuration;
 
 
-#region Termonology
+#region Terminology
 // Terminology 설정 바인딩
 builder.Services.Configure<TerminologySettings>(builder.Configuration);
 // Terminology 서비스 등록
