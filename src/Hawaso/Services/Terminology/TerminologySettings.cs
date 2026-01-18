@@ -1,4 +1,4 @@
-﻿namespace Hawaso.Services.Terminology;
+﻿namespace Azunt.Services.Terminology;
 
 public sealed class TerminologySettings
 {
