@@ -7,6 +7,7 @@ using Azunt.NoteManagement;
 using Azunt.ReasonManagement;
 using Azunt.ResourceManagement;
 using Azunt.Services;
+using Azunt.Services.Terminology;
 using Azunt.TenantSettingManagement;
 using Azunt.Web.Components.Pages.Notes.Services;
 using Azunt.Web.Infrastructure.Extensions;
@@ -124,6 +125,15 @@ builder.Services.AddAuthorization(options =>
 
 var services = builder.Services;
 var Configuration = builder.Configuration;
+
+
+#region Termonology
+// Terminology 설정 바인딩
+builder.Services.Configure<TerminologySettings>(builder.Configuration);
+// Terminology 서비스 등록
+builder.Services.AddSingleton<ITerminologyService, TerminologyService>();
+#endregion
+
 
 
 builder.Services.AddHttpContextAccessor(); //[1] services.AddHttpContextAccessor();
