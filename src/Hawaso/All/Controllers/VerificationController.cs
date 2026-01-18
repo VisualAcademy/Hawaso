@@ -79,43 +79,56 @@ namespace All.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 전화번호 추가 요청을 처리하고, 인증 코드(SMS)를 발송한 뒤 인증 페이지로 이동합니다.
+        /// - returnUrl은 null 가능하며, 로컬 URL만 허용하여 오픈 리다이렉트 공격을 방지합니다.
+        /// </summary>
+        /// <param name="model">전화번호 입력 모델</param>
+        /// <param name="returnUrl">인증 완료 후 돌아갈 URL(로컬 URL만 허용)</param>
+        /// <returns>전화번호 인증(VerifyPhoneNumber) 화면으로 리다이렉트 또는 오류/재입력 화면</returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddPhoneNumber(
             AddPhoneNumberViewModel model,
             string? returnUrl = null)
         {
-            // returnUrl 기본값 보장 (안전 처리)
-            returnUrl ??= "/";
+            // returnUrl 안전 처리:
+            // 1) null이면 "/"로
+            // 2) 로컬 URL이 아니면 "/"로 (오픈 리다이렉트 방지)
+            var safeReturnUrl = (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+                ? returnUrl
+                : "/";
 
+            // 입력값 검증 실패 시: 동일 화면으로 돌아가며 returnUrl을 ViewData로 전달
             if (!ModelState.IsValid)
             {
-                ViewData["ReturnUrl"] = returnUrl;
+                ViewData["ReturnUrl"] = safeReturnUrl;
                 return View(model);
             }
 
+            // 현재 로그인 사용자 확인
             var user = await GetCurrentUserAsync();
             if (user == null)
             {
+                // 인증 컨텍스트가 유실되었거나 비정상 접근 등
                 return View("Error");
             }
 
-            // 전화번호 변경용 인증 코드 생성
-            var code = await _userManager
-                .GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
+            // 사용자 + 전화번호 조합으로 변경(등록) 토큰 생성 (Identity 제공)
+            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
 
-            // SMS 발송
+            // SMS로 인증 코드 전송 (Twilio)
             await _twilioSender.SendSmsAsync(
                 model.PhoneNumber,
                 "Your security code is: " + code);
 
-            // 인증 페이지로 이동
+            // 인증 페이지로 이동 (PhoneNumber와 returnUrl 전달)
             return RedirectToAction(
                 nameof(VerifyPhoneNumber),
                 new
                 {
-                    PhoneNumber = model.PhoneNumber,
-                    returnUrl
+                    model.PhoneNumber, // 유추 멤버 이름 사용
+                    returnUrl = safeReturnUrl
                 });
         }
 
