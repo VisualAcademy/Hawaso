@@ -81,8 +81,13 @@ namespace All.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPhoneNumber(AddPhoneNumberViewModel model, string returnUrl = null)
+        public async Task<IActionResult> AddPhoneNumber(
+            AddPhoneNumberViewModel model,
+            string? returnUrl = null)
         {
+            // returnUrl 기본값 보장 (안전 처리)
+            returnUrl ??= "/";
+
             if (!ModelState.IsValid)
             {
                 ViewData["ReturnUrl"] = returnUrl;
@@ -95,10 +100,23 @@ namespace All.Controllers
                 return View("Error");
             }
 
-            var code = await _userManager.GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
-            await _twilioSender.SendSmsAsync(model.PhoneNumber, "Your security code is: " + code);
+            // 전화번호 변경용 인증 코드 생성
+            var code = await _userManager
+                .GenerateChangePhoneNumberTokenAsync(user, model.PhoneNumber);
 
-            return RedirectToAction(nameof(VerifyPhoneNumber), new { PhoneNumber = model.PhoneNumber, returnUrl });
+            // SMS 발송
+            await _twilioSender.SendSmsAsync(
+                model.PhoneNumber,
+                "Your security code is: " + code);
+
+            // 인증 페이지로 이동
+            return RedirectToAction(
+                nameof(VerifyPhoneNumber),
+                new
+                {
+                    PhoneNumber = model.PhoneNumber,
+                    returnUrl
+                });
         }
 
         // GET: /Verification/VerifyPhoneNumber
