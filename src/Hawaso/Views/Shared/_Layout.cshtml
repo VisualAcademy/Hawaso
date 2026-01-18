@@ -1,9 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@inject Azunt.Services.Terminology.ITerminologyService T
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Hawaso</title>
+    <title>@ViewData["Title"] - @T.Get("ProductName")</title>
 
     <!-- Bootstrap core CSS -->
     <link href="~/templates/landing/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
