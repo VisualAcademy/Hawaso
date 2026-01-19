@@ -134,15 +134,24 @@ namespace All.Controllers
 
         // GET: /Verification/VerifyPhoneNumber
         [HttpGet]
-        public async Task<IActionResult> VerifyPhoneNumber(string phoneNumber, string returnUrl = null)
+        public async Task<IActionResult> VerifyPhoneNumber(
+            string phoneNumber,
+            string? returnUrl = null)
         {
+            // returnUrl 안전 처리:
+            // 1) null이면 "/"로
+            // 2) 로컬 URL이 아니면 "/"로 (오픈 리다이렉트 방지)
+            var safeReturnUrl = (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+                ? returnUrl
+                : "/";
+
             var user = await GetCurrentUserAsync();
             if (user == null)
             {
                 return View("Error");
             }
 
-            ViewData["ReturnUrl"] = returnUrl;
+            ViewData["ReturnUrl"] = safeReturnUrl;
 
             return phoneNumber == null
                 ? View("Error")
