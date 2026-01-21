@@ -250,10 +250,16 @@ services.AddDbContext<DotNetNote.Models.NoteDbContext>(options =>
 
 
 #region DailyLogs 테이블 생성 및 컬럼 확인
-var dailyLogsTableEnhancer = new DailyLogsTableEnhancer(Configuration.GetConnectionString("DefaultConnection"));
+var dailyLogsConnectionString =
+    Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException(
+        "Connection string 'DefaultConnection' is not configured.");
+
+var dailyLogsTableEnhancer =
+    new DailyLogsTableEnhancer(dailyLogsConnectionString);
+
 dailyLogsTableEnhancer.EnsureDailyLogsTable();
 #endregion
-
 
 
 // 의존성 주입 컨테이너 설정
