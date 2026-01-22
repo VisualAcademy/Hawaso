@@ -607,7 +607,15 @@ if (DateTime.Now < (new DateTime(2025, 2, 10)))
 
 
 // Create AllowedIPRanges table in the default database
-var defaultSchemaEnhancer = new All.Infrastructures.Cores.DefaultSchemaEnhancerCreateAllowedIPRangesTable(Configuration.GetConnectionString("DefaultConnection"));
+var defaultDbConnectionString =
+    Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException(
+        "Connection string 'DefaultConnection' is not configured.");
+
+var defaultSchemaEnhancer =
+    new All.Infrastructures.Cores.DefaultSchemaEnhancerCreateAllowedIPRangesTable(
+        defaultDbConnectionString);
+
 defaultSchemaEnhancer.EnhanceDefaultDatabase();
 
 
