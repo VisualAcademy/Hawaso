@@ -20,8 +20,8 @@ public class DotNetNoteController(
 
     // 공통 속성: 검색 모드: 검색 모드이면 true, 그렇지 않으면 false.
     public bool SearchMode { get; set; } = false;
-    public string SearchField { get; set; } // 필드: Name, Title, Content
-    public string SearchQuery { get; set; } // 검색 내용
+    public string SearchField { get; set; } = ""; // 필드: Name, Title, Content
+    public string SearchQuery { get; set; } = ""; // 검색 내용
 
     /// <summary>
     /// 현재 보여줄 페이지 번호
