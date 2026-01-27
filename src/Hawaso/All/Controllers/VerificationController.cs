@@ -161,7 +161,7 @@ namespace All.Controllers
         // 휴대폰 번호 인증을 처리하는 POST 메서드
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model, string returnUrl = null)
+        public async Task<IActionResult> VerifyPhoneNumber(VerifyPhoneNumberViewModel model, string? returnUrl = null)
         {
             if (!ModelState.IsValid)
             {
