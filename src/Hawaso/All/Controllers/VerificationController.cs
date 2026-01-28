@@ -269,11 +269,15 @@ namespace All.Controllers
         }
 
         #region Helpers
-        private Task<ApplicationUser> GetCurrentUserAsync()
+        private async Task<ApplicationUser> GetCurrentUserAsync()
         {
-            return _userManager.GetUserAsync(HttpContext.User);
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            if (user == null)
+            {
+                throw new InvalidOperationException("현재 사용자를 찾을 수 없습니다.");
+            }
+            return user;
         }
-
         #endregion
     }
 }
