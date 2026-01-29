@@ -157,13 +157,15 @@ public class MemosController : ControllerBase
 
         // <>
         var origin = await _repository.GetByIdAsync(id ?? default);
-        if (origin != null)
+        if (origin == null)
         {
-            origin.Name = dto.Name;
-            origin.Title = dto.Title;
-            origin.Content = dto.Content;
-            // --TODO--
+            return NotFound();
         }
+
+        origin.Name = dto.Name;
+        origin.Title = dto.Title;
+        origin.Content = dto.Content;
+        // --TODO--
         // </>
 
         try
