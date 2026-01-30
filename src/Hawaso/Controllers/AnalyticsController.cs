@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-
-namespace Hawaso.Controllers
+﻿namespace Hawaso.Controllers
 {
     public class AnalyticsController : Controller
     {
