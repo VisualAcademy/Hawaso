@@ -2,6 +2,6 @@
 {
     public class TenantPermanentDelete
     {
-        public string ConnectionString { get; set; }
+        public required string ConnectionString { get; set; }
     }
 }
