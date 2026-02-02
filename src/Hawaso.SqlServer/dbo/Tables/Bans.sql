@@ -1,0 +1,4 @@
+﻿CREATE TABLE [dbo].[Bans]
+(
+    [Id] BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY
+)
