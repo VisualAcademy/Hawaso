@@ -14,6 +14,10 @@ namespace Azunt.Utilities.Navigation
     /// Security note: It blocks absolute URLs (e.g., "https://azunt.com") and scheme-relative URLs
     /// (e.g., "//azunt.com") to reduce the risk of open redirect vulnerabilities.
     /// </para>
+    /// <para>
+    /// Special rule: A tilde-only value ("~") is treated as invalid input and falls back to <paramref name="defaultPath"/>.
+    /// (Because "~" is an ASP.NET-specific token and is not a valid URL path by itself.)
+    /// </para>
     /// </remarks>
     public static class ReturnUrlUtility
     {
@@ -29,11 +33,12 @@ namespace Azunt.Utilities.Navigation
         /// <param name="defaultPath">The fallback path to use when the input is invalid. Default is "/".</param>
         /// <returns>A safe root-relative path such as "/".</returns>
         /// <example>
-        /// "dashboard"    -> "/dashboard"
-        /// "~/dashboard"  -> "/dashboard"
-        /// "/dashboard"   -> "/dashboard"
-        /// "https://..."  -> "/"
-        /// "//azunt.com"  -> "/"
+        /// "dashboard"      -> "/dashboard"
+        /// "~/dashboard"    -> "/dashboard"
+        /// "/dashboard"     -> "/dashboard"
+        /// "~"              -> defaultPath
+        /// "https://..."    -> defaultPath
+        /// "//azunt.com"    -> defaultPath
         /// </example>
         public static string Normalize(string? returnUrl, string defaultPath = DefaultPath)
         {
@@ -43,6 +48,10 @@ namespace Azunt.Utilities.Navigation
                 return defaultPath;
 
             var value = returnUrl.Trim();
+
+            // "~" alone is considered invalid input -> fallback
+            if (value == "~")
+                return defaultPath;
 
             // Block absolute URLs: "https://azunt.com/..."
             if (Uri.TryCreate(value, UriKind.Absolute, out _))
@@ -55,10 +64,6 @@ namespace Azunt.Utilities.Navigation
             // "~/" (ASP.NET token) -> "/"
             if (StartsWithTildeSlash(value))
                 value = value.Substring(1); // remove "~" only
-
-            // "~" -> "/"
-            if (value == "~")
-                value = "/";
 
             value = EnsureRootRelative(value);
 
@@ -119,6 +124,8 @@ namespace Azunt.Utilities.Navigation
             if (path.StartsWith("~/", StringComparison.Ordinal))
                 path = path.Substring(1); // "~/" -> "/"
 
+            // Note: tilde-only "~" is handled in Normalize() as invalid input (fallback).
+            // Here, we treat "~" defensively as root to keep this helper deterministic.
             if (path == "~")
                 path = "/";
 
