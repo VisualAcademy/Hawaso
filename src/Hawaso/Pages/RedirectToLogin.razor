@@ -1,11 +1,21 @@
 ﻿@inject NavigationManager NavigationManager
+@using Azunt.Utilities.Navigation
 
-@code{
+@code {
     [Parameter]
-    public string ReturnUrl { get; set; }
+    public string? ReturnUrl { get; set; }
+
     protected override void OnInitialized()
     {
-        ReturnUrl = "~/" + ReturnUrl;
-        NavigationManager.NavigateTo($"Identity/Account/Login?returnUrl={ReturnUrl}", forceLoad: true);
+        var safeReturnUrl = ReturnUrlUtility.Normalize(
+            ReturnUrl,
+            new Uri(NavigationManager.BaseUri),
+            ReturnUrlUtility.DefaultPath);
+
+        var encoded = Uri.EscapeDataString(safeReturnUrl);
+
+        NavigationManager.NavigateTo(
+            $"Identity/Account/Login?returnUrl={encoded}",
+            forceLoad: true);
     }
 }
