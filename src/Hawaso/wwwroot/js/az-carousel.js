@@ -1,138 +1,237 @@
-﻿const azSlides = document.querySelectorAll('.az-slide');
-const azTotalSlides = azSlides.length;
-const azProgressIndicators = document.getElementById('az-progress-indicators');
-const azSlideDuration = 5000;
-let azCurrentIndex = 0;
-let azIsPaused = false;
-let azTimeout;
-let azStartTime;
-let azElapsed = 0;
+﻿/**
+ * Az Carousel (Improved)
+ * - 컨테이너(섹션)별로 독립 동작 (여러 개 있어도 OK)
+ * - requestAnimationFrame 중복/누적 방지 (탭 전환 시 프로그레스바 동시 진행 버그 해결)
+ * - 탭 비가시 상태(document.hidden)면 자동 pause, 다시 보이면 자동 resume
+ */
 
-const azProgressDots = [];
+(function () {
+    const SLIDE_DURATION = 5000;
 
-for (let i = 0; i < azTotalSlides; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'az-progress-dot';
-    dot.dataset.index = i;
+    const sections = document.querySelectorAll('.az-carousel-section');
+    if (!sections || sections.length === 0) return;
 
-    const fill = document.createElement('div');
-    fill.className = 'az-progress-fill';
-    dot.appendChild(fill);
+    const instances = [];
 
-    dot.addEventListener('click', () => {
-        clearTimeout(azTimeout);
-        azElapsed = 0;
-        azUpdateSlide(i);
+    sections.forEach(section => {
+        const slides = section.querySelectorAll('.az-slide');
+        const totalSlides = slides.length;
+
+        const progressIndicators = section.querySelector('.az-progress-indicators');
+        const nextBtn = section.querySelector('.az-next-btn');
+        const prevBtn = section.querySelector('.az-prev-btn');
+
+        if (!progressIndicators || !nextBtn || !prevBtn || totalSlides === 0) return;
+
+        // 혹시 서버 렌더링/재사용 상황에서 기존 내용이 있을 수 있으니 초기화
+        progressIndicators.innerHTML = '';
+
+        const state = {
+            section,
+            slides,
+            totalSlides,
+            progressIndicators,
+            nextBtn,
+            prevBtn,
+
+            currentIndex: 0,
+            isPaused: false,
+            autoPausedByVisibility: false,
+
+            timeoutId: null,
+            rafId: null,
+
+            startTime: 0,
+            elapsed: 0,
+            slideDuration: SLIDE_DURATION,
+
+            progressFills: [],
+            pauseBtn: null
+        };
+
+        // Progress dots
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'az-progress-dot';
+            dot.dataset.index = i;
+
+            const fill = document.createElement('div');
+            fill.className = 'az-progress-fill';
+            dot.appendChild(fill);
+
+            dot.addEventListener('click', () => {
+                clearTimeout(state.timeoutId);
+                cancelRaf(state);
+                state.elapsed = 0;
+                updateSlide(state, i);
+            });
+
+            progressIndicators.appendChild(dot);
+            state.progressFills.push(fill);
+        }
+
+        // Pause button
+        const pauseBtn = document.createElement('div');
+        pauseBtn.className = 'az-pause-button';
+        pauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        progressIndicators.appendChild(pauseBtn);
+        state.pauseBtn = pauseBtn;
+
+        pauseBtn.addEventListener('click', () => {
+            state.isPaused = !state.isPaused;
+            pauseBtn.innerHTML = `<i class="fas fa-${state.isPaused ? 'play' : 'pause'}"></i>`;
+
+            if (state.isPaused) {
+                pauseProgress(state);
+            } else {
+                resumeProgress(state);
+            }
+        });
+
+        // Next / Prev
+        nextBtn.addEventListener('click', () => {
+            clearTimeout(state.timeoutId);
+            cancelRaf(state);
+            state.elapsed = 0;
+            updateSlide(state, state.currentIndex + 1);
+        });
+
+        prevBtn.addEventListener('click', () => {
+            clearTimeout(state.timeoutId);
+            cancelRaf(state);
+            state.elapsed = 0;
+            updateSlide(state, state.currentIndex - 1);
+        });
+
+        // Touch swipe
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        section.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        section.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe(state, touchStartX, touchEndX);
+        });
+
+        // Start
+        updateSlide(state, 0);
+        instances.push(state);
     });
 
-    azProgressIndicators.appendChild(dot);
-    azProgressDots.push(fill);
-}
+    // Visibility change: hidden -> auto pause, visible -> auto resume
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            instances.forEach(state => {
+                if (!state.isPaused) {
+                    state.autoPausedByVisibility = true;
+                    pauseProgress(state);
+                }
+            });
+        } else {
+            instances.forEach(state => {
+                if (state.autoPausedByVisibility) {
+                    state.autoPausedByVisibility = false;
+                    if (!state.isPaused) resumeProgress(state);
+                }
+            });
+        }
+    });
 
-const azPauseBtn = document.createElement('div');
-azPauseBtn.className = 'az-pause-button';
-azPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-azProgressIndicators.appendChild(azPauseBtn);
+    // ---- helpers ----
 
-azPauseBtn.addEventListener('click', () => {
-    azIsPaused = !azIsPaused;
-    azPauseBtn.innerHTML = `<i class="fas fa-${azIsPaused ? 'play' : 'pause'}"></i>`;
-    if (azIsPaused) {
-        azPauseProgress();
-    } else {
-        azResumeProgress();
+    function cancelRaf(state) {
+        if (state.rafId) {
+            cancelAnimationFrame(state.rafId);
+            state.rafId = null;
+        }
     }
-});
 
-function azUpdateSlide(index) {
-    azCurrentIndex = (index + azTotalSlides) % azTotalSlides;
+    function updateSlide(state, index) {
+        state.currentIndex = (index + state.totalSlides) % state.totalSlides;
 
-    azSlides.forEach((slide, i) => {
-        slide.classList.toggle('az-active', i === azCurrentIndex);
-    });
+        state.slides.forEach((slide, i) => {
+            slide.classList.toggle('az-active', i === state.currentIndex);
+        });
 
-    azProgressDots.forEach(dot => {
-        dot.style.transition = 'none';
-        dot.style.width = '0%';
-    });
+        // reset all progress fills
+        state.progressFills.forEach(fill => {
+            fill.style.transition = 'none';
+            fill.style.width = '0%';
+        });
 
-    azElapsed = 0;
-    if (!azIsPaused) azStartProgress(azSlideDuration);
-}
+        clearTimeout(state.timeoutId);
+        cancelRaf(state);
 
-function azStartProgress(duration) {
-    const dot = azProgressDots[azCurrentIndex];
-    dot.style.transition = 'none';
-    dot.style.width = '0%';
+        state.elapsed = 0;
 
-    requestAnimationFrame(() => {
-        dot.style.transition = `width ${duration}ms linear`;
-        dot.style.width = '100%';
-    });
-
-    azStartTime = Date.now();
-    azTimeout = setTimeout(() => {
-        azElapsed = 0;
-        azUpdateSlide(azCurrentIndex + 1);
-    }, duration);
-}
-
-function azPauseProgress() {
-    const dot = azProgressDots[azCurrentIndex];
-    const computed = parseFloat(getComputedStyle(dot).width);
-    const parentWidth = dot.parentElement.offsetWidth;
-    const percent = (computed / parentWidth) * 100;
-
-    dot.style.transition = 'none';
-    dot.style.width = percent + '%';
-
-    azElapsed += Date.now() - azStartTime;
-    clearTimeout(azTimeout);
-}
-
-function azResumeProgress() {
-    const remaining = azSlideDuration - azElapsed;
-    azStartProgress(remaining);
-}
-
-document.getElementById('az-next-btn').addEventListener('click', () => {
-    clearTimeout(azTimeout);
-    azElapsed = 0;
-    azUpdateSlide(azCurrentIndex + 1);
-});
-
-document.getElementById('az-prev-btn').addEventListener('click', () => {
-    clearTimeout(azTimeout);
-    azElapsed = 0;
-    azUpdateSlide(azCurrentIndex - 1);
-});
-
-const azCarousel = document.getElementById('az-carousel');
-let azTouchStartX = 0;
-let azTouchEndX = 0;
-
-azCarousel.addEventListener('touchstart', e => {
-    azTouchStartX = e.changedTouches[0].screenX;
-});
-
-azCarousel.addEventListener('touchend', e => {
-    azTouchEndX = e.changedTouches[0].screenX;
-    azHandleSwipe();
-});
-
-function azHandleSwipe() {
-    if (azTouchEndX < azTouchStartX - 30) {
-        clearTimeout(azTimeout);
-        azElapsed = 0;
-        azUpdateSlide(azCurrentIndex + 1);
+        if (!state.isPaused && !document.hidden) {
+            startProgress(state, state.slideDuration);
+        }
     }
-    if (azTouchEndX > azTouchStartX + 30) {
-        clearTimeout(azTimeout);
-        azElapsed = 0;
-        azUpdateSlide(azCurrentIndex - 1);
-    }
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-    azUpdateSlide(0);
-});
+    function startProgress(state, duration) {
+        const fill = state.progressFills[state.currentIndex];
+        if (!fill) return;
+
+        fill.style.transition = 'none';
+        fill.style.width = '0%';
+
+        // force reflow so the "transition reset" is applied
+        void fill.offsetWidth;
+
+        cancelRaf(state);
+        state.rafId = requestAnimationFrame(() => {
+            fill.style.transition = `width ${duration}ms linear`;
+            fill.style.width = '100%';
+        });
+
+        state.startTime = Date.now();
+        state.timeoutId = setTimeout(() => {
+            state.elapsed = 0;
+            updateSlide(state, state.currentIndex + 1);
+        }, duration);
+    }
+
+    function pauseProgress(state) {
+        const fill = state.progressFills[state.currentIndex];
+        if (!fill) return;
+
+        const computedWidth = parseFloat(getComputedStyle(fill).width) || 0;
+        const parentWidth = fill.parentElement ? fill.parentElement.offsetWidth : 0;
+        const percent = parentWidth > 0 ? (computedWidth / parentWidth) * 100 : 0;
+
+        fill.style.transition = 'none';
+        fill.style.width = Math.max(0, Math.min(100, percent)) + '%';
+
+        if (state.startTime) {
+            state.elapsed += Date.now() - state.startTime;
+        }
+
+        clearTimeout(state.timeoutId);
+        cancelRaf(state);
+    }
+
+    function resumeProgress(state) {
+        if (document.hidden) return;
+
+        const remaining = Math.max(0, state.slideDuration - state.elapsed);
+        startProgress(state, remaining > 0 ? remaining : state.slideDuration);
+    }
+
+    function handleSwipe(state, startX, endX) {
+        if (endX < startX - 30) {
+            clearTimeout(state.timeoutId);
+            cancelRaf(state);
+            state.elapsed = 0;
+            updateSlide(state, state.currentIndex + 1);
+        } else if (endX > startX + 30) {
+            clearTimeout(state.timeoutId);
+            cancelRaf(state);
+            state.elapsed = 0;
+            updateSlide(state, state.currentIndex - 1);
+        }
+    }
+})();

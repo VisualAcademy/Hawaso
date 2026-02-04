@@ -3,8 +3,8 @@
 <link href="/css/az-carousel.css" rel="stylesheet" />
 
 <div class="container px-0">
-    <section class="az-carousel-section" id="az-carousel">
-        <div class="az-slides" id="az-slide-container">
+    <section class="az-carousel-section">
+        <div class="az-slides">
             <div class="az-slide az-active">
                 <img src="~/images/az-carousel/blazor-part-3.jpg" alt="Blazor Server Part 1" />
                 <div class="az-slide-content">
@@ -13,6 +13,7 @@
                     <a href="http://www.devlec.com/?_pageVariable=courseDetail&code=PT001TB4369&method=S&relation=PT001TB4369_BlazorServer" target="_blank">강의 보기</a>
                 </div>
             </div>
+
             <div class="az-slide">
                 <img src="~/images/az-carousel/blazor-part-2.jpg" alt="Blazor Server Part 2" />
                 <div class="az-slide-content">
@@ -21,6 +22,7 @@
                     <a href="http://www.devlec.com/?_pageVariable=courseDetail&code=PT001TB4370&method=S&relation=PT001TB4370_BlazorServerPart2" target="_blank">강의 보기</a>
                 </div>
             </div>
+
             <div class="az-slide">
                 <img src="~/images/az-carousel/blazor-part-1.jpg" alt="Blazor Server Part 3" />
                 <div class="az-slide-content">
@@ -31,10 +33,15 @@
             </div>
         </div>
 
-        <div class="az-nav-arrow az-left" id="az-prev-btn"><i class="fas fa-chevron-left"></i></div>
-        <div class="az-nav-arrow az-right" id="az-next-btn"><i class="fas fa-chevron-right"></i></div>
+        <div class="az-nav-arrow az-left az-prev-btn">
+            <i class="fas fa-chevron-left"></i>
+        </div>
 
-        <div class="az-progress-indicators" id="az-progress-indicators"></div>
+        <div class="az-nav-arrow az-right az-next-btn">
+            <i class="fas fa-chevron-right"></i>
+        </div>
+
+        <div class="az-progress-indicators"></div>
     </section>
 </div>
 
