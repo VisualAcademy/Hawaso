@@ -3,8 +3,9 @@
     public class Workshop
     {
         public int Id { get; set; }
-        public string Title { get; set; }
-        public string Instructor { get; set; }
-        public string Time { get; set; }
+
+        public string Title { get; set; } = string.Empty;
+        public string Instructor { get; set; } = string.Empty;
+        public string Time { get; set; } = string.Empty;
     }
 }
