@@ -72,7 +72,7 @@
         <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
         <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="9.0.2" />
         <PackageReference Include="Stripe.net" Version="50.3.0" />
-        <PackageReference Include="Twilio" Version="7.14.1" />
+        <PackageReference Include="Twilio" Version="7.14.3" />
         <PackageReference Include="VisualAcademy.Models.Archives" Version="3.0.2" />
         <PackageReference Include="VisualAcademy.Models.BriefingLogs" Version="1.0.4" />
         <PackageReference Include="VisualAcademy.Models.Departments" Version="8.0.2" />
