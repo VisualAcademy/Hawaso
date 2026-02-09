@@ -4,8 +4,8 @@ namespace Hawaso.Pages.Administrations.Roles;
 
 public class ApplicationRoleViewModel
 {
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "역할 이름을 입력하세요.")]
-    public string RoleName { get; set; }
+    public string RoleName { get; set; } = string.Empty;
 }
