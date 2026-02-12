@@ -13,7 +13,7 @@ public partial class Details
 
     #region Injectors
     [Inject]
-    public IReplyRepository RepositoryReference { get; set; }
+    public IReplyRepository RepositoryReference { get; set; } = default!;
     #endregion
 
     #region Properties
