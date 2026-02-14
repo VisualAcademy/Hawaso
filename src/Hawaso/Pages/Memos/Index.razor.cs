@@ -4,15 +4,12 @@ namespace VisualAcademy.Pages.Memos;
 
 public partial class Index
 {
-    [Inject]
-    public IMemoRepository RepositoryReference { get; set; }
+    [Inject] public IMemoRepository? RepositoryReference { get; set; }
+    [Inject] public NavigationManager? Nav { get; set; }
 
-    [Inject]
-    public NavigationManager Nav { get; set; }
+    protected List<Memo> models = new();
 
-    protected List<Memo> models;
-
-    protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase()
+    protected DulPager.DulPagerBase pager = new()
     {
         PageNumber = 1,
         PageIndex = 0,
@@ -29,16 +26,36 @@ public partial class Index
 
     private async Task DisplayData()
     {
-        var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, 0);
+        if (RepositoryReference is null)
+        {
+            throw new InvalidOperationException($"{nameof(RepositoryReference)} was not injected.");
+        }
+
+        var articleSet = await RepositoryReference.GetArticlesAsync<int>(
+            pager.PageIndex,
+            pager.PageSize,
+            "",
+            this.searchQuery,
+            this.sortOrder,
+            0);
+
         pager.RecordCount = articleSet.TotalCount;
         models = articleSet.Items.ToList();
 
         StateHasChanged();
     }
 
-    protected void NameClick(long id) => Nav.NavigateTo($"/Memos/Details/{id}");
+    protected void NameClick(long id)
+    {
+        if (Nav is null)
+        {
+            throw new InvalidOperationException($"{nameof(Nav)} was not injected.");
+        }
 
-    protected async void PageIndexChanged(int pageIndex)
+        Nav.NavigateTo($"/Memos/Details/{id}");
+    }
+
+    protected async Task PageIndexChanged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
@@ -51,9 +68,10 @@ public partial class Index
     #region Search
     private string searchQuery = "";
 
-    protected async void Search(string query)
+    protected async Task Search(string query)
     {
         pager.PageIndex = 0;
+        pager.PageNumber = 1;
 
         this.searchQuery = query;
 
@@ -66,7 +84,7 @@ public partial class Index
     #region Sorting
     private string sortOrder = "";
 
-    protected async void SortByName()
+    protected async Task SortByName()
     {
         if (sortOrder == "")
         {
@@ -82,9 +100,10 @@ public partial class Index
         }
 
         await DisplayData();
+        StateHasChanged();
     }
 
-    protected async void SortByTitle()
+    protected async Task SortByTitle()
     {
         if (sortOrder == "")
         {
@@ -100,6 +119,7 @@ public partial class Index
         }
 
         await DisplayData();
+        StateHasChanged();
     }
     #endregion
 }
