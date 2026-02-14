@@ -61,10 +61,10 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         
-        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.13.2" />
-        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.DataGrid.EntityFrameworkAdapter" Version="4.13.2" />
-        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.13.2" />
-        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.13.2" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.14.0" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.DataGrid.EntityFrameworkAdapter" Version="4.14.0" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.14.0" />
+        <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.14.0" />
         <PackageReference Include="Microsoft.Identity.Web" Version="4.3.0" />
         <PackageReference Include="Microsoft.SemanticKernel" Version="1.70.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
@@ -81,7 +81,7 @@
         <PackageReference Include="VisualAcademy.Models.Replys" Version="1.0.1" />
         <PackageReference Include="VisualAcademy.Models.Uploads" Version="1.0.1" />
 
-        <PackageReference Include="QuestPDF" Version="2025.12.4" />
+        <PackageReference Include="QuestPDF" Version="2026.2.0" />
     </ItemGroup>
 
     <ItemGroup>
