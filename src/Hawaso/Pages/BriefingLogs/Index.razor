@@ -38,8 +38,8 @@
                 <thead class="thead-light">
                     <tr>
                         <th>ID</th>
-                        <th @onclick="@(() => SortByName())" style="cursor: pointer;">Name <Hawaso.Pages.BriefingLogs.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Hawaso.Pages.BriefingLogs.Components.SortOrderArrow></th>
-                        <th @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Hawaso.Pages.BriefingLogs.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Hawaso.Pages.BriefingLogs.Components.SortOrderArrow></th>
+                        <th @onclick="@(() => SortByName())" style="cursor: pointer;">Name <Azunt.Components.Sorting.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Azunt.Components.Sorting.SortOrderArrow></th>
+                        <th @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title <Azunt.Components.Sorting.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Azunt.Components.Sorting.SortOrderArrow></th>
                         <th>D/T Start</th>
                         <th>Actions</th>
                     </tr>
