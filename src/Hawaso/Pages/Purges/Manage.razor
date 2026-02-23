@@ -34,9 +34,9 @@
                     </colgroup>
                     <thead class="thead-light">
                         <tr>
-                            <th class="text-center text-nowrap" @onclick="@(() => SortByTitle())" style="cursor: pointer;">License Number <VisualAcademy.Pages.Purges.Components.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></VisualAcademy.Pages.Purges.Components.SortOrderArrow></th>
-                            <th class="text-center text-nowrap" @onclick="@(() => SortByCreate())">License Type <VisualAcademy.Pages.Purges.Components.SortOrderArrow SortColumn="Create" SortOrder="@sortOrder"></VisualAcademy.Pages.Purges.Components.SortOrderArrow></th>
-                            <th class="text-center text-nowrap" @onclick="@(() => SortByName())">Name <VisualAcademy.Pages.Purges.Components.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></VisualAcademy.Pages.Purges.Components.SortOrderArrow></th>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByTitle())" style="cursor: pointer;">License Number <Azunt.Components.Sorting.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Azunt.Components.Sorting.SortOrderArrow></th>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByCreate())">License Type <Azunt.Components.Sorting.SortOrderArrow SortColumn="Create" SortOrder="@sortOrder"></Azunt.Components.Sorting.SortOrderArrow></th>
+                            <th class="text-center text-nowrap" @onclick="@(() => SortByName())">Name <Azunt.Components.Sorting.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Azunt.Components.Sorting.SortOrderArrow></th>
                             <th class="text-center text-nowrap">SSN</th>
                             <th class="text-center text-nowrap">DOB</th>
                             <th class="text-center text-nowrap">Hire Date</th>
