@@ -6,10 +6,10 @@ namespace Hawaso.Pages.Customers;
 public partial class Create
 {
     [Inject]
-    public ICustomerRepository CustomerRepositoryReference { get; set; }
+    public ICustomerRepository CustomerRepositoryReference { get; set; } = default!;
 
     [Inject]
-    public NavigationManager Nav { get; set; }
+    public NavigationManager Nav { get; set; } = default!;
 
     private Customer customer = new Customer();
 
@@ -17,7 +17,7 @@ public partial class Create
 
     protected async Task btnSubmit_Click()
     {
-        customer.Created = DateTime.Now; 
+        customer.Created = DateTime.Now;
         await CustomerRepositoryReference.AddAsync(customer);
         Nav.NavigateTo("/Customers");
     }
