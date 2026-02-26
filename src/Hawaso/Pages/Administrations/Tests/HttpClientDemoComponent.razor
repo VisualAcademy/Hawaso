@@ -5,7 +5,8 @@
 HttpClient로부터 받아온 데이터: @Message
 
 @code {
-    public string Message { get; set; }
+    public string Message { get; set; } = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
         Message = await Http.GetStringAsync(
