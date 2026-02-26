@@ -5,19 +5,19 @@ namespace Hawaso.Pages.Logins.Components;
 public partial class LoginEditorForm
 {
     [Parameter]
-    public RenderFragment EditorFormTitle { get; set; }
+    public RenderFragment EditorFormTitle { get; set; } = default!;
 
     [Parameter]
-    public Login Model { get; set; }
+    public Login Model { get; set; } = default!;
 
     [Parameter]
-    public Action SaveOrUpdated { get; set; } // EventCallback<bool> 
+    public Action? SaveOrUpdated { get; set; }
 
     [Parameter]
     public EventCallback<bool> ChangeCallback { get; set; }
 
     [Inject]
-    public ILoginRepositoryAsync LoginRepositoryAsync { get; set; }
+    public ILoginRepositoryAsync LoginRepositoryAsync { get; set; } = default!;
 
     public bool IsShow { get; set; }
 
@@ -25,7 +25,7 @@ public partial class LoginEditorForm
 
     public void Close() => IsShow = false;
 
-    protected async void btnSaveOrUpdate_Click()
+    protected async Task btnSaveOrUpdate_Click()
     {
         if (Model.LoginId == 0)
         {
@@ -37,6 +37,7 @@ public partial class LoginEditorForm
             await LoginRepositoryAsync.EditAsync(Model);
             await ChangeCallback.InvokeAsync(true);
         }
+
         IsShow = false;
     }
 }
