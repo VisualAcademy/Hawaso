@@ -53,28 +53,12 @@ using VisualAcademy.Models.Replys;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
-// -------------------------------------------------
-// 1) Stripe 설정 바인딩 (Settings/StripeSettings.cs)
-// -------------------------------------------------
-builder.Services.Configure<StripeSettings>(
-    builder.Configuration.GetSection("Stripe"));
-
-
-
-
-// QuestPDF license
-QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
-
-
-
-
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
-
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
 #region GlobalAdministrators Policy 설정
 // GlobalAdministrators 이메일 목록 읽기
@@ -82,9 +66,6 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 // - 값이 없으면 빈 리스트로 초기화하여 NullReferenceException을 방지합니다.
 var globalAdminEmails = builder.Configuration.GetSection("AuthorizationSettings:GlobalAdministrators").Get<List<string>>() ?? new List<string>();
 #endregion
-
-
-
 
 #region Authorization Policy Configuration
 // 정책 기반 권한 설정
@@ -120,12 +101,8 @@ builder.Services.AddAuthorization(options =>
 });
 #endregion
 
-
-
-
 var services = builder.Services;
 var Configuration = builder.Configuration;
-
 
 #region Terminology
 // Terminology 설정 바인딩
@@ -133,8 +110,6 @@ builder.Services.Configure<TerminologySettings>(builder.Configuration);
 // Terminology 서비스 등록
 builder.Services.AddSingleton<ITerminologyService, TerminologyService>();
 #endregion
-
-
 
 builder.Services.AddHttpContextAccessor(); //[1] services.AddHttpContextAccessor();
 
@@ -513,14 +488,23 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection(); // HTTP 요청을 HTTPS로 자동 리디렉션
 
+// wwwroot 정적 파일(css, js, 이미지 등) 사용
 app.UseStaticFiles();
 
+// Endpoint 라우팅 활성화
 app.UseRouting();
 
+// CORS 정책 적용 (외부 도메인 요청 허용 정책)
+app.UseCors("AllowAnyOrigin");
+
+// 인증 처리 (로그인 여부 확인)
 app.UseAuthentication();
+
+// 권한 검사 (Role, Policy 등)
 app.UseAuthorization();
 
-app.UseCors("AllowAnyOrigin");
+
+
 
 // Configure the HTTP request pipeline.
 app.MapControllerRoute(
