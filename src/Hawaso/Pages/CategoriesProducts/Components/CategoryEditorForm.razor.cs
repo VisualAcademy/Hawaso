@@ -28,6 +28,11 @@ public partial class CategoryEditorForm
 
     protected async void btnSaveOrUpdate_Click()
     {
+        if (Model is null)
+        {
+            return; // 또는 예외 throw
+        }
+
         if (Model.CategoryId == 0)
         {
             await CategoryRepositoryAsync.AddAsync(Model);
