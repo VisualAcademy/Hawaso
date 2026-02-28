@@ -6,19 +6,19 @@ namespace Hawaso.Pages.CategoriesProducts.Components;
 public partial class CategoryEditorForm
 {
     [Parameter]
-    public RenderFragment EditorFormTitle { get; set; }
+    public RenderFragment? EditorFormTitle { get; set; }
 
     [Parameter]
-    public Category Model { get; set; }
+    public Category? Model { get; set; }
 
     [Parameter]
-    public Action SaveOrUpdated { get; set; } // EventCallback<bool> 
+    public Action? SaveOrUpdated { get; set; } // EventCallback<bool> 
 
     [Parameter]
     public EventCallback<bool> ChangeCallback { get; set; }
 
     [Inject]
-    public ICategoryRepository CategoryRepositoryAsync { get; set; }
+    public ICategoryRepository CategoryRepositoryAsync { get; set; } = default!;
 
     public bool IsShow { get; set; }
 
