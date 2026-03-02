@@ -6,14 +6,14 @@ namespace Hawaso.Pages.Notices;
 public partial class Create
 {
     [Inject]
-    public INoticeRepository NoticeRepositoryAsyncReference { get; set; }
+    public INoticeRepository NoticeRepositoryAsyncReference { get; set; } = default!;
 
     [Inject]
-    public NavigationManager NavigationManagerReference { get; set; }
+    public NavigationManager NavigationManagerReference { get; set; } = default!;
 
     protected Notice model = new Notice();
 
-    public string ParentId { get; set; }
+    public string ParentId { get; set; } = string.Empty;
 
     protected int[] parentIds = { 1, 2, 3 };
 
