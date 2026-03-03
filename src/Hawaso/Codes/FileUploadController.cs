@@ -1,14 +1,27 @@
 ﻿using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Hawaso.Codes;
 
+/// <summary>
+/// Azure Blob Storage에 파일 업로드 및 다운로드 작업을 처리합니다.
+/// </summary>
 [Authorize(Roles = "Administrators")]
 [ApiController]
 [Route("[controller]")]
-public class FileUploadController(IWebHostEnvironment environment, IConfiguration configuration) : ControllerBase
+public class FileUploadController(
+    IWebHostEnvironment environment,
+    IConfiguration configuration) : ControllerBase
 {
     private readonly string _containerName = "files";
 
+    /// <summary>
+    /// 로컬 "files" 폴더에서 파일을 읽어 Azure Blob Storage로 업로드합니다.
+    /// 기존 Blob이 존재할 경우,
+    /// Blob이 0바이트이고 로컬 파일이 0바이트가 아니면 덮어씁니다.
+    /// </summary>
+    /// <returns>업로드 성공 메시지를 반환합니다.</returns>
     [HttpGet("uploadfiles")]
     public async Task<IActionResult> UploadFiles()
     {
@@ -17,6 +30,11 @@ public class FileUploadController(IWebHostEnvironment environment, IConfiguratio
         return Ok("Files uploaded successfully.");
     }
 
+    /// <summary>
+    /// Azure Blob Storage에서 파일을 다운로드하여
+    /// 로컬 "files" 폴더에 저장합니다.
+    /// </summary>
+    /// <returns>다운로드 성공 메시지를 반환합니다.</returns>
     [HttpGet("downloadfiles")]
     public async Task<IActionResult> DownloadFiles()
     {
@@ -25,11 +43,25 @@ public class FileUploadController(IWebHostEnvironment environment, IConfiguratio
         return Ok("Files downloaded successfully.");
     }
 
+    /// <summary>
+    /// 지정된 로컬 경로에서 모든 파일을 읽어 Azure Blob Storage 컨테이너에 업로드합니다.
+    /// 동일한 파일이 이미 존재할 경우:
+    /// - Blob이 0바이트이고 로컬 파일이 0바이트가 아니면 덮어씁니다.
+    /// - 그 외에는 업로드를 건너뜁니다.
+    /// </summary>
+    /// <param name="localPath">로컬 파일이 저장된 경로입니다.</param>
     private async Task UploadFilesToBlobAsync(string localPath)
     {
-        var connectionString = $"DefaultEndpointsProtocol=https;AccountName={configuration["AppKeys:AzureStorageAccount"]};AccountKey={configuration["AppKeys:AzureStorageAccessKey"]};EndpointSuffix=core.windows.net";
+        var connectionString =
+            $"DefaultEndpointsProtocol=https;" +
+            $"AccountName={configuration["AppKeys:AzureStorageAccount"]};" +
+            $"AccountKey={configuration["AppKeys:AzureStorageAccessKey"]};" +
+            $"EndpointSuffix=core.windows.net";
+
         var blobServiceClient = new BlobServiceClient(connectionString);
         var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+
+        // 컨테이너가 없으면 생성
         await containerClient.CreateIfNotExistsAsync();
 
         foreach (var filePath in Directory.GetFiles(localPath, "*", SearchOption.AllDirectories))
@@ -37,17 +69,44 @@ public class FileUploadController(IWebHostEnvironment environment, IConfiguratio
             var relativePath = Path.GetRelativePath(localPath, filePath);
             var blobClient = containerClient.GetBlobClient(relativePath);
 
-            if (await blobClient.ExistsAsync()) // 동일한 파일이 존재하면 건너뜀
-                continue;
+            var localFileInfo = new FileInfo(filePath);
+            bool overwrite = false;
+
+            if (await blobClient.ExistsAsync())
+            {
+                var blobProperties = await blobClient.GetPropertiesAsync();
+                var blobSize = blobProperties.Value.ContentLength;
+
+                // Blob이 0바이트이고 로컬 파일이 더 크면 덮어쓰기
+                if (blobSize == 0 && localFileInfo.Length > 0)
+                {
+                    overwrite = true;
+                }
+                else
+                {
+                    continue; // 그 외에는 업로드하지 않음
+                }
+            }
 
             using var fileStream = System.IO.File.OpenRead(filePath);
-            await blobClient.UploadAsync(fileStream, overwrite: false);
+            await blobClient.UploadAsync(fileStream, overwrite: overwrite);
         }
     }
 
+    /// <summary>
+    /// Azure Blob Storage에서 모든 파일을 읽어
+    /// 지정된 로컬 경로에 다운로드합니다.
+    /// 로컬에 동일한 파일이 이미 존재하면 건너뜁니다.
+    /// </summary>
+    /// <param name="localPath">다운로드 파일이 저장될 로컬 경로입니다.</param>
     private async Task DownloadFilesFromBlobAsync(string localPath)
     {
-        var connectionString = $"DefaultEndpointsProtocol=https;AccountName={configuration["AppKeys:AzureStorageAccount"]};AccountKey={configuration["AppKeys:AzureStorageAccessKey"]};EndpointSuffix=core.windows.net";
+        var connectionString =
+            $"DefaultEndpointsProtocol=https;" +
+            $"AccountName={configuration["AppKeys:AzureStorageAccount"]};" +
+            $"AccountKey={configuration["AppKeys:AzureStorageAccessKey"]};" +
+            $"EndpointSuffix=core.windows.net";
+
         var blobServiceClient = new BlobServiceClient(connectionString);
         var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
 
@@ -63,7 +122,8 @@ public class FileUploadController(IWebHostEnvironment environment, IConfiguratio
                 Directory.CreateDirectory(directoryName);
             }
 
-            if (System.IO.File.Exists(downloadPath)) // 로컬에 이미 동일한 파일이 존재하면 건너뜀
+            // 로컬에 이미 존재하면 건너뜀
+            if (System.IO.File.Exists(downloadPath))
                 continue;
 
             // 파일 다운로드
