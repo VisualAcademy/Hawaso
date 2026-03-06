@@ -6,28 +6,27 @@ namespace Hawaso.Pages.Products;
 public partial class Create
 {
     [Inject]
-    public IProductRepositoryAsync ProductRepositoryAsync { get; set; }
+    public IProductRepositoryAsync ProductRepositoryAsync { get; set; } = default!;
 
     [Inject]
-    public NavigationManager NavigationManager { get; set; }
+    public NavigationManager NavigationManager { get; set; } = default!;
 
     [Inject]
-    public ICategoryRepository RepositoryReference { get; set; }
+    public ICategoryRepository RepositoryReference { get; set; } = default!;
 
     private Product Product = new Product();
 
-    //private string[] genders = { "Male", "Female" };
-
-    public string CategoryId { get; set; }
+    public string CategoryId { get; set; } = string.Empty;
 
     public List<Category> Categories { get; set; } = new List<Category>();
 
     protected async Task btnSubmit_Click()
     {
-        Product.CategoryId = Convert.ToInt32(CategoryId); // 선택한 카테고리
+        Product.CategoryId = Convert.ToInt32(CategoryId);
         await ProductRepositoryAsync.AddAsync(Product);
         NavigationManager.NavigateTo("/Products");
     }
 
-    protected override async Task OnInitializedAsync() => Categories = await RepositoryReference.GetAllAsync();
+    protected override async Task OnInitializedAsync()
+        => Categories = await RepositoryReference.GetAllAsync();
 }
