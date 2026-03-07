@@ -1,6 +1,4 @@
-﻿using Hawaso.Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Components;
 
 namespace Hawaso.Pages.Administrations.Roles;
 
