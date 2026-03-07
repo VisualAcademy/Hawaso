@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Identity;
 namespace Hawaso.Pages.Administrations.Roles;
 
 public partial class RoleCreate
-{        
+{
     [Inject]
-    public NavigationManager NavigationManagerRef { get; set; }
+    public NavigationManager NavigationManagerRef { get; set; } = default!;
 
     [Inject]
-    public RoleManager<ApplicationRole> RoleManager { get; set; }
+    public RoleManager<ApplicationRole> RoleManager { get; set; } = default!;
 
     public ApplicationRoleViewModel ViewModel { get; set; } = new ApplicationRoleViewModel();
 
