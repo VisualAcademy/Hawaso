@@ -1,4 +1,5 @@
-﻿using VisualAcademy.Models.Archives;
+﻿using Hawaso.Managers.Archives;
+using VisualAcademy.Models.Archives;
 
 namespace Hawaso.Models
 {

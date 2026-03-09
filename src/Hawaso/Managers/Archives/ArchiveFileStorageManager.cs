@@ -4,24 +4,24 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using VisualAcademy.Models.Replys;
+using VisualAcademy.Models.Archives;
 
-namespace ReplyApp.Managers;
+namespace Hawaso.Managers.Archives;
 
-public class ReplyAppFileStorageManager : IFileStorageManager
+public class ArchiveFileStorageManager : IArchiveFileStorageManager
 {
     private readonly IWebHostEnvironment _environment;
     private readonly string _containerName;
     private readonly string _folderPath;
 
-    public ReplyAppFileStorageManager(IWebHostEnvironment environment)
+    public ArchiveFileStorageManager(IWebHostEnvironment environment)
     {
         _environment = environment;
         _containerName = "files";
         _folderPath = Path.Combine(_environment.WebRootPath, _containerName);
     }
 
-    public async Task<bool> DeleteAsync(string fileName, string folderPath)
+    public async Task<bool> DeleteAsync(string fileName, string folderPath = "Archives")
     {
         var fullPath = Path.Combine(_folderPath, folderPath, fileName);
 
@@ -34,7 +34,7 @@ public class ReplyAppFileStorageManager : IFileStorageManager
         return await Task.FromResult(false);
     }
 
-    public async Task<byte[]> DownloadAsync(string fileName, string folderPath)
+    public async Task<byte[]> DownloadAsync(string fileName, string folderPath = "Archives")
     {
         var fullPath = Path.Combine(_folderPath, folderPath, fileName);
 
@@ -61,7 +61,7 @@ public class ReplyAppFileStorageManager : IFileStorageManager
         throw new NotImplementedException();
     }
 
-    public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath, bool overwrite)
+    public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = "Archives", bool overwrite = false)
     {
         if (bytes == null || bytes.Length == 0)
         {
@@ -82,7 +82,7 @@ public class ReplyAppFileStorageManager : IFileStorageManager
         return finalFileName;
     }
 
-    public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath, bool overwrite)
+    public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath = "Archives", bool overwrite = false)
     {
         if (stream == null)
         {
@@ -115,34 +115,29 @@ public class ReplyAppFileStorageManager : IFileStorageManager
     }
 }
 
-#region ReplyAppBlobStorageManager
-public class ReplyAppBlobStorageManager : IFileStorageManager
+#region ArchiveBlobStorageManager
+public class ArchiveBlobStorageManager : IArchiveFileStorageManager
 {
     private readonly BlobServiceClient _blobServiceClient;
     private readonly string _containerName;
 
-    public ReplyAppBlobStorageManager(IConfiguration configuration)
+    public ArchiveBlobStorageManager(IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("BlobConnection");
+        var storageAccount = configuration["AppKeys:AzureStorageAccount"];
+        var storageKey = configuration["AppKeys:AzureStorageAccessKey"];
+        var endpointSuffix = configuration["AppKeys:AzureStorageEndpointSuffix"] ?? "core.windows.net";
 
-        if (string.IsNullOrWhiteSpace(connectionString))
-        {
-            var storageAccount = configuration["AppKeys:AzureStorageAccount"];
-            var storageKey = configuration["AppKeys:AzureStorageAccessKey"];
-            var endpointSuffix = configuration["AppKeys:AzureStorageEndpointSuffix"] ?? "core.windows.net";
-
-            connectionString =
-                $"DefaultEndpointsProtocol=https;" +
-                $"AccountName={storageAccount};" +
-                $"AccountKey={storageKey};" +
-                $"EndpointSuffix={endpointSuffix}";
-        }
+        var connectionString =
+            $"DefaultEndpointsProtocol=https;" +
+            $"AccountName={storageAccount};" +
+            $"AccountKey={storageKey};" +
+            $"EndpointSuffix={endpointSuffix}";
 
         _blobServiceClient = new BlobServiceClient(connectionString);
         _containerName = "files";
     }
 
-    public async Task<bool> DeleteAsync(string fileName, string folderPath)
+    public async Task<bool> DeleteAsync(string fileName, string folderPath = "Archives")
     {
         var containerClient = await GetContainerClientAsync();
         var blobName = BuildBlobName(folderPath, fileName);
@@ -157,7 +152,7 @@ public class ReplyAppBlobStorageManager : IFileStorageManager
         return false;
     }
 
-    public async Task<byte[]> DownloadAsync(string fileName, string folderPath)
+    public async Task<byte[]> DownloadAsync(string fileName, string folderPath = "Archives")
     {
         var containerClient = await GetContainerClientAsync();
         var blobName = BuildBlobName(folderPath, fileName);
@@ -192,7 +187,7 @@ public class ReplyAppBlobStorageManager : IFileStorageManager
         throw new NotImplementedException();
     }
 
-    public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath, bool overwrite)
+    public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = "Archives", bool overwrite = false)
     {
         if (bytes == null || bytes.Length == 0)
         {
@@ -215,7 +210,7 @@ public class ReplyAppBlobStorageManager : IFileStorageManager
         return finalFileName;
     }
 
-    public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath, bool overwrite)
+    public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath = "Archives", bool overwrite = false)
     {
         if (stream == null)
         {
@@ -262,7 +257,7 @@ public class ReplyAppBlobStorageManager : IFileStorageManager
 }
 #endregion
 
-#region ReplyAppHybridStorageManager
+#region ArchiveHybridStorageManager
 /// <summary>
 /// 마이그레이션 기간 동안
 /// - 업로드: Local + Blob 동시 저장
@@ -270,40 +265,36 @@ public class ReplyAppBlobStorageManager : IFileStorageManager
 /// - 삭제: Local + Blob 동시 삭제
 /// 를 수행하는 하이브리드 스토리지 매니저
 /// </summary>
-public class ReplyAppHybridStorageManager : IFileStorageManager
+public class ArchiveHybridStorageManager : IArchiveFileStorageManager
 {
     private readonly IWebHostEnvironment _environment;
     private readonly BlobServiceClient _blobServiceClient;
     private readonly string _containerName;
     private readonly string _folderPath;
 
-    public ReplyAppHybridStorageManager(
+    public ArchiveHybridStorageManager(
         IWebHostEnvironment environment,
         IConfiguration configuration)
     {
         _environment = environment;
-        _folderPath = Path.Combine(_environment.WebRootPath, "files");
-        _containerName = "files";
 
-        var connectionString = configuration.GetConnectionString("BlobConnection");
+        var storageAccount = configuration["AppKeys:AzureStorageAccount"];
+        var storageKey = configuration["AppKeys:AzureStorageAccessKey"];
+        var endpointSuffix = configuration["AppKeys:AzureStorageEndpointSuffix"] ?? "core.windows.net";
 
-        if (string.IsNullOrWhiteSpace(connectionString))
-        {
-            var storageAccount = configuration["AppKeys:AzureStorageAccount"];
-            var storageKey = configuration["AppKeys:AzureStorageAccessKey"];
-            var endpointSuffix = configuration["AppKeys:AzureStorageEndpointSuffix"] ?? "core.windows.net";
-
-            connectionString =
-                $"DefaultEndpointsProtocol=https;" +
-                $"AccountName={storageAccount};" +
-                $"AccountKey={storageKey};" +
-                $"EndpointSuffix={endpointSuffix}";
-        }
+        var connectionString =
+            $"DefaultEndpointsProtocol=https;" +
+            $"AccountName={storageAccount};" +
+            $"AccountKey={storageKey};" +
+            $"EndpointSuffix={endpointSuffix}";
 
         _blobServiceClient = new BlobServiceClient(connectionString);
+
+        _containerName = "files";
+        _folderPath = Path.Combine(_environment.WebRootPath, _containerName);
     }
 
-    public async Task<bool> DeleteAsync(string fileName, string folderPath)
+    public async Task<bool> DeleteAsync(string fileName, string folderPath = "Archives")
     {
         bool deleted = false;
 
@@ -327,7 +318,7 @@ public class ReplyAppHybridStorageManager : IFileStorageManager
         return deleted;
     }
 
-    public async Task<byte[]> DownloadAsync(string fileName, string folderPath)
+    public async Task<byte[]> DownloadAsync(string fileName, string folderPath = "Archives")
     {
         var containerClient = await GetContainerClientAsync();
         var blobName = BuildBlobName(folderPath, fileName);
@@ -367,7 +358,7 @@ public class ReplyAppHybridStorageManager : IFileStorageManager
         throw new NotImplementedException();
     }
 
-    public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath, bool overwrite)
+    public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = "Archives", bool overwrite = false)
     {
         if (bytes == null || bytes.Length == 0)
         {
@@ -397,7 +388,7 @@ public class ReplyAppHybridStorageManager : IFileStorageManager
         return finalFileName;
     }
 
-    public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath, bool overwrite)
+    public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath = "Archives", bool overwrite = false)
     {
         if (stream == null)
         {
