@@ -16,18 +16,18 @@ public partial class Manage
     public int ParentId { get; set; } = 0;
 
     [Parameter]
-    public string ParentKey { get; set; } = "";
+    public string ParentKey { get; set; } = string.Empty;
     #endregion
 
     #region Injectors
     [Inject]
-    public NavigationManager Nav { get; set; }
+    public NavigationManager Nav { get; set; } = default!;
 
     [Inject]
-    public IJSRuntime JSRuntimeInjector { get; set; }
+    public IJSRuntime JSRuntimeInjector { get; set; } = default!;
 
     [Inject]
-    public IBannedTypeRepository RepositoryReference { get; set; }
+    public IBannedTypeRepository RepositoryReference { get; set; } = default!;
     #endregion
 
     #region Properties
@@ -40,28 +40,27 @@ public partial class Manage
     /// <summary>
     /// EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기
     /// </summary>
-    //public Components.EditorForm EditorFormReference { get; set; }
-    public Components.ModalForm EditorFormReference { get; set; }
+    public Components.ModalForm? EditorFormReference { get; set; }
 
     /// <summary>
     /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
     /// </summary>
-    public DeleteDialog DeleteDialogReference { get; set; }
+    public DeleteDialog? DeleteDialogReference { get; set; }
 
     /// <summary>
     /// 현재 페이지에서 리스트로 사용되는 모델 리스트 
     /// </summary>
-    protected List<BannedTypeModel> models = new List<BannedTypeModel>();
+    protected List<BannedTypeModel> models = new();
 
     /// <summary>
     /// 현재 페이지에서 선택된 단일 데이터를 나타내는 모델 클래스 
     /// </summary>
-    protected BannedTypeModel model = new BannedTypeModel();
+    protected BannedTypeModel model = new();
 
     /// <summary>
     /// 페이저 설정
     /// </summary>
-    protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase()
+    protected DulPager.DulPagerBase pager = new()
     {
         PageNumber = 1,
         PageIndex = 0,
@@ -75,7 +74,7 @@ public partial class Manage
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        if (UserId == "" && UserName == "")
+        if (string.IsNullOrEmpty(UserId) && string.IsNullOrEmpty(UserName))
         {
             await GetUserIdAndUserName();
         }
@@ -87,36 +86,40 @@ public partial class Manage
     private async Task DisplayData()
     {
         // ParentKey와 ParentId를 사용하는 목적은 특정 부모의 Details 페이지에서 리스트로 표현하기 위함
-        if (ParentKey != "")
+        if (!string.IsNullOrEmpty(ParentKey))
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<string>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentKey);
+            var articleSet = await RepositoryReference.GetArticlesAsync<string>(
+                pager.PageIndex, pager.PageSize, "", searchQuery, sortOrder, ParentKey);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else if (ParentId != 0)
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentId);
+            var articleSet = await RepositoryReference.GetArticlesAsync<int>(
+                pager.PageIndex, pager.PageSize, "", searchQuery, sortOrder, ParentId);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, parentIdentifier: 0);
+            var articleSet = await RepositoryReference.GetArticlesAsync<int>(
+                pager.PageIndex, pager.PageSize, searchField: "", searchQuery, sortOrder, parentIdentifier: 0);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
 
-        StateHasChanged(); // Refresh
+        StateHasChanged();
     }
 
-    protected async void PageIndexChanged(int pageIndex)
+    protected async Task PageIndexChanged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
 
         await DisplayData();
-
-        StateHasChanged();
     }
 
     #region Event Handlers
@@ -126,8 +129,8 @@ public partial class Manage
     protected void ShowEditorForm()
     {
         EditorFormTitle = "CREATE";
-        this.model = new BannedTypeModel(); // 모델 초기화
-        EditorFormReference.Show();
+        model = new BannedTypeModel();
+        EditorFormReference?.Show();
     }
 
     /// <summary>
@@ -136,9 +139,8 @@ public partial class Manage
     protected void EditBy(BannedTypeModel model)
     {
         EditorFormTitle = "EDIT";
-        this.model = new BannedTypeModel(); // 모델 초기화
-        this.model = model;
-        EditorFormReference.Show();
+        this.model = model ?? new BannedTypeModel();
+        EditorFormReference?.Show();
     }
 
     /// <summary>
@@ -146,18 +148,17 @@ public partial class Manage
     /// </summary>
     protected void DeleteBy(BannedTypeModel model)
     {
-        this.model = model;
-        DeleteDialogReference.Show();
+        this.model = model ?? new BannedTypeModel();
+        DeleteDialogReference?.Show();
     }
     #endregion
 
     /// <summary>
     /// 모델 초기화 및 모달 폼 닫기
     /// </summary>
-    protected async void CreateOrEdit()
+    protected async Task CreateOrEdit()
     {
-        EditorFormReference.Hide();
-        model = null;
+        EditorFormReference?.Hide();
         model = new BannedTypeModel();
 
         await DisplayData();
@@ -166,12 +167,12 @@ public partial class Manage
     /// <summary>
     /// 삭제 모달 폼에서 현재 선택한 항목 삭제
     /// </summary>
-    protected async void DeleteClick()
+    protected async Task DeleteClick()
     {
-        await RepositoryReference.DeleteAsync(this.model.Id);
-        DeleteDialogReference.Hide();
-        this.model = new BannedTypeModel(); // 선택했던 모델 초기화
-        await DisplayData(); // 다시 로드
+        await RepositoryReference.DeleteAsync(model.Id);
+        DeleteDialogReference?.Hide();
+        model = new BannedTypeModel();
+        await DisplayData();
     }
 
     #region Toggle with Inline Dialog
@@ -189,17 +190,17 @@ public partial class Manage
     /// <summary>
     /// 토글: Pinned
     /// </summary>
-    protected async void ToggleClick()
+    protected async Task ToggleClick()
     {
         model.Active = !model.Active;
 
         // 변경된 내용 업데이트
-        await RepositoryReference.UpdateAsync(this.model);
+        await RepositoryReference.UpdateAsync(model);
 
-        IsInlineDialogShow = false; // 표시 속성 초기화
-        this.model = new BannedTypeModel(); // 선택한 모델 초기화 
+        IsInlineDialogShow = false;
+        model = new BannedTypeModel();
 
-        await DisplayData(); // 다시 로드
+        await DisplayData();
     }
 
     /// <summary>
@@ -207,19 +208,18 @@ public partial class Manage
     /// </summary>
     protected void ToggleBy(BannedTypeModel model)
     {
-        this.model = model;
+        this.model = model ?? new BannedTypeModel();
         IsInlineDialogShow = true;
     }
     #endregion
 
     #region Search
-    private string searchQuery = "";
+    private string searchQuery = string.Empty;
 
-    protected async void Search(string query)
+    protected async Task Search(string query)
     {
         pager.PageIndex = 0;
-
-        searchQuery = query;
+        searchQuery = query ?? string.Empty;
 
         await DisplayData();
     }
@@ -229,8 +229,7 @@ public partial class Manage
     protected void DownloadExcelWithWebApi()
     {
         FileUtil.SaveAsExcel(JSRuntimeInjector, "/BannedTypeDownload/ExcelDown");
-
-        Nav.NavigateTo($"/BannedTypes"); // 다운로드 후 현재 페이지 다시 로드
+        Nav.NavigateTo("/BannedTypes");
     }
 
     protected void DownloadExcel()
@@ -238,19 +237,19 @@ public partial class Manage
         //using (var package = new ExcelPackage())
         //{
         //    var worksheet = package.Workbook.Worksheets.Add("BannedTypes");
-
+        //
         //    var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
         //        (from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName })
         //        , true);
-
+        //
         //    var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
-
+        //
         //    // 그라데이션 효과 부여
         //    var rule = uploadCol.ConditionalFormatting.AddThreeColorScale();
         //    rule.LowValue.Color = Color.SkyBlue;
         //    rule.MiddleValue.Color = Color.White;
         //    rule.HighValue.Color = Color.Red;
-
+        //
         //    var header = worksheet.Cells["B2:F2"];
         //    worksheet.DefaultColWidth = 25;
         //    worksheet.Cells[3, 2, models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
@@ -261,23 +260,23 @@ public partial class Manage
         //    header.Style.Font.Bold = true;
         //    header.Style.Font.Color.SetColor(Color.White);
         //    header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
-
-        //    FileUtil.SaveAs(JSRuntimeInjector, $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_BannedTypes.xlsx", package.GetAsByteArray());
+        //
+        //    FileUtil.SaveAs(JSRuntimeInjector, $"{DateTime.Now:yyyyMMddhhmmss}_BannedTypes.xlsx", package.GetAsByteArray());
         //}
     }
     #endregion
 
     #region Sorting
-    private string sortOrder = "";
+    private string sortOrder = string.Empty;
 
-    protected async void SortByName()
+    protected async Task SortByName()
     {
         if (!sortOrder.Contains("Name"))
         {
-            sortOrder = ""; // 다른 열을 정렬하고 있었다면, 다시 초기화
+            sortOrder = string.Empty;
         }
 
-        if (sortOrder == "")
+        if (sortOrder == string.Empty)
         {
             sortOrder = "Name";
         }
@@ -287,7 +286,7 @@ public partial class Manage
         }
         else
         {
-            sortOrder = "";
+            sortOrder = string.Empty;
         }
 
         await DisplayData();
@@ -296,29 +295,40 @@ public partial class Manage
 
     #region Get UserId and UserName
     [Parameter]
-    public string UserId { get; set; } = "";
+    public string UserId { get; set; } = string.Empty;
 
     [Parameter]
-    public string UserName { get; set; } = "";
+    public string UserName { get; set; } = string.Empty;
 
-    [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; }
+    [Inject]
+    public UserManager<ApplicationUser> UserManagerRef { get; set; } = default!;
 
-    [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; }
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; } = default!;
 
     private async Task GetUserIdAndUserName()
     {
         var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        if (user.Identity.IsAuthenticated)
+        if (user.Identity?.IsAuthenticated == true)
         {
             var currentUser = await UserManagerRef.GetUserAsync(user);
-            UserId = currentUser.Id;
-            UserName = user.Identity.Name;
+
+            if (currentUser is not null)
+            {
+                UserId = currentUser.Id ?? string.Empty;
+                UserName = user.Identity?.Name ?? currentUser.UserName ?? "Anonymous";
+            }
+            else
+            {
+                UserId = string.Empty;
+                UserName = user.Identity?.Name ?? "Anonymous";
+            }
         }
         else
         {
-            UserId = "";
+            UserId = string.Empty;
             UserName = "Anonymous";
         }
     }
