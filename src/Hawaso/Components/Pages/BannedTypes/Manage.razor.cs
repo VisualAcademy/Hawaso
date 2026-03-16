@@ -17,6 +17,12 @@ public partial class Manage
 
     [Parameter]
     public string ParentKey { get; set; } = string.Empty;
+
+    [Parameter]
+    public string UserId { get; set; } = string.Empty;
+
+    [Parameter]
+    public string UserName { get; set; } = string.Empty;
     #endregion
 
     #region Injectors
@@ -28,6 +34,12 @@ public partial class Manage
 
     [Inject]
     public IBannedTypeRepository RepositoryReference { get; set; } = default!;
+
+    [Inject]
+    public UserManager<ApplicationUser> UserManagerRef { get; set; } = default!;
+
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; } = default!;
     #endregion
 
     #region Properties
@@ -35,6 +47,11 @@ public partial class Manage
     /// 글쓰기 또는 수정하기 폼의 제목에 전달할 문자열(태그 포함 가능)
     /// </summary>
     public string EditorFormTitle { get; set; } = "CREATE";
+
+    /// <summary>
+    /// 인라인 폼을 띄울건지 여부
+    /// </summary>
+    public bool IsInlineDialogShow { get; set; }
     #endregion
 
     /// <summary>
@@ -43,17 +60,17 @@ public partial class Manage
     public Components.ModalForm? EditorFormReference { get; set; }
 
     /// <summary>
-    /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
+    /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기
     /// </summary>
     public DeleteDialog? DeleteDialogReference { get; set; }
 
     /// <summary>
-    /// 현재 페이지에서 리스트로 사용되는 모델 리스트 
+    /// 현재 페이지에서 리스트로 사용되는 모델 리스트
     /// </summary>
     protected List<BannedTypeModel> models = new();
 
     /// <summary>
-    /// 현재 페이지에서 선택된 단일 데이터를 나타내는 모델 클래스 
+    /// 현재 페이지에서 선택된 단일 데이터를 나타내는 모델 클래스
     /// </summary>
     protected BannedTypeModel model = new();
 
@@ -67,6 +84,11 @@ public partial class Manage
         PageSize = 10,
         PagerButtonCount = 5
     };
+
+    #region Fields
+    private string searchQuery = string.Empty;
+    private string sortOrder = string.Empty;
+    #endregion
 
     #region Lifecycle Methods
     /// <summary>
@@ -85,11 +107,15 @@ public partial class Manage
 
     private async Task DisplayData()
     {
-        // ParentKey와 ParentId를 사용하는 목적은 특정 부모의 Details 페이지에서 리스트로 표현하기 위함
         if (!string.IsNullOrEmpty(ParentKey))
         {
             var articleSet = await RepositoryReference.GetArticlesAsync<string>(
-                pager.PageIndex, pager.PageSize, "", searchQuery, sortOrder, ParentKey);
+                pager.PageIndex,
+                pager.PageSize,
+                string.Empty,
+                searchQuery,
+                sortOrder,
+                ParentKey);
 
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
@@ -97,7 +123,12 @@ public partial class Manage
         else if (ParentId != 0)
         {
             var articleSet = await RepositoryReference.GetArticlesAsync<int>(
-                pager.PageIndex, pager.PageSize, "", searchQuery, sortOrder, ParentId);
+                pager.PageIndex,
+                pager.PageSize,
+                string.Empty,
+                searchQuery,
+                sortOrder,
+                ParentId);
 
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
@@ -105,7 +136,12 @@ public partial class Manage
         else
         {
             var articleSet = await RepositoryReference.GetArticlesAsync<int>(
-                pager.PageIndex, pager.PageSize, searchField: "", searchQuery, sortOrder, parentIdentifier: 0);
+                pager.PageIndex,
+                pager.PageSize,
+                searchField: string.Empty,
+                searchQuery: searchQuery,
+                sortOrder: sortOrder,
+                parentIdentifier: 0);
 
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
@@ -114,7 +150,7 @@ public partial class Manage
         StateHasChanged();
     }
 
-    protected async Task PageIndexChanged(int pageIndex)
+    protected async void PageIndexChanged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
@@ -124,7 +160,7 @@ public partial class Manage
 
     #region Event Handlers
     /// <summary>
-    /// 글쓰기 모달 폼 띄우기 
+    /// 글쓰기 모달 폼 띄우기
     /// </summary>
     protected void ShowEditorForm()
     {
@@ -136,19 +172,19 @@ public partial class Manage
     /// <summary>
     /// 관리자 전용: 모달 폼으로 선택 항목 수정
     /// </summary>
-    protected void EditBy(BannedTypeModel model)
+    protected void EditBy(BannedTypeModel selectedModel)
     {
         EditorFormTitle = "EDIT";
-        this.model = model ?? new BannedTypeModel();
+        model = selectedModel ?? new BannedTypeModel();
         EditorFormReference?.Show();
     }
 
     /// <summary>
     /// 관리자 전용: 모달 폼으로 선택 항목 삭제
     /// </summary>
-    protected void DeleteBy(BannedTypeModel model)
+    protected void DeleteBy(BannedTypeModel selectedModel)
     {
-        this.model = model ?? new BannedTypeModel();
+        model = selectedModel ?? new BannedTypeModel();
         DeleteDialogReference?.Show();
     }
     #endregion
@@ -156,7 +192,7 @@ public partial class Manage
     /// <summary>
     /// 모델 초기화 및 모달 폼 닫기
     /// </summary>
-    protected async Task CreateOrEdit()
+    protected async void CreateOrEdit()
     {
         EditorFormReference?.Hide();
         model = new BannedTypeModel();
@@ -167,20 +203,16 @@ public partial class Manage
     /// <summary>
     /// 삭제 모달 폼에서 현재 선택한 항목 삭제
     /// </summary>
-    protected async Task DeleteClick()
+    protected async void DeleteClick()
     {
         await RepositoryReference.DeleteAsync(model.Id);
         DeleteDialogReference?.Hide();
         model = new BannedTypeModel();
+
         await DisplayData();
     }
 
     #region Toggle with Inline Dialog
-    /// <summary>
-    /// 인라인 폼을 띄울건지 여부 
-    /// </summary>
-    public bool IsInlineDialogShow { get; set; } = false;
-
     protected void ToggleClose()
     {
         IsInlineDialogShow = false;
@@ -188,13 +220,12 @@ public partial class Manage
     }
 
     /// <summary>
-    /// 토글: Pinned
+    /// 토글: Active
     /// </summary>
-    protected async Task ToggleClick()
+    protected async void ToggleClick()
     {
         model.Active = !model.Active;
 
-        // 변경된 내용 업데이트
         await RepositoryReference.UpdateAsync(model);
 
         IsInlineDialogShow = false;
@@ -204,21 +235,20 @@ public partial class Manage
     }
 
     /// <summary>
-    /// ToggleBy(PinnedBy)
+    /// ToggleBy
     /// </summary>
-    protected void ToggleBy(BannedTypeModel model)
+    protected void ToggleBy(BannedTypeModel selectedModel)
     {
-        this.model = model ?? new BannedTypeModel();
+        model = selectedModel ?? new BannedTypeModel();
         IsInlineDialogShow = true;
     }
     #endregion
 
     #region Search
-    private string searchQuery = string.Empty;
-
-    protected async Task Search(string query)
+    protected async void Search(string query)
     {
         pager.PageIndex = 0;
+        pager.PageNumber = 1;
         searchQuery = query ?? string.Empty;
 
         await DisplayData();
@@ -239,12 +269,11 @@ public partial class Manage
         //    var worksheet = package.Workbook.Worksheets.Add("BannedTypes");
         //
         //    var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
-        //        (from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName })
-        //        , true);
+        //        (from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName }),
+        //        true);
         //
         //    var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
         //
-        //    // 그라데이션 효과 부여
         //    var rule = uploadCol.ConditionalFormatting.AddThreeColorScale();
         //    rule.LowValue.Color = Color.SkyBlue;
         //    rule.MiddleValue.Color = Color.White;
@@ -267,11 +296,9 @@ public partial class Manage
     #endregion
 
     #region Sorting
-    private string sortOrder = string.Empty;
-
-    protected async Task SortByName()
+    protected async void SortByName()
     {
-        if (!sortOrder.Contains("Name"))
+        if (!sortOrder.Contains("Name", StringComparison.Ordinal))
         {
             sortOrder = string.Empty;
         }
@@ -294,18 +321,6 @@ public partial class Manage
     #endregion
 
     #region Get UserId and UserName
-    [Parameter]
-    public string UserId { get; set; } = string.Empty;
-
-    [Parameter]
-    public string UserName { get; set; } = string.Empty;
-
-    [Inject]
-    public UserManager<ApplicationUser> UserManagerRef { get; set; } = default!;
-
-    [Inject]
-    public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; } = default!;
-
     private async Task GetUserIdAndUserName()
     {
         var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
