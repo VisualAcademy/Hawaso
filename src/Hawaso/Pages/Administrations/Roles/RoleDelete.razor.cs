@@ -1,9 +1,5 @@
-﻿using Hawaso.Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Hawaso.Pages.Administrations.Roles;
 
