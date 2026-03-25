@@ -1,4 +1,8 @@
-﻿namespace Hawaso.Infrastructures.Tenants;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Data.SqlClient;
+
+namespace Hawaso.Infrastructures.Tenants;
 
 public class TenantSchemaEnhancerCreatePartnersTable(string masterConnectionString)
 {
@@ -23,22 +27,41 @@ public class TenantSchemaEnhancerCreatePartnersTable(string masterConnectionStri
     // 모든 테넌트의 연결 문자열과 IsMultiPortalEnabled 값을 가져오는 메서드
     private List<(string ConnectionString, bool IsMultiPortalEnabled)> GetTenantDetails()
     {
-        List<(string ConnectionString, bool IsMultiPortalEnabled)> result = new List<(string, bool)>();
+        List<(string ConnectionString, bool IsMultiPortalEnabled)> result = new();
 
         using (SqlConnection connection = new SqlConnection(masterConnectionString))
         {
             connection.Open();
 
-            SqlCommand cmd = new SqlCommand("SELECT ConnectionString, IsMultiPortalEnabled FROM dbo.Tenants", connection);
-            using (SqlDataReader reader = cmd.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    result.Add((reader["ConnectionString"].ToString(), (bool)reader["IsMultiPortalEnabled"]));
-                }
-            }
+            using SqlCommand cmd = new SqlCommand(
+                "SELECT ConnectionString, IsMultiPortalEnabled FROM dbo.Tenants",
+                connection);
 
-            connection.Close();
+            using SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                object connectionStringValue = reader["ConnectionString"];
+                object isMultiPortalEnabledValue = reader["IsMultiPortalEnabled"];
+
+                if (connectionStringValue == DBNull.Value)
+                {
+                    continue;
+                }
+
+                string connectionString = Convert.ToString(connectionStringValue) ?? string.Empty;
+
+                if (string.IsNullOrWhiteSpace(connectionString))
+                {
+                    continue;
+                }
+
+                bool isMultiPortalEnabled =
+                    isMultiPortalEnabledValue != DBNull.Value &&
+                    Convert.ToBoolean(isMultiPortalEnabledValue);
+
+                result.Add((connectionString, isMultiPortalEnabled));
+            }
         }
 
         return result;
@@ -54,29 +77,27 @@ public class TenantSchemaEnhancerCreatePartnersTable(string masterConnectionStri
         {
             connection.Open();
 
-            SqlCommand cmdCheck = new SqlCommand(@"
-                    SELECT COUNT(*) 
-                    FROM INFORMATION_SCHEMA.TABLES 
-                    WHERE TABLE_SCHEMA = 'dbo' 
-                    AND TABLE_NAME = 'Partners'", connection);
+            using SqlCommand cmdCheck = new SqlCommand(@"
+                SELECT COUNT(*) 
+                FROM INFORMATION_SCHEMA.TABLES 
+                WHERE TABLE_SCHEMA = 'dbo' 
+                  AND TABLE_NAME = 'Partners'", connection);
 
-            int tableCount = (int)cmdCheck.ExecuteScalar();
+            int tableCount = Convert.ToInt32(cmdCheck.ExecuteScalar());
 
             if (tableCount == 0)
             {
-                SqlCommand cmdCreateTable = new SqlCommand(@"
-                        CREATE TABLE [dbo].[Partners](
-                            [ID] bigint IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
-                            [BaseAPIAddress] nvarchar(max) NULL,
-                            [Name] nvarchar(max) NULL,
-                            [Password] nvarchar(max) NULL,
-                            [PrimaryEmail] nvarchar(max) NULL
-                        )", connection);
+                using SqlCommand cmdCreateTable = new SqlCommand(@"
+                    CREATE TABLE [dbo].[Partners](
+                        [ID] bigint IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+                        [BaseAPIAddress] nvarchar(max) NULL,
+                        [Name] nvarchar(max) NULL,
+                        [Password] nvarchar(max) NULL,
+                        [PrimaryEmail] nvarchar(max) NULL
+                    )", connection);
 
                 cmdCreateTable.ExecuteNonQuery();
             }
-
-            connection.Close();
         }
     }
 
@@ -90,24 +111,22 @@ public class TenantSchemaEnhancerCreatePartnersTable(string masterConnectionStri
         {
             connection.Open();
 
-            SqlCommand cmdCheck = new SqlCommand(@"
-                    SELECT COUNT(*) 
-                    FROM dbo.Partners 
-                    WHERE Name = 'VisualAcademy'", connection);
+            using SqlCommand cmdCheck = new SqlCommand(@"
+                SELECT COUNT(*) 
+                FROM dbo.Partners 
+                WHERE Name = 'VisualAcademy'", connection);
 
-            int partnerCount = (int)cmdCheck.ExecuteScalar();
+            int partnerCount = Convert.ToInt32(cmdCheck.ExecuteScalar());
 
             if (partnerCount == 0)
             {
                 // 다음 코드는 교육용 암호를 사용한 것입니다. 실제 프로덕션 환경에서는 사용하지 마세요.
-                SqlCommand cmdInsert = new SqlCommand(@"
-                        INSERT INTO dbo.Partners (BaseAPIAddress, Name, Password, PrimaryEmail) 
-                        VALUES ('https://portal.visualacademy.com', 'VisualAcademy', 'Pa$$w0rd', 'visualacademy@visualacademy.com')", connection);
+                using SqlCommand cmdInsert = new SqlCommand(@"
+                    INSERT INTO dbo.Partners (BaseAPIAddress, Name, Password, PrimaryEmail) 
+                    VALUES ('https://portal.visualacademy.com', 'VisualAcademy', 'Pa$$w0rd', 'visualacademy@visualacademy.com')", connection);
 
                 cmdInsert.ExecuteNonQuery();
             }
-
-            connection.Close();
         }
     }
 }
