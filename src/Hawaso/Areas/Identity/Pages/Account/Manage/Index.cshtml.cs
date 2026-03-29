@@ -1,5 +1,6 @@
 ﻿using Hawaso.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,19 +19,19 @@ public partial class IndexModel : PageModel
         _signInManager = signInManager;
     }
 
-    public string Username { get; set; }
+    public string Username { get; set; } = string.Empty;
 
     [TempData]
-    public string StatusMessage { get; set; }
+    public string? StatusMessage { get; set; }
 
     [BindProperty]
-    public InputModel Input { get; set; }
+    public InputModel Input { get; set; } = new();
 
     public class InputModel
     {
         [Phone]
         [Display(Name = "Phone number")]
-        public string PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
     }
 
     private async Task LoadAsync(ApplicationUser user)
@@ -38,7 +39,7 @@ public partial class IndexModel : PageModel
         var userName = await _userManager.GetUserNameAsync(user);
         var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
-        Username = userName;
+        Username = userName ?? string.Empty;
 
         Input = new InputModel
         {
