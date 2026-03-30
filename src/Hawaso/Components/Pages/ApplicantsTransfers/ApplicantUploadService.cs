@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System.Text;
 
 namespace VisualAcademy.Components.Pages.ApplicantsTransfers;
 
@@ -7,93 +8,79 @@ public class ApplicantUploadService
 {
     public async Task<List<ApplicantTransfer>> ParseExcelAsync(Stream fileStream)
     {
+        ArgumentNullException.ThrowIfNull(fileStream);
+
         var applicants = new List<ApplicantTransfer>();
 
         using var memoryStream = new MemoryStream();
         await fileStream.CopyToAsync(memoryStream);
-        memoryStream.Position = 0; // Reset stream position
+        memoryStream.Position = 0;
 
         using var spreadsheetDocument = SpreadsheetDocument.Open(memoryStream, false);
-        WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
-        Sheet sheet = workbookPart.Workbook.Descendants<Sheet>().FirstOrDefault();
-        WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id);
-        SheetData sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
 
-        foreach (Row row in sheetData.Elements<Row>().Skip(7))
+        var workbookPart = spreadsheetDocument.WorkbookPart
+            ?? throw new InvalidOperationException("The Excel file does not contain a workbook part.");
+
+        var workbook = workbookPart.Workbook
+            ?? throw new InvalidOperationException("The Excel file does not contain a workbook.");
+
+        var sheet = workbook.Descendants<Sheet>().FirstOrDefault()
+            ?? throw new InvalidOperationException("The Excel file does not contain any sheets.");
+
+        var sheetId = sheet.Id?.Value;
+        if (string.IsNullOrWhiteSpace(sheetId))
         {
-            var cellEnumerator = row.Elements<Cell>().GetEnumerator();
+            throw new InvalidOperationException("The sheet Id is missing.");
+        }
 
-            cellEnumerator.MoveNext();
-            var department = ReadCellValue(workbookPart, cellEnumerator.Current);
+        var worksheetPart = workbookPart.GetPartById(sheetId) as WorksheetPart
+            ?? throw new InvalidOperationException("The worksheet part could not be found.");
 
-            cellEnumerator.MoveNext();
-            var employeeId = ReadCellValue(workbookPart, cellEnumerator.Current);
+        var worksheet = worksheetPart.Worksheet
+            ?? throw new InvalidOperationException("The worksheet could not be loaded.");
 
-            cellEnumerator.MoveNext();
-            var firstName = ReadCellValue(workbookPart, cellEnumerator.Current);
+        var sheetData = worksheet.Elements<SheetData>().FirstOrDefault()
+            ?? throw new InvalidOperationException("The worksheet does not contain sheet data.");
 
-            cellEnumerator.MoveNext();
-            var middleInitial = ReadCellValue(workbookPart, cellEnumerator.Current);
+        foreach (var row in sheetData.Elements<Row>().Skip(7))
+        {
+            string? department = GetCellValueByColumnName(workbookPart, row, "A");
+            string? employeeId = GetCellValueByColumnName(workbookPart, row, "B");
+            string? firstName = GetCellValueByColumnName(workbookPart, row, "C");
+            string? middleInitial = GetCellValueByColumnName(workbookPart, row, "D");
+            string? lastName = GetCellValueByColumnName(workbookPart, row, "E");
+            string? dateBirthday = GetCellValueByColumnName(workbookPart, row, "F");
+            string? ssNumber = GetCellValueByColumnName(workbookPart, row, "G");
+            string? address1 = GetCellValueByColumnName(workbookPart, row, "H");
+            string? address2 = GetCellValueByColumnName(workbookPart, row, "I");
+            string? city = GetCellValueByColumnName(workbookPart, row, "J");
+            string? state = GetCellValueByColumnName(workbookPart, row, "K");
+            string? zip = GetCellValueByColumnName(workbookPart, row, "L");
+            string? gender = GetCellValueByColumnName(workbookPart, row, "M");
+            string? cellPhone = GetCellValueByColumnName(workbookPart, row, "N");
+            string? primaryEmail = GetCellValueByColumnName(workbookPart, row, "O");
 
-            cellEnumerator.MoveNext();
-            var lastName = ReadCellValue(workbookPart, cellEnumerator.Current);
+            // 실제 엑셀 구조에 맞게 열 문자를 조정하세요.
+            // 아래는 기존 코드 흐름을 유지한 예시입니다.
+            string? employmentStatus = GetCellValueByColumnName(workbookPart, row, "P");
+            string? dateSeniority = GetCellValueByColumnName(workbookPart, row, "Q");
+            string? defaultJobsHR = GetCellValueByColumnName(workbookPart, row, "R");
+            string? employeeStatus = GetCellValueByColumnName(workbookPart, row, "S");
+            string? tribalNation = GetCellValueByColumnName(workbookPart, row, "T");
+            string? gamingLicenseType = GetCellValueByColumnName(workbookPart, row, "U");
+            string? dateRehired = GetCellValueByColumnName(workbookPart, row, "V");
+            string? dateTerminated = GetCellValueByColumnName(workbookPart, row, "W");
 
-            cellEnumerator.MoveNext();
-            var dateBirthday = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var ssNumber = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var address1 = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var address2 = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var city = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var state = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var zip = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var gender = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var cellPhone = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var primaryEmail = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            // 이후 열들에 대한 처리...
-            // ...
-
-            cellEnumerator.MoveNext();
-            var employmentStatus = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var dateSeniority = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var defaultJobsHR = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var employeeStatus = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var tribalNation = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var gamingLicenseType = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var dateRehired = ReadCellValue(workbookPart, cellEnumerator.Current);
-
-            cellEnumerator.MoveNext();
-            var dateTerminated = ReadCellValue(workbookPart, cellEnumerator.Current);
+            // 완전히 빈 행은 건너뛰기
+            if (IsRowEmpty(
+                department, employeeId, firstName, middleInitial, lastName,
+                dateBirthday, ssNumber, address1, address2, city, state, zip,
+                gender, cellPhone, primaryEmail, employmentStatus, dateSeniority,
+                defaultJobsHR, employeeStatus, tribalNation, gamingLicenseType,
+                dateRehired, dateTerminated))
+            {
+                continue;
+            }
 
             applicants.Add(new ApplicantTransfer
             {
@@ -104,7 +91,7 @@ public class ApplicantUploadService
                 LastName = lastName,
                 DOB = dateBirthday,
                 SSN = ssNumber,
-                Address = address1 + " " + address2,
+                Address = $"{address1} {address2}".Trim(),
                 City = city,
                 State = state,
                 PostalCode = zip,
@@ -115,7 +102,6 @@ public class ApplicantUploadService
                 WorkPhone = cellPhone,
                 Email = primaryEmail,
                 PrimaryEmail = primaryEmail,
-                // 추가적으로 필요한 매핑을 계속 진행...
                 EmploymentStatus = employmentStatus,
                 DateSeniority = dateSeniority,
                 DefaultJobsHR = defaultJobsHR,
@@ -130,15 +116,79 @@ public class ApplicantUploadService
         return applicants;
     }
 
-    private string ReadCellValue(WorkbookPart workbookPart, Cell cell)
+    private static string? GetCellValueByColumnName(WorkbookPart workbookPart, Row row, string columnName)
     {
-        if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
+        ArgumentNullException.ThrowIfNull(workbookPart);
+        ArgumentNullException.ThrowIfNull(row);
+        ArgumentException.ThrowIfNullOrWhiteSpace(columnName);
+
+        var cell = row.Elements<Cell>()
+            .FirstOrDefault(c =>
+            {
+                var cellReference = c.CellReference?.Value;
+                if (string.IsNullOrWhiteSpace(cellReference))
+                {
+                    return false;
+                }
+
+                return string.Equals(
+                    GetColumnName(cellReference),
+                    columnName,
+                    StringComparison.OrdinalIgnoreCase);
+            });
+
+        return ReadCellValue(workbookPart, cell);
+    }
+
+    private static string GetColumnName(string cellReference)
+    {
+        var columnName = new StringBuilder();
+
+        foreach (char ch in cellReference)
         {
-            return workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(int.Parse(cell.CellValue.InnerText)).InnerText;
+            if (char.IsLetter(ch))
+            {
+                columnName.Append(ch);
+            }
+            else
+            {
+                break;
+            }
         }
-        else
+
+        return columnName.ToString();
+    }
+
+    private static string? ReadCellValue(WorkbookPart workbookPart, Cell? cell)
+    {
+        if (cell is null)
         {
-            return cell.CellValue?.InnerText;
+            return null;
         }
+
+        if (cell.DataType?.Value == CellValues.SharedString)
+        {
+            var sharedStringTable = workbookPart.SharedStringTablePart?.SharedStringTable;
+            if (sharedStringTable is null)
+            {
+                return null;
+            }
+
+            if (!int.TryParse(cell.CellValue?.InnerText, out int sharedStringIndex))
+            {
+                return null;
+            }
+
+            return sharedStringTable.Elements<SharedStringItem>()
+                .ElementAtOrDefault(sharedStringIndex)?
+                .InnerText;
+        }
+
+        return cell.CellValue?.InnerText;
+    }
+
+    private static bool IsRowEmpty(params string?[] values)
+    {
+        return values.All(string.IsNullOrWhiteSpace);
     }
 }
