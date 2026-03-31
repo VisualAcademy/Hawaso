@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System;
 
 namespace Hawaso.Web.Components.Pages.VendorPages.Models
 {
@@ -16,7 +17,9 @@ namespace Hawaso.Web.Components.Pages.VendorPages.Models
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
-                connectionString = _configuration.GetConnectionString("TenantDbConnection");
+                connectionString = _configuration.GetConnectionString("TenantDbConnection")
+                    ?? throw new InvalidOperationException(
+                        "Connection string 'TenantDbConnection' was not found.");
             }
 
             var optionsBuilder = new DbContextOptionsBuilder<VendorPermanentDeleteDbContext>();
@@ -27,7 +30,10 @@ namespace Hawaso.Web.Components.Pages.VendorPages.Models
 
         public VendorPermanentDeleteDbContext CreateDbContext()
         {
-            var defaultConnectionString = _configuration.GetConnectionString("TenantDbConnection");
+            var defaultConnectionString = _configuration.GetConnectionString("TenantDbConnection")
+                ?? throw new InvalidOperationException(
+                    "Connection string 'TenantDbConnection' was not found.");
+
             return CreateDbContext(defaultConnectionString);
         }
     }
