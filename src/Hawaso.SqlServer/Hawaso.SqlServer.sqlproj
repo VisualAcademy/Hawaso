@@ -192,6 +192,7 @@
     <None Include="dbo\Scripts\Employee_FormData_References_Extract.sql" />
     <None Include="dbo\Scripts\Employee_FormData_OtherAddresses_Extract.sql" />
     <None Include="Seed\LicenseTypes.seed.sql" />
+    <None Include="Seed\AppointmentsTypes.seed.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment.sql" />

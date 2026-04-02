@@ -11,3 +11,4 @@
 */
 
 :r .\Seed\LicenseTypes.seed.sql
+:r .\Seed\AppointmentsTypes.seed.sql
