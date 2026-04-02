@@ -38,7 +38,7 @@
         <PackageReference Include="Azunt.TechnicianManagement" Version="1.0.1" />
         <PackageReference Include="Azunt.TenantManagement" Version="1.0.5" />
         <PackageReference Include="Azunt.TenantSettingManagement" Version="1.0.5" />
-        <PackageReference Include="Azure.Identity" Version="1.19.0" />
+        <PackageReference Include="Azure.Identity" Version="1.20.0" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.27.0" />
         <PackageReference Include="Blazored.Toast" Version="4.2.1" />
         <PackageReference Include="ChartJs.Blazor" Version="1.1.0" />
@@ -65,7 +65,7 @@
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.DataGrid.EntityFrameworkAdapter" Version="4.14.0" />
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.14.0" />
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.14.0" />
-        <PackageReference Include="Microsoft.Identity.Web" Version="4.6.0" />
+        <PackageReference Include="Microsoft.Identity.Web" Version="4.7.0" />
         <PackageReference Include="Microsoft.SemanticKernel" Version="1.74.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
