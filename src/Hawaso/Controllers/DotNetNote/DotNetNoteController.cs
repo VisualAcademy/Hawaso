@@ -1,8 +1,11 @@
-﻿using DotNetNote.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using DotNetNote.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Dul.Board;
 using Dul.Web;
 using Hawaso.Models.Notes;
@@ -15,9 +18,8 @@ public class DotNetNoteController(
     INoteCommentRepository commentRepository,
     ILogger<DotNetNoteController> logger,
     NoteDbContext context
-        ) : Controller
+) : Controller
 {
-
     // 공통 속성: 검색 모드: 검색 모드이면 true, 그렇지 않으면 false.
     public bool SearchMode { get; set; } = false;
     public string SearchField { get; set; } = ""; // 필드: Name, Title, Content
@@ -66,11 +68,9 @@ public class DotNetNoteController(
         //    100번째 페이지 보고 있다가 다시 리스트 왔을 때 100번째 페이지 표시
         if (!string.IsNullOrEmpty(Request.Cookies["DotNetNotePageNum"]))
         {
-            if (!String.IsNullOrEmpty(
-                Request.Cookies["DotNetNotePageNum"]))
+            if (!string.IsNullOrEmpty(Request.Cookies["DotNetNotePageNum"]))
             {
-                PageIndex =
-                    Convert.ToInt32(Request.Cookies["DotNetNotePageNum"]);
+                PageIndex = Convert.ToInt32(Request.Cookies["DotNetNotePageNum"]);
             }
             else
             {
@@ -79,8 +79,7 @@ public class DotNetNoteController(
         }
 
         // 게시판 리스트 정보 가져오기
-        //IEnumerable<Note> notes;
-        List<Note> notes = new List<Note>();
+        List<Note> notes = new();
         if (!SearchMode)
         {
             TotalRecordCount = repository.GetCountAll();
@@ -88,10 +87,8 @@ public class DotNetNoteController(
         }
         else
         {
-            TotalRecordCount = repository.GetCountBySearch(
-                SearchField, SearchQuery);
-            notes = repository.GetSeachAll(
-                PageIndex, SearchField, SearchQuery);
+            TotalRecordCount = repository.GetCountBySearch(SearchField, SearchQuery);
+            notes = repository.GetSeachAll(PageIndex, SearchField, SearchQuery);
         }
 
         // 주요 정보를 뷰 페이지로 전송
@@ -107,7 +104,6 @@ public class DotNetNoteController(
             RecordCount = TotalRecordCount,
             PageSize = 10,
             PageNumber = PageIndex + 1,
-
             SearchMode = SearchMode,
             SearchField = SearchField,
             SearchQuery = SearchQuery
@@ -141,11 +137,10 @@ public class DotNetNoteController(
     /// </summary>
     [HttpPost]
     [Authorize] // 스팸 글 때문에 추가
-    public async Task<IActionResult> Create(
-        Note model, ICollection<IFormFile> files)
+    public async Task<IActionResult> Create(Note model, ICollection<IFormFile> files)
     {
         //파일 업로드 처리 시작
-        string fileName = String.Empty;
+        string fileName = string.Empty;
         int fileSize = 0;
 
         var uploadFolder = Path.Combine(environment.WebRootPath, "files");
@@ -155,35 +150,35 @@ public class DotNetNoteController(
             if (file.Length > 0)
             {
                 fileSize = Convert.ToInt32(file.Length);
+
+                var parsedContentDisposition = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
+                var originalFileName = parsedContentDisposition.FileName?.Trim('"') ?? file.FileName;
+
                 // 파일명 중복 처리
                 fileName = Dul.FileUtility.GetFileNameWithNumbering(
-                    uploadFolder, Path.GetFileName(
-                        ContentDispositionHeaderValue.Parse(
-                            file.ContentDisposition).FileName.Trim('"')));
+                    uploadFolder,
+                    Path.GetFileName(originalFileName));
+
                 // 파일 업로드
-                using (var fileStream = new FileStream(
-                    Path.Combine(uploadFolder, fileName), FileMode.Create))
-                {
-                    await file.CopyToAsync(fileStream);
-                }
+                using var fileStream = new FileStream(Path.Combine(uploadFolder, fileName), FileMode.Create);
+                await file.CopyToAsync(fileStream);
             }
         }
 
-        Note note = new Note();
-
-        note.Name = model.Name;
-        note.Email = Dul.HtmlUtility.Encode(model.Email);
-        note.Homepage = model.Homepage;
-        //note.Title    = Dul.HtmlUtility.Encode(model.Title);
-        note.Title = model.Title;
-        note.Content = model.Content;
-        note.FileName = fileName;
-        note.FileSize = fileSize;
-        note.Password = (new Dul.Security.CryptorEngine())
-            .EncryptPassword(model.Password);
-        note.PostIp =
-            HttpContext.Connection.RemoteIpAddress.ToString(); // IP 주소
-        note.Encoding = model.Encoding;
+        Note note = new()
+        {
+            Name = model.Name,
+            Email = Dul.HtmlUtility.Encode(model.Email),
+            Homepage = model.Homepage,
+            //Title = Dul.HtmlUtility.Encode(model.Title),
+            Title = model.Title,
+            Content = model.Content,
+            FileName = fileName,
+            FileSize = fileSize,
+            Password = (new Dul.Security.CryptorEngine()).EncryptPassword(model.Password),
+            PostIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty, // IP 주소
+            Encoding = model.Encoding
+        };
 
         repository.Add(note); // 데이터 저장
 
@@ -197,30 +192,29 @@ public class DotNetNoteController(
     /// <summary>
     /// 게시판 파일 강제 다운로드 기능(/BoardDown/:Id)
     /// </summary>
-    public FileResult BoardDown(int id)
+    public FileResult? BoardDown(int id)
     {
         // 넘겨져 온 번호에 해당하는 파일명 가져오기(보안때문에... 파일명 숨김)
-        string fileName = repository.GetFileNameById(id);
+        string? fileName = repository.GetFileNameById(id);
 
-        if (fileName == null)
+        if (string.IsNullOrEmpty(fileName))
         {
             return null;
         }
-        else
+
+        // 다운로드 카운트 증가 메서드 호출
+        repository.UpdateDownCountById(id);
+
+        var fullPath = Path.Combine(environment.WebRootPath, "files", fileName);
+        if (System.IO.File.Exists(fullPath))
         {
-            // 다운로드 카운트 증가 메서드 호출
-            repository.UpdateDownCountById(id);
+            byte[] fileBytes = System.IO.File.ReadAllBytes(fullPath);
 
-            if (System.IO.File.Exists(Path.Combine(environment.WebRootPath, "files") + "\\" + fileName))
-            {
-                byte[] fileBytes = System.IO.File.ReadAllBytes(Path.Combine(environment.WebRootPath, "files") + "\\" + fileName);
-
-                //return File(fileBytes, "application/octet-stream", fileName);
-                return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
-            }
-
-            return null;
+            //return File(fileBytes, "application/octet-stream", fileName);
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
+
+        return null;
     }
 
     #region Details - 게시판의 상세 보기 페이지(Details, BoardView)
@@ -232,9 +226,16 @@ public class DotNetNoteController(
         // 넘겨온 Id 값에 해당하는 레코드 하나 읽어서 Note 클래스에 바인딩
         var note = repository.GetNoteById(id);
 
+        if (note is null)
+        {
+            return NotFound();
+        }
+
         //[!] 인코딩 방식에 따른 데이터 출력: 
         // 직접 문자열 비교해도 되지만, 학습목적으로 열거형으로 비교 
-        ContentEncodingType encoding = (ContentEncodingType)Enum.Parse(typeof(ContentEncodingType), note.Encoding);
+        ContentEncodingType encoding =
+            (ContentEncodingType)Enum.Parse(typeof(ContentEncodingType), note.Encoding);
+
         string encodedContent = "";
         switch (encoding)
         {
@@ -258,14 +259,20 @@ public class DotNetNoteController(
         ViewBag.Content = encodedContent; //[!]
 
         // 첨부된 파일 확인
-        if (note.FileName.Length > 1)
+        if (!string.IsNullOrEmpty(note.FileName) && note.FileName.Length > 1)
         {
             //[a] 파일 다운로드 링크: String.Format()으로 표현해 봄 
-            ViewBag.FileName = String.Format("<a href='/DotNetNote/BoardDown?Id={0}'>" + "{1}{2} / 전송수: {3}</a>", note.Id, "<img src=\"/images/ext/ext_zip.gif\" border=\"0\">", note.FileName, note.DownCount);
+            ViewBag.FileName = string.Format(
+                "<a href='/DotNetNote/BoardDown?Id={0}'>" + "{1}{2} / 전송수: {3}</a>",
+                note.Id,
+                "<img src=\"/images/ext/ext_zip.gif\" border=\"0\">",
+                note.FileName,
+                note.DownCount);
+
             //[b] 이미지 미리보기: C# 6.0 String 보간법으로 표현해 봄
             if (Dul.BoardLibrary.IsPhoto(note.FileName))
             {
-                ViewBag.ImageDown = $"<img src=\'/DotNetNote/ImageDown/{note.Id}\'><br />";
+                ViewBag.ImageDown = $"<img src='/DotNetNote/ImageDown/{note.Id}'><br />";
             }
         }
         else
@@ -274,9 +281,11 @@ public class DotNetNoteController(
         }
 
         // 현재 글에 해당하는 댓글 리스트와 현재 글 번호를 담아서 전달
-        NoteCommentViewModel vm = new NoteCommentViewModel();
-        vm.NoteCommentList = commentRepository.GetNoteComments(note.Id);
-        vm.BoardId = note.Id;
+        NoteCommentViewModel vm = new()
+        {
+            NoteCommentList = commentRepository.GetNoteComments(note.Id),
+            BoardId = note.Id
+        };
         ViewBag.CommentListAndId = vm;
 
         return View(note);
@@ -300,7 +309,6 @@ public class DotNetNoteController(
     [HttpPost]
     public IActionResult Delete(int id, string password)
     {
-        //if (_repository.DeleteNote(id, Password) > 0)
         if (repository.DeleteNote(id,
             (new Dul.Security.CryptorEngine()).EncryptPassword(password)) > 0)
         {
@@ -318,11 +326,8 @@ public class DotNetNoteController(
                 return RedirectToAction("Index");
             }
         }
-        else
-        {
-            ViewBag.Message = "삭제되지 않았습니다. 비밀번호를 확인하세요.";
-        }
 
+        ViewBag.Message = "삭제되지 않았습니다. 비밀번호를 확인하세요.";
         ViewBag.Id = id;
         return View();
     }
@@ -347,13 +352,17 @@ public class DotNetNoteController(
         // 기존 데이터를 바인딩
         var note = repository.GetNoteById(id);
 
+        if (note is null)
+        {
+            return NotFound();
+        }
+
         // 첨부된 파일명 및 파일크기 기록
-        if (note.FileName.Length > 0)
+        if (!string.IsNullOrEmpty(note.FileName))
         {
             ViewBag.FileName = note.FileName;
             ViewBag.FileSize = note.FileSize;
-            ViewBag.FileNamePrevious =
-                $"기존에 업로드된 파일명: {note.FileName}";
+            ViewBag.FileNamePrevious = $"기존에 업로드된 파일명: {note.FileName}";
         }
         else
         {
@@ -369,8 +378,11 @@ public class DotNetNoteController(
     /// </summary>
     [HttpPost]
     public async Task<IActionResult> Edit(
-        Note model, ICollection<IFormFile> files,
-        int id, string previousFileName = "", int previousFileSize = 0)
+        Note model,
+        ICollection<IFormFile> files,
+        int id,
+        string previousFileName = "",
+        int previousFileSize = 0)
     {
         ViewBag.FormType = BoardWriteFormType.Modify;
         ViewBag.TitleDescription = "글 수정 - 아래 항목을 수정하세요.";
@@ -379,7 +391,7 @@ public class DotNetNoteController(
         string fileName = "";
         int fileSize = 0;
 
-        if (previousFileName != null)
+        if (!string.IsNullOrEmpty(previousFileName))
         {
             fileName = previousFileName;
             fileSize = previousFileSize;
@@ -393,36 +405,37 @@ public class DotNetNoteController(
             if (file.Length > 0)
             {
                 fileSize = Convert.ToInt32(file.Length);
+
+                var parsedContentDisposition = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
+                var originalFileName = parsedContentDisposition.FileName?.Trim('"') ?? file.FileName;
+
                 // 파일명 중복 처리
                 fileName = Dul.FileUtility.GetFileNameWithNumbering(
-                    uploadFolder, Path.GetFileName(
-                        ContentDispositionHeaderValue.Parse(
-                            file.ContentDisposition).FileName.Trim('"')));
+                    uploadFolder,
+                    Path.GetFileName(originalFileName));
+
                 // 파일업로드
-                using (var fileStream = new FileStream(
-                    Path.Combine(uploadFolder, fileName), FileMode.Create))
-                {
-                    await file.CopyToAsync(fileStream);
-                }
+                using var fileStream = new FileStream(Path.Combine(uploadFolder, fileName), FileMode.Create);
+                await file.CopyToAsync(fileStream);
             }
         }
 
-        Note note = new Note();
-
-        note.Id = id;
-        note.Name = model.Name;
-        //note.Email = Dul.HtmlUtility.Encode(model.Email);
-        note.Email = model.Email;
-        note.Homepage = model.Homepage;
-        //note.Title = Dul.HtmlUtility.Encode(model.Title);
-        note.Title = model.Title;
-        note.Content = model.Content;
-        note.FileName = fileName;
-        note.FileSize = fileSize;
-        note.Password = (new Dul.Security.CryptorEngine()).EncryptPassword(model.Password);
-        note.ModifyIp =
-            HttpContext.Connection.RemoteIpAddress.ToString(); // IP 주소
-        note.Encoding = model.Encoding;
+        Note note = new()
+        {
+            Id = id,
+            Name = model.Name,
+            //Email = Dul.HtmlUtility.Encode(model.Email),
+            Email = model.Email,
+            Homepage = model.Homepage,
+            //Title = Dul.HtmlUtility.Encode(model.Title),
+            Title = model.Title,
+            Content = model.Content,
+            FileName = fileName,
+            FileSize = fileSize,
+            Password = (new Dul.Security.CryptorEngine()).EncryptPassword(model.Password),
+            ModifyIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty, // IP 주소
+            Encoding = model.Encoding
+        };
 
         int r = repository.UpdateNote(note); // 데이터베이스에 수정 적용
         if (r > 0)
@@ -430,12 +443,9 @@ public class DotNetNoteController(
             TempData["Message"] = "수정되었습니다.";
             return RedirectToAction("Details", new { Id = id });
         }
-        else
-        {
-            ViewBag.ErrorMessage =
-                "업데이트가 되지 않았습니다. 암호를 확인하세요.";
-            return View(note);
-        }
+
+        ViewBag.ErrorMessage = "업데이트가 되지 않았습니다. 암호를 확인하세요.";
+        return View(note);
     }
     #endregion
 
@@ -454,14 +464,19 @@ public class DotNetNoteController(
         // 기존 데이터를 바인딩
         var note = repository.GetNoteById(id); // 기존 부모글 Id
 
-        // 새로운 Note 개체 생성
-        var newNote = new Note();
+        if (note is null)
+        {
+            return NotFound();
+        }
 
-        // 기존 글의 제목과 내용을 새 Note 개체에 저장 후 전달
-        newNote.Title = $"Re : {note.Title}";
-        newNote.Content =
-            $"\n\nOn {note.PostDate}, '{note.Name}' wrote:\n----------\n>"
-            + $"{note.Content.Replace("\n", "\n>")}\n---------";
+        // 새로운 Note 개체 생성
+        var newNote = new Note
+        {
+            // 기존 글의 제목과 내용을 새 Note 개체에 저장 후 전달
+            Title = $"Re : {note.Title}",
+            Content =
+                $"\n\nOn {note.PostDate}, '{note.Name}' wrote:\n----------\n>{note.Content.Replace("\n", "\n>")}\n---------"
+        };
 
         return View(newNote);
     }
@@ -471,11 +486,10 @@ public class DotNetNoteController(
     /// </summary>
     [HttpPost]
     [Authorize] // 스팸 글 때문에 추가
-    public async Task<IActionResult> Reply(
-        Note model, ICollection<IFormFile> files, int id)
+    public async Task<IActionResult> Reply(Note model, ICollection<IFormFile> files, int id)
     {
         //파일 업로드 처리 시작
-        string fileName = String.Empty;
+        string fileName = string.Empty;
         int fileSize = 0;
 
         var uploadFolder = Path.Combine(environment.WebRootPath, "files");
@@ -485,33 +499,36 @@ public class DotNetNoteController(
             if (file.Length > 0)
             {
                 fileSize = Convert.ToInt32(file.Length);
+
+                var parsedContentDisposition = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
+                var originalFileName = parsedContentDisposition.FileName?.Trim('"') ?? file.FileName;
+
                 // 파일명 중복 처리
                 fileName = Dul.FileUtility.GetFileNameWithNumbering(
-                    uploadFolder, Path.GetFileName(
-                        ContentDispositionHeaderValue.Parse(
-                            file.ContentDisposition).FileName.Trim('"')));
+                    uploadFolder,
+                    Path.GetFileName(originalFileName));
+
                 // 파일 업로드
-                using (var fileStream = new FileStream(
-                    Path.Combine(uploadFolder, fileName), FileMode.Create))
-                {
-                    await file.CopyToAsync(fileStream);
-                }
+                using var fileStream = new FileStream(Path.Combine(uploadFolder, fileName), FileMode.Create);
+                await file.CopyToAsync(fileStream);
             }
         }
 
-        Note note = new Note();
-
-        note.Id = note.ParentNum = Convert.ToInt32(id); // 부모글 저장
-        note.Name = model.Name;
-        note.Email = Dul.HtmlUtility.Encode(model.Email);
-        note.Homepage = model.Homepage;
-        note.Title = Dul.HtmlUtility.Encode(model.Title);
-        note.Content = model.Content;
-        note.FileName = fileName;
-        note.FileSize = fileSize;
-        note.Password = (new Dul.Security.CryptorEngine()).EncryptPassword(model.Password);
-        note.PostIp = HttpContext.Connection.RemoteIpAddress.ToString();
-        note.Encoding = model.Encoding;
+        Note note = new()
+        {
+            Id = id,
+            ParentNum = id, // 부모글 저장
+            Name = model.Name,
+            Email = Dul.HtmlUtility.Encode(model.Email),
+            Homepage = model.Homepage,
+            Title = Dul.HtmlUtility.Encode(model.Title),
+            Content = model.Content,
+            FileName = fileName,
+            FileSize = fileSize,
+            Password = (new Dul.Security.CryptorEngine()).EncryptPassword(model.Password),
+            PostIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
+            Encoding = model.Encoding
+        };
 
         repository.ReplyNote(note); // 데이터 답변 저장
 
@@ -529,51 +546,50 @@ public class DotNetNoteController(
     /// </summary>
     public IActionResult ImageDown(int id)
     {
-        string fileName = "";
-
         // 넘겨져 온 번호에 해당하는 파일명 가져오기(보안때문에... 파일명 숨김)
-        fileName = repository.GetFileNameById(id);
+        string? fileName = repository.GetFileNameById(id);
 
-        if (fileName == null)
+        if (string.IsNullOrEmpty(fileName))
         {
-            return null;
+            return NotFound();
         }
-        else
+
+        string strFileName = fileName;
+        string strFileExt = Path.GetExtension(strFileName).ToLowerInvariant();
+        string strContentType = "";
+
+        if (strFileExt == ".gif" || strFileExt == ".jpg"
+            || strFileExt == ".jpeg" || strFileExt == ".png")
         {
-            string strFileName = fileName;
-            string strFileExt = Path.GetExtension(strFileName);
-            string strContentType = "";
-            if (strFileExt == ".gif" || strFileExt == ".jpg"
-                || strFileExt == ".jpeg" || strFileExt == ".png")
+            switch (strFileExt)
             {
-                switch (strFileExt)
-                {
-                    case ".gif":
-                        strContentType = "image/gif"; break;
-                    case ".jpg":
-                        strContentType = "image/jpeg"; break;
-                    case ".jpeg":
-                        strContentType = "image/jpeg"; break;
-                    case ".png":
-                        strContentType = "image/png"; break;
-                }
+                case ".gif":
+                    strContentType = "image/gif";
+                    break;
+                case ".jpg":
+                case ".jpeg":
+                    strContentType = "image/jpeg";
+                    break;
+                case ".png":
+                    strContentType = "image/png";
+                    break;
             }
-
-            if (System.IO.File.Exists(Path.Combine(environment.WebRootPath, "files") + "\\" + fileName))
-            {
-                // 다운로드 카운트 증가 메서드 호출
-                repository.UpdateDownCount(fileName);
-
-                // 이미지 파일 정보 얻기
-                byte[] fileBytes = System.IO.File.ReadAllBytes(Path.Combine(
-                    environment.WebRootPath, "files") + "\\" + fileName);
-
-                // 이미지 파일 다운로드 
-                return File(fileBytes, strContentType, fileName);
-            }
-
-            return Content("http://placehold.it/250x150?text=NoImage");
         }
+
+        var fullPath = Path.Combine(environment.WebRootPath, "files", fileName);
+        if (System.IO.File.Exists(fullPath))
+        {
+            // 다운로드 카운트 증가 메서드 호출
+            repository.UpdateDownCount(fileName);
+
+            // 이미지 파일 정보 얻기
+            byte[] fileBytes = System.IO.File.ReadAllBytes(fullPath);
+
+            // 이미지 파일 다운로드 
+            return File(fileBytes, strContentType, fileName);
+        }
+
+        return Content("http://placehold.it/250x150?text=NoImage");
     }
 
     #region CommentAdd: 댓글 입력 처리
@@ -582,16 +598,16 @@ public class DotNetNoteController(
     /// </summary>
     [HttpPost]
     [Authorize] // 스팸 글 때문에 추가
-    public IActionResult CommentAdd(
-        int BoardId, string txtName, string txtPassword, string txtOpinion)
+    public IActionResult CommentAdd(int BoardId, string txtName, string txtPassword, string txtOpinion)
     {
         // 댓글 개체 생성
-        NoteComment comment = new NoteComment();
-        comment.BoardId = BoardId;
-        comment.Name = txtName;
-        comment.Password =
-            (new Dul.Security.CryptorEngine()).EncryptPassword(txtPassword);
-        comment.Opinion = txtOpinion;
+        NoteComment comment = new()
+        {
+            BoardId = BoardId,
+            Name = txtName,
+            Password = (new Dul.Security.CryptorEngine()).EncryptPassword(txtPassword),
+            Opinion = txtOpinion
+        };
 
         // 댓글 데이터 저장
         commentRepository.AddNoteComment(comment);
@@ -617,17 +633,16 @@ public class DotNetNoteController(
     /// 댓글 삭제 처리
     /// </summary>
     [HttpPost]
-    public IActionResult CommentDelete(
-        string boardId, string id, string txtPassword)
+    public IActionResult CommentDelete(string boardId, string id, string txtPassword)
     {
         txtPassword = (new Dul.Security.CryptorEngine()).EncryptPassword(txtPassword);
+
         // 현재 삭제하려는 댓글의 암호가 맞으면, 삭제 진행
-        if (commentRepository.GetCountBy(Convert.ToInt32(boardId)
-            , Convert.ToInt32(id), txtPassword) > 0)
+        if (commentRepository.GetCountBy(Convert.ToInt32(boardId), Convert.ToInt32(id), txtPassword) > 0)
         {
             // 삭제 처리
-            commentRepository.DeleteNoteComment(
-                Convert.ToInt32(boardId), Convert.ToInt32(id), txtPassword);
+            commentRepository.DeleteNoteComment(Convert.ToInt32(boardId), Convert.ToInt32(id), txtPassword);
+
             // 게시판 상세 보기 페이지로 이동
             return RedirectToAction("Details", new { Id = boardId });
         }
@@ -676,12 +691,16 @@ public class DotNetNoteController(
     {
         return Json(new
         {
-            list = context.Notes.OrderByDescending(n => n.Id).Skip((page - 1) * 5).Take(5).Select(x => new
-            {
-                num = x.Id,
-                title = x.Title,
-                postDate = x.PostDate.ToString("yyyy.MM.dd")
-            }),
+            list = context.Notes
+                .OrderByDescending(n => n.Id)
+                .Skip((page - 1) * 5)
+                .Take(5)
+                .Select(x => new
+                {
+                    num = x.Id,
+                    title = x.Title,
+                    postDate = x.PostDate.ToString("yyyy.MM.dd")
+                }),
             count = context.Notes.Count()
         });
     }
@@ -698,18 +717,31 @@ public class DotNetNoteController(
     [AllowAnonymous]
     public JsonResult PopupList(int page = 1, string keyword = "")
     {
-        int cnt = 0;
+        int cnt;
 
         List<Note> notices;
         if (string.IsNullOrWhiteSpace(keyword))
         {
-            notices = context.Notes.OrderByDescending(n => n.Id).Skip((page - 1) * 5).Take(5).ToList();
+            notices = context.Notes
+                .OrderByDescending(n => n.Id)
+                .Skip((page - 1) * 5)
+                .Take(5)
+                .ToList();
+
             cnt = context.Notes.Count();
         }
         else
         {
-            notices = context.Notes.OrderByDescending(n => n.Id).Where(n => n.Title.Contains(keyword)).Skip((page - 1) * 5).Take(5).ToList();
-            cnt = context.Notes.Where(n => EF.Functions.Like(n.Title, "N%" + keyword + "%") || n.Title.Contains(keyword)).Count();
+            notices = context.Notes
+                .Where(n => n.Title.Contains(keyword))
+                .OrderByDescending(n => n.Id)
+                .Skip((page - 1) * 5)
+                .Take(5)
+                .ToList();
+
+            cnt = context.Notes
+                .Where(n => EF.Functions.Like(n.Title, $"N%{keyword}%") || n.Title.Contains(keyword))
+                .Count();
         }
 
         return Json(new
@@ -735,19 +767,43 @@ public class DotNetNoteController(
     [AllowAnonymous]
     public JsonResult NoticeView(int num, string keyword = "")
     {
-        var articleBase = context.Notes.Where(n => n.Id == num).SingleOrDefault();
+        var articleBase = context.Notes.SingleOrDefault(n => n.Id == num);
 
-        Note prevArticleSet = new Note();
-        Note nextArticleSet = new Note();
+        if (articleBase is null)
+        {
+            return Json(new
+            {
+                message = "NOT_FOUND"
+            });
+        }
+
+        // CS8600 경고 제거 핵심:
+        Note? prevArticleSet;
+        Note? nextArticleSet;
+
         if (string.IsNullOrWhiteSpace(keyword))
         {
-            prevArticleSet = context.Notes.Where(n => n.Id < num).OrderByDescending(n => n.Id).FirstOrDefault(); // 이전 
-            nextArticleSet = context.Notes.Where(n => n.Id > num).OrderBy(n => n.Id).FirstOrDefault(); // 다음 
+            prevArticleSet = context.Notes
+                .Where(n => n.Id < num)
+                .OrderByDescending(n => n.Id)
+                .FirstOrDefault(); // 이전
+
+            nextArticleSet = context.Notes
+                .Where(n => n.Id > num)
+                .OrderBy(n => n.Id)
+                .FirstOrDefault(); // 다음
         }
         else
         {
-            prevArticleSet = context.Notes.Where(n => n.Id < num && n.Title.Contains(keyword)).OrderByDescending(n => n.Id).FirstOrDefault(); // 이전 
-            nextArticleSet = context.Notes.Where(n => n.Id > num && n.Title.Contains(keyword)).OrderBy(n => n.Id).FirstOrDefault(); // 다음 
+            prevArticleSet = context.Notes
+                .Where(n => n.Id < num && n.Title.Contains(keyword))
+                .OrderByDescending(n => n.Id)
+                .FirstOrDefault(); // 이전
+
+            nextArticleSet = context.Notes
+                .Where(n => n.Id > num && n.Title.Contains(keyword))
+                .OrderBy(n => n.Id)
+                .FirstOrDefault(); // 다음
         }
 
         return Json(new
@@ -756,10 +812,10 @@ public class DotNetNoteController(
             postDate = articleBase.PostDate.ToString("yyyy.MM.dd"),
             content = articleBase.Content,
             fileName = articleBase.FileName,
-            prevNum = (prevArticleSet != null ? prevArticleSet.Id : -1),
-            prevTitle = (prevArticleSet != null ? prevArticleSet.Title : ""),
-            nextNum = (nextArticleSet != null ? nextArticleSet.Id : -1),
-            nextTitle = (nextArticleSet != null ? nextArticleSet.Title : "")
+            prevNum = prevArticleSet?.Id ?? -1,
+            prevTitle = prevArticleSet?.Title ?? "",
+            nextNum = nextArticleSet?.Id ?? -1,
+            nextTitle = nextArticleSet?.Title ?? ""
         });
     }
 
@@ -812,7 +868,6 @@ public class DotNetNoteController(
                 };
 
                 return Created("", "");
-
             }
             else
             {
@@ -826,13 +881,15 @@ public class DotNetNoteController(
                         msg = "수정되지 않았습니다."
                     });
                 }
+
                 return Created("", "");
             }
         }
         else
         {
             //return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState); // ASP.NET 
-            HttpRequestMessage request = new HttpRequestMessage();
+            HttpRequestMessage request = new();
+
             //return request.CreateResponse(HttpStatusCode.BadRequest); // ASP.NET Core
             return BadRequest(ModelState);
         }
@@ -849,13 +906,13 @@ public class DotNetNoteController(
     //    string tableID = HttpContext.Application["Notice.TID"].ToString();
     //    string tableName = tableID.ToUpper();
     //    string fileName = (new ArticleRepository()).GetFileNameById(tableName, num);
-
+    //
     //    if (Convert.ToBoolean(ConfigurationManager.AppSettings["AZURE_STORAGE_ENABLE"].ToString()))
     //    {
     //        //return Redirect($"/BoardDown.aspx?BoardName={boardName}&Num={file.ArticleId}&FileName={file.FileName}&IsSub={file.ArticleId.ToString().PadLeft(8, '0')}");
     //        // 서브 폴더에서 다운로드: 멀티파일 리스트에서 다운로드할 때 사용 됨 
     //        AzureBlobFileManager.FileDownFromAzureBlob(ConfigurationManager.AppSettings["AZURE_STORAGE_CONNECTIONSTRING"].ToString(), ConfigurationManager.AppSettings["AZURE_STORAGE_CONTAINERNAME"].ToString(), ConfigurationManager.AppSettings["AZURE_STORAGE_SUBFOLDER"].ToString(), tableName, fileName);
-
+    //
     //        return View();
     //    }
     //    else
@@ -865,9 +922,9 @@ public class DotNetNoteController(
     //        string downloadPath = (ConfigurationManager.AppSettings["FILE_UPLOAD_FOLDER"].ToString() == "") ?
     //            Path.Combine(Server.MapPath("./BoardFiles"), tableID) + "\\" :
     //            Path.Combine(HttpContext.Application["BOARD_FILE_PATH"].ToString(), tableID) + "\\";
-
+    //
     //        byte[] fileBytes = System.IO.File.ReadAllBytes(Path.Combine(downloadPath, fileName));
-
+    //
     //        return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
     //    }
     //}
