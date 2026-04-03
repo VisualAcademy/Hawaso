@@ -29,6 +29,7 @@ using Hawaso.Infrastructures.Tenants;
 using Hawaso.Models.CommonValues;
 using Hawaso.Models.Notes;
 using Hawaso.Services;
+using Hawaso.Services.Interfaces;
 using Hawaso.Settings;
 using Hawaso.Web.Components.Pages.VendorPages.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -295,6 +296,10 @@ void DependencyInjectionContainer(IServiceCollection services)
     services.AddDependencyInjectionContainerForResourceApp(connectionString, Azunt.Models.Enums.RepositoryMode.EfCore);
     services.AddTransient<ResourceAppDbContextFactory>();
     #endregion
+
+    services.AddScoped<IEmployeeLicenseNumberService, EmployeeLicenseNumberService>();
+    services.AddScoped<IVendorEmployeeLicenseNumberService, VendorEmployeeLicenseNumberService>();
+    services.AddScoped<IVendorLicenseNumberService, VendorLicenseNumberService>();
 }
 
 // DotNetSaleCore 관련 의존성 주입
