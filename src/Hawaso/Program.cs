@@ -12,6 +12,8 @@ using Azunt.TenantSettingManagement;
 using Azunt.Web.Components.Pages.Notes.Services;
 using Azunt.Web.Infrastructure.Extensions;
 using Azunt.Web.Policies;
+using Azunt.Web.Services;
+using Azunt.Web.Services.Interfaces;
 using Azunt.Web.Settings;
 using Blazored.Toast;
 using Dalbodre.Infrastructures.Cores;
@@ -433,7 +435,7 @@ builder.Host.UseSerilog();
 builder.Services.AddDbContext<Azunt.Data.LogsDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
+builder.Services.AddScoped<IPhotoLogService, InMemoryPhotoLogService>();
 
 var app = builder.Build();
 
