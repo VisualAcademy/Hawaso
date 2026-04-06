@@ -8,48 +8,72 @@ namespace Hawaso.Pages.Administrations.Roles;
 public partial class RoleEdit
 {
     [Parameter]
-    public string Id { get; set; }
+    public string Id { get; set; } = default!;
 
     [Inject]
-    public NavigationManager NavigationManagerRef { get; set; }
+    public NavigationManager NavigationManagerRef { get; set; } = default!;
 
     [Inject]
-    public RoleManager<ApplicationRole> RoleManager { get; set; }
-
-    public ApplicationRoleViewModel ViewModel { get; set; } = new ApplicationRoleViewModel();
-
-    public List<string> ErrorMessages { get; set; } = new List<string>();
+    public RoleManager<ApplicationRole> RoleManager { get; set; } = default!;
 
     [Inject]
-    public IJSRuntime JSRuntime { get; set; }
+    public IJSRuntime JSRuntime { get; set; } = default!;
 
-    private ApplicationRole model = new ApplicationRole();
+    public ApplicationRoleViewModel ViewModel { get; set; } = new();
+
+    public List<string> ErrorMessages { get; set; } = new();
+
+    private ApplicationRole model = new();
 
     protected override async Task OnInitializedAsync()
     {
-        model = await RoleManager.FindByIdAsync(Id);
+        if (string.IsNullOrWhiteSpace(Id))
+        {
+            ErrorMessages.Add("Role ID is missing.");
+            return;
+        }
+
+        model = await RoleManager.FindByIdAsync(Id) ?? new ApplicationRole();
+
+        if (string.IsNullOrEmpty(model.Id))
+        {
+            ErrorMessages.Add("The requested role could not be found.");
+            return;
+        }
+
         ViewModel.Id = model.Id;
-        ViewModel.RoleName = model.Name;
+        ViewModel.RoleName = model.Name ?? string.Empty;
     }
 
     public async Task HandleUpdate()
     {
-        var role = await RoleManager.FindByIdAsync(Id);
-        if (role != null)
-        {
-            role.Name = ViewModel.RoleName;
+        ErrorMessages.Clear();
 
-            IdentityResult identityResult = await RoleManager.UpdateAsync(role);
-            if (identityResult.Succeeded)
+        if (string.IsNullOrWhiteSpace(Id))
+        {
+            ErrorMessages.Add("Role ID is missing.");
+            return;
+        }
+
+        var role = await RoleManager.FindByIdAsync(Id);
+        if (role == null)
+        {
+            ErrorMessages.Add("The requested role could not be found.");
+            return;
+        }
+
+        role.Name = ViewModel.RoleName;
+
+        IdentityResult identityResult = await RoleManager.UpdateAsync(role);
+        if (identityResult.Succeeded)
+        {
+            NavigationManagerRef.NavigateTo($"/Administrations/Roles/RoleDetails/{Id}");
+        }
+        else
+        {
+            foreach (var error in identityResult.Errors)
             {
-                NavigationManagerRef.NavigateTo("/Administrations/Roles/RoleDetails/" + Id);
-            }
-            else
-            {
-                foreach (var error in identityResult.Errors)
-                {
-                    ErrorMessages.Add(error.Description);
-                }
+                ErrorMessages.Add(error.Description);
             }
         }
     }
