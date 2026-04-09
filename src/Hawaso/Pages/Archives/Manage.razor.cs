@@ -1,6 +1,7 @@
 ﻿using BlazorUtils;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
 using VisualAcademy.Models.Archives;
 
@@ -9,8 +10,10 @@ namespace Hawaso.Pages.Archives;
 public partial class Manage
 {
     #region Parameters
-    [Parameter] public int ParentId { get; set; } = 0;
-    [Parameter] public string ParentKey { get; set; } = "";
+    [Parameter] public int ParentId { get; set; }
+    [Parameter] public string ParentKey { get; set; } = string.Empty;
+    [Parameter] public string UserId { get; set; } = string.Empty;
+    [Parameter] public string UserName { get; set; } = string.Empty;
     #endregion
 
     #region Injectors
@@ -18,17 +21,23 @@ public partial class Manage
     [Inject] public IJSRuntime JSRuntimeInjector { get; set; } = default!;
     [Inject] public IArchiveRepository RepositoryReference { get; set; } = default!;
     [Inject] public IArchiveFileStorageManager FileStorageManagerReference { get; set; } = default!;
+    [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; } = default!;
+    [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; } = default!;
     #endregion
 
     #region Properties
-    /// <summary>글쓰기 또는 수정하기 폼의 제목(태그 포함 가능)</summary>
+    /// <summary>
+    /// 글쓰기 또는 수정하기 폼의 제목(태그 포함 가능)
+    /// </summary>
     public string EditorFormTitle { get; set; } = "CREATE";
     #endregion
 
-    // 모달 참조
+    #region References
     public Components.ModalForm? EditorFormReference { get; set; }
     public Components.DeleteDialog? DeleteDialogReference { get; set; }
+    #endregion
 
+    #region Fields
     protected List<Archive> models = new();
     protected Archive model = new();
 
@@ -39,6 +48,10 @@ public partial class Manage
         PageSize = 10,
         PagerButtonCount = 5
     };
+
+    private string searchQuery = string.Empty;
+    private string sortOrder = string.Empty;
+    #endregion
 
     #region Lifecycle Methods
     protected override async Task OnInitializedAsync()
@@ -52,31 +65,54 @@ public partial class Manage
     }
     #endregion
 
+    #region Data
     private async Task DisplayData()
     {
-        // 특정 부모 Details 페이지에서 리스트로 표현할 때 ParentKey/ParentId 사용
         if (!string.IsNullOrEmpty(ParentKey))
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<string>(pager.PageIndex, pager.PageSize, searchField: "", searchQuery, sortOrder, ParentKey);
+            var articleSet = await RepositoryReference.GetArticlesAsync<string>(
+                pager.PageIndex,
+                pager.PageSize,
+                searchField: "",
+                searchQuery,
+                sortOrder,
+                ParentKey);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else if (ParentId != 0)
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, searchField: "", searchQuery, sortOrder, ParentId);
+            var articleSet = await RepositoryReference.GetArticlesAsync<int>(
+                pager.PageIndex,
+                pager.PageSize,
+                searchField: "",
+                searchQuery,
+                sortOrder,
+                ParentId);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, searchField: "", searchQuery, sortOrder, parentIdentifier: 0);
+            var articleSet = await RepositoryReference.GetArticlesAsync<int>(
+                pager.PageIndex,
+                pager.PageSize,
+                searchField: "",
+                searchQuery,
+                sortOrder,
+                parentIdentifier: 0);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
 
         StateHasChanged();
     }
+    #endregion
 
+    #region Paging / Navigation
     protected void NameClick(long id) => Nav.NavigateTo($"/Archives/Details/{id}");
 
     protected async Task PageIndexChanged(int pageIndex)
@@ -84,8 +120,8 @@ public partial class Manage
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
         await DisplayData();
-        StateHasChanged();
     }
+    #endregion
 
     #region Event Handlers
     protected void ShowEditorForm()
@@ -95,44 +131,48 @@ public partial class Manage
         {
             ParentId = ParentId,
             ParentKey = ParentKey,
-            Name = UserName // 로그인 사용자 이름 기본 제공
+            Name = UserName
         };
+
         EditorFormReference?.Show();
     }
 
     protected void EditBy(Archive selected)
     {
-        EditorFormTitle = "EDIT";
-        model = selected;
+        model = selected ?? new Archive();
         model.ParentId = ParentId;
         model.ParentKey = ParentKey;
+        EditorFormTitle = "EDIT";
+
         EditorFormReference?.Show();
     }
 
     protected void DeleteBy(Archive selected)
     {
-        model = selected;
+        model = selected ?? new Archive();
         DeleteDialogReference?.Show();
     }
-    #endregion
 
     protected async Task DownloadBy(Archive selected)
     {
-        if (!string.IsNullOrWhiteSpace(selected.FileName))
+        if (string.IsNullOrWhiteSpace(selected.FileName))
         {
-            var fileBytes = await FileStorageManagerReference.DownloadAsync(selected.FileName, "Archives");
-            if (fileBytes is { Length: > 0 })
-            {
-                // DownCount null-safe 증가
-                selected.DownCount = (selected.DownCount ?? 0) + 1;
-                await RepositoryReference.EditAsync(selected);
-
-                await FileUtil.SaveAs(JSRuntimeInjector, selected.FileName, fileBytes);
-            }
+            return;
         }
+
+        var fileBytes = await FileStorageManagerReference.DownloadAsync(selected.FileName, "Archives");
+        if (fileBytes is not { Length: > 0 })
+        {
+            return;
+        }
+
+        selected.DownCount = (selected.DownCount ?? 0) + 1;
+        await RepositoryReference.EditAsync(selected);
+
+        await FileUtil.SaveAs(JSRuntimeInjector, selected.FileName, fileBytes);
     }
 
-    protected async void CreateOrEdit()
+    protected async Task CreateOrEdit()
     {
         EditorFormReference?.Hide();
         model = new Archive();
@@ -141,20 +181,21 @@ public partial class Manage
 
     protected async Task DeleteClick()
     {
-        if (!string.IsNullOrWhiteSpace(model?.FileName))
+        if (!string.IsNullOrWhiteSpace(model.FileName))
         {
-            // 첨부 파일 삭제 
             await FileStorageManagerReference.DeleteAsync(model.FileName, "Archives");
         }
 
         await RepositoryReference.DeleteAsync(model.Id);
         DeleteDialogReference?.Hide();
+
         model = new Archive();
         await DisplayData();
     }
+    #endregion
 
     #region Toggle with Inline Dialog
-    public bool IsInlineDialogShow { get; set; } = false;
+    public bool IsInlineDialogShow { get; set; }
 
     protected void ToggleClose()
     {
@@ -164,7 +205,12 @@ public partial class Manage
 
     protected async Task ToggleClick()
     {
-        model.IsPinned = model?.IsPinned == true ? false : true;
+        if (model is null)
+        {
+            return;
+        }
+
+        model.IsPinned = model.IsPinned != true;
 
         await RepositoryReference.UpdateAsync(model);
 
@@ -175,37 +221,31 @@ public partial class Manage
 
     protected void ToggleBy(Archive selected)
     {
-        model = selected;
+        model = selected ?? new Archive();
         IsInlineDialogShow = true;
     }
     #endregion
 
     #region Search
-    private string searchQuery = "";
-
     protected async Task Search(string query)
     {
         pager.PageIndex = 0;
-        searchQuery = query;
+        searchQuery = query ?? string.Empty;
         await DisplayData();
     }
     #endregion
 
-    #region Excel (EPPlus 제거)
-    // 서버의 OpenXML 기반 API를 호출하여 엑셀 다운로드
+    #region Excel
     protected void DownloadExcelWithWebApi()
     {
         FileUtil.SaveAsExcel(JSRuntimeInjector, "/ArchiveDownload/ExcelDown");
-        Nav.NavigateTo("/Archives"); // 필요 시 강력 새로고침
+        Nav.NavigateTo("/Archives");
     }
 
-    // EPPlus 제거: 기존 메서드는 Web API 호출로 위임
     protected void DownloadExcel() => DownloadExcelWithWebApi();
     #endregion
 
     #region Sorting
-    private string sortOrder = "";
-
     protected async Task SortByName()
     {
         sortOrder = sortOrder switch
@@ -214,6 +254,7 @@ public partial class Manage
             "Name" => "NameDesc",
             _ => ""
         };
+
         await DisplayData();
     }
 
@@ -225,16 +266,12 @@ public partial class Manage
             "Title" => "TitleDesc",
             _ => ""
         };
+
         await DisplayData();
     }
     #endregion
 
     #region Get UserId and UserName
-    [Parameter] public string UserId { get; set; } = "";
-    [Parameter] public string UserName { get; set; } = "";
-    [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; } = default!;
-    [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; } = default!;
-
     private async Task GetUserIdAndUserName()
     {
         var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
@@ -243,12 +280,12 @@ public partial class Manage
         if (user.Identity?.IsAuthenticated == true)
         {
             var currentUser = await UserManagerRef.GetUserAsync(user);
-            UserId = currentUser?.Id ?? "";
-            UserName = user.Identity?.Name ?? currentUser?.UserName ?? "Anonymous";
+            UserId = currentUser?.Id ?? string.Empty;
+            UserName = user.Identity.Name ?? currentUser?.UserName ?? "Anonymous";
         }
         else
         {
-            UserId = "";
+            UserId = string.Empty;
             UserName = "Anonymous";
         }
     }
