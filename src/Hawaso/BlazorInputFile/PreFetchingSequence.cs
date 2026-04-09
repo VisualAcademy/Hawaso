@@ -10,7 +10,10 @@ internal class PreFetchingSequence<T>
     private readonly Queue<T> _buffer;
     private long _maxFetchedIndex;
 
-    public PreFetchingSequence(Func<long, CancellationToken, T> fetchCallback, long totalFetchableItems, int maxBufferCapacity)
+    public PreFetchingSequence(
+        Func<long, CancellationToken, T> fetchCallback,
+        long totalFetchableItems,
+        int maxBufferCapacity)
     {
         _fetchCallback = fetchCallback;
         _buffer = new Queue<T>();
@@ -21,6 +24,7 @@ internal class PreFetchingSequence<T>
     public T ReadNext(CancellationToken cancellationToken)
     {
         EnqueueFetches(cancellationToken);
+
         if (_buffer.Count == 0)
         {
             throw new InvalidOperationException("There are no more entries to read");
@@ -28,21 +32,20 @@ internal class PreFetchingSequence<T>
 
         var next = _buffer.Dequeue();
         EnqueueFetches(cancellationToken);
+
         return next;
     }
 
-    public bool TryPeekNext(out T result)
+    public bool TryPeekNext(out T? result)
     {
         if (_buffer.Count > 0)
         {
             result = _buffer.Peek();
             return true;
         }
-        else
-        {
-            result = default;
-            return false;
-        }
+
+        result = default;
+        return false;
     }
 
     private void EnqueueFetches(CancellationToken cancellationToken)
