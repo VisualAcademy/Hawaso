@@ -172,7 +172,7 @@ public partial class Manage
         await FileUtil.SaveAs(JSRuntimeInjector, selected.FileName, fileBytes);
     }
 
-    protected async Task CreateOrEdit()
+    protected async void CreateOrEdit()
     {
         EditorFormReference?.Hide();
         model = new Archive();
