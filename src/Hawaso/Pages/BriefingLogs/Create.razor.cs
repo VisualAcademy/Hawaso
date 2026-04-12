@@ -11,16 +11,16 @@ public partial class Create
 {
     #region Injectors
     [Inject]
-    public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; }
+    public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; } = null!;
 
     [Inject]
-    public NavigationManager NavigationManagerReference { get; set; }
+    public NavigationManager NavigationManagerReference { get; set; } = null!;
     #endregion
 
     #region Properties
-    public BriefingLog Model { get; set; }
+    public BriefingLog Model { get; set; } = new();
 
-    public string ParentId { get; set; }
+    public string ParentId { get; set; } = string.Empty;
     #endregion
 
     #region Fields
@@ -28,7 +28,7 @@ public partial class Create
     #endregion
 
     #region Event Handlers
-    protected async void FormSubmit()
+    protected async Task FormSubmit()
     {
         int.TryParse(ParentId, out int parentId);
         Model.ParentId = parentId;
@@ -58,9 +58,9 @@ public partial class Create
     }
 
     [Inject]
-    public IBriefingLogFileStorageManager FileStorageManager { get; set; }
-    private IFileListEntry[] selectedFiles;
-    protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files; 
+    public IBriefingLogFileStorageManager FileStorageManager { get; set; } = null!;
+    private IFileListEntry[]? selectedFiles;
+    protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
     #endregion
 
     #region Lifecycle Methods
@@ -83,21 +83,21 @@ public partial class Create
     [Parameter]
     public string UserName { get; set; } = "";
 
-    [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; }
+    [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; } = null!;
 
     // [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
-    [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; }
+    [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; } = null!;
 
     private async Task GetUserIdAndUserName()
     {
         var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        if (user.Identity.IsAuthenticated)
+        if (user.Identity?.IsAuthenticated == true)
         {
             var currentUser = await UserManagerRef.GetUserAsync(user);
-            UserId = currentUser.Id;
-            UserName = user.Identity.Name;
+            UserId = currentUser?.Id ?? "";
+            UserName = user.Identity?.Name ?? "";
         }
         else
         {
