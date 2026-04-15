@@ -13,7 +13,7 @@ namespace Hawaso.Pages.BriefingLogs;
 public partial class Manage
 {
     [Parameter] public int ParentId { get; set; } = 0;
-    [Parameter] public string ParentKey { get; set; } = "";
+    [Parameter] public string ParentKey { get; set; } = string.Empty;
 
     [Inject] public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; } = default!;
     [Inject] public NavigationManager NavigationManagerReference { get; set; } = default!;
@@ -21,10 +21,10 @@ public partial class Manage
     [Inject] public IBriefingLogFileStorageManager FileStorageManager { get; set; } = default!;
 
     /// <summary>EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기</summary>
-    public Components.EditorForm EditorFormReference { get; set; } = default!;
+    public Components.EditorForm? EditorFormReference { get; set; }
 
     /// <summary>DeleteDialog에 대한 참조: 모달로 항목 삭제하기</summary>
-    public Components.DeleteDialog DeleteDialogReference { get; set; } = default!;
+    public Components.DeleteDialog? DeleteDialogReference { get; set; }
 
     protected List<BriefingLog> models = new();
     protected BriefingLog model = new();
@@ -32,7 +32,7 @@ public partial class Manage
     /// <summary>공지사항으로 올리기 폼을 띄울건지 여부</summary>
     public bool IsInlineDialogShow { get; set; } = false;
 
-    protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase()
+    protected DulPager.DulPagerBase pager = new()
     {
         PageNumber = 1,
         PageIndex = 0,
@@ -40,140 +40,188 @@ public partial class Manage
         PagerButtonCount = 5
     };
 
-    protected override async Task OnInitializedAsync() => await DisplayData();
+    public string EditorFormTitle { get; set; } = "CREATE";
+
+    private string searchQuery = string.Empty;
+    private string sortOrder = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DisplayData();
+    }
 
     private async Task DisplayData()
     {
         if (!string.IsNullOrEmpty(ParentKey))
         {
-            var articleSet = await UploadRepositoryAsyncReference.GetArticles<string>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentKey);
+            var articleSet = await UploadRepositoryAsyncReference.GetArticles<string>(
+                pager.PageIndex,
+                pager.PageSize,
+                string.Empty,
+                searchQuery,
+                sortOrder,
+                ParentKey);
+
             pager.RecordCount = articleSet.TotalCount;
-            models = articleSet.Items.ToList();
+            models = articleSet.Items?.ToList() ?? new List<BriefingLog>();
         }
         else if (ParentId != 0)
         {
-            var articleSet = await UploadRepositoryAsyncReference.GetArticles<int>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentId);
+            var articleSet = await UploadRepositoryAsyncReference.GetArticles<int>(
+                pager.PageIndex,
+                pager.PageSize,
+                string.Empty,
+                searchQuery,
+                sortOrder,
+                ParentId);
+
             pager.RecordCount = articleSet.TotalCount;
-            models = articleSet.Items.ToList();
+            models = articleSet.Items?.ToList() ?? new List<BriefingLog>();
         }
         else
         {
-            var articleSet = await UploadRepositoryAsyncReference.GetArticles<int>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, 0);
+            var articleSet = await UploadRepositoryAsyncReference.GetArticles<int>(
+                pager.PageIndex,
+                pager.PageSize,
+                string.Empty,
+                searchQuery,
+                sortOrder,
+                0);
+
             pager.RecordCount = articleSet.TotalCount;
-            models = articleSet.Items.ToList();
+            models = articleSet.Items?.ToList() ?? new List<BriefingLog>();
         }
 
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
-    protected void NameClick(int id) => NavigationManagerReference.NavigateTo($"/BriefingLogs/Details/{id}");
+    protected void NameClick(int id)
+    {
+        NavigationManagerReference.NavigateTo($"/BriefingLogs/Details/{id}");
+    }
 
     protected async void PageIndexChanged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
-        await DisplayData();
-        StateHasChanged();
-    }
 
-    public string EditorFormTitle { get; set; } = "CREATE";
+        await DisplayData();
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected void ShowEditorForm()
     {
         EditorFormTitle = "CREATE";
-        this.model = new BriefingLog { ParentKey = ParentKey };
-        EditorFormReference.Show();
+        model = new BriefingLog { ParentKey = ParentKey };
+        EditorFormReference?.Show();
     }
 
-    protected void EditBy(BriefingLog model)
+    protected void EditBy(BriefingLog selectedModel)
     {
+        model = selectedModel ?? new BriefingLog();
         EditorFormTitle = "EDIT";
-        this.model = model;
-        this.model.ParentKey = ParentKey;
-        EditorFormReference.Show();
+        model.ParentKey = ParentKey;
+        EditorFormReference?.Show();
     }
 
-    protected void DeleteBy(BriefingLog model)
+    protected void DeleteBy(BriefingLog selectedModel)
     {
-        this.model = model;
-        DeleteDialogReference.Show();
+        model = selectedModel ?? new BriefingLog();
+        DeleteDialogReference?.Show();
     }
 
-    protected void ToggleBy(BriefingLog model)
+    protected void ToggleBy(BriefingLog selectedModel)
     {
-        this.model = model;
+        model = selectedModel ?? new BriefingLog();
         IsInlineDialogShow = true;
     }
 
-    protected async void DownloadBy(BriefingLog model)
+    protected async Task DownloadBy(BriefingLog selectedModel)
     {
-        if (!string.IsNullOrEmpty(model.FileName))
+        if (selectedModel is null || string.IsNullOrWhiteSpace(selectedModel.FileName))
         {
-            byte[] fileBytes = await FileStorageManager.DownloadAsync(model.FileName, "");
-            if (fileBytes != null)
-            {
-                model.DownCount = model.DownCount + 1;
-                await UploadRepositoryAsyncReference.EditAsync(model);
-                await FileUtil.SaveAs(JSRuntime, model.FileName, fileBytes);
-            }
+            return;
+        }
+
+        byte[] fileBytes = await FileStorageManager.DownloadAsync(selectedModel.FileName, "");
+
+        if (fileBytes is { Length: > 0 })
+        {
+            selectedModel.DownCount += 1;
+            await UploadRepositoryAsyncReference.EditAsync(selectedModel);
+            await FileUtil.SaveAs(JSRuntime, selectedModel.FileName, fileBytes);
         }
     }
 
+    // Manage.razor 쪽에서 void 반환형 콜백을 기대하는 경우가 있어 async void 유지
     protected async void CreateOrEdit()
     {
-        EditorFormReference.Hide();
-        this.model = new BriefingLog();
+        EditorFormReference?.Hide();
+        model = new BriefingLog();
+
         await DisplayData();
     }
 
     protected async void DeleteClick()
     {
-        if (!string.IsNullOrEmpty(model?.FileName))
+        string? fileName = model.FileName;
+
+        if (!string.IsNullOrWhiteSpace(fileName))
         {
-            await FileStorageManager.DeleteAsync(model.FileName, "");
+            await FileStorageManager.DeleteAsync(fileName, "");
         }
 
-        await UploadRepositoryAsyncReference.DeleteAsync(this.model.Id);
-        DeleteDialogReference.Hide();
-        this.model = new BriefingLog();
+        await UploadRepositoryAsyncReference.DeleteAsync(model.Id);
+
+        DeleteDialogReference?.Hide();
+        model = new BriefingLog();
+
         await DisplayData();
     }
 
     protected void ToggleClose()
     {
         IsInlineDialogShow = false;
-        this.model = new BriefingLog();
+        model = new BriefingLog();
     }
 
     protected async void ToggleClick()
     {
-        this.model.IsPinned = (this.model?.IsPinned == true) ? false : true;
-        await UploadRepositoryAsyncReference.EditAsync(this.model);
+        model.IsPinned = !model.IsPinned;
+
+        await UploadRepositoryAsyncReference.EditAsync(model);
+
         IsInlineDialogShow = false;
-        this.model = new BriefingLog();
+        model = new BriefingLog();
+
         await DisplayData();
     }
 
     #region Search
-    private string searchQuery = "";
-
     protected async void Search(string query)
     {
         pager.PageIndex = 0;
-        this.searchQuery = query;
+        searchQuery = query ?? string.Empty;
+
         await DisplayData();
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
     #endregion
 
     // ===== EPPlus 제거: Open XML SDK로 대체 =====
-    protected void DownloadExcel()
+    protected async Task DownloadExcel()
     {
-        // 데이터가 없으면 바로 종료
-        if (models == null || models.Count == 0) return;
+        if (models.Count == 0)
+        {
+            return;
+        }
 
         using var ms = new MemoryStream();
-        using (var doc = SpreadsheetDocument.Create(ms, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook, true))
+
+        using (var doc = SpreadsheetDocument.Create(
+            ms,
+            DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook,
+            true))
         {
             var wbPart = doc.AddWorkbookPart();
             wbPart.Workbook = new Workbook();
@@ -190,46 +238,42 @@ public partial class Manage
                 Name = "BriefingLogs"
             });
 
-            // Header
             uint rowIndex = 1;
             var header = new Row { RowIndex = rowIndex };
             sheetData.Append(header);
 
             string[] headers = { "Created", "Name", "Title", "DownCount", "FileName" };
             for (int i = 0; i < headers.Length; i++)
+            {
                 header.Append(TextCell(Ref(i + 1, (int)rowIndex), headers[i]));
+            }
 
-            // Rows
             rowIndex = 2;
-            foreach (var m in models)
+
+            foreach (var item in models)
             {
                 var row = new Row { RowIndex = rowIndex };
                 sheetData.Append(row);
 
-                // Created: DateTime / DateTimeOffset / string 등 대응
-                string createdStr = string.Empty;
-                var createdObj = (object?)m.Created;
-                if (createdObj is DateTimeOffset dto)
-                    createdStr = dto.LocalDateTime.ToString("yyyy MMM d ddd", CultureInfo.InvariantCulture);
-                else if (createdObj is DateTime dt)
-                    createdStr = dt.ToLocalTime().ToString("yyyy MMM d ddd", CultureInfo.InvariantCulture);
-                else if (createdObj != null)
-                    createdStr = createdObj.ToString() ?? string.Empty;
+                string createdStr = item.Created.HasValue
+                    ? item.Created.Value.ToLocalTime().ToString("yyyy MMM d ddd", CultureInfo.InvariantCulture)
+                    : string.Empty;
 
-                var downObj = (object?)m.DownCount;
-                string downStr = downObj?.ToString() ?? "0";
+                string downStr = item.DownCount.ToString(CultureInfo.InvariantCulture);
 
-                var values = new[]
+                string[] values =
                 {
                     createdStr,
-                    m.Name ?? string.Empty,
-                    m.Title ?? string.Empty,
+                    item.Name ?? string.Empty,
+                    item.Title ?? string.Empty,
                     downStr,
-                    m.FileName ?? string.Empty
+                    item.FileName ?? string.Empty
                 };
 
                 for (int i = 0; i < values.Length; i++)
+                {
                     row.Append(TextCell(Ref(i + 1, (int)rowIndex), values[i]));
+                }
 
                 rowIndex++;
             }
@@ -238,13 +282,13 @@ public partial class Manage
             wbPart.Workbook.Save();
         }
 
-        var fileName = $"{DateTime.Now:yyyyMMddHHmmss}_BriefingLogs.xlsx";
-        FileUtil.SaveAs(JSRuntime, fileName, ms.ToArray());
+        string fileName = $"{DateTime.Now:yyyyMMddHHmmss}_BriefingLogs.xlsx";
+        await FileUtil.SaveAs(JSRuntime, fileName, ms.ToArray());
     }
 
     // ===== OpenXML helpers =====
     private static Cell TextCell(string cellRef, string text) =>
-        new Cell
+        new()
         {
             CellReference = cellRef,
             DataType = CellValues.String,
@@ -255,34 +299,52 @@ public partial class Manage
 
     private static string ColName(int index)
     {
-        var dividend = index;
+        int dividend = index;
         string col = string.Empty;
+
         while (dividend > 0)
         {
-            var modulo = (dividend - 1) % 26;
+            int modulo = (dividend - 1) % 26;
             col = (char)('A' + modulo) + col;
             dividend = (dividend - modulo) / 26;
         }
+
         return col;
     }
 
     #region Sorting
-    private string sortOrder = "";
-
     protected async void SortByName()
     {
-        if (sortOrder == "") sortOrder = "Name";
-        else if (sortOrder == "Name") sortOrder = "NameDesc";
-        else sortOrder = "";
+        if (sortOrder == "")
+        {
+            sortOrder = "Name";
+        }
+        else if (sortOrder == "Name")
+        {
+            sortOrder = "NameDesc";
+        }
+        else
+        {
+            sortOrder = "";
+        }
 
         await DisplayData();
     }
 
     protected async void SortByTitle()
     {
-        if (sortOrder == "") sortOrder = "Title";
-        else if (sortOrder == "Title") sortOrder = "TitleDesc";
-        else sortOrder = "";
+        if (sortOrder == "")
+        {
+            sortOrder = "Title";
+        }
+        else if (sortOrder == "Title")
+        {
+            sortOrder = "TitleDesc";
+        }
+        else
+        {
+            sortOrder = "";
+        }
 
         await DisplayData();
     }
