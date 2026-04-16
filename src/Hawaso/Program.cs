@@ -61,8 +61,6 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
-QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
-
 #region GlobalAdministrators Policy 설정
 // GlobalAdministrators 이메일 목록 읽기
 // - appsettings.json의 "AuthorizationSettings:GlobalAdministrators" 배열을 읽어옵니다.

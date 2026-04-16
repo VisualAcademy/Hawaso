@@ -9,6 +9,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="NuGet.Packaging" Version="7.3.1" />
+        <PackageReference Include="NuGet.Protocol" Version="7.3.1" />
+        
         <PackageReference Include="Azunt" Version="1.2.3" />
         <PackageReference Include="Azunt.ApplicantTypeManagement" Version="1.0.0" />
         <PackageReference Include="Azunt.AppointmentTypeManagement" Version="1.0.4" />
@@ -81,7 +84,7 @@
         <PackageReference Include="VisualAcademy.Models.Replys" Version="1.0.1" />
         <PackageReference Include="VisualAcademy.Models.Uploads" Version="1.0.1" />
 
-        <PackageReference Include="QuestPDF" Version="2026.2.4" />
+        
     </ItemGroup>
 
     <ItemGroup>
