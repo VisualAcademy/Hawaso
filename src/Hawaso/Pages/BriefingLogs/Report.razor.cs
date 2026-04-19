@@ -15,10 +15,10 @@ namespace Hawaso.Pages.BriefingLogs
     public partial class Report
     {
         [Inject]
-        public IBriefingLogRepository UploadRepositoryReference { get; set; }
+        public IBriefingLogRepository UploadRepositoryReference { get; set; } = default!;
 
-        private BarConfig _barChartConfig;
-        private BarDataset<DoubleWrapper> _barDataSet;
+        private BarConfig _barChartConfig = default!;
+        private BarDataset<DoubleWrapper> _barDataSet = default!;
 
         protected override async Task OnInitializedAsync()
         {
