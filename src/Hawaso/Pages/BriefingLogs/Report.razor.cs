@@ -6,8 +6,6 @@ using ChartJs.Blazor.ChartJS.Common.Properties;
 using ChartJs.Blazor.ChartJS.Common.Wrappers;
 using ChartJs.Blazor.Util;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Zero.Models;
 
 namespace Hawaso.Pages.BriefingLogs
