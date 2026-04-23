@@ -10,37 +10,64 @@ namespace Hawaso.Pages.Libraries;
 public partial class Create
 {
     [Inject]
-    public ILibraryRepository UploadRepositoryAsyncReference { get; set; }
+    public ILibraryRepository UploadRepositoryAsyncReference { get; set; } = default!;
 
     [Inject]
-    public NavigationManager NavigationManagerReference { get; set; }
+    public NavigationManager NavigationManagerReference { get; set; } = default!;
 
-    protected LibraryModel model = new LibraryModel();
+    [Inject]
+    public ILibraryFileStorageManager FileStorageManager { get; set; } = default!;
 
-    public string ParentId { get; set; }
+    [Inject]
+    public UserManager<ApplicationUser> UserManagerRef { get; set; } = default!;
+
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; } = default!;
+
+    protected LibraryModel model = new();
+
+    public string ParentId { get; set; } = "";
 
     protected int[] parentIds = { 1, 2, 3 };
 
-    protected async void FormSubmit()
+    private IFileListEntry[]? selectedFiles;
+
+    [Parameter]
+    public string UserId { get; set; } = "";
+
+    [Parameter]
+    public string UserName { get; set; } = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(UserId) && string.IsNullOrEmpty(UserName))
+        {
+            await GetUserIdAndUserName();
+        }
+
+        model.Name = UserName;
+    }
+
+    protected async Task FormSubmit()
     {
         int.TryParse(ParentId, out int parentId);
         model.ParentId = parentId;
 
         #region 파일 업로드 관련 추가 코드 영역
-        if (selectedFiles != null && selectedFiles.Length > 0)
+        if (selectedFiles is { Length: > 0 })
         {
-            // 파일 업로드
             var file = selectedFiles.FirstOrDefault();
-            var fileName = "";
-            int fileSize = 0;
-            if (file != null)
+
+            if (file is not null)
             {
-                fileName = file.Name;
-                fileSize = Convert.ToInt32(file.Size);
+                var fileSize = Convert.ToInt32(file.Size);
+                var uploadedFileName = await FileStorageManager.UploadAsync(
+                    file.Data,
+                    file.Name,
+                    "Libraries",
+                    true);
 
-                fileName = await FileStorageManager.UploadAsync(file.Data, file.Name, "Libraries", true);
-
-                model.FileName = fileName;
+                model.FileName = uploadedFileName;
                 model.FileSize = fileSize;
             }
         }
@@ -50,43 +77,21 @@ public partial class Create
         NavigationManagerReference.NavigateTo("/Libraries");
     }
 
-    [Inject]
-    public ILibraryFileStorageManager FileStorageManager { get; set; }
-    private IFileListEntry[] selectedFiles;
-    protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (UserId == "" && UserName == "")
-        {
-            await GetUserIdAndUserName();
-        }
-
-        model.Name = UserName;
-    }
+    protected void HandleSelection(IFileListEntry[] files) => selectedFiles = files;
 
     #region Get UserId and UserName
-    [Parameter]
-    public string UserId { get; set; } = "";
-
-    [Parameter]
-    public string UserName { get; set; } = "";
-
-    [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; }
-
-    // [CascadingParameter] Task<AuthenticationState> authenticationStateTask { get; set; }
-    [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; }
-
     private async Task GetUserIdAndUserName()
     {
         var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
         var user = authState.User;
+        var identity = user.Identity;
 
-        if (user.Identity.IsAuthenticated)
+        if (identity?.IsAuthenticated == true)
         {
             var currentUser = await UserManagerRef.GetUserAsync(user);
-            UserId = currentUser.Id;
-            UserName = user.Identity.Name;
+
+            UserId = currentUser?.Id ?? "";
+            UserName = identity.Name ?? currentUser?.UserName ?? "Anonymous";
         }
         else
         {
