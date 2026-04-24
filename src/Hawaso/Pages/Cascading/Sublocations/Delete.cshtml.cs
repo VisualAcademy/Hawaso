@@ -1,6 +1,8 @@
 ﻿#nullable disable
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Hawaso.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using VisualAcademy.Models;
 
 namespace VisualAcademy.Pages.Cascading.Sublocations;
@@ -12,33 +14,37 @@ public class DeleteModel(ApplicationDbContext context) : PageModel
 
     public async Task<IActionResult> OnGetAsync(int? id)
     {
-        if (id == null)
+        if (id is null)
         {
             return NotFound();
         }
 
-        Sublocation = await context.Sublocations
-            .Include(s => s.LocationRef).FirstOrDefaultAsync(m => m.Id == id);
+        var sublocation = await context.Sublocations
+            .Include(s => s.LocationRef)
+            .FirstOrDefaultAsync(m => m.Id == id.Value);
 
-        if (Sublocation == null)
+        if (sublocation is null)
         {
             return NotFound();
         }
+
+        Sublocation = sublocation;
+
         return Page();
     }
 
     public async Task<IActionResult> OnPostAsync(int? id)
     {
-        if (id == null)
+        if (id is null)
         {
             return NotFound();
         }
 
-        Sublocation = await context.Sublocations.FindAsync(id);
+        var sublocation = await context.Sublocations.FindAsync(id.Value);
 
-        if (Sublocation != null)
+        if (sublocation is not null)
         {
-            context.Sublocations.Remove(Sublocation);
+            context.Sublocations.Remove(sublocation);
             await context.SaveChangesAsync();
         }
 
