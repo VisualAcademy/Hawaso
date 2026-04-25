@@ -11,6 +11,7 @@ using Azunt.Services.Terminology;
 using Azunt.TenantSettingManagement;
 using Azunt.Web.Components.Pages.Notes.Services;
 using Azunt.Web.Infrastructure.Extensions;
+using Azunt.Web.Infrastructures.Auth;
 using Azunt.Web.Policies;
 using Azunt.Web.Services;
 using Azunt.Web.Services.Interfaces;
@@ -686,6 +687,32 @@ catch (Exception ex)
 
 // Minimal APIs
 app.MapAzuntMinimalApis();
+
+
+
+
+
+#region TenantSchemaEnhancerProfilePicture
+try
+{
+    var configuration = app.Services.GetRequiredService<IConfiguration>();
+    var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
+
+    var masterConn = configuration.GetConnectionString("DefaultConnection")
+                     ?? throw new InvalidOperationException("Missing connection string 'DefaultConnection'.");
+
+    var typedLogger = loggerFactory.CreateLogger<TenantSchemaEnhancerProfilePicture>();
+    var enhancer33 = new TenantSchemaEnhancerProfilePicture(masterConn, typedLogger);
+
+    enhancer33.EnsureProfilePictureColumn();
+}
+catch (Exception ex)
+{
+    app.Services.GetRequiredService<ILogger<Program>>()
+        .LogError(ex, "Failed to ensure AspNetUsers.ProfilePicture column at startup.");
+}
+#endregion
+
 
 
 
