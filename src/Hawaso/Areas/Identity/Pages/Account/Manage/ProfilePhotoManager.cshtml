@@ -1,0 +1,1000 @@
+﻿@page
+@model Azunt.Web.Areas.Identity.Pages.Account.Manage.ProfilePhotoManagerModel
+@{
+    ViewData["Title"] = "Profile Photo";
+    ViewData["ActivePage"] = ManageNavPages.ProfilePhotoManager;
+    var uploadProfilePhotoUrl = Url.Page(null, "UploadProfilePhoto");
+    var downloadProfilePhotoUrl = Url.Page(null, "DownloadProfilePhoto");
+}
+
+<div class="container py-4">
+    <div class="mb-4">
+        <h4 class="mb-1 fw-semibold">@ViewData["Title"]</h4>
+        <div class="text-muted small">
+            Upload, drag and drop, capture, crop, download, and save a profile photo used for your account identity across the system.
+        </div>
+    </div>
+
+    <partial name="_StatusMessage" model="Model.StatusMessage" />
+
+    <form id="profile-photo-form" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-light border-0">
+                <div class="fw-semibold">Profile Photo</div>
+                <div class="text-muted small">
+                    Recommended: clear front-facing image, JPG or PNG, up to 5MB.
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row align-items-start g-4">
+                    <div class="col-lg-6 text-center">
+                        <label asp-for="Input.ProfilePhoto" class="form-label fw-semibold d-block mb-3"></label>
+
+                        <div class="profile-photo-wrapper mx-auto">
+                            @if (Model.Input.ProfilePhoto != null && Model.Input.ProfilePhoto.Length > 0)
+                            {
+                                <img id="profilePhoto"
+                                     class="profile-photo-preview"
+                                     src="data:image/*;base64,@Convert.ToBase64String(Model.Input.ProfilePhoto)"
+                                     alt="Profile Photo" />
+
+                                <div id="profilePhotoPlaceholder"
+                                     class="profile-photo-placeholder d-none">
+                                    👤
+                                </div>
+                            }
+                            else
+                            {
+                                <img id="profilePhoto"
+                                     class="profile-photo-preview d-none"
+                                     src=""
+                                     alt="Profile Photo" />
+
+                                <div id="profilePhotoPlaceholder" class="profile-photo-placeholder">
+                                    👤
+                                </div>
+                            }
+
+                            <div class="profile-photo-actions"
+                                 onmousedown="event.preventDefault(); event.stopPropagation();"
+                                 onclick="event.stopPropagation();">
+                                <button type="button"
+                                        id="profilePhotoUploadButton"
+                                        class="btn btn-primary rounded-circle profile-photo-action-btn"
+                                        title="Upload Photo"
+                                        aria-label="Upload Photo"
+                                        onclick="openProfilePhotoFileUpload(event)">
+                                    📁
+                                </button>
+
+                                <button type="button"
+                                        id="profilePhotoCameraButton"
+                                        class="btn btn-primary rounded-circle profile-photo-action-btn"
+                                        title="Take Photo"
+                                        aria-label="Take Photo"
+                                        onclick="openProfilePhotoWebcamCapture(event)">
+                                    📷
+                                </button>
+
+                                @if (Model.Input.ProfilePhoto != null && Model.Input.ProfilePhoto.Length > 0)
+                                {
+                                    <button type="button"
+                                            id="profilePhotoDownloadButton"
+                                            class="btn btn-success rounded-circle profile-photo-action-btn"
+                                            title="Download Photo"
+                                            aria-label="Download Photo"
+                                            onclick="downloadProfilePhoto(event)">
+                                        ⬇️
+                                    </button>
+                                }
+                            </div>
+                        </div>
+
+                        <input type="file"
+                               id="profilePhotoFileInput"
+                               name="profilePhoto"
+                               accept=".png,.jpg,.jpeg,.gif,.tif,.tiff,.webp"
+                               class="d-none"
+                               onchange="uploadProfilePhotoFromFile(this)" />
+
+                        <span asp-validation-for="Input.ProfilePhoto" class="text-danger d-block mt-2"></span>
+                        <div id="profilePhotoMessage" class="text-muted mt-2 small"></div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div id="profilePhotoDropZone"
+                             class="profile-photo-drop-zone mb-3"
+                             onclick="openProfilePhotoFileUpload(event)"
+                             ondragenter="handleProfilePhotoDragEnter(event)"
+                             ondragover="handleProfilePhotoDragOver(event)"
+                             ondragleave="handleProfilePhotoDragLeave(event)"
+                             ondrop="handleProfilePhotoDrop(event)">
+                            <div class="profile-photo-drop-icon">⬆️</div>
+                            <div class="fw-semibold">Drag and drop an image here</div>
+                            <div class="text-muted small">
+                                Or click this area to select a file from your device.
+                            </div>
+                        </div>
+
+                        <div class="enterprise-guide-box">
+                            <div class="fw-semibold mb-2">Guidelines</div>
+                            <ul class="small text-muted mb-3 ps-3">
+                                <li>Use a clear image that helps administrators identify your account.</li>
+                                <li>Supported formats include JPG, PNG, GIF, TIF, TIFF, and WEBP.</li>
+                                <li>The maximum allowed file size is 5MB.</li>
+                                <li>You may upload, drag and drop, or capture a photo using your camera.</li>
+                                <li>Before saving, you can crop the image into a profile-friendly square.</li>
+                                <li>If a photo is already uploaded, use the download button to save a copy.</li>
+                            </ul>
+
+                            <div class="small text-muted border rounded bg-light p-3">
+                                This profile photo may be displayed in account management, user lists, internal workflows,
+                                and other authenticated areas of the system.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="profilePhotoWebcamModal" class="modal-backdrop-custom d-none">
+    <div class="modal-dialog-custom">
+        <div class="modal-content shadow">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title mb-0">Take Photo</h5>
+                    <div class="text-muted small">Capture a photo, then crop it before uploading.</div>
+                </div>
+                <button type="button"
+                        class="btn-close"
+                        aria-label="Close"
+                        onclick="closeProfilePhotoWebcamCapture()">
+                </button>
+            </div>
+
+            <div class="modal-body text-center">
+                <video id="profilePhotoWebcamVideo"
+                       class="profile-photo-webcam-video"
+                       autoplay
+                       playsinline>
+                </video>
+
+                <canvas id="profilePhotoWebcamCanvas"
+                        width="480"
+                        height="360"
+                        class="d-none">
+                </canvas>
+
+                <img id="profilePhotoWebcamPreview"
+                     class="profile-photo-webcam-preview d-none"
+                     alt="Captured Profile Photo" />
+
+                <div id="profilePhotoWebcamMessage" class="text-muted mt-2 small"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        onclick="closeProfilePhotoWebcamCapture()">
+                    Cancel
+                </button>
+
+                <button type="button"
+                        id="profilePhotoCaptureButton"
+                        class="btn btn-primary"
+                        onclick="captureProfilePhotoWebcamPhoto()">
+                    Capture
+                </button>
+
+                <button type="button"
+                        id="profilePhotoWebcamUploadButton"
+                        class="btn btn-success"
+                        onclick="uploadProfilePhotoWebcamPhoto()">
+                    Crop & Upload
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="profilePhotoCropModal" class="modal-backdrop-custom d-none">
+    <div class="modal-dialog-custom crop-dialog-custom">
+        <div class="modal-content shadow">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title mb-0">Crop Profile Photo</h5>
+                    <div class="text-muted small">
+                        Adjust the image before uploading. The saved image will be cropped as a square.
+                    </div>
+                </div>
+                <button type="button"
+                        class="btn-close"
+                        aria-label="Close"
+                        onclick="closeProfilePhotoCropModal()">
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="crop-stage mx-auto">
+                    <canvas id="profilePhotoCropCanvas"
+                            width="512"
+                            height="512"
+                            class="profile-photo-crop-canvas">
+                    </canvas>
+                </div>
+
+                <div class="mt-3">
+                    <label for="profilePhotoCropZoom" class="form-label small fw-semibold mb-1">
+                        Zoom
+                    </label>
+                    <input type="range"
+                           id="profilePhotoCropZoom"
+                           class="form-range"
+                           min="1"
+                           max="3"
+                           step="0.05"
+                           value="1"
+                           oninput="renderProfilePhotoCropPreview()" />
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="profilePhotoCropOffsetX" class="form-label small fw-semibold mb-1">
+                            Horizontal Position
+                        </label>
+                        <input type="range"
+                               id="profilePhotoCropOffsetX"
+                               class="form-range"
+                               min="-100"
+                               max="100"
+                               step="1"
+                               value="0"
+                               oninput="renderProfilePhotoCropPreview()" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="profilePhotoCropOffsetY" class="form-label small fw-semibold mb-1">
+                            Vertical Position
+                        </label>
+                        <input type="range"
+                               id="profilePhotoCropOffsetY"
+                               class="form-range"
+                               min="-100"
+                               max="100"
+                               step="1"
+                               value="0"
+                               oninput="renderProfilePhotoCropPreview()" />
+                    </div>
+                </div>
+
+                <div id="profilePhotoCropMessage" class="text-muted mt-2 small"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        onclick="closeProfilePhotoCropModal()">
+                    Cancel
+                </button>
+
+                <button type="button"
+                        class="btn btn-outline-primary"
+                        onclick="resetProfilePhotoCropControls()">
+                    Reset
+                </button>
+
+                <button type="button"
+                        id="profilePhotoCropUploadButton"
+                        class="btn btn-success"
+                        onclick="uploadCroppedProfilePhoto()">
+                    Upload Cropped Photo
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        .profile-photo-wrapper {
+            position: relative;
+            width: 350px;
+            height: 350px;
+        }
+
+        .profile-photo-preview,
+        .profile-photo-placeholder {
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            border: 1px solid #dee2e6;
+            object-fit: cover;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .08);
+        }
+
+        .profile-photo-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 72px;
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .profile-photo-actions {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .profile-photo-action-btn {
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            font-size: 22px;
+            line-height: 1;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15);
+        }
+
+            .profile-photo-action-btn:disabled {
+                opacity: .65;
+                cursor: not-allowed;
+            }
+
+        .profile-photo-drop-zone {
+            border: 2px dashed #ced4da;
+            border-radius: .75rem;
+            padding: 1.5rem;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: border-color .15s ease-in-out, background-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+
+            .profile-photo-drop-zone:hover,
+            .profile-photo-drop-zone.profile-photo-drop-zone-active {
+                border-color: #0d6efd;
+                background: #eef5ff;
+                box-shadow: 0 0.25rem 0.75rem rgba(13, 110, 253, .12);
+            }
+
+        .profile-photo-drop-icon {
+            font-size: 32px;
+            line-height: 1;
+            margin-bottom: .5rem;
+        }
+
+        .enterprise-guide-box {
+            border: 1px solid #e9ecef;
+            border-radius: .75rem;
+            padding: 1.25rem;
+            background: #fff;
+        }
+
+        .modal-backdrop-custom {
+            position: fixed;
+            inset: 0;
+            z-index: 1055;
+            background: rgba(0, 0, 0, .55);
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .modal-dialog-custom {
+            max-width: 560px;
+            margin: 4rem auto;
+        }
+
+        .crop-dialog-custom {
+            max-width: 680px;
+        }
+
+        .profile-photo-webcam-video,
+        .profile-photo-webcam-preview {
+            width: 100%;
+            max-width: 480px;
+            border-radius: .5rem;
+            background: #000;
+        }
+
+        .crop-stage {
+            width: 320px;
+            height: 320px;
+            border-radius: .75rem;
+            border: 1px solid #dee2e6;
+            overflow: hidden;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-photo-crop-canvas {
+            width: 320px;
+            height: 320px;
+            display: block;
+            background: #f8f9fa;
+        }
+
+        @@media (max-width: 576px) {
+            .profile-photo-wrapper {
+                width: 260px;
+                height: 260px;
+            }
+
+            .profile-photo-preview,
+            .profile-photo-placeholder {
+                width: 260px;
+                height: 260px;
+            }
+
+            .crop-stage,
+            .profile-photo-crop-canvas {
+                width: 260px;
+                height: 260px;
+            }
+        }
+    </style>
+
+    <script>
+        var uploadProfilePhotoUrl = '@uploadProfilePhotoUrl';
+        var downloadProfilePhotoUrl = '@downloadProfilePhotoUrl';
+        var maxProfilePhotoSize = 5 * 1024 * 1024;
+
+        var profilePhotoWebcamState = {
+            stream: null,
+            capturedBlob: null
+        };
+
+        var profilePhotoCropState = {
+            sourceBlob: null,
+            sourceFileName: "profile-photo.jpg",
+            image: null,
+            sourceObjectUrl: null
+        };
+
+        function getRequestVerificationToken() {
+            var tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+            return tokenInput ? tokenInput.value : "";
+        }
+
+        function downloadProfilePhoto(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                if (event.stopImmediatePropagation) {
+                    event.stopImmediatePropagation();
+                }
+            }
+
+            if (downloadProfilePhotoUrl) {
+                window.location.href = downloadProfilePhotoUrl;
+            }
+
+            return false;
+        }
+
+        function setProfilePhotoMessage(message) {
+            var messageElement = document.getElementById("profilePhotoMessage");
+            if (messageElement) {
+                messageElement.innerText = message;
+            }
+        }
+
+        function setProfilePhotoWebcamMessage(message) {
+            var messageElement = document.getElementById("profilePhotoWebcamMessage");
+            if (messageElement) {
+                messageElement.innerText = message;
+            }
+        }
+
+        function setProfilePhotoCropMessage(message) {
+            var messageElement = document.getElementById("profilePhotoCropMessage");
+            if (messageElement) {
+                messageElement.innerText = message;
+            }
+        }
+
+        function setProfilePhotoButtonsDisabled(disabled) {
+            [
+                "profilePhotoUploadButton",
+                "profilePhotoCameraButton",
+                "profilePhotoDownloadButton",
+                "profilePhotoWebcamUploadButton",
+                "profilePhotoCaptureButton",
+                "profilePhotoCropUploadButton"
+            ].forEach(function (id) {
+                var button = document.getElementById(id);
+                if (button) {
+                    button.disabled = disabled;
+                }
+            });
+        }
+
+        function showProfilePhotoPreview(blobOrFile) {
+            var profilePhoto = document.getElementById("profilePhoto");
+            var placeholder = document.getElementById("profilePhotoPlaceholder");
+
+            if (profilePhoto) {
+                profilePhoto.src = window.URL.createObjectURL(blobOrFile);
+                profilePhoto.classList.remove("d-none");
+            }
+
+            if (placeholder) {
+                placeholder.classList.add("d-none");
+            }
+        }
+
+        function isValidProfilePhotoFile(file, messageSetter) {
+            if (!file) {
+                messageSetter("Profile photo file is required.");
+                return false;
+            }
+
+            if (file.size > maxProfilePhotoSize) {
+                messageSetter("Profile photo must be 5MB or smaller.");
+                return false;
+            }
+
+            if (file.type && !file.type.startsWith("image/")) {
+                messageSetter("Only image files are allowed.");
+                return false;
+            }
+
+            return true;
+        }
+
+        function openProfilePhotoFileUpload(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                if (event.stopImmediatePropagation) {
+                    event.stopImmediatePropagation();
+                }
+            }
+
+            var input = document.getElementById("profilePhotoFileInput");
+
+            if (input) {
+                input.value = "";
+                input.click();
+            }
+
+            return false;
+        }
+
+        function handleProfilePhotoDragEnter(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var dropZone = document.getElementById("profilePhotoDropZone");
+            if (dropZone) {
+                dropZone.classList.add("profile-photo-drop-zone-active");
+            }
+        }
+
+        function handleProfilePhotoDragOver(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var dropZone = document.getElementById("profilePhotoDropZone");
+            if (dropZone) {
+                dropZone.classList.add("profile-photo-drop-zone-active");
+            }
+        }
+
+        function handleProfilePhotoDragLeave(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var dropZone = document.getElementById("profilePhotoDropZone");
+
+            if (dropZone && !dropZone.contains(event.relatedTarget)) {
+                dropZone.classList.remove("profile-photo-drop-zone-active");
+            }
+        }
+
+        function handleProfilePhotoDrop(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            var dropZone = document.getElementById("profilePhotoDropZone");
+            if (dropZone) {
+                dropZone.classList.remove("profile-photo-drop-zone-active");
+            }
+
+            if (!event.dataTransfer || !event.dataTransfer.files || event.dataTransfer.files.length === 0) {
+                setProfilePhotoMessage("Please drop an image file.");
+                return false;
+            }
+
+            var file = event.dataTransfer.files[0];
+
+            if (!isValidProfilePhotoFile(file, setProfilePhotoMessage)) {
+                return false;
+            }
+
+            openProfilePhotoCropModal(file, file.name || "profile-photo.jpg", setProfilePhotoMessage);
+            return false;
+        }
+
+        async function uploadProfilePhotoBlob(blob, fileName, messageSetter) {
+            if (!isValidProfilePhotoFile(blob, messageSetter)) {
+                return false;
+            }
+
+            var formData = new FormData();
+            formData.append("profilePhoto", blob, fileName);
+
+            messageSetter("Uploading photo...");
+            setProfilePhotoButtonsDisabled(true);
+
+            try {
+                var response = await fetch(uploadProfilePhotoUrl, {
+                    method: "POST",
+                    headers: {
+                        "RequestVerificationToken": getRequestVerificationToken()
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    var errorText = await response.text();
+                    messageSetter(errorText || "Photo upload failed.");
+                    return false;
+                }
+
+                messageSetter("Photo uploaded successfully.");
+                return true;
+            } catch (error) {
+                messageSetter("Photo upload failed.");
+                return false;
+            } finally {
+                setProfilePhotoButtonsDisabled(false);
+            }
+        }
+
+        async function uploadProfilePhotoFromFile(input) {
+            if (!input || !input.files || input.files.length === 0) {
+                return;
+            }
+
+            var file = input.files[0];
+
+            if (!isValidProfilePhotoFile(file, setProfilePhotoMessage)) {
+                return;
+            }
+
+            openProfilePhotoCropModal(file, file.name || "profile-photo.jpg", setProfilePhotoMessage);
+        }
+
+        function openProfilePhotoCropModal(blobOrFile, fileName, messageSetter) {
+            if (!isValidProfilePhotoFile(blobOrFile, messageSetter || setProfilePhotoMessage)) {
+                return;
+            }
+
+            clearProfilePhotoCropState();
+
+            profilePhotoCropState.sourceBlob = blobOrFile;
+            profilePhotoCropState.sourceFileName = fileName || "profile-photo.jpg";
+            profilePhotoCropState.sourceObjectUrl = URL.createObjectURL(blobOrFile);
+
+            var image = new Image();
+
+            image.onload = function () {
+                profilePhotoCropState.image = image;
+                resetProfilePhotoCropControls();
+
+                var cropModal = document.getElementById("profilePhotoCropModal");
+                if (cropModal) {
+                    cropModal.classList.remove("d-none");
+                }
+
+                setProfilePhotoCropMessage("Adjust the crop area, then upload the cropped photo.");
+                renderProfilePhotoCropPreview();
+            };
+
+            image.onerror = function () {
+                setProfilePhotoMessage("Unable to load image for cropping.");
+                clearProfilePhotoCropState();
+            };
+
+            image.src = profilePhotoCropState.sourceObjectUrl;
+        }
+
+        function closeProfilePhotoCropModal() {
+            var cropModal = document.getElementById("profilePhotoCropModal");
+
+            if (cropModal) {
+                cropModal.classList.add("d-none");
+            }
+
+            setProfilePhotoCropMessage("");
+            clearProfilePhotoCropState();
+        }
+
+        function clearProfilePhotoCropState() {
+            if (profilePhotoCropState.sourceObjectUrl) {
+                URL.revokeObjectURL(profilePhotoCropState.sourceObjectUrl);
+            }
+
+            profilePhotoCropState.sourceBlob = null;
+            profilePhotoCropState.sourceFileName = "profile-photo.jpg";
+            profilePhotoCropState.image = null;
+            profilePhotoCropState.sourceObjectUrl = null;
+        }
+
+        function resetProfilePhotoCropControls() {
+            var zoom = document.getElementById("profilePhotoCropZoom");
+            var offsetX = document.getElementById("profilePhotoCropOffsetX");
+            var offsetY = document.getElementById("profilePhotoCropOffsetY");
+
+            if (zoom) {
+                zoom.value = "1";
+            }
+
+            if (offsetX) {
+                offsetX.value = "0";
+            }
+
+            if (offsetY) {
+                offsetY.value = "0";
+            }
+
+            renderProfilePhotoCropPreview();
+        }
+
+        function renderProfilePhotoCropPreview() {
+            var image = profilePhotoCropState.image;
+            var canvas = document.getElementById("profilePhotoCropCanvas");
+
+            if (!image || !canvas) {
+                return;
+            }
+
+            var context = canvas.getContext("2d");
+            var outputSize = canvas.width;
+
+            var zoomInput = document.getElementById("profilePhotoCropZoom");
+            var offsetXInput = document.getElementById("profilePhotoCropOffsetX");
+            var offsetYInput = document.getElementById("profilePhotoCropOffsetY");
+
+            var zoom = zoomInput ? parseFloat(zoomInput.value) : 1;
+            var offsetXPercent = offsetXInput ? parseFloat(offsetXInput.value) : 0;
+            var offsetYPercent = offsetYInput ? parseFloat(offsetYInput.value) : 0;
+
+            if (isNaN(zoom) || zoom < 1) {
+                zoom = 1;
+            }
+
+            var baseCropSize = Math.min(image.naturalWidth, image.naturalHeight);
+            var cropSize = baseCropSize / zoom;
+
+            var maxOffsetX = (image.naturalWidth - cropSize) / 2;
+            var maxOffsetY = (image.naturalHeight - cropSize) / 2;
+
+            var centerX = image.naturalWidth / 2 + (maxOffsetX * offsetXPercent / 100);
+            var centerY = image.naturalHeight / 2 + (maxOffsetY * offsetYPercent / 100);
+
+            var sourceX = centerX - cropSize / 2;
+            var sourceY = centerY - cropSize / 2;
+
+            sourceX = Math.max(0, Math.min(sourceX, image.naturalWidth - cropSize));
+            sourceY = Math.max(0, Math.min(sourceY, image.naturalHeight - cropSize));
+
+            context.clearRect(0, 0, outputSize, outputSize);
+            context.fillStyle = "#f8f9fa";
+            context.fillRect(0, 0, outputSize, outputSize);
+
+            context.drawImage(
+                image,
+                sourceX,
+                sourceY,
+                cropSize,
+                cropSize,
+                0,
+                0,
+                outputSize,
+                outputSize
+            );
+        }
+
+        async function createCroppedProfilePhotoBlob() {
+            return new Promise(function (resolve) {
+                var canvas = document.getElementById("profilePhotoCropCanvas");
+
+                if (!canvas) {
+                    resolve(null);
+                    return;
+                }
+
+                canvas.toBlob(function (blob) {
+                    resolve(blob);
+                }, "image/jpeg", 0.92);
+            });
+        }
+
+        async function uploadCroppedProfilePhoto() {
+            if (!profilePhotoCropState.image) {
+                setProfilePhotoCropMessage("Please select an image first.");
+                return;
+            }
+
+            renderProfilePhotoCropPreview();
+
+            var croppedBlob = await createCroppedProfilePhotoBlob();
+
+            if (!croppedBlob) {
+                setProfilePhotoCropMessage("Unable to crop the image.");
+                return;
+            }
+
+            var uploaded = await uploadProfilePhotoBlob(
+                croppedBlob,
+                normalizeCroppedProfilePhotoFileName(profilePhotoCropState.sourceFileName),
+                setProfilePhotoCropMessage
+            );
+
+            if (uploaded) {
+                showProfilePhotoPreview(croppedBlob);
+                closeProfilePhotoCropModal();
+                window.location.reload();
+            }
+        }
+
+        function normalizeCroppedProfilePhotoFileName(fileName) {
+            if (!fileName) {
+                return "profile-photo-cropped.jpg";
+            }
+
+            var dotIndex = fileName.lastIndexOf(".");
+
+            if (dotIndex <= 0) {
+                return fileName + "-cropped.jpg";
+            }
+
+            return fileName.substring(0, dotIndex) + "-cropped.jpg";
+        }
+
+        async function openProfilePhotoWebcamCapture(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                if (event.stopImmediatePropagation) {
+                    event.stopImmediatePropagation();
+                }
+            }
+
+            var modal = document.getElementById("profilePhotoWebcamModal");
+            var video = document.getElementById("profilePhotoWebcamVideo");
+            var preview = document.getElementById("profilePhotoWebcamPreview");
+
+            if (!modal || !video || !preview) {
+                return false;
+            }
+
+            setProfilePhotoWebcamMessage("Starting camera...");
+
+            modal.classList.remove("d-none");
+            preview.classList.add("d-none");
+            preview.src = "";
+            video.classList.remove("d-none");
+
+            try {
+                var stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false
+                });
+
+                profilePhotoWebcamState.stream = stream;
+                profilePhotoWebcamState.capturedBlob = null;
+
+                video.srcObject = stream;
+                setProfilePhotoWebcamMessage("Camera is ready.");
+            } catch (error) {
+                setProfilePhotoWebcamMessage("Unable to access the camera. Please allow camera permission and use HTTPS.");
+            }
+
+            return false;
+        }
+
+        function captureProfilePhotoWebcamPhoto() {
+            var video = document.getElementById("profilePhotoWebcamVideo");
+            var canvas = document.getElementById("profilePhotoWebcamCanvas");
+            var preview = document.getElementById("profilePhotoWebcamPreview");
+
+            if (!video || !canvas || !preview || !video.srcObject) {
+                setProfilePhotoWebcamMessage("Camera is not ready.");
+                return;
+            }
+
+            var width = video.videoWidth || 480;
+            var height = video.videoHeight || 360;
+
+            canvas.width = width;
+            canvas.height = height;
+
+            var context = canvas.getContext("2d");
+            context.drawImage(video, 0, 0, width, height);
+
+            canvas.toBlob(function (blob) {
+                if (!blob) {
+                    setProfilePhotoWebcamMessage("Unable to capture photo.");
+                    return;
+                }
+
+                profilePhotoWebcamState.capturedBlob = blob;
+
+                preview.src = URL.createObjectURL(blob);
+                preview.classList.remove("d-none");
+                video.classList.add("d-none");
+
+                setProfilePhotoWebcamMessage("Photo captured. Review it and click Crop & Upload.");
+            }, "image/jpeg", 0.9);
+        }
+
+        async function uploadProfilePhotoWebcamPhoto() {
+            if (!profilePhotoWebcamState.capturedBlob) {
+                setProfilePhotoWebcamMessage("Please capture a photo first.");
+                return;
+            }
+
+            closeProfilePhotoWebcamCapture(false);
+            openProfilePhotoCropModal(
+                profilePhotoWebcamState.capturedBlob,
+                "webcam-profile-photo.jpg",
+                setProfilePhotoCropMessage
+            );
+        }
+
+        function closeProfilePhotoWebcamCapture(clearCapturedBlob) {
+            if (clearCapturedBlob === undefined) {
+                clearCapturedBlob = true;
+            }
+
+            var modal = document.getElementById("profilePhotoWebcamModal");
+            var video = document.getElementById("profilePhotoWebcamVideo");
+            var preview = document.getElementById("profilePhotoWebcamPreview");
+
+            if (profilePhotoWebcamState.stream) {
+                profilePhotoWebcamState.stream.getTracks().forEach(function (track) {
+                    track.stop();
+                });
+            }
+
+            profilePhotoWebcamState.stream = null;
+
+            if (clearCapturedBlob) {
+                profilePhotoWebcamState.capturedBlob = null;
+            }
+
+            if (video) {
+                video.srcObject = null;
+            }
+
+            if (preview) {
+                preview.src = "";
+                preview.classList.add("d-none");
+            }
+
+            if (modal) {
+                modal.classList.add("d-none");
+            }
+
+            setProfilePhotoWebcamMessage("");
+        }
+    </script>
+}

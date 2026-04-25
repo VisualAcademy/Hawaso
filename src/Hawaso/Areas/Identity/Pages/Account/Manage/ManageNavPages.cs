@@ -16,7 +16,7 @@ public static class ManageNavPages
 
     public static string TwoFactorAuthentication => "TwoFactorAuthentication";
 
-    public static string ProfilePictureUpload => "ProfilePictureUpload";
+    public static string ProfilePhotoManager => "ProfilePhotoManager";
 
     public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
 
@@ -29,8 +29,8 @@ public static class ManageNavPages
     public static string PersonalDataNavClass(ViewContext viewContext) => PageNavClass(viewContext, PersonalData);
 
     public static string TwoFactorAuthenticationNavClass(ViewContext viewContext) => PageNavClass(viewContext, TwoFactorAuthentication);
-    public static string ProfilePictureUploadNavClass(ViewContext viewContext)
-        => PageNavClass(viewContext, ProfilePictureUpload);
+
+    public static string ProfilePhotoManagerNavClass(ViewContext viewContext) => PageNavClass(viewContext, ProfilePhotoManager);
 
     private static string PageNavClass(ViewContext viewContext, string page)
     {
