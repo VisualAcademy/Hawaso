@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace Hawaso.Data;
 
@@ -31,4 +32,7 @@ public class ApplicationUser : IdentityUser
     public string? RefreshToken { get; set; }
 
     public DateTime? RefreshTokenExpiryTime { get; set; }
+
+    [Display(Name = "Profile Picture")]
+    public byte[]? ProfilePicture { get; set; }
 }
