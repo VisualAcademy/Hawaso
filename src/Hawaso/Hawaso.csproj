@@ -74,7 +74,7 @@
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
         <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
         <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="9.0.3" />
-        <PackageReference Include="Stripe.net" Version="51.0.1" />
+        <PackageReference Include="Stripe.net" Version="51.1.0" />
         <PackageReference Include="Twilio" Version="7.14.7" />
         <PackageReference Include="VisualAcademy.Models.Archives" Version="3.0.2" />
         <PackageReference Include="VisualAcademy.Models.BriefingLogs" Version="1.0.4" />
