@@ -1,4 +1,4 @@
-﻿@if (IsShow)
+﻿@if (IsShow && Model is not null)
 {
     <div class="modal fade show d-block" tabindex="-1" role="dialog" id="customerEditDialog">
         <div class="modal-dialog" role="document">
@@ -11,15 +11,20 @@
                 </div>
                 <div class="modal-body">
                     <EditForm Model="Model" OnValidSubmit="btnSaveOrUpdate_Click">
-                        <DataAnnotationsValidator></DataAnnotationsValidator>
-                        <ValidationSummary></ValidationSummary>
-                        <input type="hidden" @bind-value="@Model.CategoryId" />
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <input type="hidden" @bind-value="Model.CategoryId" />
+
                         <div class="form-group">
                             <label for="txtName">Name</label>
-                            <InputText id="txtName" class="form-control" placeholder="Enter Title"
-                                       @bind-Value="@Model.CategoryName"></InputText>
-                            <ValidationMessage For="@(() => Model.CategoryName)" class="form-text text-muted"></ValidationMessage>
+                            <InputText id="txtName"
+                                       class="form-control"
+                                       placeholder="Enter Title"
+                                       @bind-Value="Model.CategoryName" />
+                            <ValidationMessage For="@(() => Model.CategoryName)" class="form-text text-muted" />
                         </div>
+
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Submit</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Cancel</button>

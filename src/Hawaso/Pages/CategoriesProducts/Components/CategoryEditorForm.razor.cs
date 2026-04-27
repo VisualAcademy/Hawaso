@@ -12,7 +12,7 @@ public partial class CategoryEditorForm
     public Category? Model { get; set; }
 
     [Parameter]
-    public Action? SaveOrUpdated { get; set; } // EventCallback<bool> 
+    public Action? SaveOrUpdated { get; set; }
 
     [Parameter]
     public EventCallback<bool> ChangeCallback { get; set; }
@@ -26,23 +26,24 @@ public partial class CategoryEditorForm
 
     public void Close() => IsShow = false;
 
-    protected async void btnSaveOrUpdate_Click()
+    protected async Task btnSaveOrUpdate_Click()
     {
         if (Model is null)
         {
-            return; // 또는 예외 throw
+            return;
         }
 
         if (Model.CategoryId == 0)
         {
             await CategoryRepositoryAsync.AddAsync(Model);
-            SaveOrUpdated?.Invoke(); 
+            SaveOrUpdated?.Invoke();
         }
         else
         {
-            await CategoryRepositoryAsync.EditAsync(Model); 
+            await CategoryRepositoryAsync.EditAsync(Model);
             await ChangeCallback.InvokeAsync(true);
         }
+
         IsShow = false;
     }
 }
