@@ -1,0 +1,87 @@
+﻿@model Azunt.Web.Models.SitePage
+
+@{
+    ViewData["Title"] = "Edit Site Page";
+}
+
+<h1>Edit Site Page</h1>
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="RoutePattern" class="form-label"></label>
+        <input asp-for="RoutePattern" class="form-control" readonly />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="HttpMethod" class="form-label"></label>
+        <input asp-for="HttpMethod" class="form-control" readonly />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DisplayName" class="form-label"></label>
+        <input asp-for="DisplayName" class="form-control" readonly />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PageTitle" class="form-label"></label>
+        <input asp-for="PageTitle" class="form-control" />
+        <span asp-validation-for="PageTitle" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="PageNumber" class="form-label"></label>
+        <input asp-for="PageNumber" class="form-control" />
+        <span asp-validation-for="PageNumber" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SortOrder" class="form-label"></label>
+        <input asp-for="SortOrder" class="form-control" />
+        <span asp-validation-for="SortOrder" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsPublic" class="form-check-input" />
+        <label asp-for="IsPublic" class="form-check-label"></label>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsVisibleInDashboard" class="form-check-input" />
+        <label asp-for="IsVisibleInDashboard" class="form-check-label"></label>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="RequiredRoles" class="form-label"></label>
+        <input asp-for="RequiredRoles" class="form-control" />
+        <span asp-validation-for="RequiredRoles" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="RequiredPolicy" class="form-label"></label>
+        <input asp-for="RequiredPolicy" class="form-control" />
+        <span asp-validation-for="RequiredPolicy" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Save
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Back
+    </a>
+
+    @if (Model.HttpMethod == "GET")
+    {
+        <a href="@(Model.Url)" target="_blank" class="btn btn-outline-secondary">
+            Open Page
+        </a>
+    }
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

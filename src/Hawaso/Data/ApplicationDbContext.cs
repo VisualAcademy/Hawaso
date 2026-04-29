@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azunt.Web.Models;
+using Microsoft.EntityFrameworkCore;
 using VisualAcademy.Components.Pages.ApplicantsTransfers;
 using VisualAcademy.Models;
 
@@ -27,6 +28,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
 
     public DbSet<KnownUser> KnownUsers { get; set; }
 
+    public DbSet<SitePage> SitePages => Set<SitePage>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -34,6 +37,53 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
         builder.Entity<Page>().Property(p => p.TenantName).HasDefaultValue("Hawaso");
 
         builder.Entity<KnownUser>().ToTable("KnownUsers");
+
+        builder.Entity<SitePage>(entity =>
+        {
+            entity.ToTable("SitePages");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.RoutePattern)
+                .HasMaxLength(300)
+                .IsRequired();
+
+            entity.Property(e => e.HttpMethod)
+                .HasMaxLength(50);
+
+            entity.Property(e => e.DisplayName)
+                .HasMaxLength(300);
+
+            entity.Property(e => e.PageTitle)
+                .HasMaxLength(200);
+
+            entity.Property(e => e.RequiredRoles)
+                .HasMaxLength(500);
+
+            entity.Property(e => e.RequiredPolicy)
+                .HasMaxLength(200);
+
+            entity.Property(e => e.SortOrder)
+                .HasDefaultValue(0);
+
+            entity.Property(e => e.IsPublic)
+                .HasDefaultValue(true);
+
+            entity.Property(e => e.IsVisibleInDashboard)
+                .HasDefaultValue(true);
+
+            entity.Property(e => e.AllowAnonymous)
+                .HasDefaultValue(false);
+
+            entity.Property(e => e.IsEndpointActive)
+                .HasDefaultValue(true);
+
+            entity.Property(e => e.CreatedAtUtc)
+                .HasDefaultValueSql("SYSUTCDATETIME()");
+
+            entity.HasIndex(e => new { e.RoutePattern, e.HttpMethod })
+                .IsUnique();
+        });
     }
 }
 

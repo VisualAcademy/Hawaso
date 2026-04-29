@@ -189,6 +189,7 @@
     <Build Include="dbo\Tables\AppointmentsTypes.sql" />
     <Build Include="dbo\Tables\PayoutReportRuns.sql" />
     <Build Include="dbo\Tables\StripePayoutSnapshots.sql" />
+    <Build Include="dbo\Tables\SitePages.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Scripts\Employee_FormData_References_Extract.sql" />

@@ -1,0 +1,106 @@
+﻿@model IEnumerable<Azunt.Web.Models.SitePage>
+
+@{
+    ViewData["Title"] = "Site Pages";
+}
+
+<h1>Site Pages</h1>
+
+@if (TempData["Message"] is string message)
+{
+    <div class="alert alert-success">
+        @message
+    </div>
+}
+
+<form asp-action="Sync" method="post" class="mb-3">
+    @Html.AntiForgeryToken()
+
+    <button type="submit" class="btn btn-primary">
+        Sync Routes
+    </button>
+</form>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th style="width:80px;">Page No.</th>
+            <th style="width:80px;">Sort</th>
+            <th>Title</th>
+            <th>Route</th>
+            <th style="width:80px;">Method</th>
+            <th style="width:120px;">Public</th>
+            <th style="width:160px;">Roles</th>
+            <th style="width:160px;">Policy</th>
+            <th style="width:100px;">Active</th>
+            <th style="width:160px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var page in Model)
+        {
+            <tr class="@(!page.IsEndpointActive ? "table-warning" : "")">
+                <td>@(page.PageNumber)</td>
+                <td>@(page.SortOrder)</td>
+                <td>@(page.PageTitle)</td>
+
+                <td>
+                    @if (page.HttpMethod == "GET")
+                    {
+                        <a href="@(page.Url)" target="_blank">
+                            @(page.RoutePattern)
+                        </a>
+                    }
+                    else
+                    {
+                        @(page.RoutePattern)
+                    }
+                </td>
+
+                <td>@(page.HttpMethod)</td>
+
+                <td>
+                    @if (page.AllowAnonymous)
+                    {
+                        <span class="badge bg-success">Anonymous</span>
+                    }
+                    else if (page.IsPublic)
+                    {
+                        <span class="badge bg-info">Public</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Restricted</span>
+                    }
+                </td>
+
+                <td>@(page.RequiredRoles)</td>
+                <td>@(page.RequiredPolicy)</td>
+
+                <td>
+                    @if (page.IsEndpointActive)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark">Missing</span>
+                    }
+                </td>
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@(page.Id)" class="btn btn-sm btn-outline-primary">
+                        Edit
+                    </a>
+
+                    @if (page.HttpMethod == "GET")
+                    {
+                        <a href="@(page.Url)" target="_blank" class="btn btn-sm btn-outline-secondary">
+                            Open
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
