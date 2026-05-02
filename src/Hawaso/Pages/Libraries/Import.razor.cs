@@ -34,10 +34,15 @@ public partial class Import
         // 파일 업로드
         if (selectedFiles is { Length: > 0 })
         {
-            var file = selectedFiles.First();
+            var file = selectedFiles.FirstOrDefault();
+
             if (file is not null)
             {
-                var uploadedName = await FileStorageManager.UploadAsync(file.Data, file.Name, "", overwrite: true);
+                var uploadedName = await FileStorageManager.UploadAsync(
+                    file.Data,
+                    file.Name,
+                    "",
+                    overwrite: true);
 
                 model.FileName = uploadedName;
                 model.FileSize = Convert.ToInt32(file.Size);
@@ -49,6 +54,7 @@ public partial class Import
         {
             m.FileName = model.FileName;
             m.FileSize = model.FileSize;
+
             await UploadRepositoryAsyncReference.AddAsync(m);
         }
 
@@ -60,28 +66,41 @@ public partial class Import
     {
         selectedFiles = files;
 
-        if (selectedFiles is { Length: > 0 })
+        if (selectedFiles is not { Length: > 0 })
         {
-            var file = selectedFiles.First();
-            using var stream = new MemoryStream();
-            await file.Data.CopyToAsync(stream);
-            stream.Position = 0;
+            return;
+        }
 
-            Models.Clear();
-            foreach (var row in ReadRowsFromFirstWorksheet(stream))
+        var file = selectedFiles.FirstOrDefault();
+
+        if (file is null)
+        {
+            return;
+        }
+
+        using var stream = new MemoryStream();
+
+        await file.Data.CopyToAsync(stream);
+        stream.Position = 0;
+
+        Models.Clear();
+
+        foreach (var row in ReadRowsFromFirstWorksheet(stream))
+        {
+            // A열: Name, B열: DownCount
+            if (string.IsNullOrWhiteSpace(row.name))
             {
-                // A열: Name, B열: DownCount
-                if (string.IsNullOrWhiteSpace(row.name)) continue;
-
-                Models.Add(new LibraryModel
-                {
-                    Name = row.name.Trim(),
-                    DownCount = row.downCount
-                });
+                continue;
             }
 
-            StateHasChanged();
+            Models.Add(new LibraryModel
+            {
+                Name = row.name.Trim(),
+                DownCount = row.downCount
+            });
         }
+
+        StateHasChanged();
     }
 
     // ===== OpenXML helpers =====
@@ -89,55 +108,96 @@ public partial class Import
     private static IEnumerable<(string name, int downCount)> ReadRowsFromFirstWorksheet(Stream xlsxStream)
     {
         using var doc = SpreadsheetDocument.Open(xlsxStream, false);
-        var wbPart = doc.WorkbookPart ?? throw new InvalidOperationException("WorkbookPart is missing.");
-        var firstSheet = wbPart.Workbook.Sheets?.Elements<Sheet>().FirstOrDefault()
-                         ?? throw new InvalidOperationException("No worksheet found.");
-        var wsPart = (WorksheetPart)wbPart.GetPartById(firstSheet.Id!);
-        var sheetData = wsPart.Worksheet.GetFirstChild<SheetData>()
-                         ?? throw new InvalidOperationException("SheetData is missing.");
+
+        var wbPart = doc.WorkbookPart
+            ?? throw new InvalidOperationException("WorkbookPart is missing.");
+
+        var workbook = wbPart.Workbook
+            ?? throw new InvalidOperationException("Workbook is missing.");
+
+        var sheets = workbook.Sheets
+            ?? throw new InvalidOperationException("Sheets collection is missing.");
+
+        var firstSheet = sheets.Elements<Sheet>().FirstOrDefault()
+            ?? throw new InvalidOperationException("No worksheet found.");
+
+        var firstSheetId = firstSheet.Id?.Value;
+
+        if (string.IsNullOrWhiteSpace(firstSheetId))
+        {
+            throw new InvalidOperationException("Worksheet relationship Id is missing.");
+        }
+
+        var wsPart = wbPart.GetPartById(firstSheetId) as WorksheetPart
+            ?? throw new InvalidOperationException("WorksheetPart is missing.");
+
+        var worksheet = wsPart.Worksheet
+            ?? throw new InvalidOperationException("Worksheet is missing.");
+
+        var sheetData = worksheet.GetFirstChild<SheetData>()
+            ?? throw new InvalidOperationException("SheetData is missing.");
 
         // 첫 행(헤더) 스킵, 2행부터 데이터
         foreach (var row in sheetData.Elements<Row>().Skip(1))
         {
-            var a = GetCellString(wbPart, GetCell(row, "A")); // Name
-            var bStr = GetCellString(wbPart, GetCell(row, "B")); // DownCount
+            var name = GetCellString(wbPart, GetCell(row, "A")); // Name
+            var downCountText = GetCellString(wbPart, GetCell(row, "B")); // DownCount
 
-            int.TryParse(bStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var b);
-            yield return (a, b);
+            int.TryParse(
+                downCountText,
+                NumberStyles.Any,
+                CultureInfo.InvariantCulture,
+                out var downCount);
+
+            yield return (name, downCount);
         }
     }
 
     private static Cell? GetCell(Row row, string columnName)
-        => row.Elements<Cell>()
-              .FirstOrDefault(c => string.Equals(GetColumnName(c.CellReference?.Value ?? ""), columnName, StringComparison.OrdinalIgnoreCase));
+    {
+        return row.Elements<Cell>()
+            .FirstOrDefault(c =>
+                string.Equals(
+                    GetColumnName(c.CellReference?.Value ?? string.Empty),
+                    columnName,
+                    StringComparison.OrdinalIgnoreCase));
+    }
 
     private static string GetColumnName(string cellRef)
     {
         // 예: "B12" -> "B"
         var chars = cellRef.Where(char.IsLetter).ToArray();
+
         return new string(chars);
     }
 
     private static string GetCellString(WorkbookPart wbPart, Cell? cell)
     {
-        if (cell is null) return string.Empty;
+        if (cell is null)
+        {
+            return string.Empty;
+        }
 
         // SharedString
         if (cell.DataType?.Value == CellValues.SharedString)
         {
             if (int.TryParse(cell.InnerText, out var sstIndex) &&
-                wbPart.SharedStringTablePart?.SharedStringTable is { } sst &&
-                sstIndex >= 0 && sstIndex < sst.ChildElements.Count)
+                wbPart.SharedStringTablePart?.SharedStringTable is { } sharedStringTable &&
+                sstIndex >= 0 &&
+                sstIndex < sharedStringTable.ChildElements.Count)
             {
-                return sst.ElementAt(sstIndex).InnerText ?? string.Empty;
+                return sharedStringTable.ElementAt(sstIndex).InnerText ?? string.Empty;
             }
+
             return string.Empty;
         }
 
         // InlineString
         if (cell.DataType?.Value == CellValues.InlineString)
         {
-            return cell.InlineString?.Text?.Text ?? cell.InnerText ?? string.Empty;
+            return cell.InlineString?.Text?.Text
+                ?? cell.InnerText
+                ?? string.Empty;
         }
 
         // Boolean
@@ -147,6 +207,8 @@ public partial class Import
         }
 
         // Number / Date(serial) / General
-        return cell.CellValue?.InnerText ?? cell.InnerText ?? string.Empty;
+        return cell.CellValue?.InnerText
+            ?? cell.InnerText
+            ?? string.Empty;
     }
 }
