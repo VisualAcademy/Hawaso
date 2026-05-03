@@ -1,34 +1,43 @@
 ﻿@page "/divisions"
 @page "/divisions/manage"
 
-@using Hawaso.Web.Components.Pages.DivisionPages.Components 
+@using Hawaso.Web.Components.Pages.DivisionPages.Components
 @using Microsoft.AspNetCore.Authorization
 
 @* @attribute [Authorize(Roles = "Administrators")] *@
 
 <h3 class="mt-1 mb-1">
     Divisions
+
     @if (UseBootstrap5)
     {
-        <button class="btn btn-sm btn-outline-primary" @onclick="ShowEditorForm">Add</button>
+        <button type="button" class="btn btn-sm btn-outline-primary" @onclick="ShowEditorForm">
+            Add
+        </button>
     }
     else
     {
-        <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;">Add</span>
+        <span class="oi oi-plus text-primary align-baseline"
+              @onclick="ShowEditorForm"
+              style="cursor: pointer;">
+            Add
+        </span>
     }
-    <button onclick="location.href = '/DivisionDownload/ExcelDown';" class="btn btn-sm btn-primary" style="float: right;">
+
+    <button type="button"
+            class="btn btn-sm btn-primary"
+            style="float: right;"
+            @onclick="DownloadExcelWithWebApi">
         Excel Export
     </button>
 </h3>
 
 <div class="row">
     <div class="col-md-12">
-        @if (models == null)
+        @if (models is null)
         {
             <div>
-                <p>
-                    Loading...
-                </p>
+                <p>Loading...</p>
             </div>
         }
         else
@@ -43,77 +52,113 @@
                         <col style="width: auto;" />
                         <col style="width: 300px;" />
                     </colgroup>
+
                     <thead class="thead-light">
                         <tr>
                             <th class="text-center">ID</th>
-                            <th class="text-center text-nowrap" @onclick="@(() => SortByName())" style="cursor: pointer;">Name <Azunt.Components.Sorting.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Azunt.Components.Sorting.SortOrderArrow></th>
+                            <th class="text-center text-nowrap"
+                                @onclick="SortByName"
+                                style="cursor: pointer;">
+                                Name
+                                <Azunt.Components.Sorting.SortOrderArrow SortColumn="Name"
+                                                                         SortOrder="@sortOrder">
+                                </Azunt.Components.Sorting.SortOrderArrow>
+                            </th>
                             <th class="text-center text-nowrap">Created</th>
                             <th class="text-center text-nowrap">Active</th>
                             <th class="text-center text-nowrap">&nbsp;</th>
                             <th class="text-center text-nowrap">Admin</th>
                         </tr>
                     </thead>
-                    @if (models.Count == 0)
-                    {
-                        <tbody>
+
+                    <tbody>
+                        @if (models.Count == 0)
+                        {
                             <tr>
                                 <td colspan="6" class="text-center">
                                     <p>No Data.</p>
                                 </td>
                             </tr>
-                        </tbody>
-                    }
-                    <tbody>
-                        @foreach (var m in models)
+                        }
+                        else
                         {
-                            <tr>
-                                <td class="text-center" style="font-size: xx-small;">
-                                    @m.Id
-                                </td>
-                                <td style="cursor: pointer;" class="text-center">
-                                    <span class="btn-link text-nowrap">@m.Name</span>
-                                </td>
-                                <td class="text-center text-nowrap small">
-                                    @(Dul.DateTimeUtility.ShowTimeOrDate(m.CreatedAt))
-                                </td>
-                                <td class="text-center">
-                                    @if (m.Active != null && m.Active.Value)
-                                    {
-                                        <input type="checkbox" checked />
-                                    }
-                                    else
-                                    {
-                                        <input type="checkbox" />
-                                    }
-                                </td>
-                                <td>&nbsp;</td>
-                                <td class="text-center text-nowrap">
-                                    <input type="button" name="btnEdit" value="Edit" class="btn btn-sm btn-primary" @onclick="(() => EditBy(m))" />
-                                    <input type="button" name="btnDelete" value="Del" class="btn btn-sm btn-danger" @onclick="(() => DeleteBy(m))" />
-                                    <input type="button" name="btnToggle" value="Toggle" class="btn btn-sm btn-primary" @onclick="(() => ToggleBy(m))" />
-                                </td>
-                            </tr>
+                            @foreach (var m in models)
+                            {
+                                <tr>
+                                    <td class="text-center" style="font-size: xx-small;">
+                                        @m.Id
+                                    </td>
+
+                                    <td class="text-center" style="cursor: pointer;">
+                                        <span class="btn-link text-nowrap">@m.Name</span>
+                                    </td>
+
+                                    <td class="text-center text-nowrap small">
+                                        @(Dul.DateTimeUtility.ShowTimeOrDate(m.CreatedAt))
+                                    </td>
+
+                                    <td class="text-center">
+                                        <input type="checkbox"
+                                               checked="@(m.Active == true)"
+                                               disabled />
+                                    </td>
+
+                                    <td>&nbsp;</td>
+
+                                    <td class="text-center text-nowrap">
+                                        <input type="button"
+                                               name="btnEdit"
+                                               value="Edit"
+                                               class="btn btn-sm btn-primary"
+                                               @onclick="() => EditBy(m)" />
+
+                                        <input type="button"
+                                               name="btnDelete"
+                                               value="Del"
+                                               class="btn btn-sm btn-danger"
+                                               @onclick="() => DeleteBy(m)" />
+
+                                        <input type="button"
+                                               name="btnToggle"
+                                               value="Toggle"
+                                               class="btn btn-sm btn-primary"
+                                               @onclick="() => ToggleBy(m)" />
+                                    </td>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>
             </div>
         }
     </div>
+
     <div class="col-md-12">
-        <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        <DulPager.DulPagerComponent Model="pager"
+                                    PageIndexChanged="PageIndexChanged">
+        </DulPager.DulPagerComponent>
     </div>
+
     <div class="col-md-12">
-        <Azunt.Components.Search.SearchBox placeholder="Search Divisions..." SearchQueryChanged="Search" Engine="Azunt.Components.Search.SearchBox.DebounceEngine.Cts"></Azunt.Components.Search.SearchBox>
+        <Azunt.Components.Search.SearchBox placeholder="Search Divisions..."
+                                           SearchQueryChanged="Search"
+                                           Engine="Azunt.Components.Search.SearchBox.DebounceEngine.Cts">
+        </Azunt.Components.Search.SearchBox>
     </div>
 </div>
 
-@*입력 또는 수정 폼 모달 다이얼로그*@
-<ModalForm @ref="EditorFormReference" ModelSender="model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit" UserName="@UserName">
+@* 입력 또는 수정 폼 모달 다이얼로그 *@
+<ModalForm @ref="EditorFormReference"
+           ModelSender="model"
+           CreateCallback="CreateOrEditCallback"
+           EditCallback="CreateOrEditCallback"
+           UserName="@UserName">
     <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
 </ModalForm>
 
-@*삭제 폼 모달 다이얼로그*@
-<DeleteDialog @ref="DeleteDialogReference" OnClickCallback="DeleteClick">
+@* 삭제 폼 모달 다이얼로그 *@
+<DeleteDialog @ref="DeleteDialogReference"
+              OnClickCallback="DeleteClickCallback">
 </DeleteDialog>
 
 @if (IsInlineDialogShow)
@@ -121,28 +166,51 @@
     <div class="modal fade show d-block" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+
                 <div class="modal-header">
                     <h5 class="modal-title">Toggle</h5>
+
                     @if (UseBootstrap5)
                     {
-                        <button type="button" class="btn-close" aria-label="Close" @onclick="ToggleClose"></button>
+                        <button type="button"
+                                class="btn-close"
+                                aria-label="Close"
+                                @onclick="ToggleClose">
+                        </button>
                     }
                     else
                     {
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
+                        <button type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                                @onclick="ToggleClose">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     }
                 </div>
+
                 <div class="modal-body">
-                    <p>Do you want to toggle post #@(model.Id)?</p>
+                    <p>Do you want to toggle division #@(model.Id)?</p>
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @onclick="ToggleClick">Toggle</button>
-                    <button type="button" class="btn btn-secondary" @onclick="ToggleClose">Close</button>
+                    <button type="button"
+                            class="btn btn-primary"
+                            @onclick="ToggleClick">
+                        Toggle
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            @onclick="ToggleClose">
+                        Close
+                    </button>
                 </div>
+
             </div>
         </div>
     </div>
+
     <div class="modal-backdrop show"></div>
 }

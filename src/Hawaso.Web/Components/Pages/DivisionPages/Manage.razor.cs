@@ -1,7 +1,6 @@
 using Hawaso.Web.Components.Pages.DivisionPages.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
 
 namespace Hawaso.Web.Components.Pages.DivisionPages;
@@ -15,56 +14,68 @@ public partial class Manage : ComponentBase
     public bool UseBootstrap5 { get; set; } = true;
 
     #region Parameters
+
     [Parameter]
     public int ParentId { get; set; } = 0;
 
     [Parameter]
     public string ParentKey { get; set; } = "";
+
+    [Parameter]
+    public string UserId { get; set; } = "";
+
+    [Parameter]
+    public string UserName { get; set; } = "";
+
     #endregion
 
     #region Injectors
-    [Inject]
-    public NavigationManager Nav { get; set; }
 
     [Inject]
-    public IJSRuntime JSRuntimeInjector { get; set; }
+    public NavigationManager Nav { get; set; } = default!;
 
     [Inject]
-    public IDivisionRepository RepositoryReference { get; set; }
+    public IJSRuntime JSRuntimeInjector { get; set; } = default!;
+
+    [Inject]
+    public IDivisionRepository RepositoryReference { get; set; } = default!;
+
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; } = default!;
+
     #endregion
 
     #region Properties
+
     /// <summary>
     /// 글쓰기 또는 수정하기 폼의 제목에 전달할 문자열(태그 포함 가능)
     /// </summary>
     public string EditorFormTitle { get; set; } = "CREATE";
-    #endregion
 
     /// <summary>
     /// EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기
     /// </summary>
-    //public Components.EditorForm EditorFormReference { get; set; }
-    public Components.ModalForm EditorFormReference { get; set; }
+    public Components.ModalForm EditorFormReference { get; set; } = default!;
 
     /// <summary>
-    /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
+    /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기
     /// </summary>
-    public Components.DeleteDialog DeleteDialogReference { get; set; }
+    public Components.DeleteDialog DeleteDialogReference { get; set; } = default!;
 
     /// <summary>
-    /// 현재 페이지에서 리스트로 사용되는 모델 리스트 
+    /// 현재 페이지에서 리스트로 사용되는 모델 리스트
     /// </summary>
-    protected List<DivisionModel> models = new List<DivisionModel>();
+    protected List<DivisionModel> models = new();
 
     /// <summary>
-    /// 현재 페이지에서 선택된 단일 데이터를 나타내는 모델 클래스 
+    /// 현재 페이지에서 선택된 단일 데이터를 나타내는 모델 클래스
     /// </summary>
-    protected DivisionModel model = new DivisionModel();
+    protected DivisionModel model = new();
 
     /// <summary>
     /// 페이저 설정
     /// </summary>
-    protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase()
+    protected DulPager.DulPagerBase pager = new()
     {
         PageNumber = 1,
         PageIndex = 0,
@@ -72,240 +83,284 @@ public partial class Manage : ComponentBase
         PagerButtonCount = 5
     };
 
+    /// <summary>
+    /// 인라인 폼을 띄울건지 여부
+    /// </summary>
+    public bool IsInlineDialogShow { get; set; } = false;
+
+    protected string sortOrder = "";
+
+    private string searchQuery = "";
+
+    #endregion
+
     #region Lifecycle Methods
+
     /// <summary>
     /// 페이지 초기화 이벤트 처리기
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        if (UserId == "" && UserName == "")
+        if (string.IsNullOrWhiteSpace(UserId) && string.IsNullOrWhiteSpace(UserName))
         {
             await GetUserIdAndUserName();
         }
 
         await DisplayData();
     }
+
     #endregion
+
+    #region Data
 
     private async Task DisplayData()
     {
         // ParentKey와 ParentId를 사용하는 목적은 특정 부모의 Details 페이지에서 리스트로 표현하기 위함
-        if (ParentKey != "")
+        if (!string.IsNullOrWhiteSpace(ParentKey))
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<string>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentKey);
+            var articleSet = await RepositoryReference.GetArticlesAsync<string>(
+                pager.PageIndex,
+                pager.PageSize,
+                searchField: "",
+                searchQuery,
+                sortOrder,
+                ParentKey);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else if (ParentId != 0)
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentId);
+            var articleSet = await RepositoryReference.GetArticlesAsync<int>(
+                pager.PageIndex,
+                pager.PageSize,
+                searchField: "",
+                searchQuery,
+                sortOrder,
+                ParentId);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, parentIdentifier: 0);
+            var articleSet = await RepositoryReference.GetArticlesAsync<int>(
+                pager.PageIndex,
+                pager.PageSize,
+                searchField: "",
+                searchQuery,
+                sortOrder,
+                parentIdentifier: 0);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
 
-        StateHasChanged(); // Refresh
+        StateHasChanged();
     }
 
-    protected async void PageIndexChanged(int pageIndex)
+    protected async Task PageIndexChanged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
 
         await DisplayData();
-
-        StateHasChanged();
     }
 
+    #endregion
+
     #region Event Handlers
+
     /// <summary>
-    /// 글쓰기 모달 폼 띄우기 
+    /// 글쓰기 모달 폼 띄우기
     /// </summary>
     protected void ShowEditorForm()
     {
         EditorFormTitle = "CREATE";
-        this.model = new DivisionModel(); // 모델 초기화
+        model = new DivisionModel();
+
         EditorFormReference.Show();
     }
 
     /// <summary>
     /// 관리자 전용: 모달 폼으로 선택 항목 수정
     /// </summary>
-    protected void EditBy(DivisionModel model)
+    protected void EditBy(DivisionModel selectedModel)
     {
         EditorFormTitle = "EDIT";
-        this.model = new DivisionModel(); // 모델 초기화
-        this.model = model;
+        model = selectedModel;
+
         EditorFormReference.Show();
     }
 
     /// <summary>
     /// 관리자 전용: 모달 폼으로 선택 항목 삭제
     /// </summary>
-    protected void DeleteBy(DivisionModel model)
+    protected void DeleteBy(DivisionModel selectedModel)
     {
-        this.model = model;
+        model = selectedModel;
+
         DeleteDialogReference.Show();
     }
-    #endregion
 
     /// <summary>
-    /// 모델 초기화 및 모달 폼 닫기
+    /// ModalForm의 CreateCallback/EditCallback에서 호출되는 void 콜백 메서드
     /// </summary>
-    protected async void CreateOrEdit()
+    protected async void CreateOrEditCallback()
+    {
+        await CreateOrEditAsync();
+    }
+
+    /// <summary>
+    /// 실제 생성/수정 후처리 비동기 로직
+    /// </summary>
+    private async Task CreateOrEditAsync()
     {
         EditorFormReference.Hide();
-        this.model = new DivisionModel();
+        model = new DivisionModel();
 
         await DisplayData();
     }
 
     /// <summary>
-    /// 삭제 모달 폼에서 현재 선택한 항목 삭제
+    /// DeleteDialog의 OnClickCallback에서 호출되는 void 콜백 메서드
     /// </summary>
-    protected async void DeleteClick()
+    protected async void DeleteClickCallback()
     {
-        await RepositoryReference.DeleteAsync(this.model.Id);
-        DeleteDialogReference.Hide();
-        this.model = new DivisionModel(); // 선택했던 모델 초기화
-        await DisplayData(); // 다시 로드
+        await DeleteClickAsync();
     }
 
-    #region Toggle with Inline Dialog
     /// <summary>
-    /// 인라인 폼을 띄울건지 여부 
+    /// 실제 삭제 비동기 로직
     /// </summary>
-    public bool IsInlineDialogShow { get; set; } = false;
+    private async Task DeleteClickAsync()
+    {
+        await RepositoryReference.DeleteAsync(model.Id);
+
+        DeleteDialogReference.Hide();
+        model = new DivisionModel();
+
+        await DisplayData();
+    }
+
+    #endregion
+
+    #region Toggle with Inline Dialog
 
     protected void ToggleClose()
     {
         IsInlineDialogShow = false;
-        this.model = new DivisionModel();
+        model = new DivisionModel();
     }
 
     /// <summary>
-    /// 토글: Pinned
+    /// 토글: Active
     /// </summary>
-    protected async void ToggleClick()
+    protected async Task ToggleClick()
     {
         model.Active = !model.Active;
 
-        // 변경된 내용 업데이트
-        await RepositoryReference.UpdateAsync(this.model);
+        await RepositoryReference.UpdateAsync(model);
 
-        IsInlineDialogShow = false; // 표시 속성 초기화
-        this.model = new DivisionModel(); // 선택한 모델 초기화 
-
-        await DisplayData(); // 다시 로드
-    }
-
-    /// <summary>
-    /// ToggleBy(PinnedBy)
-    /// </summary>
-    protected void ToggleBy(DivisionModel model)
-    {
-        this.model = model;
-        IsInlineDialogShow = true;
-    }
-    #endregion
-
-    #region Search
-    private string searchQuery = "";
-
-    protected async void Search(string query)
-    {
-        pager.PageIndex = 0;
-
-        this.searchQuery = query;
+        IsInlineDialogShow = false;
+        model = new DivisionModel();
 
         await DisplayData();
     }
+
+    /// <summary>
+    /// ToggleBy
+    /// </summary>
+    protected void ToggleBy(DivisionModel selectedModel)
+    {
+        model = selectedModel;
+        IsInlineDialogShow = true;
+    }
+
+    #endregion
+
+    #region Search
+
+    protected async Task Search(string query)
+    {
+        pager.PageIndex = 0;
+        pager.PageNumber = 1;
+
+        searchQuery = query;
+
+        await DisplayData();
+    }
+
     #endregion
 
     #region Excel
+
     protected void DownloadExcelWithWebApi()
     {
-        //FileUtil.SaveAsExcel(JSRuntimeInjector, "/DivisionDownload/ExcelDown");
+        // FileUtil.SaveAsExcel(JSRuntimeInjector, "/DivisionDownload/ExcelDown");
 
-        Nav.NavigateTo($"/Divisions"); // 다운로드 후 현재 페이지 다시 로드
+        Nav.NavigateTo("/DivisionDownload/ExcelDown", forceLoad: true);
     }
 
     protected void DownloadExcel()
     {
-        //using (var package = new ExcelPackage())
-        //{
-        //    var worksheet = package.Workbook.Worksheets.Add("Divisions");
-
-        //    var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
-        //        (from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName })
-        //        , true);
-
-        //    var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
-
-        //    // 그라데이션 효과 부여
-        //    var rule = uploadCol.ConditionalFormatting.AddThreeColorScale();
-        //    rule.LowValue.Color = Color.SkyBlue;
-        //    rule.MiddleValue.Color = Color.White;
-        //    rule.HighValue.Color = Color.Red;
-
-        //    var header = worksheet.Cells["B2:F2"];
-        //    worksheet.DefaultColWidth = 25;
-        //    worksheet.Cells[3, 2, models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
-        //    tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
-        //    tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
-        //    tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
-        //    tableBody.Style.Border.BorderAround(ExcelBorderStyle.Medium);
-        //    header.Style.Font.Bold = true;
-        //    header.Style.Font.Color.SetColor(Color.White);
-        //    header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
-
-        //    FileUtil.SaveAs(JSRuntimeInjector, $"{DateTime.Now.ToString("yyyyMMddhhmmss")}_Divisions.xlsx", package.GetAsByteArray());
-        //}
+        // using (var package = new ExcelPackage())
+        // {
+        //     var worksheet = package.Workbook.Worksheets.Add("Divisions");
+        //
+        //     var tableBody = worksheet.Cells["B2:B2"].LoadFromCollection(
+        //         (from m in models select new { m.Created, m.Name, m.Title, m.DownCount, m.FileName }),
+        //         true);
+        //
+        //     var uploadCol = tableBody.Offset(1, 1, models.Count, 1);
+        //
+        //     var rule = uploadCol.ConditionalFormatting.AddThreeColorScale();
+        //     rule.LowValue.Color = Color.SkyBlue;
+        //     rule.MiddleValue.Color = Color.White;
+        //     rule.HighValue.Color = Color.Red;
+        //
+        //     var header = worksheet.Cells["B2:F2"];
+        //     worksheet.DefaultColWidth = 25;
+        //     worksheet.Cells[3, 2, models.Count + 2, 2].Style.Numberformat.Format = "yyyy MMM d DDD";
+        //     tableBody.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+        //     tableBody.Style.Fill.PatternType = ExcelFillStyle.Solid;
+        //     tableBody.Style.Fill.BackgroundColor.SetColor(Color.WhiteSmoke);
+        //     tableBody.Style.Border.BorderAround(ExcelBorderStyle.Medium);
+        //     header.Style.Font.Bold = true;
+        //     header.Style.Font.Color.SetColor(Color.White);
+        //     header.Style.Fill.BackgroundColor.SetColor(Color.DarkBlue);
+        //
+        //     FileUtil.SaveAs(
+        //         JSRuntimeInjector,
+        //         $"{DateTime.Now:yyyyMMddhhmmss}_Divisions.xlsx",
+        //         package.GetAsByteArray());
+        // }
     }
+
     #endregion
 
     #region Sorting
-    private string sortOrder = "";
 
-    protected async void SortByName()
+    protected async Task SortByName()
     {
         if (!sortOrder.Contains("Name"))
-        {
-            sortOrder = ""; // 다른 열을 정렬하고 있었다면, 다시 초기화
-        }
-
-        if (sortOrder == "")
-        {
-            sortOrder = "Name";
-        }
-        else if (sortOrder == "Name")
-        {
-            sortOrder = "NameDesc";
-        }
-        else
         {
             sortOrder = "";
         }
 
+        sortOrder = sortOrder switch
+        {
+            "" => "Name",
+            "Name" => "NameDesc",
+            _ => ""
+        };
+
         await DisplayData();
     }
+
     #endregion
 
     #region Get UserId and UserName
-    [Parameter]
-    public string UserId { get; set; } = "";
-
-    [Parameter]
-    public string UserName { get; set; } = "";
-
-    //[Inject] public UserManager<VisualAcademy.Data.ApplicationUser> UserManagerRef { get; set; }
-
-    [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; }
 
     private async Task GetUserIdAndUserName()
     {
@@ -314,9 +369,10 @@ public partial class Manage : ComponentBase
 
         if (user?.Identity?.IsAuthenticated == true)
         {
-            //var currentUser = await UserManagerRef.GetUserAsync(user);
-            //UserId = currentUser.Id;
-            //UserName = user.Identity.Name;
+            // var currentUser = await UserManagerRef.GetUserAsync(user);
+            // UserId = currentUser.Id;
+
+            UserName = user.Identity.Name ?? "";
         }
         else
         {
@@ -324,5 +380,6 @@ public partial class Manage : ComponentBase
             UserName = "Anonymous";
         }
     }
+
     #endregion
 }
