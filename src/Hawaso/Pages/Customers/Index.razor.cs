@@ -10,12 +10,12 @@ namespace Hawaso.Pages.Customers
     public partial class Index
     {
         [Inject]
-        public ICustomerRepository CustomerRepositoryAsync { get; set; }
+        public ICustomerRepository CustomerRepositoryAsync { get; set; } = default!;
 
         [Inject]
-        public NavigationManager NavigationManager { get; set; }
+        public NavigationManager NavigationManager { get; set; } = default!;
 
-        private DulPagerBase pager = new DulPagerBase()
+        private readonly DulPagerBase pager = new()
         {
             PageNumber = 1,
             PageIndex = 0,
@@ -23,7 +23,7 @@ namespace Hawaso.Pages.Customers
             PagerButtonCount = 5
         };
 
-        private List<Customer> customers; 
+        private List<Customer>? customers;
 
         protected override async Task OnInitializedAsync()
         {
@@ -32,20 +32,20 @@ namespace Hawaso.Pages.Customers
 
         private async Task DisplayData()
         {
-            //await Task.Delay(3000);
-            var articleSet = await CustomerRepositoryAsync.GetAllAsync(pager.PageIndex, pager.PageSize);
+            var articleSet = await CustomerRepositoryAsync.GetAllAsync(
+                pager.PageIndex,
+                pager.PageSize);
+
             pager.RecordCount = articleSet.TotalRecords;
-            customers = articleSet.Records.ToList();
+            customers = articleSet.Records?.ToList() ?? new List<Customer>();
         }
 
-        private async void PageIndexChanged(int pageIndex)
+        private async Task PageIndexChanged(int pageIndex)
         {
             pager.PageIndex = pageIndex;
             pager.PageNumber = pageIndex + 1;
 
             await DisplayData();
-
-            StateHasChanged();
         }
 
         private void btnCustomerName_Click(int customerId)
