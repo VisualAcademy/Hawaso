@@ -5,13 +5,15 @@
 
 @page "/CodeSnippets/CurrentUserData1"
 
-<h3>현재 접속자 정보 얻기 코드 샘플 1</h3>
-
 @attribute [Authorize(Roles = "Administrators")]
 
 @using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
+
 @inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3>현재 접속자 정보 얻기 코드 샘플 1</h3>
 
 <h3>ClaimsPrincipal Data</h3>
 
@@ -19,7 +21,7 @@
 
 <p>@_authMessage</p>
 
-@if (_claims.Count() > 0)
+@if (_claims.Any())
 {
     <ul>
         @foreach (var claim in _claims)
@@ -32,25 +34,32 @@
 <p>@_surnameMessage</p>
 
 @code {
-    private string _authMessage;
-    private string _surnameMessage;
+    private string _authMessage = string.Empty;
+    private string _surnameMessage = string.Empty;
     private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
 
     private async Task GetClaimsPrincipalData()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
+        var identity = user.Identity;
 
-        if (user.Identity.IsAuthenticated)
+        if (identity?.IsAuthenticated == true)
         {
-            _authMessage = $"{user.Identity.Name} is authenticated.";
+            _authMessage = $"{identity.Name ?? "Unknown user"} is authenticated.";
             _claims = user.Claims;
-            _surnameMessage =
-                $"Surname: {user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value}";
+
+            var surname = user.FindFirst(c => c.Type == ClaimTypes.Surname)?.Value;
+
+            _surnameMessage = string.IsNullOrWhiteSpace(surname)
+                ? "Surname: Not provided."
+                : $"Surname: {surname}";
         }
         else
         {
             _authMessage = "The user is NOT authenticated.";
+            _claims = Enumerable.Empty<Claim>();
+            _surnameMessage = string.Empty;
         }
     }
 }
