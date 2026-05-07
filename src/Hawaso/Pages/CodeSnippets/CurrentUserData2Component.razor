@@ -5,32 +5,40 @@
 
 @page "/CodeSnippets/CurrentUserData2"
 
-<h3>현재 접속자 정보 얻기 코드 샘플 2</h3>
-
 @attribute [Authorize(Roles = "Administrators")]
 
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@using System.Security.Claims
 
-<text>현재 접속자의 이름은 @(Name)입니다.</text>
+<h3>현재 접속자 정보 얻기 코드 샘플 2</h3>
+
+<text>현재 접속자의 이름은 @Name 입니다.</text>
 <br />
 nameidentifier: @NameIdentifier
 
 @code {
-    public string NameIdentifier { get; set; }
-    public string Name { get; set; }
+    public string NameIdentifier { get; set; } = string.Empty;
+
+    public string Name { get; set; } = string.Empty;
+
+    [CascadingParameter]
+    public Task<AuthenticationState>? AuthenticationStateRef { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateRef;
-        if (authState.User.Identity.IsAuthenticated)
+        if (AuthenticationStateRef is null)
         {
-            //[2] Claims에 저장된 값 출력
-            Name = authState.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
-            NameIdentifier = authState.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+            return;
+        }
+
+        var authState = await AuthenticationStateRef;
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            Name = user.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+            NameIdentifier = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? string.Empty;
         }
     }
-
-    [CascadingParameter]
-    public Task<AuthenticationState> AuthenticationStateRef { get; set; }
 }
