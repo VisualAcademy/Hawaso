@@ -4,7 +4,7 @@
 
 
 
-
+    has_military_service: null,
 
 
 
