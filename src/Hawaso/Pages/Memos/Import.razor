@@ -1,4 +1,5 @@
 ﻿@page "/Memos/Import"
+
 @using Microsoft.AspNetCore.Components.Forms
 @using System.IO
 @using DocumentFormat.OpenXml.Packaging
@@ -8,13 +9,22 @@
 
 <h3>Excel 파일 업로드</h3>
 
-<a href="/templates/Memos/MemosImport.xlsx" class="btn btn-secondary mb-3">Template Download</a><br />
+<a href="/templates/Memos/MemosImport.xlsx" class="btn btn-secondary mb-3">Template Download</a>
+<br />
 
 <Microsoft.AspNetCore.Components.Forms.InputFile OnChange="HandleExcelUpload" accept=".xlsx" />
 
-@if (memos != null && memos.Count > 0)
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger mt-3">
+        @errorMessage
+    </div>
+}
+
+@if (memos.Count > 0)
 {
     <h4>데이터 미리보기</h4>
+
     <table class="table">
         <thead>
             <tr>
@@ -40,79 +50,141 @@
     </table>
 }
 
-<button class="btn btn-primary" @onclick="SaveMemos">Save All</button>
+<button class="btn btn-primary" @onclick="SaveMemos" disabled="@(memos.Count == 0)">
+    Save All
+</button>
 
 @code {
     [Inject]
-    public IMemoRepository RepositoryReference { get; set; }
+    public IMemoRepository RepositoryReference { get; set; } = default!;
 
     [Inject]
-    public NavigationManager NavigationManager { get; set; }
+    public NavigationManager NavigationManager { get; set; } = default!;
 
-    private List<Memo> memos = new List<Memo>();
+    private List<Memo> memos = new();
+
+    private string errorMessage = "";
 
     private async Task HandleExcelUpload(InputFileChangeEventArgs e)
     {
+        errorMessage = "";
+        memos.Clear();
+
         var file = e.File;
-        if (file != null)
+
+        if (file is null)
         {
-            MemoryStream memoryStream = new MemoryStream();
-            await file.OpenReadStream(maxAllowedSize: 10485760).CopyToAsync(memoryStream);
-            memoryStream.Position = 0; // 스트림의 위치를 처음으로 되돌림
-
-            using var package = SpreadsheetDocument.Open(memoryStream, false);
-            var workbookPart = package.WorkbookPart;
-            var sheet = workbookPart.Workbook.Descendants<Sheet>().FirstOrDefault();
-            var worksheetPart = (WorksheetPart)workbookPart.GetPartById(sheet.Id);
-            var sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
-
-            List<Memo> loadedMemos = new List<Memo>();
-
-            // 엑셀 파일에서 첫 번째 행은 헤더로 가정, 데이터는 두 번째 행부터 시작
-            foreach (Row row in sheetData.Descendants<Row>().Skip(1))
-            {
-                // 각 행에서 셀 데이터 읽기
-                var cells = row.Descendants<Cell>().ToList();
-                if (cells.Count >= 5) // 최소한 5개의 셀 데이터가 필요
-                {
-                    var name = ReadCellValue(workbookPart, cells[0]);
-                    var email = ReadCellValue(workbookPart, cells[1]);
-                    var title = ReadCellValue(workbookPart, cells[2]);
-                    var content = ReadCellValue(workbookPart, cells[3]);
-                    var createdBy = ReadCellValue(workbookPart, cells[4]);
-
-                    loadedMemos.Add(new Memo
-                        {
-                            Name = name,
-                            Email = email,
-                            Title = title,
-                            Content = content,
-                            CreatedBy = createdBy,
-                            Created = DateTime.UtcNow // 생성 날짜를 현재 시간으로 설정
-                        });
-                }
-            }
-
-            if (loadedMemos.Any())
-            {
-                memos = loadedMemos; // 로컬 상태에 업로드된 데이터 저장
-                StateHasChanged(); // UI 갱신
-            }
+            errorMessage = "업로드할 Excel 파일을 선택하세요.";
+            return;
         }
+
+        await using var memoryStream = new MemoryStream();
+
+        await file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024).CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+
+        using var package = SpreadsheetDocument.Open(memoryStream, false);
+
+        var workbookPart = package.WorkbookPart;
+
+        if (workbookPart?.Workbook is null)
+        {
+            errorMessage = "Excel 파일에서 Workbook 정보를 찾을 수 없습니다.";
+            return;
+        }
+
+        var sheet = workbookPart.Workbook.Descendants<Sheet>().FirstOrDefault();
+
+        if (sheet?.Id?.Value is null)
+        {
+            errorMessage = "Excel 파일에서 첫 번째 Sheet 정보를 찾을 수 없습니다.";
+            return;
+        }
+
+        var part = workbookPart.GetPartById(sheet.Id.Value);
+
+        if (part is not WorksheetPart worksheetPart)
+        {
+            errorMessage = "Excel 파일에서 Worksheet 정보를 찾을 수 없습니다.";
+            return;
+        }
+
+        var worksheet = worksheetPart.Worksheet;
+
+        if (worksheet is null)
+        {
+            errorMessage = "Excel 파일에서 Worksheet 내용을 찾을 수 없습니다.";
+            return;
+        }
+
+        var sheetData = worksheet.Elements<SheetData>().FirstOrDefault();
+
+        if (sheetData is null)
+        {
+            errorMessage = "Excel 파일에 읽을 수 있는 데이터가 없습니다.";
+            return;
+        }
+
+        List<Memo> loadedMemos = new();
+
+        // 엑셀 파일에서 첫 번째 행은 헤더로 가정, 데이터는 두 번째 행부터 시작
+        foreach (Row row in sheetData.Descendants<Row>().Skip(1))
+        {
+            var cells = row.Descendants<Cell>().ToList();
+
+            if (cells.Count < 5)
+            {
+                continue;
+            }
+
+            var name = ReadCellValue(workbookPart, cells[0]);
+            var email = ReadCellValue(workbookPart, cells[1]);
+            var title = ReadCellValue(workbookPart, cells[2]);
+            var content = ReadCellValue(workbookPart, cells[3]);
+            var createdBy = ReadCellValue(workbookPart, cells[4]);
+
+            loadedMemos.Add(new Memo
+            {
+                Name = name,
+                Email = email,
+                Title = title,
+                Content = content,
+                CreatedBy = createdBy,
+                Created = DateTime.UtcNow
+            });
+        }
+
+        if (loadedMemos.Count == 0)
+        {
+            errorMessage = "가져올 Memo 데이터가 없습니다.";
+            return;
+        }
+
+        memos = loadedMemos;
     }
 
-    // 셀 값 읽기 함수
-    private string ReadCellValue(WorkbookPart workbookPart, Cell cell)
+    private static string ReadCellValue(WorkbookPart workbookPart, Cell cell)
     {
-        if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
+        if (cell.DataType?.Value == CellValues.SharedString)
         {
-            return workbookPart.SharedStringTablePart.SharedStringTable
-                .ElementAt(int.Parse(cell.InnerText)).InnerText;
+            var sharedStringTable = workbookPart.SharedStringTablePart?.SharedStringTable;
+
+            if (sharedStringTable is null)
+            {
+                return "";
+            }
+
+            if (!int.TryParse(cell.InnerText, out var sharedStringIndex))
+            {
+                return "";
+            }
+
+            return sharedStringTable
+                .ElementAtOrDefault(sharedStringIndex)?
+                .InnerText ?? "";
         }
-        else
-        {
-            return cell.InnerText;
-        }
+
+        return cell.InnerText ?? "";
     }
 
     private async Task SaveMemos()
@@ -130,12 +202,12 @@
             memo.Step = 0;
             memo.RefOrder = 0;
             memo.PostIp = "127.0.0.1";
-            memo.Password = "";
             memo.ReadCount = 0;
             memo.DownCount = 0;
 
             await RepositoryReference.AddAsync(memo);
         }
+
         NavigationManager.NavigateTo("/Memos");
     }
 }
