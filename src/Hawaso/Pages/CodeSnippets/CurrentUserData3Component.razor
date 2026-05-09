@@ -5,9 +5,10 @@
 
 @page "/CodeSnippets/CurrentUserData3"
 
-@using Hawaso.Data
 @using Hawaso.Models
-@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
 
 <h3>현재 접속자 정보 얻기 코드 샘플 3</h3>
 
@@ -16,41 +17,52 @@
 <text>
     현재 접속자:<br />
     UserId: @UserId <br />
-    이름: @(UserName)
+    이름: @UserName
 </text>
 
 @code {
-    protected override async Task OnInitializedAsync()
-    {
-        if (UserId == "" && UserName == "")
-        {
-            await GetUserIdAndUserName();
-        }
-    }
+    #region Parameters
 
-    #region Get UserId and UserName
     [Parameter]
     public string UserId { get; set; } = "";
 
     [Parameter]
     public string UserName { get; set; } = "";
 
-    // IdentityUser인지 ApplicationUser인지 확인: Hawaso 프로젝트는 ApplicationUser 사용
-    //[Inject] public UserManager<IdentityUser> UserManagerRef { get; set; }
-    [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; }
+    #endregion
 
-    [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; }
+    #region Inject
 
-    private async Task GetUserIdAndUserName()
+    // Hawaso 프로젝트는 IdentityUser가 아닌 ApplicationUser를 사용
+    [Inject]
+    public UserManager<ApplicationUser> UserManagerRef { get; set; } = default!;
+
+    [Inject]
+    public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; } = default!;
+
+    #endregion
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrEmpty(UserId) && string.IsNullOrEmpty(UserName))
+        {
+            await GetUserIdAndUserNameAsync();
+        }
+    }
+
+    #region Get UserId and UserName
+
+    private async Task GetUserIdAndUserNameAsync()
     {
         var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
-        var user = authState.User;
+        var claimsPrincipal = authState.User;
 
-        if (user.Identity.IsAuthenticated)
+        if (claimsPrincipal.Identity?.IsAuthenticated == true)
         {
-            var currentUser = await UserManagerRef.GetUserAsync(user);
-            UserId = currentUser.Id;
-            UserName = user.Identity.Name;
+            var currentUser = await UserManagerRef.GetUserAsync(claimsPrincipal);
+
+            UserId = currentUser?.Id ?? "";
+            UserName = claimsPrincipal.Identity?.Name ?? currentUser?.UserName ?? "";
         }
         else
         {
@@ -58,5 +70,7 @@
             UserName = "Anonymous";
         }
     }
+
     #endregion
+
 }
