@@ -5,7 +5,7 @@ using System.Globalization;
 using VisualAcademy.Models.Libraries;
 using VisualAcademy.Models.Replys;
 
-// Open XML SDK (EPPlus 제거)
+// Open XML SDK
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -18,36 +18,44 @@ public partial class Manage
     public int ParentId { get; set; } = 0;
 
     [Parameter]
-    public string ParentKey { get; set; } = "";
+    public string ParentKey { get; set; } = string.Empty;
 
     #region Injectors
+
     [Inject]
     public ILibraryRepository UploadRepositoryAsyncReference { get; set; } = default!;
 
     [Inject]
     public NavigationManager NavigationManagerReference { get; set; } = default!;
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
+
+    [Inject]
+    public IFileStorageManager FileStorageManager { get; set; } = default!;
+
     #endregion
 
     /// <summary>
     /// EditorForm에 대한 참조: 모달로 글쓰기 또는 수정하기
     /// </summary>
-    public Components.EditorForm EditorFormReference { get; set; }
+    public Components.EditorForm EditorFormReference { get; set; } = default!;
 
     /// <summary>
-    /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기 
+    /// DeleteDialog에 대한 참조: 모달로 항목 삭제하기
     /// </summary>
-    public Components.DeleteDialog DeleteDialogReference { get; set; }
+    public Components.DeleteDialog DeleteDialogReference { get; set; } = default!;
 
-    protected List<LibraryModel> models = new();
+    protected List<LibraryModel>? models;
 
     protected LibraryModel model = new();
 
     /// <summary>
-    /// 공지사항으로 올리기 폼을 띄울건지 여부 
+    /// 공지사항으로 올리기 폼을 띄울건지 여부
     /// </summary>
     public bool IsInlineDialogShow { get; set; } = false;
 
-    protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase()
+    protected DulPager.DulPagerBase pager = new()
     {
         PageNumber = 1,
         PageIndex = 0,
@@ -55,25 +63,59 @@ public partial class Manage
         PagerButtonCount = 5
     };
 
-    protected override async Task OnInitializedAsync() => await DisplayData();
+    public string EditorFormTitle { get; set; } = "CREATE";
+
+    #region Search / Sorting
+
+    private string searchQuery = string.Empty;
+
+    protected string sortOrder = string.Empty;
+
+    #endregion
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DisplayData();
+    }
 
     private async Task DisplayData()
     {
-        if (!string.IsNullOrEmpty(ParentKey))
+        if (!string.IsNullOrWhiteSpace(ParentKey))
         {
-            var articleSet = await UploadRepositoryAsyncReference.GetArticles<string>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentKey);
+            var articleSet = await UploadRepositoryAsyncReference.GetArticles<string>(
+                pager.PageIndex,
+                pager.PageSize,
+                string.Empty,
+                searchQuery,
+                sortOrder,
+                ParentKey);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else if (ParentId != 0)
         {
-            var articleSet = await UploadRepositoryAsyncReference.GetArticles<int>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentId);
+            var articleSet = await UploadRepositoryAsyncReference.GetArticles<int>(
+                pager.PageIndex,
+                pager.PageSize,
+                string.Empty,
+                searchQuery,
+                sortOrder,
+                ParentId);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else
         {
-            var articleSet = await UploadRepositoryAsyncReference.GetArticles<int>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, 0);
+            var articleSet = await UploadRepositoryAsyncReference.GetArticles<int>(
+                pager.PageIndex,
+                pager.PageSize,
+                string.Empty,
+                searchQuery,
+                sortOrder,
+                0);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
@@ -81,7 +123,10 @@ public partial class Manage
         StateHasChanged();
     }
 
-    protected void NameClick(int id) => NavigationManagerReference.NavigateTo($"/Libraries/Details/{id}");
+    protected void NameClick(int id)
+    {
+        NavigationManagerReference.NavigateTo($"/Libraries/Details/{id}");
+    }
 
     protected async void PageIndexChanged(int pageIndex)
     {
@@ -93,127 +138,160 @@ public partial class Manage
         StateHasChanged();
     }
 
-    public string EditorFormTitle { get; set; } = "CREATE";
-
     protected void ShowEditorForm()
     {
         EditorFormTitle = "CREATE";
-        this.model = new LibraryModel { ParentKey = ParentKey };
+
+        model = new LibraryModel
+        {
+            ParentKey = ParentKey
+        };
+
         EditorFormReference.Show();
     }
 
-    protected void EditBy(LibraryModel model)
+    protected void EditBy(LibraryModel selectedModel)
     {
         EditorFormTitle = "EDIT";
-        this.model = model;
-        this.model.ParentKey = ParentKey;
+
+        model = selectedModel;
+        model.ParentKey = ParentKey;
+
         EditorFormReference.Show();
     }
 
-    protected void DeleteBy(LibraryModel model)
+    protected void DeleteBy(LibraryModel selectedModel)
     {
-        this.model = model;
+        model = selectedModel;
+
         DeleteDialogReference.Show();
     }
 
-    protected void ToggleBy(LibraryModel model)
+    protected void ToggleBy(LibraryModel selectedModel)
     {
-        this.model = model;
+        model = selectedModel;
+
         IsInlineDialogShow = true;
     }
 
-    protected async void DownloadBy(LibraryModel model)
+    protected async void DownloadBy(LibraryModel selectedModel)
     {
-        if (!string.IsNullOrEmpty(model.FileName))
+        if (string.IsNullOrWhiteSpace(selectedModel.FileName))
         {
-            byte[] fileBytes = await FileStorageManager.DownloadAsync(model.FileName, "");
-            if (fileBytes != null)
-            {
-                model.DownCount = model.DownCount + 1;
-                await UploadRepositoryAsyncReference.EditAsync(model);
-
-                await FileUtil.SaveAs(JSRuntime, model.FileName, fileBytes);
-            }
+            return;
         }
+
+        byte[] fileBytes = await FileStorageManager.DownloadAsync(selectedModel.FileName, string.Empty);
+
+        if (fileBytes.Length == 0)
+        {
+            return;
+        }
+
+        selectedModel.DownCount++;
+        await UploadRepositoryAsyncReference.EditAsync(selectedModel);
+
+        await FileUtil.SaveAs(JSRuntime, selectedModel.FileName, fileBytes);
     }
 
-    [Inject]
-    public IJSRuntime JSRuntime { get; set; } = default!;
+    /// <summary>
+    /// EditorForm CreateCallback용.
+    /// </summary>
+    protected async Task CreateOrEdit()
+    {
+        await CloseEditorAndRefreshAsync();
+    }
 
-    [Inject]
-    public IFileStorageManager FileStorageManager { get; set; } = default!;
+    /// <summary>
+    /// EditorForm EditCallback용.
+    /// EventCallback&lt;bool&gt;와의 연결을 위해 bool 매개변수 오버로드를 둔다.
+    /// </summary>
+    protected async Task CreateOrEdit(bool _)
+    {
+        await CloseEditorAndRefreshAsync();
+    }
 
-    protected async void CreateOrEdit()
+    private async Task CloseEditorAndRefreshAsync()
     {
         EditorFormReference.Hide();
-        this.model = new LibraryModel();
+
+        model = new LibraryModel();
+
         await DisplayData();
     }
 
     protected async void DeleteClick()
     {
-        if (!string.IsNullOrEmpty(model?.FileName))
+        if (!string.IsNullOrWhiteSpace(model.FileName))
         {
-            await FileStorageManager.DeleteAsync(model.FileName, "");
+            await FileStorageManager.DeleteAsync(model.FileName, string.Empty);
         }
 
-        await UploadRepositoryAsyncReference.DeleteAsync(this.model.Id);
+        await UploadRepositoryAsyncReference.DeleteAsync(model.Id);
+
         DeleteDialogReference.Hide();
-        this.model = new LibraryModel();
+
+        model = new LibraryModel();
+
         await DisplayData();
     }
 
     protected void ToggleClose()
     {
         IsInlineDialogShow = false;
-        this.model = new LibraryModel();
+
+        model = new LibraryModel();
     }
 
     protected async void ToggleClick()
     {
-        this.model.IsPinned = (this.model?.IsPinned == true) ? false : true;
+        model.IsPinned = model.IsPinned == true ? false : true;
 
-        await UploadRepositoryAsyncReference.EditAsync(this.model);
+        await UploadRepositoryAsyncReference.EditAsync(model);
+
         IsInlineDialogShow = false;
-        this.model = new LibraryModel();
+
+        model = new LibraryModel();
+
         await DisplayData();
     }
-
-    #region Search
-    private string searchQuery = "";
 
     protected async void Search(string query)
     {
         pager.PageIndex = 0;
+        pager.PageNumber = 1;
 
-        this.searchQuery = query;
+        searchQuery = query ?? string.Empty;
 
         await DisplayData();
 
         StateHasChanged();
     }
-    #endregion
 
-    // ===== EPPlus 제거, Open XML SDK로 교체 =====
-    protected void DownloadExcel()
+    #region Excel Download
+
+    // EPPlus 제거, Open XML SDK로 교체
+    protected async Task DownloadExcel()
     {
-        // 빈 목록이면 바로 종료(원하면 빈 파일 생성으로 바꿀 수 있음)
-        if (models is null || models.Count == 0)
+        if (models == null || models.Count == 0)
         {
             return;
         }
 
         using var ms = new MemoryStream();
+
         using (var doc = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
         {
-            var wbPart = doc.AddWorkbookPart();
+            WorkbookPart wbPart = doc.AddWorkbookPart();
             wbPart.Workbook = new Workbook();
 
-            var wsPart = wbPart.AddNewPart<WorksheetPart>();
-            var sheetData = new SheetData();
+            WorksheetPart wsPart = wbPart.AddNewPart<WorksheetPart>();
+
+            SheetData sheetData = new();
             wsPart.Worksheet = new Worksheet(sheetData);
 
-            var sheets = wbPart.Workbook.AppendChild(new Sheets());
+            Sheets sheets = wbPart.Workbook.AppendChild(new Sheets());
+
             sheets.Append(new Sheet
             {
                 Id = wbPart.GetIdOfPart(wsPart),
@@ -221,35 +299,50 @@ public partial class Manage
                 Name = "Libraries"
             });
 
-            // Header
             uint headerRowIndex = 1;
-            var headerRow = new Row { RowIndex = headerRowIndex };
+
+            Row headerRow = new()
+            {
+                RowIndex = headerRowIndex
+            };
+
             sheetData.Append(headerRow);
 
-            string[] headers = { "Created", "Name", "Title", "DownCount", "FileName" };
+            string[] headers =
+            {
+                "Created",
+                "Name",
+                "Title",
+                "DownCount",
+                "FileName"
+            };
+
             for (int i = 0; i < headers.Length; i++)
             {
                 headerRow.Append(TextCell(Ref(i + 1, (int)headerRowIndex), headers[i]));
             }
 
-            // Data rows
             uint rowIndex = 2;
-            foreach (var m in models)
+
+            foreach (LibraryModel item in models)
             {
-                var row = new Row { RowIndex = rowIndex };
+                Row row = new()
+                {
+                    RowIndex = rowIndex
+                };
+
                 sheetData.Append(row);
 
-                // Created은 DateTime?일 가능성 → 문자열로 안전 출력
-                string createdStr = m.Created?.ToLocalTime()
+                string createdText = item.Created?.ToLocalTime()
                     .ToString("yyyy MMM d ddd", CultureInfo.InvariantCulture) ?? string.Empty;
 
-                var values = new[]
+                string[] values =
                 {
-                    createdStr,
-                    m.Name ?? string.Empty,
-                    m.Title ?? string.Empty,
-                    m.DownCount.ToString(CultureInfo.InvariantCulture),
-                    m.FileName ?? string.Empty
+                    createdText,
+                    item.Name ?? string.Empty,
+                    item.Title ?? string.Empty,
+                    item.DownCount.ToString(CultureInfo.InvariantCulture),
+                    item.FileName ?? string.Empty
                 };
 
                 for (int i = 0; i < values.Length; i++)
@@ -264,72 +357,72 @@ public partial class Manage
             wbPart.Workbook.Save();
         }
 
-        var bytes = ms.ToArray();
-        FileUtil.SaveAs(JSRuntime, $"{DateTime.Now:yyyyMMddHHmmss}_Libraries.xlsx", bytes);
+        byte[] bytes = ms.ToArray();
+
+        await FileUtil.SaveAs(JSRuntime, $"{DateTime.Now:yyyyMMddHHmmss}_Libraries.xlsx", bytes);
     }
 
-    // ===== OpenXML helpers =====
-    private static Cell TextCell(string cellRef, string text) =>
-        new Cell
+    #endregion
+
+    #region Open XML Helpers
+
+    private static Cell TextCell(string cellRef, string text)
+    {
+        return new Cell
         {
             CellReference = cellRef,
             DataType = CellValues.String,
             CellValue = new CellValue(text ?? string.Empty)
         };
+    }
 
-    private static string Ref(int col1Based, int row) => $"{ColName(col1Based)}{row}";
+    private static string Ref(int col1Based, int row)
+    {
+        return $"{ColName(col1Based)}{row}";
+    }
 
     private static string ColName(int index)
     {
-        // 1 -> A, 2 -> B, ... 26 -> Z, 27 -> AA ...
-        var dividend = index;
-        string col = string.Empty;
+        int dividend = index;
+        string columnName = string.Empty;
+
         while (dividend > 0)
         {
-            var modulo = (dividend - 1) % 26;
-            col = (char)('A' + modulo) + col;
+            int modulo = (dividend - 1) % 26;
+            columnName = (char)('A' + modulo) + columnName;
             dividend = (dividend - modulo) / 26;
         }
-        return col;
+
+        return columnName;
     }
 
+    #endregion
+
     #region Sorting
-    private string sortOrder = "";
 
     protected async void SortByName()
     {
-        if (sortOrder == "")
+        sortOrder = sortOrder switch
         {
-            sortOrder = "Name";
-        }
-        else if (sortOrder == "Name")
-        {
-            sortOrder = "NameDesc";
-        }
-        else
-        {
-            sortOrder = "";
-        }
+            "" => "Name",
+            "Name" => "NameDesc",
+            _ => ""
+        };
 
         await DisplayData();
     }
 
     protected async void SortByTitle()
     {
-        if (sortOrder == "")
+        sortOrder = sortOrder switch
         {
-            sortOrder = "Title";
-        }
-        else if (sortOrder == "Title")
-        {
-            sortOrder = "TitleDesc";
-        }
-        else
-        {
-            sortOrder = "";
-        }
+            "" => "Title",
+            "Title" => "TitleDesc",
+            _ => ""
+        };
 
         await DisplayData();
     }
+
     #endregion
 }
