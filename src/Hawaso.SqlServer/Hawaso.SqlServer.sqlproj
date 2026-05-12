@@ -196,6 +196,7 @@
     <None Include="dbo\Scripts\Employee_FormData_OtherAddresses_Extract.sql" />
     <None Include="Seed\LicenseTypes.seed.sql" />
     <None Include="Seed\AppointmentsTypes.seed.sql" />
+    <None Include="dbo\Scripts\20260512_BackupAndSwap_Employees_LicenseFields.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment.sql" />
