@@ -42,7 +42,7 @@
         <PackageReference Include="Azunt.TenantManagement" Version="1.0.5" />
         <PackageReference Include="Azunt.TenantSettingManagement" Version="1.0.5" />
         <PackageReference Include="Azure.Identity" Version="1.21.0" />
-        <PackageReference Include="Azure.Storage.Blobs" Version="12.27.0" />
+        <PackageReference Include="Azure.Storage.Blobs" Version="12.28.0" />
         <PackageReference Include="Blazored.Toast" Version="4.2.1" />
         <PackageReference Include="ChartJs.Blazor" Version="1.1.0" />
         <PackageReference Include="CommonMark.NET" Version="0.15.1" />
