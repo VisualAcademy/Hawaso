@@ -1,7 +1,6 @@
-﻿namespace At
+﻿namespace At;
+
+public class Page
 {
-    public class Page
-    {
-        public const string Counter = "/counter";
-    }
+    public const string Counter = "/counter";
 }
