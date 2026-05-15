@@ -10,33 +10,49 @@ namespace Hawaso.Models;
 #region MemoFileStorageManager
 public class MemoFileStorageManager : IMemoFileStorageManager
 {
-    private const string moduleName = "Memos";
+    private const string ModuleName = "Memos";
+    private const string ContainerName = "files";
+
     private readonly IWebHostEnvironment _environment;
-    private readonly string _containerName;
     private readonly string _folderPath;
 
     public MemoFileStorageManager(IWebHostEnvironment environment)
     {
-        _environment = environment;
-        _containerName = "files";
-        _folderPath = Path.Combine(_environment.WebRootPath, _containerName);
-    }
+        _environment = environment ?? throw new ArgumentNullException(nameof(environment));
 
-    public async Task<bool> DeleteAsync(string fileName, string folderPath = moduleName)
-    {
-        var fullPath = Path.Combine(_folderPath, folderPath, fileName);
-
-        if (File.Exists(fullPath))
+        if (string.IsNullOrWhiteSpace(_environment.WebRootPath))
         {
-            File.Delete(fullPath);
-            return await Task.FromResult(true);
+            throw new InvalidOperationException("WebRootPath is not configured.");
         }
 
-        return await Task.FromResult(false);
+        _folderPath = Path.Combine(_environment.WebRootPath, ContainerName);
     }
 
-    public async Task<byte[]> DownloadAsync(string fileName, string folderPath = moduleName)
+    public async Task<bool> DeleteAsync(string fileName, string folderPath = ModuleName)
     {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return false;
+        }
+
+        var fullPath = Path.Combine(_folderPath, folderPath, fileName);
+
+        if (!File.Exists(fullPath))
+        {
+            return false;
+        }
+
+        File.Delete(fullPath);
+        return await Task.FromResult(true);
+    }
+
+    public async Task<byte[]> DownloadAsync(string fileName, string folderPath = ModuleName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return Array.Empty<byte>();
+        }
+
         var fullPath = Path.Combine(_folderPath, folderPath, fileName);
 
         if (File.Exists(fullPath))
@@ -44,14 +60,23 @@ public class MemoFileStorageManager : IMemoFileStorageManager
             return await File.ReadAllBytesAsync(fullPath);
         }
 
-        return null;
+        return Array.Empty<byte>();
     }
 
-    public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = moduleName, bool overwrite = false)
+    public async Task<string> UploadAsync(
+        byte[] bytes,
+        string fileName,
+        string folderPath = ModuleName,
+        bool overwrite = false)
     {
-        if (bytes == null || bytes.Length == 0)
+        if (bytes is null || bytes.Length == 0)
         {
             throw new ArgumentException("The file content is empty.", nameof(bytes));
+        }
+
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            throw new ArgumentException("The file name is required.", nameof(fileName));
         }
 
         var directoryPath = Path.Combine(_folderPath, folderPath);
@@ -68,11 +93,20 @@ public class MemoFileStorageManager : IMemoFileStorageManager
         return finalFileName;
     }
 
-    public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath = moduleName, bool overwrite = false)
+    public async Task<string> UploadAsync(
+        Stream stream,
+        string fileName,
+        string folderPath = ModuleName,
+        bool overwrite = false)
     {
-        if (stream == null)
+        if (stream is null)
         {
             throw new ArgumentNullException(nameof(stream));
+        }
+
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            throw new ArgumentException("The file name is required.", nameof(fileName));
         }
 
         var directoryPath = Path.Combine(_folderPath, folderPath);
@@ -84,10 +118,13 @@ public class MemoFileStorageManager : IMemoFileStorageManager
 
         var fullPath = Path.Combine(directoryPath, finalFileName);
 
-        using (var fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
-        {
-            await stream.CopyToAsync(fileStream);
-        }
+        await using var fileStream = new FileStream(
+            fullPath,
+            FileMode.Create,
+            FileAccess.Write,
+            FileShare.None);
+
+        await stream.CopyToAsync(fileStream);
 
         return finalFileName;
     }
@@ -112,6 +149,11 @@ public class MemoBlobStorageManager : IMemoFileStorageManager
 
     public MemoBlobStorageManager(IConfiguration configuration)
     {
+        if (configuration is null)
+        {
+            throw new ArgumentNullException(nameof(configuration));
+        }
+
         var connectionString = configuration.GetConnectionString("BlobConnection");
 
         if (string.IsNullOrWhiteSpace(connectionString))
@@ -119,6 +161,11 @@ public class MemoBlobStorageManager : IMemoFileStorageManager
             var storageAccount = configuration["AppKeys:AzureStorageAccount"];
             var storageKey = configuration["AppKeys:AzureStorageAccessKey"];
             var endpointSuffix = configuration["AppKeys:AzureStorageEndpointSuffix"] ?? "core.windows.net";
+
+            if (string.IsNullOrWhiteSpace(storageAccount) || string.IsNullOrWhiteSpace(storageKey))
+            {
+                throw new InvalidOperationException("Azure Storage configuration is missing.");
+            }
 
             connectionString =
                 $"DefaultEndpointsProtocol=https;" +
@@ -132,6 +179,11 @@ public class MemoBlobStorageManager : IMemoFileStorageManager
 
     public async Task<bool> DeleteAsync(string fileName, string folderPath = DefaultFolderPath)
     {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return false;
+        }
+
         var containerClient = await GetContainerClientAsync();
         var blobName = BuildBlobName(folderPath, fileName);
         var blobClient = containerClient.GetBlobClient(blobName);
@@ -147,6 +199,11 @@ public class MemoBlobStorageManager : IMemoFileStorageManager
 
     public async Task<byte[]> DownloadAsync(string fileName, string folderPath = DefaultFolderPath)
     {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return Array.Empty<byte>();
+        }
+
         var containerClient = await GetContainerClientAsync();
         var blobName = BuildBlobName(folderPath, fileName);
         var blobClient = containerClient.GetBlobClient(blobName);
@@ -154,21 +211,30 @@ public class MemoBlobStorageManager : IMemoFileStorageManager
         if (await blobClient.ExistsAsync())
         {
             var downloadInfo = await blobClient.DownloadAsync();
-            using (var ms = new MemoryStream())
-            {
-                await downloadInfo.Value.Content.CopyToAsync(ms);
-                return ms.ToArray();
-            }
+
+            await using var ms = new MemoryStream();
+            await downloadInfo.Value.Content.CopyToAsync(ms);
+
+            return ms.ToArray();
         }
 
-        return null;
+        return Array.Empty<byte>();
     }
 
-    public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = DefaultFolderPath, bool overwrite = false)
+    public async Task<string> UploadAsync(
+        byte[] bytes,
+        string fileName,
+        string folderPath = DefaultFolderPath,
+        bool overwrite = false)
     {
-        if (bytes == null || bytes.Length == 0)
+        if (bytes is null || bytes.Length == 0)
         {
             throw new ArgumentException("The file content is empty.", nameof(bytes));
+        }
+
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            throw new ArgumentException("The file name is required.", nameof(fileName));
         }
 
         var containerClient = await GetContainerClientAsync();
@@ -180,50 +246,60 @@ public class MemoBlobStorageManager : IMemoFileStorageManager
         var blobName = BuildBlobName(folderPath, finalFileName);
         var blobClient = containerClient.GetBlobClient(blobName);
 
-        using (var ms = new MemoryStream(bytes))
-        {
-            await blobClient.UploadAsync(ms, overwrite: true);
-        }
+        await using var ms = new MemoryStream(bytes);
+        await blobClient.UploadAsync(ms, overwrite: true);
 
         return finalFileName;
     }
 
-    public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath = DefaultFolderPath, bool overwrite = false)
+    public async Task<string> UploadAsync(
+        Stream stream,
+        string fileName,
+        string folderPath = DefaultFolderPath,
+        bool overwrite = false)
     {
-        if (stream == null)
+        if (stream is null)
         {
             throw new ArgumentNullException(nameof(stream));
         }
 
-        using (var ms = new MemoryStream())
+        if (string.IsNullOrWhiteSpace(fileName))
         {
-            await stream.CopyToAsync(ms);
-            return await UploadAsync(ms.ToArray(), fileName, folderPath, overwrite);
+            throw new ArgumentException("The file name is required.", nameof(fileName));
         }
+
+        await using var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+
+        return await UploadAsync(ms.ToArray(), fileName, folderPath, overwrite);
     }
 
     private async Task<BlobContainerClient> GetContainerClientAsync()
     {
         var containerClient = _blobServiceClient.GetBlobContainerClient(ContainerName);
         await containerClient.CreateIfNotExistsAsync();
+
         return containerClient;
     }
 
     private static string BuildBlobName(string folderPath, string fileName)
     {
         var normalizedFolder = (folderPath ?? string.Empty).Trim().Trim('/', '\\');
+
         return string.IsNullOrWhiteSpace(normalizedFolder)
             ? fileName
             : $"{normalizedFolder}/{fileName}";
     }
 
-    private async Task<string> GetUniqueBlobFileNameAsync(BlobContainerClient containerClient, string folderPath, string fileName)
+    private async Task<string> GetUniqueBlobFileNameAsync(
+        BlobContainerClient containerClient,
+        string folderPath,
+        string fileName)
     {
-        string extension = Path.GetExtension(fileName);
-        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-        int count = 1;
-
-        string candidateFileName = fileName;
+        var extension = Path.GetExtension(fileName);
+        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+        var candidateFileName = fileName;
+        var count = 1;
 
         while (await containerClient.GetBlobClient(BuildBlobName(folderPath, candidateFileName)).ExistsAsync())
         {
@@ -245,8 +321,8 @@ public class MemoBlobStorageManager : IMemoFileStorageManager
 /// </summary>
 public class MemoHybridStorageManager : IMemoFileStorageManager
 {
-    private const string moduleName = "Memos";
-    private const string containerName = "files";
+    private const string ModuleName = "Memos";
+    private const string ContainerName = "files";
 
     private readonly IWebHostEnvironment _environment;
     private readonly BlobServiceClient _blobServiceClient;
@@ -256,8 +332,19 @@ public class MemoHybridStorageManager : IMemoFileStorageManager
         IWebHostEnvironment environment,
         IConfiguration configuration)
     {
-        _environment = environment;
-        _folderPath = Path.Combine(_environment.WebRootPath, containerName);
+        _environment = environment ?? throw new ArgumentNullException(nameof(environment));
+
+        if (configuration is null)
+        {
+            throw new ArgumentNullException(nameof(configuration));
+        }
+
+        if (string.IsNullOrWhiteSpace(_environment.WebRootPath))
+        {
+            throw new InvalidOperationException("WebRootPath is not configured.");
+        }
+
+        _folderPath = Path.Combine(_environment.WebRootPath, ContainerName);
 
         var connectionString = configuration.GetConnectionString("BlobConnection");
 
@@ -266,6 +353,11 @@ public class MemoHybridStorageManager : IMemoFileStorageManager
             var storageAccount = configuration["AppKeys:AzureStorageAccount"];
             var storageKey = configuration["AppKeys:AzureStorageAccessKey"];
             var endpointSuffix = configuration["AppKeys:AzureStorageEndpointSuffix"] ?? "core.windows.net";
+
+            if (string.IsNullOrWhiteSpace(storageAccount) || string.IsNullOrWhiteSpace(storageKey))
+            {
+                throw new InvalidOperationException("Azure Storage configuration is missing.");
+            }
 
             connectionString =
                 $"DefaultEndpointsProtocol=https;" +
@@ -277,11 +369,17 @@ public class MemoHybridStorageManager : IMemoFileStorageManager
         _blobServiceClient = new BlobServiceClient(connectionString);
     }
 
-    public async Task<bool> DeleteAsync(string fileName, string folderPath = moduleName)
+    public async Task<bool> DeleteAsync(string fileName, string folderPath = ModuleName)
     {
-        bool deleted = false;
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return false;
+        }
+
+        var deleted = false;
 
         var localFilePath = Path.Combine(_folderPath, folderPath, fileName);
+
         if (File.Exists(localFilePath))
         {
             File.Delete(localFilePath);
@@ -301,8 +399,13 @@ public class MemoHybridStorageManager : IMemoFileStorageManager
         return deleted;
     }
 
-    public async Task<byte[]> DownloadAsync(string fileName, string folderPath = moduleName)
+    public async Task<byte[]> DownloadAsync(string fileName, string folderPath = ModuleName)
     {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return Array.Empty<byte>();
+        }
+
         var containerClient = await GetContainerClientAsync();
         var blobName = BuildBlobName(folderPath, fileName);
         var blobClient = containerClient.GetBlobClient(blobName);
@@ -310,27 +413,37 @@ public class MemoHybridStorageManager : IMemoFileStorageManager
         if (await blobClient.ExistsAsync())
         {
             var downloadInfo = await blobClient.DownloadAsync();
-            using (var ms = new MemoryStream())
-            {
-                await downloadInfo.Value.Content.CopyToAsync(ms);
-                return ms.ToArray();
-            }
+
+            await using var ms = new MemoryStream();
+            await downloadInfo.Value.Content.CopyToAsync(ms);
+
+            return ms.ToArray();
         }
 
         var localFilePath = Path.Combine(_folderPath, folderPath, fileName);
+
         if (File.Exists(localFilePath))
         {
             return await File.ReadAllBytesAsync(localFilePath);
         }
 
-        return null;
+        return Array.Empty<byte>();
     }
 
-    public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath = moduleName, bool overwrite = false)
+    public async Task<string> UploadAsync(
+        byte[] bytes,
+        string fileName,
+        string folderPath = ModuleName,
+        bool overwrite = false)
     {
-        if (bytes == null || bytes.Length == 0)
+        if (bytes is null || bytes.Length == 0)
         {
             throw new ArgumentException("The file content is empty.", nameof(bytes));
+        }
+
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            throw new ArgumentException("The file name is required.", nameof(fileName));
         }
 
         var containerClient = await GetContainerClientAsync();
@@ -339,49 +452,55 @@ public class MemoHybridStorageManager : IMemoFileStorageManager
             ? fileName
             : await GetUniqueFileNameAcrossLocalAndBlobAsync(containerClient, folderPath, fileName);
 
-        // Local upload
         var localDirectory = Path.Combine(_folderPath, folderPath);
         EnsureDirectoryExists(localDirectory);
 
         var localFilePath = Path.Combine(localDirectory, finalFileName);
         await File.WriteAllBytesAsync(localFilePath, bytes);
 
-        // Blob upload
         var blobName = BuildBlobName(folderPath, finalFileName);
         var blobClient = containerClient.GetBlobClient(blobName);
 
-        using (var ms = new MemoryStream(bytes))
-        {
-            await blobClient.UploadAsync(ms, overwrite: true);
-        }
+        await using var ms = new MemoryStream(bytes);
+        await blobClient.UploadAsync(ms, overwrite: true);
 
         return finalFileName;
     }
 
-    public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath = moduleName, bool overwrite = false)
+    public async Task<string> UploadAsync(
+        Stream stream,
+        string fileName,
+        string folderPath = ModuleName,
+        bool overwrite = false)
     {
-        if (stream == null)
+        if (stream is null)
         {
             throw new ArgumentNullException(nameof(stream));
         }
 
-        using (var ms = new MemoryStream())
+        if (string.IsNullOrWhiteSpace(fileName))
         {
-            await stream.CopyToAsync(ms);
-            return await UploadAsync(ms.ToArray(), fileName, folderPath, overwrite);
+            throw new ArgumentException("The file name is required.", nameof(fileName));
         }
+
+        await using var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+
+        return await UploadAsync(ms.ToArray(), fileName, folderPath, overwrite);
     }
 
     private async Task<BlobContainerClient> GetContainerClientAsync()
     {
-        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+        var containerClient = _blobServiceClient.GetBlobContainerClient(ContainerName);
         await containerClient.CreateIfNotExistsAsync();
+
         return containerClient;
     }
 
     private static string BuildBlobName(string folderPath, string fileName)
     {
         var normalizedFolder = (folderPath ?? string.Empty).Trim().Trim('/', '\\');
+
         return string.IsNullOrWhiteSpace(normalizedFolder)
             ? fileName
             : $"{normalizedFolder}/{fileName}";
@@ -392,11 +511,10 @@ public class MemoHybridStorageManager : IMemoFileStorageManager
         string folderPath,
         string fileName)
     {
-        string extension = Path.GetExtension(fileName);
-        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-
-        string candidate = fileName;
-        int count = 1;
+        var extension = Path.GetExtension(fileName);
+        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+        var candidate = fileName;
+        var count = 1;
 
         while (await ExistsInLocalOrBlobAsync(containerClient, folderPath, candidate))
         {
@@ -412,6 +530,7 @@ public class MemoHybridStorageManager : IMemoFileStorageManager
         string fileName)
     {
         var localPath = Path.Combine(_folderPath, folderPath, fileName);
+
         if (File.Exists(localPath))
         {
             return true;
