@@ -13,7 +13,7 @@ public partial class Details
 
     #region Injectors
     [Inject]
-    public ICustomerRepository CustomerRepositoryReference { get; set; }
+    public ICustomerRepository CustomerRepositoryReference { get; set; } = default!;
     #endregion
 
     #region Fields
@@ -21,6 +21,9 @@ public partial class Details
     #endregion
 
     #region Lifecycle Methods
-    protected override async Task OnInitializedAsync() => customer = await CustomerRepositoryReference.GetByIdAsync(CustomerId);
+    protected override async Task OnInitializedAsync()
+    {
+        customer = await CustomerRepositoryReference.GetByIdAsync(CustomerId);
+    }
     #endregion
 }
