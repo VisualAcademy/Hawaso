@@ -1,71 +1,91 @@
 ﻿namespace Hawaso.Infrastructures.Tenants;
 
+using System.Data;
+using Microsoft.Data.SqlClient;
+
 public class TenantSchemaEnhancerAddColumnApplications(string masterConnectionString)
 {
     public void EnhanceAllTenantDatabases()
     {
         List<string> tenantConnectionStrings = GetTenantConnectionStrings();
 
-        foreach (string connStr in tenantConnectionStrings)
+        foreach (string connectionString in tenantConnectionStrings)
         {
-            EnsureNewColumns(connStr);
+            EnsureNewColumns(connectionString);
         }
     }
 
     private List<string> GetTenantConnectionStrings()
     {
-        List<string> result = new List<string>();
+        List<string> result = new();
 
-        using (SqlConnection connection = new SqlConnection(masterConnectionString))
+        using SqlConnection connection = new(masterConnectionString);
+        connection.Open();
+
+        using SqlCommand command = new(
+            "SELECT ConnectionString FROM dbo.Tenants WHERE ConnectionString IS NOT NULL",
+            connection);
+
+        using SqlDataReader reader = command.ExecuteReader();
+
+        while (reader.Read())
         {
-            connection.Open();
+            object value = reader["ConnectionString"];
 
-            SqlCommand cmd = new SqlCommand("SELECT ConnectionString FROM dbo.Tenants", connection);
-            using (SqlDataReader reader = cmd.ExecuteReader())
+            if (value == DBNull.Value)
             {
-                while (reader.Read())
-                {
-                    result.Add(reader["ConnectionString"].ToString());
-                }
+                continue;
             }
 
-            connection.Close();
+            string? connectionString = value.ToString();
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                continue;
+            }
+
+            result.Add(connectionString);
         }
 
         return result;
     }
 
-    private void EnsureNewColumns(string connectionString)
+    private static void EnsureNewColumns(string connectionString)
     {
-        using (SqlConnection connection = new SqlConnection(connectionString))
+        using SqlConnection connection = new(connectionString);
+        connection.Open();
+
+        List<(string Name, string Type)> columnsToAdd =
+        [
+            ("PortalName", "nvarchar(max) DEFAULT('Hawaso') NULL"),
+            ("Language", "nvarchar(255) DEFAULT('en-US') NULL"),
+        ];
+
+        foreach ((string name, string type) in columnsToAdd)
         {
-            connection.Open();
+            using SqlCommand checkCommand = new($@"
+SELECT COUNT(*)
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'dbo'
+  AND TABLE_NAME = 'Applications'
+  AND COLUMN_NAME = @ColumnName",
+                connection);
 
-            List<(string Name, string Type)> columnsToAdd = new List<(string, string)>
+            checkCommand.Parameters.AddWithValue("@ColumnName", name);
+
+            int columnCount = Convert.ToInt32(checkCommand.ExecuteScalar());
+
+            if (columnCount > 0)
             {
-                ("PortalName", "nvarchar(max) Default('Hawaso') NULL"),
-                ("Language", "nvarchar(255) Default('en-US') NULL"),
-            };
-
-            foreach (var column in columnsToAdd)
-            {
-                SqlCommand cmdCheck = new SqlCommand($@"
-                        SELECT COUNT(*) 
-                        FROM INFORMATION_SCHEMA.COLUMNS 
-                        WHERE TABLE_NAME = 'Applications' 
-                        AND COLUMN_NAME = '{column.Name}'", connection);
-
-                int columnCount = (int)cmdCheck.ExecuteScalar();
-                if (columnCount == 0)
-                {
-                    SqlCommand cmdAddColumn = new SqlCommand($@"
-                            ALTER TABLE [dbo].[Applications]
-                            ADD [{column.Name}] {column.Type}", connection);
-                    cmdAddColumn.ExecuteNonQuery();
-                }
+                continue;
             }
 
-            connection.Close();
+            using SqlCommand addColumnCommand = new($@"
+ALTER TABLE [dbo].[Applications]
+ADD [{name}] {type}",
+                connection);
+
+            addColumnCommand.ExecuteNonQuery();
         }
     }
 }
