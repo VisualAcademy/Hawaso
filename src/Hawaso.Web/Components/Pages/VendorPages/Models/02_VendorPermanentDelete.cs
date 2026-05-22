@@ -11,6 +11,6 @@ namespace Hawaso.Web.Components.Pages.VendorPages.Models
         public bool Active { get; set; } = true;
 
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }
