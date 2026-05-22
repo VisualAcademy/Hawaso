@@ -6,59 +6,86 @@
         <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">@EditorFormTitle</h5>
+                    <h5 class="modal-title">
+                        @EditorFormTitle
+                    </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="Hide">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
+
                 <div class="modal-body">
                     <EditForm Model="ModelEdit" OnValidSubmit="CreateOrEditClick">
-                        <DataAnnotationsValidator></DataAnnotationsValidator>
-                        <ValidationSummary></ValidationSummary>
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
                         @if (ModelEdit.Id != 0)
                         {
                             <div class="form-group">
                                 <label for="id">Id: </label> @ModelEdit.Id
-                                <input type="hidden" @bind-value="@ModelEdit.Id" />
+                                <input type="hidden" @bind-value="ModelEdit.Id" />
                             </div>
                         }
+
                         <div class="form-group">
                             <label for="txtName">Name</label>
-                            <InputText id="txtName" class="form-control" placeholder="Enter Name" @bind-Value="@ModelEdit.Name"></InputText>
-                            <ValidationMessage For="@(() => ModelEdit.Name)" class="form-text text-muted"></ValidationMessage>
+                            <InputText id="txtName"
+                                       class="form-control"
+                                       placeholder="Enter Name"
+                                       @bind-Value="ModelEdit.Name" />
+                            <ValidationMessage For="@(() => ModelEdit.Name)" class="form-text text-muted" />
                         </div>
+
                         <div class="form-group">
                             <label for="txtTitle">Title</label>
-                            <InputText id="txtTitle" class="form-control" placeholder="Enter Title" @bind-Value="@ModelEdit.Title"></InputText>
-                            <ValidationMessage For="@(() => ModelEdit.Title)" class="form-text text-muted"></ValidationMessage>
+                            <InputText id="txtTitle"
+                                       class="form-control"
+                                       placeholder="Enter Title"
+                                       @bind-Value="ModelEdit.Title" />
+                            <ValidationMessage For="@(() => ModelEdit.Title)" class="form-text text-muted" />
                         </div>
+
                         <div class="form-group">
                             <label for="txtContent">Content</label>
-                            <textarea id="txtContext" class="form-control" placeholder="Enter Content" rows="5" @bind="ModelEdit.Content" @bind:event="oninput"></textarea>
+                            <textarea id="txtContent"
+                                      class="form-control"
+                                      placeholder="Enter Content"
+                                      rows="5"
+                                      @bind="ModelEdit.Content"
+                                      @bind:event="oninput"></textarea>
+
                             <div class="text-right" style="font-size: 8px; font-style: italic;">
-                                Count: @(ModelEdit?.Content?.Length ?? 0)
+                                Count: @(ModelEdit.Content?.Length ?? 0)
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label for="txtPassword">Password</label>
-                            <InputText id="txtPassword" type="password" class="form-control" placeholder="Enter Password" @bind-Value="@ModelEdit.Password"></InputText>
-                            <ValidationMessage For="@(() => ModelEdit.Password)" class="form-text text-muted"></ValidationMessage>
+                            <InputText id="txtPassword"
+                                       type="password"
+                                       class="form-control"
+                                       placeholder="Enter Password"
+                                       @bind-Value="ModelEdit.Password" />
+                            <ValidationMessage For="@(() => ModelEdit.Password)" class="form-text text-muted" />
                         </div>
+
                         <div class="form-group">
                             <label for="lstCategory">Parent</label>
-                            <InputSelect @bind-Value="@parentId" class="form-control" id="lstCategory">
+                            <InputSelect @bind-Value="parentId" class="form-control" id="lstCategory">
                                 <option value="">--Select Parent--</option>
                                 @foreach (var p in parentIds)
                                 {
                                     <option value="@p">@p</option>
                                 }
                             </InputSelect>
-                            <ValidationMessage For="@(() => parentId)" class="form-text text-muted"></ValidationMessage>
+                            <ValidationMessage For="@(() => parentId)" class="form-text text-muted" />
                         </div>
+
                         <div class="form-group">
-                            <label for="txtTitle">File</label>
-                            <BlazorInputFile.InputFile OnChange="HandleSelection"></BlazorInputFile.InputFile>
+                            <label for="txtFile">File</label>
+                            <BlazorInputFile.InputFile OnChange="HandleSelection" />
                         </div>
+
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Submit</button>
                             <button type="button" class="btn btn-secondary" @onclick="Hide">Cancel</button>
@@ -68,5 +95,6 @@
             </div>
         </div>
     </div>
+
     <div class="modal-backdrop show"></div>
 }
