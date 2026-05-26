@@ -11,133 +11,146 @@ public partial class ModalForm
     private string passwordErrorMessage = string.Empty;
 
     #region Fields
-    private string parentId = "";
 
-    private bool isSubmitting = false; // 업로드 중인지 여부를 나타내는 플래그 추가
-    private string submitButtonText = "Submit"; // 버튼 텍스트 속성 추가
+    private string parentId = string.Empty;
+
+    private bool isSubmitting;
+    private string submitButtonText = "Submit";
 
     /// <summary>
     /// 첨부 파일 리스트 보관
     /// </summary>
-    private IFileListEntry[] selectedFiles;
+    private IFileListEntry[] selectedFiles = Array.Empty<IFileListEntry>();
 
     private const string PlaceholderRelativePath = "images/skip-upload-placeholder.png";
+
     #endregion
 
     #region Properties
-    /// <summary>
-    /// (글쓰기/글수정)모달 다이얼로그를 표시할건지 여부 
-    /// </summary>
-    public bool IsShow { get; set; } = false;
-    #endregion
-
-    #region Public Methods
-    /// <summary>
-    /// 폼 보이기 
-    /// </summary>
-    public void Show()
-    {
-        IsShow = true; // 현재 인라인 모달 폼 보이기
-        submitButtonText = "Submit"; // 폼이 열릴 때 버튼 텍스트를 기본 값으로 재설정
-    }
 
     /// <summary>
-    /// 폼 닫기
+    /// 글쓰기/글수정 모달 다이얼로그를 표시할지 여부
     /// </summary>
-    public void Hide() => IsShow = false; // 현재 인라인 모달 폼 숨기기
+    public bool IsShow { get; set; }
+
+    /// <summary>
+    /// 전체 넘어온 개체 중에서 폼에서 변경되는 내용만 따로 관리
+    /// </summary>
+    public Memo ModelEdit { get; set; } = new();
+
+    public string[] Encodings { get; set; } =
+    [
+        "Plain-Text",
+        "Text/HTML",
+        "Mixed-Text"
+    ];
+
     #endregion
 
     #region Parameters
+
     /// <summary>
     /// 폼의 제목 영역
     /// </summary>
     [Parameter]
-    public RenderFragment EditorFormTitle { get; set; }
+    public RenderFragment? EditorFormTitle { get; set; }
 
     /// <summary>
-    /// 넘어온 모델 개체 
+    /// 넘어온 모델 개체
     /// </summary>
     [Parameter]
-    public Memo ModelSender { get; set; }
+    public Memo ModelSender { get; set; } = new();
 
     /// <summary>
-    /// 전체 넘어온 개체 중에서 폼에서 변경되는 내용만 따로 관리: ModelEdit => MemoEdit, MemoViewModel, ...
-    /// </summary>
-    public Memo ModelEdit { get; set; }
-
-    public string[] Encodings { get; set; } = { "Plain-Text", "Text/HTML", "Mixed-Text" };
-
-    #region Lifecycle Methods
-    // 넘어온 Model 값을 수정 전용 ModelEdit에 담기 
-    protected override void OnParametersSet()
-    {
-        ModelEdit = new Memo();
-        ModelEdit.Id = ModelSender.Id;
-        ModelEdit.Name = ModelSender.Name;
-        ModelEdit.Title = ModelSender.Title;
-        ModelEdit.Content = ModelSender.Content;
-        ModelEdit.Password = ModelSender.Password;
-
-        if (ModelEdit.Encoding != null)
-        {
-            ModelEdit.Encoding = ModelSender.Encoding;
-        }
-        else
-        {
-            ModelEdit.Encoding = "Plain-Text"; // Plain-Text, Text/HTML, Mixed-Text
-        }
-
-        // 더 많은 정보는 여기에서...
-
-        // ParentId가 넘어온 값이 있으면... 즉, 0이 아니면 ParentId 드롭다운 리스트 기본값 선택
-        parentId = ModelSender.ParentId.ToString();
-        if (parentId == "0")
-        {
-            parentId = "";
-        }
-    }
-    #endregion
-
-    /// <summary>
-    /// 부모 컴포넌트에게 생성(Create)이 완료되었다고 보고하는 목적으로 부모 컴포넌트에게 알림
-    /// 학습 목적으로 Action 대리자 사용
+    /// 부모 컴포넌트에게 생성 완료를 알림
     /// </summary>
     [Parameter]
-    public Action CreateCallback { get; set; }
+    public Action? CreateCallback { get; set; }
 
     /// <summary>
-    /// 부모 컴포넌트에게 수정(Edit)이 완료되었다고 보고하는 목적으로 부모 컴포넌트에게 알림
-    /// 학습 목적으로 EventCallback 구조체 사용
+    /// 부모 컴포넌트에게 수정 완료를 알림
     /// </summary>
     [Parameter]
     public EventCallback<bool> EditCallback { get; set; }
 
     [Parameter]
-    public string ParentKey { get; set; } = "";
+    public string ParentKey { get; set; } = string.Empty;
+
     #endregion
 
     #region Injectors
+
+    [Inject]
+    public IMemoRepository RepositoryReference { get; set; } = default!;
+
+    [Inject]
+    public IMemoFileStorageManager FileStorageManagerReference { get; set; } = default!;
+
+    [Inject]
+    public IJSRuntime JS { get; set; } = default!;
+
+    [Inject]
+    public IWebHostEnvironment WebHostEnv { get; set; } = default!;
+
+    #endregion
+
+    #region Public Methods
+
     /// <summary>
-    /// 리포지토리 클래스에 대한 참조 
+    /// 폼 보이기
     /// </summary>
-    [Inject]
-    public IMemoRepository RepositoryReference { get; set; }
+    public void Show()
+    {
+        IsShow = true;
+        submitButtonText = "Submit";
+        titleErrorMessage = string.Empty;
+        passwordErrorMessage = string.Empty;
+    }
 
-    [Inject]
-    public IMemoFileStorageManager FileStorageManagerReference { get; set; }
+    /// <summary>
+    /// 폼 닫기
+    /// </summary>
+    public void Hide() => IsShow = false;
 
-    [Inject] public IJSRuntime JS { get; set; }                     
-    [Inject] public IWebHostEnvironment WebHostEnv { get; set; }    
+    #endregion
+
+    #region Lifecycle Methods
+
+    /// <summary>
+    /// 넘어온 Model 값을 수정 전용 ModelEdit에 담기
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        ModelEdit = new Memo
+        {
+            Id = ModelSender.Id,
+            Name = ModelSender.Name ?? string.Empty,
+            Title = ModelSender.Title ?? string.Empty,
+            Content = ModelSender.Content ?? string.Empty,
+            Password = ModelSender.Password ?? string.Empty,
+            Encoding = string.IsNullOrWhiteSpace(ModelSender.Encoding)
+                ? "Plain-Text"
+                : ModelSender.Encoding,
+            ParentId = ModelSender.ParentId,
+            ParentKey = ModelSender.ParentKey ?? string.Empty
+        };
+
+        var senderParentId = ModelSender.ParentId.GetValueOrDefault();
+
+        parentId = senderParentId == 0
+            ? string.Empty
+            : senderParentId.ToString();
+    }
+
     #endregion
 
     #region Event Handlers
-    protected async void CreateOrEditClick()
+
+    protected async Task CreateOrEditClickAsync()
     {
-        // 초기화
         titleErrorMessage = string.Empty;
         passwordErrorMessage = string.Empty;
 
-        // 유효성 검사
         if (string.IsNullOrWhiteSpace(ModelEdit.Title))
         {
             titleErrorMessage = "제목은 필수 항목입니다.";
@@ -150,40 +163,36 @@ public partial class ModalForm
 
         if (!string.IsNullOrEmpty(titleErrorMessage) || !string.IsNullOrEmpty(passwordErrorMessage))
         {
-            StateHasChanged(); // 오류 메시지 표시를 위해 UI 갱신
-            return; // 저장 중단
+            StateHasChanged();
+            return;
         }
 
-        if (isSubmitting) return; // 이미 제출 중이면 반환
+        if (isSubmitting)
+        {
+            return;
+        }
 
-        isSubmitting = true; // 제출 시작 플래그 설정
-        submitButtonText = "Uploading..."; // 버튼 텍스트를 'Uploading...'으로 변경
+        isSubmitting = true;
+        submitButtonText = "Uploading...";
 
         try
         {
-            // 변경 내용 저장
-            ModelSender.Name = ModelEdit.Name;
-            ModelSender.Title = ModelEdit.Title;
-            ModelSender.Content = ModelEdit.Content;
-            ModelSender.Password = ModelEdit.Password;
-            ModelSender.Encoding = ModelEdit.Encoding;
+            ApplyFormValuesToSender();
 
-            #region 파일 업로드 관련 추가 코드 영역
-            if (selectedFiles != null && selectedFiles.Length > 0)
+            if (selectedFiles.Length > 0)
             {
-                // 파일 업로드
                 var file = selectedFiles.FirstOrDefault();
-                if (file != null)
-                {
-                    string fileName = file.Name;
 
-                    // 파일명이 30자를 넘으면 앞의 30자까지만 사용
+                if (file is not null)
+                {
+                    var fileName = file.Name;
+
                     if (fileName.Length > 30)
                     {
-                        fileName = fileName.Substring(0, 30);
+                        fileName = fileName[..30];
                     }
 
-                    int fileSize = Convert.ToInt32(file.Size);
+                    var fileSize = Convert.ToInt32(file.Size);
 
                     await FileStorageManagerReference.UploadAsync(file.Data, fileName, "Memos", true);
 
@@ -191,66 +200,64 @@ public partial class ModalForm
                     ModelSender.FileSize = fileSize;
                 }
             }
-            #endregion
 
-            if (!int.TryParse(parentId, out int newParentId))
-            {
-                newParentId = 0;
-            }
-            ModelSender.ParentId = newParentId;
-            ModelSender.ParentKey = ModelSender.ParentKey;
+            ApplyParentValuesToSender();
 
             if (ModelSender.Id == 0)
             {
-                // Create
                 await RepositoryReference.AddAsync(ModelSender);
                 CreateCallback?.Invoke();
             }
             else
             {
-                // Edit
                 await RepositoryReference.UpdateAsync(ModelSender);
                 await EditCallback.InvokeAsync(true);
             }
         }
         catch (Exception ex)
         {
-            // 오류 처리 로직 추가 (필요시)
             Console.WriteLine($"Error: {ex.Message}");
         }
         finally
         {
-            isSubmitting = false; // 작업 완료 후 플래그 재설정
-            submitButtonText = "Submit"; // 작업 완료 후 버튼 텍스트를 'Submit'으로 재설정
+            isSubmitting = false;
+            submitButtonText = "Submit";
         }
     }
 
-    protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
+    protected void HandleSelection(IFileListEntry[] files)
+    {
+        selectedFiles = files ?? Array.Empty<IFileListEntry>();
+    }
+
     #endregion
 
-    #region Skip Upload (placeholder 업로드)
+    #region Skip Upload
+
     protected async Task SkipUploadAsync()
     {
-        if (isSubmitting) return;
+        if (isSubmitting)
+        {
+            return;
+        }
 
-        var ok = await JS.InvokeAsync<bool>("confirm",
+        var ok = await JS.InvokeAsync<bool>(
+            "confirm",
             "This will attach a placeholder image instead of a real file.\n\n" +
             "(A blank/placeholder image will be attached instead of a file upload.)\n\nContinue?");
-        if (!ok) return;
+
+        if (!ok)
+        {
+            return;
+        }
 
         try
         {
             isSubmitting = true;
             submitButtonText = "Uploading...";
 
-            // 필드 매핑
-            ModelSender.Name = ModelEdit.Name;
-            ModelSender.Title = ModelEdit.Title;
-            ModelSender.Content = ModelEdit.Content;
-            ModelSender.Password = ModelEdit.Password;
-            ModelSender.Encoding = ModelEdit.Encoding;
+            ApplyFormValuesToSender();
 
-            // wwwroot 경로 + placeholder 파일 경로
             var webRoot = WebHostEnv.WebRootPath ?? "wwwroot";
             var placeholderFullPath = Path.Combine(webRoot, PlaceholderRelativePath);
 
@@ -260,22 +267,33 @@ public partial class ModalForm
                 return;
             }
 
-            using var fs = System.IO.File.OpenRead(placeholderFullPath);
+            await using var fs = System.IO.File.OpenRead(placeholderFullPath);
 
-            // 업로드 파일명: Title 기반 간단 생성
-            string sanitizedTitle = Regex.Replace(ModelSender.Title ?? "", "[\\\\/:*?\"<>|]+", "-").TrimEnd('.').Replace(" ", "-");
-            if (sanitizedTitle.Length > 10) sanitizedTitle = sanitizedTitle.Substring(0, 10);
-            string fileName = $"{sanitizedTitle}{DateTime.Now:yyyyMMddHHmmss}-skip.png";
+            var sanitizedTitle = Regex
+                .Replace(ModelSender.Title ?? string.Empty, "[\\\\/:*?\"<>|]+", "-")
+                .TrimEnd('.')
+                .Replace(" ", "-");
+
+            if (sanitizedTitle.Length > 10)
+            {
+                sanitizedTitle = sanitizedTitle[..10];
+            }
+
+            if (string.IsNullOrWhiteSpace(sanitizedTitle))
+            {
+                sanitizedTitle = "memo";
+            }
+
+            var fileName = $"{sanitizedTitle}{DateTime.Now:yyyyMMddHHmmss}-skip.png";
 
             await FileStorageManagerReference.UploadAsync(fs, fileName, "Memos", true);
 
             var fileInfo = new System.IO.FileInfo(placeholderFullPath);
+
             ModelSender.FileName = fileName;
             ModelSender.FileSize = (int)fileInfo.Length;
 
-            if (!int.TryParse(parentId, out int newParentId)) newParentId = 0;
-            ModelSender.ParentId = newParentId;
-            ModelSender.ParentKey = ModelSender.ParentKey;
+            ApplyParentValuesToSender();
 
             if (ModelSender.Id == 0)
             {
@@ -287,9 +305,6 @@ public partial class ModalForm
                 await RepositoryReference.UpdateAsync(ModelSender);
                 await EditCallback.InvokeAsync(true);
             }
-
-            // 필요 시 모달 닫기
-            // Hide();
         }
         finally
         {
@@ -297,5 +312,36 @@ public partial class ModalForm
             submitButtonText = "Submit";
         }
     }
+
+    #endregion
+
+    #region Helpers
+
+    private void ApplyFormValuesToSender()
+    {
+        ModelSender.Name = ModelEdit.Name;
+        ModelSender.Title = ModelEdit.Title;
+        ModelSender.Content = ModelEdit.Content;
+        ModelSender.Password = ModelEdit.Password;
+        ModelSender.Encoding = string.IsNullOrWhiteSpace(ModelEdit.Encoding)
+            ? "Plain-Text"
+            : ModelEdit.Encoding;
+    }
+
+    private void ApplyParentValuesToSender()
+    {
+        if (!int.TryParse(parentId, out var newParentId))
+        {
+            newParentId = 0;
+        }
+
+        ModelSender.ParentId = newParentId;
+
+        if (!string.IsNullOrWhiteSpace(ParentKey))
+        {
+            ModelSender.ParentKey = ParentKey;
+        }
+    }
+
     #endregion
 }
