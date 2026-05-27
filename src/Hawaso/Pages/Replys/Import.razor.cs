@@ -129,7 +129,15 @@ public partial class Import
                 return;
             }
 
-            var sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+            var worksheet = worksheetPart.Worksheet;
+
+            if (worksheet is null)
+            {
+                StateHasChanged();
+                return;
+            }
+
+            var sheetData = worksheet.GetFirstChild<SheetData>();
 
             if (sheetData is null)
             {
