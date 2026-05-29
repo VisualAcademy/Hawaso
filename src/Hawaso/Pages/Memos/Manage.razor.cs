@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.JSInterop;
 using System.Globalization;
 using VisualAcademy.Pages.Memos.Components;
-using System.IO;
-using System.Linq;
 
 // Open XML SDK
 using DocumentFormat.OpenXml;
@@ -19,19 +17,24 @@ namespace VisualAcademy.Pages.Memos;
 public partial class Manage
 {
     #region Parameters
+
     [Parameter] public int ParentId { get; set; } = 0;
     [Parameter] public string ParentKey { get; set; } = "";
     [Parameter] public bool IsReadOnly { get; set; } = false;
+
     #endregion
 
     #region Injectors
-    [Inject] public NavigationManager Nav { get; set; }
-    [Inject] public IJSRuntime JSRuntimeInjector { get; set; }
-    [Inject] public IMemoRepository RepositoryReference { get; set; }
-    [Inject] public IMemoFileStorageManager FileStorageManagerReference { get; set; }
+
+    [Inject] public NavigationManager Nav { get; set; } = default!;
+    [Inject] public IJSRuntime JSRuntimeInjector { get; set; } = default!;
+    [Inject] public IMemoRepository RepositoryReference { get; set; } = default!;
+    [Inject] public IMemoFileStorageManager FileStorageManagerReference { get; set; } = default!;
+
     #endregion
 
     #region Properties
+
     public string EditorFormTitle { get; set; } = "CREATE";
     public List<Memo> Models { get; set; } = [];
     public Memo Model { get; set; } = new();
@@ -43,144 +46,201 @@ public partial class Manage
         PageSize = 10,
         PagerButtonCount = 5
     };
+
     #endregion
 
     #region Component References
-    public ModalForm EditorFormReference { get; set; }
-    public DeleteDialog DeleteDialogReference { get; set; }
+
+    public ModalForm? EditorFormReference { get; set; }
+    public DeleteDialog? DeleteDialogReference { get; set; }
+
     #endregion
 
     #region Search
+
     private string searchQuery = "";
 
-    protected async void Search(string query)
+    protected async Task Search(string query)
     {
         pager.PageIndex = 0;
         searchQuery = query;
         await DisplayData();
     }
+
     #endregion
 
     #region Lifecycle Methods
+
     protected override async Task OnInitializedAsync()
     {
-        if (UserId == "" && UserName == "")
+        if (string.IsNullOrEmpty(UserId) && string.IsNullOrEmpty(UserName))
         {
             await GetUserIdAndUserName();
         }
+
         await DisplayData();
     }
+
     #endregion
 
     #region DisplayData()
+
     private async Task DisplayData()
     {
-        if (ParentKey != "")
+        if (!string.IsNullOrEmpty(ParentKey))
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<string>(pager.PageIndex, pager.PageSize, searchField: "", searchQuery, sortOrder, ParentKey);
+            var articleSet = await RepositoryReference.GetArticlesAsync<string>(
+                pager.PageIndex,
+                pager.PageSize,
+                searchField: "",
+                searchQuery,
+                sortOrder,
+                ParentKey);
+
             pager.RecordCount = articleSet.TotalCount;
             Models = articleSet.Items.ToList();
         }
         else if (ParentId != 0)
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, searchField: "", searchQuery, sortOrder, ParentId);
+            var articleSet = await RepositoryReference.GetArticlesAsync<int>(
+                pager.PageIndex,
+                pager.PageSize,
+                searchField: "",
+                searchQuery,
+                sortOrder,
+                ParentId);
+
             pager.RecordCount = articleSet.TotalCount;
             Models = articleSet.Items.ToList();
         }
         else
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, searchField: "", searchQuery, sortOrder, parentIdentifier: 0);
+            var articleSet = await RepositoryReference.GetArticlesAsync<int>(
+                pager.PageIndex,
+                pager.PageSize,
+                searchField: "",
+                searchQuery,
+                sortOrder,
+                parentIdentifier: 0);
+
             pager.RecordCount = articleSet.TotalCount;
             Models = articleSet.Items.ToList();
         }
 
         StateHasChanged();
     }
+
     #endregion
 
     #region Navigation
-    protected void NameClick(long id) => Nav.NavigateTo($"/Memos/Details/{id}");
+
+    protected void NameClick(long id)
+    {
+        Nav.NavigateTo($"/Memos/Details/{id}");
+    }
+
     #endregion
 
-    protected async void PageIndexChanged(int pageIndex)
+    protected async Task PageIndexChanged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
+
         await DisplayData();
         StateHasChanged();
     }
 
     #region Editor + Delete
+
     protected void ShowEditorForm()
     {
         EditorFormTitle = "CREATE";
+
         Model = new Memo
         {
             ParentId = ParentId,
             ParentKey = ParentKey,
             Name = UserName
         };
-        EditorFormReference.Show();
+
+        EditorFormReference?.Show();
     }
 
     protected void EditBy(Memo model)
     {
         EditorFormTitle = "EDIT";
-        Model = new Memo();
+
         Model = model;
         Model.ParentId = model.ParentId;
         Model.ParentKey = model.ParentKey;
-        EditorFormReference.Show();
+
+        EditorFormReference?.Show();
     }
 
     protected void DeleteBy(Memo model)
     {
         Model = model;
-        DeleteDialogReference.Show();
+        DeleteDialogReference?.Show();
     }
 
-    protected async void DownloadBy(Memo model)
+    protected async Task DownloadBy(Memo model)
     {
-        if (!string.IsNullOrEmpty(model.FileName))
+        if (string.IsNullOrEmpty(model.FileName))
         {
-            byte[] fileBytes = await FileStorageManagerReference.DownloadAsync(model.FileName, "Memos");
-            if (fileBytes != null)
-            {
-                model.DownCount = model.DownCount + 1;
-                await RepositoryReference.EditAsync(model);
-                await FileUtil.SaveAs(JSRuntimeInjector, model.FileName, fileBytes);
-            }
+            return;
         }
+
+        byte[]? fileBytes = await FileStorageManagerReference.DownloadAsync(model.FileName, "Memos");
+
+        if (fileBytes is null)
+        {
+            return;
+        }
+
+        model.DownCount = (model.DownCount ?? 0) + 1;
+
+        await RepositoryReference.EditAsync(model);
+        await FileUtil.SaveAs(JSRuntimeInjector, model.FileName, fileBytes);
     }
 
-    protected async void CreateOrEditOld()
+    protected async Task CreateOrEditOld()
     {
-        EditorFormReference.Hide();
+        EditorFormReference?.Hide();
+
         Model = new Memo();
+
         await DisplayData();
     }
 
     protected void CreateOrEdit()
     {
-        EditorFormReference.Hide();
+        EditorFormReference?.Hide();
         Nav.NavigateTo(Nav.Uri, forceLoad: true);
     }
 
-    protected async void DeleteClick()
+    protected async Task DeleteClick()
     {
-        if (!string.IsNullOrEmpty(Model?.FileName))
+        if (!string.IsNullOrEmpty(Model.FileName))
         {
             await FileStorageManagerReference.DeleteAsync(Model.FileName, "Memos");
         }
 
-        await RepositoryReference.DeleteAsync(Model.Id);
-        DeleteDialogReference.Hide();
+        if (Model.Id > 0)
+        {
+            await RepositoryReference.DeleteAsync(Model.Id);
+        }
+
+        DeleteDialogReference?.Hide();
+
         Model = new Memo();
+
         await DisplayData();
     }
+
     #endregion
 
     #region Toggle with Inline Dialog
+
     public bool IsInlineDialogShow { get; set; } = false;
 
     protected void ToggleClose()
@@ -189,12 +249,22 @@ public partial class Manage
         Model = new Memo();
     }
 
-    protected async void ToggleClick()
+    protected async Task ToggleClick()
     {
-        Model.IsPinned = (Model?.IsPinned == true) ? false : true;
+        if (Model.Id <= 0)
+        {
+            IsInlineDialogShow = false;
+            Model = new Memo();
+            return;
+        }
+
+        Model.IsPinned = !Model.IsPinned;
+
         await RepositoryReference.UpdateAsync(Model);
+
         IsInlineDialogShow = false;
         Model = new Memo();
+
         await DisplayData();
     }
 
@@ -203,25 +273,28 @@ public partial class Manage
         Model = model;
         IsInlineDialogShow = true;
     }
+
     #endregion
 
-    #region Excel (EPPlus 제거, OpenXML로 대체)
-    protected void DownloadExcelWithWebApi()
+    #region Excel
+
+    protected async Task DownloadExcelWithWebApi()
     {
-        FileUtil.SaveAsExcel(JSRuntimeInjector, "/MemoDownload/ExcelDown");
-        Nav.NavigateTo($"/Memos");
+        await FileUtil.SaveAsExcel(JSRuntimeInjector, "/MemoDownload/ExcelDown");
+        Nav.NavigateTo("/Memos");
     }
 
-    protected void DownloadExcel()
+    protected async Task DownloadExcel()
     {
-        var rows = Models ?? [];
+        var rows = Models;
+
         if (rows.Count == 0)
         {
-            // 데이터 없을 때는 그냥 리턴 (필요 시 알림 표출)
             return;
         }
 
         byte[] bytes;
+
         using (var ms = new MemoryStream())
         {
             using (var doc = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
@@ -231,9 +304,11 @@ public partial class Manage
 
                 var wsPart = wbPart.AddNewPart<WorksheetPart>();
                 var sheetData = new SheetData();
+
                 wsPart.Worksheet = new Worksheet(sheetData);
 
                 var sheets = wbPart.Workbook.AppendChild(new Sheets());
+
                 sheets.Append(new Sheet
                 {
                     Id = wbPart.GetIdOfPart(wsPart),
@@ -241,19 +316,26 @@ public partial class Manage
                     Name = "Memos"
                 });
 
-                // Header
                 uint headerRowIndex = 1;
                 var header = new Row { RowIndex = headerRowIndex };
                 sheetData.Append(header);
 
-                string[] headers = { "Created", "Name", "Title", "DownCount", "FileName" };
+                string[] headers =
+                [
+                    "Created",
+                    "Name",
+                    "Title",
+                    "DownCount",
+                    "FileName"
+                ];
+
                 for (int i = 0; i < headers.Length; i++)
                 {
                     header.Append(TextCell(Ref(i + 1, (int)headerRowIndex), headers[i]));
                 }
 
-                // Data
                 uint rowIndex = 2;
+
                 foreach (var m in rows)
                 {
                     var row = new Row { RowIndex = rowIndex };
@@ -286,91 +368,138 @@ public partial class Manage
         }
 
         var fileName = $"{DateTime.Now:yyyyMMddHHmmss}_Memos.xlsx";
-        FileUtil.SaveAs(JSRuntimeInjector, fileName, bytes);
+
+        await FileUtil.SaveAs(JSRuntimeInjector, fileName, bytes);
     }
 
-    // OpenXML helpers
-    private static Cell TextCell(string cellRef, string text) =>
-        new Cell
+    private static Cell TextCell(string cellRef, string? text)
+    {
+        return new Cell
         {
             CellReference = cellRef,
             DataType = CellValues.String,
             CellValue = new CellValue(text ?? string.Empty)
         };
+    }
 
-    private static string Ref(int col1Based, int row) => $"{ColName(col1Based)}{row}";
+    private static string Ref(int col1Based, int row)
+    {
+        return $"{ColName(col1Based)}{row}";
+    }
 
     private static string ColName(int index)
     {
         var dividend = index;
-        string col = string.Empty;
+        var col = string.Empty;
+
         while (dividend > 0)
         {
             var modulo = (dividend - 1) % 26;
             col = (char)('A' + modulo) + col;
             dividend = (dividend - modulo) / 26;
         }
+
         return col;
     }
+
     #endregion
 
     #region Sorting
+
     private string sortOrder = "";
 
-    protected async void SortByCreate()
+    protected async Task SortByCreate()
     {
-        if (!sortOrder.Contains("Create")) sortOrder = "";
-        if (sortOrder == "") sortOrder = "Create";
-        else if (sortOrder == "Create") sortOrder = "CreateDesc";
-        else sortOrder = "";
+        if (!sortOrder.Contains("Create"))
+        {
+            sortOrder = "";
+        }
+
+        if (sortOrder == "")
+        {
+            sortOrder = "Create";
+        }
+        else if (sortOrder == "Create")
+        {
+            sortOrder = "CreateDesc";
+        }
+        else
+        {
+            sortOrder = "";
+        }
+
         await DisplayData();
     }
 
-    protected async void SortByName()
+    protected async Task SortByName()
     {
-        if (!sortOrder.Contains("Name")) sortOrder = "";
-        if (sortOrder == "") sortOrder = "Name";
-        else if (sortOrder == "Name") sortOrder = "NameDesc";
-        else sortOrder = "";
+        if (!sortOrder.Contains("Name"))
+        {
+            sortOrder = "";
+        }
+
+        if (sortOrder == "")
+        {
+            sortOrder = "Name";
+        }
+        else if (sortOrder == "Name")
+        {
+            sortOrder = "NameDesc";
+        }
+        else
+        {
+            sortOrder = "";
+        }
+
         await DisplayData();
     }
 
-    protected async void SortByTitle()
+    protected async Task SortByTitle()
     {
-        if (!sortOrder.Contains("Title")) sortOrder = "";
-        if (sortOrder == "") sortOrder = "Title";
-        else if (sortOrder == "Title") sortOrder = "TitleDesc";
-        else sortOrder = "";
+        if (!sortOrder.Contains("Title"))
+        {
+            sortOrder = "";
+        }
+
+        if (sortOrder == "")
+        {
+            sortOrder = "Title";
+        }
+        else if (sortOrder == "Title")
+        {
+            sortOrder = "TitleDesc";
+        }
+        else
+        {
+            sortOrder = "";
+        }
+
         await DisplayData();
     }
+
     #endregion
 
     #region Get UserId and UserName
+
     [Parameter] public string UserId { get; set; } = "";
     [Parameter] public string UserName { get; set; } = "";
 
-    [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; }
-    [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; }
+    [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; } = default!;
+    [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; } = default!;
 
     private async Task GetUserIdAndUserName()
     {
         try
         {
-            if (AuthenticationStateProviderRef is null || UserManagerRef is null)
-            {
-                UserId = "";
-                UserName = "Anonymous";
-                return;
-            }
-
             var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
-            var user = authState?.User;
+            var user = authState.User;
 
-            if (user?.Identity?.IsAuthenticated == true)
+            if (user.Identity?.IsAuthenticated == true)
             {
                 var currentUser = await UserManagerRef.GetUserAsync(user);
+
                 UserId = currentUser?.Id ?? "";
-                UserName = user?.Identity?.Name ?? currentUser?.UserName ?? "Anonymous";
+                UserName = user.Identity.Name ?? currentUser?.UserName ?? "Anonymous";
             }
             else
             {
@@ -384,6 +513,7 @@ public partial class Manage
             UserName = "Anonymous";
         }
     }
+
     #endregion
 
     private async Task OpenPreview(long attachmentId)
