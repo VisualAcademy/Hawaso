@@ -94,14 +94,13 @@ builder.Services.AddAuthorization(options =>
     // - 조건 2: 이메일(ClaimTypes.Email)이 globalAdminEmails 리스트에 포함되어야 함
     options.AddPolicy("GlobalAdministrators", policy =>
         policy.RequireAssertion(context =>
-            context.User.IsInRole("Administrators") && // 역할 검사
+            context.User.IsInRole("Administrators") &&
             context.User.HasClaim(c =>
-                c.Type == ClaimTypes.Email && // 이메일 Claim 존재 여부 검사
-                globalAdminEmails.Contains(c.Value, StringComparer.OrdinalIgnoreCase)) // 이메일 리스트 포함 여부 검사
+                c.Type == ClaimTypes.Email &&
+                globalAdminEmails.Contains(c.Value, StringComparer.OrdinalIgnoreCase))
         )
     );
     #endregion
-
 });
 #endregion
 
@@ -115,7 +114,7 @@ builder.Services.Configure<TerminologySettings>(builder.Configuration);
 builder.Services.AddSingleton<ITerminologyService, TerminologyService>();
 #endregion
 
-builder.Services.AddHttpContextAccessor(); //[1] services.AddHttpContextAccessor();
+builder.Services.AddHttpContextAccessor();
 
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
@@ -136,8 +135,6 @@ services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 4;
 });
 
-
-
 services.ConfigureApplicationCookie(options =>
 {
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
@@ -150,8 +147,8 @@ services.ConfigureApplicationCookie(options =>
     options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
 
     // SlidingExpiration = true 이면
-    //    - 사용자가 30분 안에 계속 요청을 보내면 만료 시간이 밀립니다 (30분 "무활동" 시 로그아웃)
-    //    - 정확히 로그인 후 30분에 무조건 끊고 싶으면 false 로 바꾸면 됩니다.
+    // - 사용자가 30분 안에 계속 요청을 보내면 만료 시간이 밀립니다.
+    // - 정확히 로그인 후 30분에 무조건 끊고 싶으면 false 로 바꾸면 됩니다.
     options.SlidingExpiration = true;
 
     // 1) 리다이렉트 커스터마이징 (/auth/ping은 401만)
@@ -173,14 +170,12 @@ services.ConfigureApplicationCookie(options =>
         // /auth/ping 에 대해서는 SlidingExpiration으로 인한 재발급(갱신)을 막는다
         if (context.Request.Path.StartsWithSegments("/auth/ping"))
         {
-            context.ShouldRenew = false;   // 여기 포인트
+            context.ShouldRenew = false;
         }
 
         return Task.CompletedTask;
     };
 });
-
-
 
 services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, Hawaso.Areas.Identity.Services.EmailSender>();
 
@@ -196,20 +191,13 @@ services.AddCors(options =>
         builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
-
-
 // HttpClient 등록
-// HttpClient 인스턴스를 DI(Dependency Injection) 컨테이너에 등록하여 재사용성을 높임
 builder.Services.AddHttpClient();
 
 // Fluent UI Blazor library add: 반드시 AddHttpClient() 확장 메서드 다음에 위치할 것
 builder.Services.AddFluentUIComponents();
 
-
-
 builder.Services.AddScoped<ApplicantUploadService>();
-
-
 
 services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 services.AddDatabaseDeveloperPageExceptionFilter();
@@ -219,6 +207,7 @@ services.Configure<DotNetNoteSettings>(Configuration.GetSection("DotNetNoteSetti
 
 services.AddDbContext<DotNetNoteContext>(options =>
     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
 services.AddDbContext<DotNetNote.Models.NoteDbContext>(options =>
     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -226,7 +215,6 @@ services.AddDbContext<DotNetNote.Models.NoteDbContext>(options =>
 //var schemaEnhancerChanges = new TenantSchemaEnhancerCreateChangesTable(connectionString);
 //schemaEnhancerChanges.CreateChangesTable();
 #endregion
-
 
 #region DailyLogs 테이블 생성 및 컬럼 확인
 var dailyLogsConnectionString =
@@ -239,7 +227,6 @@ var dailyLogsTableEnhancer =
 
 dailyLogsTableEnhancer.EnsureDailyLogsTable();
 #endregion
-
 
 // 의존성 주입 컨테이너 설정
 DependencyInjectionContainer(services);
@@ -258,8 +245,10 @@ void DependencyInjectionContainer(IServiceCollection services)
 
     services.AddDbContext<HawasoDbContext>(options =>
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+
     services.AddDbContext<CommonValueDbContext>(options =>
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
     services.AddTransient<ICommonValueRepository, CommonValueRepository>();
 
     // ManufacturerApp 관련 의존성 주입
@@ -288,11 +277,10 @@ void DependencyInjectionContainer(IServiceCollection services)
     /// <summary>
     /// 공지사항(NoticeApp) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리 
     /// </summary>
-    services.AddDependencyInjectionContainerForNoticeApp(Configuration["ConnectionStrings:DefaultConnection"]); // 또 다른 데이터베이스 연결 문자열 표현법
+    services.AddDependencyInjectionContainerForNoticeApp(Configuration["ConnectionStrings:DefaultConnection"]);
 
     services.AddDependencyInjectionContainerForReasonApp(connectionString, RepositoryMode.EfCore);
     services.AddTransient<ReasonAppDbContextFactory>();
-
 
     #region ResourceManagement 
     // Resource 모듈 등록
@@ -315,11 +303,7 @@ try
 }
 catch (Exception)
 {
-
 }
-
-
-
 
 #region Semantic Kernel
 builder.Services.AddKernel();
@@ -331,20 +315,11 @@ var aiConfig = builder.Configuration.GetSection("SmartComponents");
 //    new DefaultAzureCredential()); 
 #endregion
 
-
-
-
-
 services.AddDependencyInjectionContainerForVendorPermanentDelete(connectionString);
-
-
 
 services.AddTransient<ITwilioSender, TwilioSender>();
 
-
 services.AddTransient<IMailchimpEmailSender, MailchimpEmailSender>();
-
-
 
 var defaultConnStr = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("DefaultConnection is missing in configuration.");
@@ -354,15 +329,11 @@ builder.Services.AddTransient<FileAppDbContextFactory>();
 
 builder.Services.AddScoped<IFileStorageService, Azunt.Web.Components.Pages.FilesPages.Services.AzureBlobStorageService>();
 
-
-
 #region NoteManagement
 builder.Services.AddDependencyInjectionContainerForNoteApp(connectionString, Azunt.Models.Enums.RepositoryMode.EfCore);
 builder.Services.AddTransient<Azunt.NoteManagement.NoteDbContextFactory>();
 builder.Services.AddScoped<Azunt.NoteManagement.INoteStorageService, NoOpNoteStorageService>();
 #endregion
-
-
 
 // 최신 권장 방식: HttpClientFactory 등록
 builder.Services.AddHttpClient("egress-ip", client =>
@@ -373,7 +344,6 @@ builder.Services.AddHttpClient("egress-ip", client =>
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
 });
 
-
 #region Background Service
 // appsettings.json 바인딩
 builder.Services.Configure<BackgroundScreeningOptions>(
@@ -383,31 +353,25 @@ builder.Services.Configure<BackgroundScreeningOptions>(
 builder.Services.AddScoped<IBackgroundScreeningPolicy, BackgroundScreeningPolicy>();
 #endregion
 
-
-
 // 기본 연결 문자열로 모듈 등록 (Service/DbContextFactory 등)
 builder.Services.AddTenantSettingsModule(builder.Configuration);
 
 // 공통 DI 묶음
 builder.Services.AddAzuntWeb(builder.Configuration);
 
-
-
-
-
 #region Serilog
 // 1. Serilog 컬럼 옵션 정의
 var columnOptions = new ColumnOptions
 {
     Store = new List<StandardColumn>
-            {
-                StandardColumn.Message,
-                StandardColumn.MessageTemplate,
-                StandardColumn.Level,
-                StandardColumn.TimeStamp,
-                StandardColumn.Exception,
-                StandardColumn.Properties
-            }
+    {
+        StandardColumn.Message,
+        StandardColumn.MessageTemplate,
+        StandardColumn.Level,
+        StandardColumn.TimeStamp,
+        StandardColumn.Exception,
+        StandardColumn.Properties
+    }
 };
 
 // 2. Serilog 로거 구성
@@ -419,7 +383,7 @@ Serilog.Log.Logger = new LoggerConfiguration()
         sinkOptions: new MSSqlServerSinkOptions
         {
             TableName = "AppLogs",
-            AutoCreateSqlTable = true // 이미 테이블이 존재하므로 false
+            AutoCreateSqlTable = true
         },
         restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error,
         columnOptions: columnOptions
@@ -431,8 +395,6 @@ Serilog.Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 #endregion
 
-
-
 builder.Services.AddDbContext<Azunt.Data.LogsDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -440,25 +402,16 @@ builder.Services.AddScoped<IPhotoLogService, InMemoryPhotoLogService>();
 
 var app = builder.Build();
 
-
-
-
-
 // -------------------------------------------------
 // 2) Stripe SecretKey 전역 설정 (StripeConfiguration.ApiKey)
 // -------------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
-var stripeOptions = scope.ServiceProvider
-    .GetRequiredService<IOptions<StripeSettings>>().Value;
+    var stripeOptions = scope.ServiceProvider
+        .GetRequiredService<IOptions<StripeSettings>>().Value;
 
-StripeConfiguration.ApiKey = stripeOptions.SecretKey;
+    StripeConfiguration.ApiKey = stripeOptions.SecretKey;
 }
-
-
-
-
-
 
 //if (app.Environment.IsProduction())
 {
@@ -470,9 +423,6 @@ StripeConfiguration.ApiKey = stripeOptions.SecretKey;
     #endregion
 }
 
-
-
-
 try
 {
     var documentsTableEnhancer = new DocumentsTableEnhancer(connectionString);
@@ -480,21 +430,16 @@ try
 }
 catch (Exception)
 {
-
 }
-
-
-
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    app.UseHsts(); // 브라우저에 HTTPS만 사용하도록 지시하는 보안 헤더 추가
+    app.UseHsts();
 }
 
-app.UseHttpsRedirection(); // HTTP 요청을 HTTPS로 자동 리디렉션
+app.UseHttpsRedirection();
 
 // wwwroot 정적 파일(css, js, 이미지 등) 사용
 app.UseStaticFiles();
@@ -502,35 +447,23 @@ app.UseStaticFiles();
 // Endpoint 라우팅 활성화
 app.UseRouting();
 
-// CORS 정책 적용 (외부 도메인 요청 허용 정책)
+// CORS 정책 적용
 app.UseCors("AllowAnyOrigin");
 
-// 인증 처리 (로그인 여부 확인)
+// 인증 처리
 app.UseAuthentication();
 
-// 권한 검사 (Role, Policy 등)
+// 권한 검사
 app.UseAuthorization();
-
-
-
 
 // Configure the HTTP request pipeline.
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 app.MapRazorPages();
-
-
-
-
-
-
-
-
-
-
 
 #region 데이터베이스 및 인증 스키마 초기화
 var config = app.Services.GetRequiredService<IConfiguration>();
@@ -545,17 +478,6 @@ else
     Console.WriteLine("Database initialization is skipped (Database:InitializeOnStartup = false)");
 }
 #endregion
-
-
-
-
-
-
-
-
-
-
-
 
 #region CreateBuiltInUsersAndRoles and ResetAdministratorPassword
 // 기본 역할 및 사용자 추가 및 관리자 암호 초기화 
@@ -576,9 +498,6 @@ using (var scope = app.Services.CreateScope())
 }
 #endregion
 
-
-
-
 // **PageSchemaEnhancer** 인스턴스 생성
 PageSchemaEnhancer pageSchemaEnhancer = new PageSchemaEnhancer(connectionString);
 pageSchemaEnhancer.EnsurePagesTableExists();
@@ -588,7 +507,6 @@ pageSchemaEnhancer.EnsurePagesTableExists();
 //tenantSchemaEnhancerCreatePartnersTable.EnhanceAllTenantDatabases();
 //#endregion
 
-
 #region Create ApplicantsTransfers Table
 if (DateTime.Now < (new DateTime(2025, 2, 10)))
 {
@@ -596,7 +514,6 @@ if (DateTime.Now < (new DateTime(2025, 2, 10)))
     createTenantsTransfersTable.CreateApplicantsTransfersTable();
 }
 #endregion
-
 
 // Create AllowedIPRanges table in the default database
 var defaultDbConnectionString =
@@ -610,8 +527,6 @@ var defaultSchemaEnhancer =
 
 defaultSchemaEnhancer.EnhanceDefaultDatabase();
 
-
-
 //using (var scope = app.Services.CreateScope())
 //{
 //    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
@@ -620,8 +535,6 @@ defaultSchemaEnhancer.EnhanceDefaultDatabase();
 //    var enhancer = new TenantSchemaEnhancerCreateCustomFieldTitlesTable(masterConnectionString);
 //    enhancer.EnhanceAllTenantDatabases();
 //}
-
-
 
 #region Minimal API - GET /api/foo
 
@@ -637,20 +550,11 @@ app.MapGet("api/foo", () =>
 
 #endregion
 
-
-
 // 엔드포인트 등록
 app.MapIsoCountriesEndpoint();
 
-
 // Diagnostics 엔드포인트 매핑
 app!.MapDiagnosticsEndpoints();
-
-
-
-
-
-
 
 #region Employees 테이블 초기화/보강 및 시드
 try
@@ -683,16 +587,26 @@ catch (Exception ex)
 }
 #endregion
 
+#region Employees 테이블에 LicenseNumberSort 컬럼 및 인덱스 추가
+// 2026-05-31
+// Azunt.EmployeeManagement NuGet package initializer.
+// 기존 Employees 테이블이 있는 테넌트 DB에 LicenseNumberSort 컬럼과 인덱스를 보장합니다.
+try
+{
+    EmployeesLicenseNumberSortBuilder.Run(
+        app.Services,
+        forMaster: false);
 
-
-
+    Console.WriteLine("Employees LicenseNumberSort column and index initialization finished. Target=Tenants");
+}
+catch (Exception ex)
+{
+    Console.Error.WriteLine($"[EmployeesLicenseNumberSortBuilder] Startup failed: {ex.Message}");
+}
+#endregion
 
 // Minimal APIs
 app.MapAzuntMinimalApis();
-
-
-
-
 
 #region TenantSchemaEnhancerProfilePicture
 try
@@ -715,14 +629,7 @@ catch (Exception ex)
 }
 #endregion
 
-
-
-
 app.Run();
-
-
-
-
 
 /// <summary>
 /// 쇼핑몰(DotNetSaleCore) 관련 의존성(종속성) 주입 관련 코드만 따로 모아서 관리
@@ -738,8 +645,10 @@ void AddDependencyInjectionContainerForDotNetSaleCore(IServiceCollection service
 
     services.AddSingleton<ILoginRepository>(
         new LoginRepository(configuration.GetConnectionString("DefaultConnection")));
+
     services.AddDbContext<LoginDbContext>(options =>
         options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+
     services.AddTransient<ILoginRepositoryAsync, LoginRepositoryAsync>();
 }
 
