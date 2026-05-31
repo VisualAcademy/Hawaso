@@ -7,10 +7,16 @@ public partial class ProductDeleteDialog
 {
     public bool IsShow { get; set; }
 
-    public void Show() => IsShow = true;
-
-    public void Close() => IsShow = false;
-
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    public void Show()
+    {
+        IsShow = true;
+    }
+
+    public void Close()
+    {
+        IsShow = false;
+    }
 }

@@ -13,12 +13,12 @@ public partial class ManageBy
     public int CategoryId { get; set; }
 
     [Inject]
-    public IProductRepositoryAsync ProductRepositoryAsync { get; set; }
+    public IProductRepositoryAsync ProductRepositoryAsync { get; set; } = default!;
 
     [Inject]
-    public NavigationManager NavigationManager { get; set; }
+    public NavigationManager NavigationManager { get; set; } = default!;
 
-    private DulPagerBase pager = new DulPagerBase()
+    private readonly DulPagerBase pager = new()
     {
         PageNumber = 1,
         PageIndex = 0,
@@ -26,104 +26,128 @@ public partial class ManageBy
         PagerButtonCount = 5
     };
 
-    private List<Product> Products;
+    private List<Product>? Products { get; set; }
 
     public string EditorFormTitle { get; set; } = "ADD";
 
-    public Product Product { get; set; } = new Product();
+    public Product Product { get; set; } = new();
 
-    public ProductEditorForm ProductEditorForm { get; set; }
+    private ProductEditorForm? ProductEditorForm { get; set; }
 
-    public ProductDeleteDialog ProductDeleteDialog { get; set; }
+    private ProductDeleteDialog? ProductDeleteDialog { get; set; }
 
     public bool IsInlineDialogShow { get; set; }
 
-    protected override async Task OnInitializedAsync() => await DisplayData();
+    protected override async Task OnInitializedAsync()
+    {
+        await DisplayData();
+    }
 
     private async Task DisplayData()
     {
-        var articleSet = await ProductRepositoryAsync.GetAllByParentIdAsync(pager.PageIndex, pager.PageSize, CategoryId);
-        pager.RecordCount = articleSet.TotalRecords;
-        Products = articleSet.Records.ToList();
+        var productSet = await ProductRepositoryAsync.GetAllByParentIdAsync(
+            pager.PageIndex,
+            pager.PageSize,
+            CategoryId);
+
+        pager.RecordCount = productSet.TotalRecords;
+        Products = productSet.Records?.ToList() ?? new List<Product>();
     }
 
-    private async void PageIndexChanged(int pageIndex)
+    private async Task PageIndexChanged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
 
         await DisplayData();
-
-        StateHasChanged();
     }
 
-    private void btnProductName_Click(int ProductId) => NavigationManager.NavigateTo($"/Products/Details/{ProductId}");
+    private void btnProductName_Click(int productId)
+    {
+        NavigationManager.NavigateTo($"/Products/Details/{productId}");
+    }
 
     protected void btnCreate_Click()
     {
         EditorFormTitle = "ADD";
-        Product = new Product();
+        Product = new Product
+        {
+            CategoryId = CategoryId
+        };
 
-        ProductEditorForm.Show(); 
+        ProductEditorForm?.Show();
     }
 
-    protected async void SaveOrUpdated()
+    protected async Task SaveOrUpdated()
     {
-        ProductEditorForm.Close();
+        ProductEditorForm?.Close();
 
         await DisplayData();
-
-        StateHasChanged();
     }
 
-    protected void EditBy(Product Product)
+    protected void EditBy(Product product)
     {
         EditorFormTitle = "EDIT";
-        this.Product = Product; 
+        Product = product;
 
-        ProductEditorForm.Show();
+        ProductEditorForm?.Show();
     }
 
-    protected void DeleteBy(Product Product)
+    protected void DeleteBy(Product product)
     {
-        this.Product = Product;
-        ProductDeleteDialog.Show();
+        Product = product;
+
+        ProductDeleteDialog?.Show();
     }
 
-    protected async void btnDelete_Click()
+    protected async Task btnDelete_Click()
     {
+        if (Product.ProductId <= 0)
+        {
+            return;
+        }
+
         await ProductRepositoryAsync.DeleteAsync(Product.ProductId);
 
-        ProductDeleteDialog.Close();
+        ProductDeleteDialog?.Close();
 
-        Product = new Product(); 
+        Product = new Product
+        {
+            CategoryId = CategoryId
+        };
 
         await DisplayData();
-
-        StateHasChanged();
     }
 
     protected void ToggleBy(Product product)
     {
-        this.Product = product;
+        Product = product;
         IsInlineDialogShow = true;
     }
 
-    protected async void btnToggleAbsence_Click()
+    protected async Task btnToggleAbsence_Click()
     {
-        Product.Absence = (Product?.Absence == 0) ? 1 : 0; // 토글
+        if (Product.ProductId <= 0)
+        {
+            return;
+        }
+
+        Product.Absence = Product.Absence == 0 ? 1 : 0;
 
         await ProductRepositoryAsync.EditAsync(Product);
 
         await DisplayData();
 
         IsInlineDialogShow = false;
-        StateHasChanged();
     }
 
     protected void btnClose_Click()
     {
         IsInlineDialogShow = false;
-        Product = new Product(); 
+
+        Product = new Product
+        {
+            CategoryId = CategoryId
+        };
     }
 }
