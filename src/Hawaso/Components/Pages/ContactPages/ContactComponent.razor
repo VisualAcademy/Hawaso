@@ -1,19 +1,18 @@
 ﻿@page "/contact"
 
 @using Hawaso.Data
-@using Microsoft.AspNetCore.Http
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
 @inject UserManager<ApplicationUser> UserManager
-@inject IHttpContextAccessor HttpContextAccessor
 @inject ApplicationDbContext _dbContext
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Contact</PageTitle>
 
-<h1>@Page?.Title</h1>
+<h1>@(Page?.Title ?? "Contact")</h1>
 
 <div>
-    @((MarkupString)Page?.Content)
+    @((MarkupString)(Page?.Content ?? string.Empty))
 </div>
 
 @code {
@@ -21,21 +20,19 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // 로그인한 사용자의 TenantName을 가져오기
-        //[3] var user = await UserManager.GetUserAsync(HttpContextAccessor.HttpContext.User);
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = await UserManager.GetUserAsync(authState.User);
+
         var tenantName = user?.TenantName ?? "Hawaso";
 
         Page = await _dbContext.Pages
-            .Where(p => p.PageName == "Contact" && p.TenantName == tenantName)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(p =>
+                p.PageName == "Contact" &&
+                p.TenantName == tenantName);
 
-        if (Page == null)
-        {
-            Page = await _dbContext.Pages
-                .Where(p => p.PageName == "Contact" && p.TenantName == "Hawaso")
-                .FirstOrDefaultAsync();
-        }
+        Page ??= await _dbContext.Pages
+            .FirstOrDefaultAsync(p =>
+                p.PageName == "Contact" &&
+                p.TenantName == "Hawaso");
     }
 }
