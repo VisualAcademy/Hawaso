@@ -41,17 +41,21 @@
         var user = await UserManager.GetUserAsync(authState.User);
         var tenantName = user?.TenantName ?? "Hawaso";
 
-        Page = await _dbContext.Pages
+        var existingPage = await _dbContext.Pages
             .Where(p => p.PageName == "Contact" && p.TenantName == tenantName)
             .FirstOrDefaultAsync();
 
-        if (Page == null)
+        if (existingPage == null)
         {
             Page = new Page
                 {
                     PageName = "Contact",
                     TenantName = tenantName
                 };
+        }
+        else
+        {
+            Page = existingPage;
         }
     }
 
