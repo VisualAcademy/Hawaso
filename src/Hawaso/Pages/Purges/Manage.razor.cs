@@ -18,15 +18,15 @@ public partial class Manage
     #endregion
 
     #region Injectors
-    [Inject] public NavigationManager Nav { get; set; }
-    [Inject] public IJSRuntime JSRuntimeInjector { get; set; }
-    [Inject] public IPurgeRepository RepositoryReference { get; set; }
-    [Inject] public IPurgeFileStorageManager FileStorageManagerReference { get; set; }
+    [Inject] public NavigationManager Nav { get; set; } = default!;
+    [Inject] public IJSRuntime JSRuntimeInjector { get; set; } = default!;
+    [Inject] public IPurgeRepository RepositoryReference { get; set; } = default!;
+    [Inject] public IPurgeFileStorageManager FileStorageManagerReference { get; set; } = default!;
     #endregion
 
     #region Properties
     public string EditorFormTitle { get; set; } = "CREATE";
-    public Components.DeleteDialog DeleteDialogReference { get; set; }
+    public Components.DeleteDialog DeleteDialogReference { get; set; } = default!;
     protected List<Purge> models = new();
     protected Purge model = new();
 
@@ -46,6 +46,7 @@ public partial class Manage
         {
             await GetUserIdAndUserName();
         }
+
         await DisplayData();
     }
     #endregion
@@ -55,21 +56,39 @@ public partial class Manage
         if (!string.IsNullOrEmpty(ParentKey))
         {
             var articleSet = await RepositoryReference.GetArticlesAsync<string>(
-                pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, ParentKey);
+                pager.PageIndex,
+                pager.PageSize,
+                searchField: "",
+                this.searchQuery,
+                this.sortOrder,
+                ParentKey);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else if (ParentId != 0)
         {
             var articleSet = await RepositoryReference.GetArticlesAsync<int>(
-                pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, ParentId);
+                pager.PageIndex,
+                pager.PageSize,
+                searchField: "",
+                this.searchQuery,
+                this.sortOrder,
+                ParentId);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else
         {
             var articleSet = await RepositoryReference.GetArticlesAsync<int>(
-                pager.PageIndex, pager.PageSize, searchField: "", this.searchQuery, this.sortOrder, parentIdentifier: 0);
+                pager.PageIndex,
+                pager.PageSize,
+                searchField: "",
+                this.searchQuery,
+                this.sortOrder,
+                parentIdentifier: 0);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
@@ -83,7 +102,9 @@ public partial class Manage
     {
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
+
         await DisplayData();
+
         StateHasChanged();
     }
 
@@ -101,36 +122,45 @@ public partial class Manage
     protected void DeleteBy(Purge model)
     {
         this.model = model;
+
         DeleteDialogReference.Show();
     }
     #endregion
 
     protected async void DownloadBy(Purge model)
     {
-        if (!string.IsNullOrEmpty(model.FileName))
+        if (model is null || string.IsNullOrEmpty(model.FileName))
         {
-            var fileBytes = await FileStorageManagerReference.DownloadAsync(model.FileName, "Purges");
-            if (fileBytes != null)
-            {
-                // DownCount: int? → null-safe 증가
-                model.DownCount = (model.DownCount ?? 0) + 1;
-                await RepositoryReference.EditAsync(model);
-
-                await FileUtil.SaveAs(JSRuntimeInjector, model.FileName, fileBytes);
-            }
+            return;
         }
+
+        var fileBytes = await FileStorageManagerReference.DownloadAsync(model.FileName, "Purges");
+
+        if (fileBytes is null)
+        {
+            return;
+        }
+
+        // DownCount: int? → null-safe 증가
+        model.DownCount = (model.DownCount ?? 0) + 1;
+        await RepositoryReference.EditAsync(model);
+
+        await FileUtil.SaveAs(JSRuntimeInjector, model.FileName, fileBytes);
     }
 
     protected async void DeleteClick()
     {
-        if (!string.IsNullOrEmpty(model?.FileName))
+        if (!string.IsNullOrEmpty(model.FileName))
         {
             await FileStorageManagerReference.DeleteAsync(model.FileName, "Purges");
         }
 
         await RepositoryReference.DeleteAsync(this.model.Id);
+
         DeleteDialogReference.Hide();
+
         this.model = new Purge();
+
         await DisplayData();
     }
 
@@ -145,7 +175,12 @@ public partial class Manage
 
     protected async void ToggleClick()
     {
-        this.model.IsPinned = (this.model?.IsPinned == true) ? false : true;
+        if (this.model is null)
+        {
+            return;
+        }
+
+        this.model.IsPinned = !this.model.IsPinned;
 
         await RepositoryReference.UpdateAsync(this.model);
 
@@ -169,6 +204,7 @@ public partial class Manage
     {
         pager.PageIndex = 0;
         this.searchQuery = query;
+
         await DisplayData();
     }
     #endregion
@@ -184,6 +220,7 @@ public partial class Manage
         }
 
         byte[] bytes;
+
         using (var ms = new MemoryStream())
         {
             using (var doc = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
@@ -210,6 +247,7 @@ public partial class Manage
 
                 // 필요한 컬럼: Created, Name, Title, DownCount, FileName
                 string[] headers = { "Created", "Name", "Title", "DownCount", "FileName" };
+
                 for (int i = 0; i < headers.Length; i++)
                 {
                     headerRow.Append(TextCell(CellRef(i + 1, (int)headerRowIndex), headers[i]));
@@ -217,6 +255,7 @@ public partial class Manage
 
                 // Data rows
                 uint rowIndex = 2;
+
                 foreach (var m in models)
                 {
                     var row = new Row { RowIndex = rowIndex };
@@ -254,7 +293,9 @@ public partial class Manage
         }
 
         var fileName = $"{DateTime.Now:yyyyMMddHHmmss}_Purges.xlsx";
-        FileUtil.SaveAs(JSRuntimeInjector,
+
+        FileUtil.SaveAs(
+            JSRuntimeInjector,
             fileName,
             bytes);
     }
@@ -274,12 +315,14 @@ public partial class Manage
         // 1 -> A, 2 -> B, ... 26 -> Z, 27 -> AA
         var dividend = idx;
         string col = string.Empty;
+
         while (dividend > 0)
         {
             var modulo = (dividend - 1) % 26;
             col = (char)('A' + modulo) + col;
             dividend = (dividend - modulo) / 26;
         }
+
         return col;
     }
     #endregion
@@ -289,37 +332,52 @@ public partial class Manage
 
     protected async void SortByCreate()
     {
-        if (!sortOrder.Contains("Create")) sortOrder = "";
+        if (!sortOrder.Contains("Create"))
+        {
+            sortOrder = "";
+        }
+
         sortOrder = sortOrder switch
         {
             "" => "Create",
             "Create" => "CreateDesc",
             _ => ""
         };
+
         await DisplayData();
     }
 
     protected async void SortByName()
     {
-        if (!sortOrder.Contains("Name")) sortOrder = "";
+        if (!sortOrder.Contains("Name"))
+        {
+            sortOrder = "";
+        }
+
         sortOrder = sortOrder switch
         {
             "" => "Name",
             "Name" => "NameDesc",
             _ => ""
         };
+
         await DisplayData();
     }
 
     protected async void SortByTitle()
     {
-        if (!sortOrder.Contains("Title")) sortOrder = "";
+        if (!sortOrder.Contains("Title"))
+        {
+            sortOrder = "";
+        }
+
         sortOrder = sortOrder switch
         {
             "" => "Title",
             "Title" => "TitleDesc",
             _ => ""
         };
+
         await DisplayData();
     }
     #endregion
@@ -328,41 +386,28 @@ public partial class Manage
     [Parameter] public string UserId { get; set; } = "";
     [Parameter] public string UserName { get; set; } = "";
 
-    [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; }
-    [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; }
+    [Inject] public UserManager<ApplicationUser> UserManagerRef { get; set; } = default!;
+    [Inject] public AuthenticationStateProvider AuthenticationStateProviderRef { get; set; } = default!;
 
     private async Task GetUserIdAndUserName()
     {
-        // 널-안전 가드
-        if (AuthenticationStateProviderRef is null || UserManagerRef is null)
-        {
-            UserId = "";
-            UserName = "Anonymous";
-            return;
-        }
-
         var authState = await AuthenticationStateProviderRef.GetAuthenticationStateAsync();
         var user = authState.User;
 
         if (user?.Identity?.IsAuthenticated == true)
         {
             var currentUser = await UserManagerRef.GetUserAsync(user);
-            if (currentUser != null)
+
+            if (currentUser is not null)
             {
                 UserId = currentUser.Id ?? "";
                 UserName = user.Identity?.Name ?? currentUser.UserName ?? "Anonymous";
-            }
-            else
-            {
-                UserId = "";
-                UserName = "Anonymous";
+                return;
             }
         }
-        else
-        {
-            UserId = "";
-            UserName = "Anonymous";
-        }
+
+        UserId = "";
+        UserName = "Anonymous";
     }
     #endregion
 }
