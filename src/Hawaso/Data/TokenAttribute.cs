@@ -1,18 +1,17 @@
-﻿namespace Hawaso.Data
+﻿namespace Hawaso.Data;
+
+public class TokenAttribute : Attribute
 {
-    public class TokenAttribute : Attribute
+    public TokenAttribute()
     {
-        public TokenAttribute()
-        {
-        }
-
-        public TokenAttribute(string token)
-        {
-            this.Token = token;
-        }
-
-        public string Token { get; set; }
-
-        public string Prefix { get; set; }
     }
+
+    public TokenAttribute(string token)
+    {
+        Token = token;
+    }
+
+    public string Token { get; set; } = string.Empty;
+
+    public string Prefix { get; set; } = string.Empty;
 }
