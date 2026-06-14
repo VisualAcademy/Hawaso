@@ -11,12 +11,12 @@ namespace Hawaso.Pages.CategoriesProducts;
 public partial class Manage
 {
     [Inject]
-    public ICategoryRepository CategoryRepositoryAsync { get; set; }
+    public ICategoryRepository CategoryRepositoryAsync { get; set; } = default!;
 
     [Inject]
-    public NavigationManager NavigationManager { get; set; }
+    public NavigationManager NavigationManager { get; set; } = default!;
 
-    private DulPagerBase pager = new DulPagerBase()
+    private DulPagerBase pager = new()
     {
         PageNumber = 1,
         PageIndex = 0,
@@ -24,15 +24,15 @@ public partial class Manage
         PagerButtonCount = 5
     };
 
-    private List<Category> customers;
+    private List<Category> customers = new();
 
     public string EditorFormTitle { get; set; } = "ADD";
 
-    public Category Category { get; set; } = new Category();
+    public Category Category { get; set; } = new();
 
-    public CategoryEditorForm CategoryEditorForm { get; set; }
+    public CategoryEditorForm CategoryEditorForm { get; set; } = default!;
 
-    public CategoryDeleteDialog CategoryDeleteDialog { get; set; }
+    public CategoryDeleteDialog CategoryDeleteDialog { get; set; } = default!;
 
     public bool IsInlineDialogShow { get; set; }
 
@@ -40,7 +40,10 @@ public partial class Manage
 
     private async Task DisplayData()
     {
-        var articleSet = await CategoryRepositoryAsync.GetAllAsync(pager.PageIndex, pager.PageSize);
+        var articleSet = await CategoryRepositoryAsync.GetAllAsync(
+            pager.PageIndex,
+            pager.PageSize);
+
         pager.RecordCount = articleSet.TotalRecords;
         customers = articleSet.Records.ToList();
     }
@@ -60,7 +63,7 @@ public partial class Manage
         EditorFormTitle = "ADD";
         Category = new Category();
 
-        CategoryEditorForm.Show(); 
+        CategoryEditorForm.Show();
     }
 
     protected async void SaveOrUpdated()
@@ -75,7 +78,7 @@ public partial class Manage
     protected void EditBy(Category customer)
     {
         EditorFormTitle = "EDIT";
-        Category = customer; 
+        Category = customer;
 
         CategoryEditorForm.Show();
     }
@@ -83,6 +86,7 @@ public partial class Manage
     protected void DeleteBy(Category customer)
     {
         Category = customer;
+
         CategoryDeleteDialog.Show();
     }
 
@@ -92,7 +96,7 @@ public partial class Manage
 
         CategoryDeleteDialog.Close();
 
-        Category = new Category(); 
+        Category = new Category();
 
         await DisplayData();
 
@@ -102,6 +106,6 @@ public partial class Manage
     protected void btnClose_Click()
     {
         IsInlineDialogShow = false;
-        Category = new Category(); 
+        Category = new Category();
     }
 }
