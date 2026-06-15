@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using BlazorUtils;
-// EPPlus 제거
-// using OfficeOpenXml;
-// using System.Drawing;
-// using OfficeOpenXml.Style;
-
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,7 +9,7 @@ using System.Collections.Generic;
 using VisualAcademy.Models.Replys;
 using Hawaso.Pages.Replys.Components;
 
-// Open XML SDK 추가
+// Open XML SDK
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -24,36 +19,40 @@ namespace Hawaso.Pages.Replys;
 public partial class Manage
 {
     #region Parameters
+
     [Parameter]
     public int ParentId { get; set; } = 0;
 
     [Parameter]
-    public string ParentKey { get; set; } = "";
+    public string ParentKey { get; set; } = string.Empty;
+
     #endregion
 
     #region Injectors
-    [Inject] public NavigationManager Nav { get; set; }
-    [Inject] public IJSRuntime JSRuntimeInjector { get; set; }
-    [Inject] public IReplyRepository RepositoryReference { get; set; }
-    [Inject] public IFileStorageManager FileStorageManagerReference { get; set; }
+
+    [Inject] public NavigationManager Nav { get; set; } = default!;
+    [Inject] public IJSRuntime JSRuntimeInjector { get; set; } = default!;
+    [Inject] public IReplyRepository RepositoryReference { get; set; } = default!;
+    [Inject] public IFileStorageManager FileStorageManagerReference { get; set; } = default!;
+
     #endregion
 
     #region Properties
+
     /// <summary>글쓰기 또는 수정하기 폼의 제목</summary>
     public string EditorFormTitle { get; set; } = "CREATE";
-    #endregion
 
     /// <summary>모달로 글쓰기 또는 수정하기</summary>
-    public Components.EditorForm EditorFormReference { get; set; }
+    public Components.EditorForm EditorFormReference { get; set; } = default!;
 
     /// <summary>모달로 항목 삭제</summary>
-    public DeleteDialog DeleteDialogReference { get; set; }
+    public DeleteDialog DeleteDialogReference { get; set; } = default!;
 
-    protected List<Reply> models;
+    protected List<Reply> models = new();
 
-    protected Reply model = new Reply();
+    protected Reply model = new();
 
-    protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase()
+    protected DulPager.DulPagerBase pager = new()
     {
         PageNumber = 1,
         PageIndex = 0,
@@ -61,36 +60,61 @@ public partial class Manage
         PagerButtonCount = 5
     };
 
+    #endregion
+
     #region Lifecycle Methods
+
     protected override async Task OnInitializedAsync() => await DisplayData();
+
     #endregion
 
     private async Task DisplayData()
     {
-        if (ParentKey != "")
+        if (!string.IsNullOrWhiteSpace(ParentKey))
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<string>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentKey);
+            var articleSet = await RepositoryReference.GetArticlesAsync<string>(
+                pager.PageIndex,
+                pager.PageSize,
+                string.Empty,
+                searchQuery,
+                sortOrder,
+                ParentKey);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else if (ParentId != 0)
         {
-            var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, ParentId);
+            var articleSet = await RepositoryReference.GetArticlesAsync<int>(
+                pager.PageIndex,
+                pager.PageSize,
+                string.Empty,
+                searchQuery,
+                sortOrder,
+                ParentId);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
         else
         {
-            // 평상시에는 이 코드만 사용
-            var articleSet = await RepositoryReference.GetArticlesAsync<int>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, 0);
+            var articleSet = await RepositoryReference.GetArticlesAsync<int>(
+                pager.PageIndex,
+                pager.PageSize,
+                string.Empty,
+                searchQuery,
+                sortOrder,
+                0);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
         }
 
-        StateHasChanged(); // Refresh
+        StateHasChanged();
     }
 
-    protected void NameClick(int id) => Nav.NavigateTo($"/Replys/Details/{id}");
+    protected void NameClick(int id) =>
+        Nav.NavigateTo($"/Replys/Details/{id}");
 
     protected async void PageIndexChanged(int pageIndex)
     {
@@ -103,123 +127,160 @@ public partial class Manage
     }
 
     #region Event Handlers
+
     protected void ShowEditorForm()
     {
         EditorFormTitle = "CREATE";
-        this.model = new Reply();
-        this.model.ParentKey = ParentKey;
+
+        model = new Reply
+        {
+            ParentKey = ParentKey
+        };
+
         EditorFormReference.Show();
     }
 
-    protected void EditBy(Reply model)
+    protected void EditBy(Reply selectedModel)
     {
         EditorFormTitle = "EDIT";
-        this.model = new Reply();
-        this.model = model;
-        this.model.ParentKey = ParentKey;
+
+        model = selectedModel;
+        model.ParentKey = ParentKey;
+
         EditorFormReference.Show();
     }
 
-    protected void DeleteBy(Reply model)
+    protected void DeleteBy(Reply selectedModel)
     {
-        this.model = model;
+        model = selectedModel;
+
         DeleteDialogReference.Show();
     }
+
     #endregion
 
-    protected async void DownloadBy(Reply model)
+    protected async void DownloadBy(Reply selectedModel)
     {
-        if (!string.IsNullOrEmpty(model.FileName))
+        if (string.IsNullOrWhiteSpace(selectedModel.FileName))
         {
-            byte[] fileBytes = await FileStorageManagerReference.DownloadAsync(model.FileName, "");
-            if (fileBytes != null)
-            {
-                // DownCount
-                model.DownCount = model.DownCount + 1;
-                await RepositoryReference.EditAsync(model);
+            return;
+        }
 
-                await FileUtil.SaveAs(JSRuntimeInjector, model.FileName, fileBytes);
-            }
+        byte[] fileBytes = await FileStorageManagerReference.DownloadAsync(
+            selectedModel.FileName,
+            string.Empty);
+
+        if (fileBytes != null && fileBytes.Length > 0)
+        {
+            selectedModel.DownCount++;
+
+            await RepositoryReference.EditAsync(selectedModel);
+
+            await FileUtil.SaveAs(JSRuntimeInjector, selectedModel.FileName, fileBytes);
         }
     }
 
     protected async void CreateOrEdit()
     {
         EditorFormReference.Hide();
-        this.model = new Reply();
+
+        model = new Reply();
+
         await DisplayData();
+
+        StateHasChanged();
     }
 
     protected async void DeleteClick()
     {
-        if (!string.IsNullOrEmpty(model?.FileName))
+        if (!string.IsNullOrWhiteSpace(model.FileName))
         {
-            // 첨부 파일 삭제 
-            await FileStorageManagerReference.DeleteAsync(model.FileName, "");
+            await FileStorageManagerReference.DeleteAsync(model.FileName, string.Empty);
         }
 
-        await RepositoryReference.DeleteAsync(this.model.Id);
+        await RepositoryReference.DeleteAsync(model.Id);
+
         DeleteDialogReference.Hide();
-        this.model = new Reply(); // 선택했던 모델 초기화
-        await DisplayData(); // 다시 로드
+
+        model = new Reply();
+
+        await DisplayData();
+
+        StateHasChanged();
     }
 
     #region Toggle with Inline Dialog
+
     public bool IsInlineDialogShow { get; set; } = false;
 
     protected void ToggleClose()
     {
         IsInlineDialogShow = false;
-        this.model = new Reply();
+
+        model = new Reply();
     }
 
     protected async void ToggleClick()
     {
-        this.model.IsPinned = (this.model?.IsPinned == true) ? false : true;
+        model.IsPinned = !model.IsPinned;
 
-        // 변경된 내용 업데이트
-        await RepositoryReference.EditAsync(this.model);
+        await RepositoryReference.EditAsync(model);
 
-        IsInlineDialogShow = false; // 표시 속성 초기화
-        this.model = new Reply(); // 선택한 모델 초기화 
+        IsInlineDialogShow = false;
 
-        await DisplayData(); // 다시 로드
+        model = new Reply();
+
+        await DisplayData();
+
+        StateHasChanged();
     }
 
-    protected void ToggleBy(Reply model)
+    protected void ToggleBy(Reply selectedModel)
     {
-        this.model = model;
+        model = selectedModel;
+
         IsInlineDialogShow = true;
     }
+
     #endregion
 
     #region Search
-    private string searchQuery = "";
+
+    private string searchQuery = string.Empty;
 
     protected async void Search(string query)
     {
         pager.PageIndex = 0;
+        pager.PageNumber = 1;
 
-        this.searchQuery = query;
+        searchQuery = query;
 
         await DisplayData();
+
+        StateHasChanged();
     }
+
     #endregion
 
     #region Excel
+
     protected void DownloadExcelWithWebApi()
     {
         FileUtil.SaveAsExcel(JSRuntimeInjector, "/ReplyDownload/ExcelDown");
-        Nav.NavigateTo($"/Replys"); // 다운로드 후 현재 페이지 다시 로드
+
+        Nav.NavigateTo("/Replys");
     }
 
     // EPPlus -> Open XML SDK 로 교체
     protected void DownloadExcel()
     {
-        var list = models ?? new List<Reply>();
-        if (list.Count == 0) return;
+        if (models.Count == 0)
+        {
+            return;
+        }
 
         byte[] bytes;
+
         using (var ms = new MemoryStream())
         {
             using (var doc = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
@@ -229,9 +290,11 @@ public partial class Manage
 
                 var wsPart = wbPart.AddNewPart<WorksheetPart>();
                 var sheetData = new SheetData();
+
                 wsPart.Worksheet = new Worksheet(sheetData);
 
                 var sheets = wbPart.Workbook.AppendChild(new Sheets());
+
                 sheets.Append(new Sheet
                 {
                     Id = wbPart.GetIdOfPart(wsPart),
@@ -239,35 +302,39 @@ public partial class Manage
                     Name = "Replys"
                 });
 
-                // 헤더
+                // Header
                 uint headerRowIndex = 1;
                 var headerRow = new Row { RowIndex = headerRowIndex };
+
                 sheetData.Append(headerRow);
 
-                string[] headers = { "Created", "Name", "Title", "DownCount", "FileName" };
+                string[] headers =
+                {
+                    "Created",
+                    "Name",
+                    "Title",
+                    "DownCount",
+                    "FileName"
+                };
+
                 for (int i = 0; i < headers.Length; i++)
                 {
                     headerRow.Append(TextCell(Ref(i + 1, (int)headerRowIndex), headers[i]));
                 }
 
-                // 데이터
+                // Data
                 uint rowIndex = 2;
-                foreach (var m in list)
+
+                foreach (var m in models)
                 {
                     var row = new Row { RowIndex = rowIndex };
+
                     sheetData.Append(row);
 
-                    // Created 안전 변환 (DateTime 또는 DateTimeOffset 모두 대응)
-                    string createdStr = string.Empty;
-                    // DateTime? 형태라면
-                    if (m.Created is DateTime dt)
-                    {
-                        createdStr = dt.ToLocalTime().ToString("yyyy MMM d ddd", CultureInfo.InvariantCulture);
-                    }
-                    createdStr = m.Created?.ToString() ?? string.Empty;
+                    var createdStr = m.Created?.ToLocalTime()
+                        .ToString("yyyy MMM d ddd", CultureInfo.InvariantCulture) ?? string.Empty;
 
-                    // DownCount는 int 또는 int? 둘 다 대응
-                    string downCountStr = (m.DownCount is int dc ? dc : 0).ToString(CultureInfo.InvariantCulture);
+                    var downCountStr = Convert.ToString(m.DownCount, CultureInfo.InvariantCulture) ?? "0";
 
                     var values = new[]
                     {
@@ -293,42 +360,48 @@ public partial class Manage
             bytes = ms.ToArray();
         }
 
-        var fileName = $"{System.DateTime.Now:yyyyMMddHHmmss}_Replys.xlsx";
+        var fileName = $"{DateTime.Now:yyyyMMddHHmmss}_Replys.xlsx";
+
         FileUtil.SaveAs(JSRuntimeInjector, fileName, bytes);
     }
 
     // ===== OpenXML helpers =====
     private static Cell TextCell(string cellRef, string text) =>
-        new Cell
+        new()
         {
             CellReference = cellRef,
             DataType = CellValues.String,
             CellValue = new CellValue(text ?? string.Empty)
         };
 
-    private static string Ref(int col1Based, int row) => $"{ColName(col1Based)}{row}";
+    private static string Ref(int col1Based, int row) =>
+        $"{ColName(col1Based)}{row}";
 
     private static string ColName(int index)
     {
-        // 1 -> A, 2 -> B, ... 26 -> Z, 27 -> AA ...
         var dividend = index;
-        string col = string.Empty;
+        var col = string.Empty;
+
         while (dividend > 0)
         {
             var modulo = (dividend - 1) % 26;
+
             col = (char)('A' + modulo) + col;
             dividend = (dividend - modulo) / 26;
         }
+
         return col;
     }
+
     #endregion
 
     #region Sorting
-    private string sortOrder = "";
+
+    private string sortOrder = string.Empty;
 
     protected async void SortByName()
     {
-        if (sortOrder == "")
+        if (sortOrder == string.Empty)
         {
             sortOrder = "Name";
         }
@@ -338,15 +411,17 @@ public partial class Manage
         }
         else
         {
-            sortOrder = "";
+            sortOrder = string.Empty;
         }
 
         await DisplayData();
+
+        StateHasChanged();
     }
 
     protected async void SortByTitle()
     {
-        if (sortOrder == "")
+        if (sortOrder == string.Empty)
         {
             sortOrder = "Title";
         }
@@ -356,10 +431,13 @@ public partial class Manage
         }
         else
         {
-            sortOrder = "";
+            sortOrder = string.Empty;
         }
 
         await DisplayData();
+
+        StateHasChanged();
     }
+
     #endregion
 }
