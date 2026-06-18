@@ -3,7 +3,6 @@ using Microsoft.JSInterop;
 using BlazorUtils;
 using VisualAcademy.Models.Replys;
 using System.Globalization;
-using System.Linq;
 
 // Open XML SDK
 using DocumentFormat.OpenXml;
