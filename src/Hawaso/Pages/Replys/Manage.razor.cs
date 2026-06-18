@@ -2,9 +2,6 @@
 using Microsoft.JSInterop;
 using BlazorUtils;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
 
 using VisualAcademy.Models.Replys;
 using Hawaso.Pages.Replys.Components;
