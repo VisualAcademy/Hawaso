@@ -279,7 +279,10 @@ void DependencyInjectionContainer(IServiceCollection services)
     /// </summary>
     services.AddDependencyInjectionContainerForNoticeApp(Configuration["ConnectionStrings:DefaultConnection"]);
 
-    services.AddDependencyInjectionContainerForReasonApp(connectionString, RepositoryMode.EfCore);
+    //services.AddDependencyInjectionContainerForReasonApp(connectionString, RepositoryMode.EfCore);
+    services.AddDependencyInjectionContainerForReasonApp(
+    connectionString,
+    ReasonServicesRegistrationExtensions.RepositoryMode.EfCore);
     services.AddTransient<ReasonAppDbContextFactory>();
 
     #region ResourceManagement 
