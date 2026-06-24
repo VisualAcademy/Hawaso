@@ -54,6 +54,7 @@ using VisualAcademy.Components.Pages.ApplicantsTransfers;
 using VisualAcademy.Models.BannedTypes;
 using VisualAcademy.Models.Departments;
 using VisualAcademy.Models.Replys;
+using Azunt.InstructionManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -285,6 +286,9 @@ void DependencyInjectionContainer(IServiceCollection services)
     ReasonServicesRegistrationExtensions.RepositoryMode.EfCore);
     services.AddTransient<ReasonAppDbContextFactory>();
 
+    var defaultConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDependencyInjectionContainerForInstructionApp(defaultConnectionString, InstructionRepositoryMode.EfCoreSqlServer);
+
     #region ResourceManagement 
     // Resource 모듈 등록
     services.AddDependencyInjectionContainerForResourceApp(connectionString, Azunt.Models.Enums.RepositoryMode.EfCore);
@@ -404,6 +408,13 @@ builder.Services.AddDbContext<Azunt.Data.LogsDbContext>(opt =>
 builder.Services.AddScoped<IPhotoLogService, InMemoryPhotoLogService>();
 
 var app = builder.Build();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    InstructionsTableBuilder.Run(scope.ServiceProvider, forMaster: true);
+}
+
 
 // -------------------------------------------------
 // 2) Stripe SecretKey 전역 설정 (StripeConfiguration.ApiKey)
