@@ -12,10 +12,10 @@ namespace Hawaso.Pages.Uploads;
 public partial class Report
 {
     [Inject]
-    public IUploadRepository UploadRepositoryReference { get; set; }
+    public IUploadRepository UploadRepositoryReference { get; set; } = default!;
 
-    private BarConfig _barChartConfig;
-    private BarDataset<DoubleWrapper> _barDataSet;
+    private BarConfig _barChartConfig = default!;
+    private BarDataset<DoubleWrapper> _barDataSet = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,24 +57,24 @@ public partial class Report
             }
         };
 
-        List<string> backgroundColors = new List<string>(); // 배경색: 랜덤
-        List<string> labels = new List<string>(); // 1월부터 12월까지
-        List<double> values = new List<double>(); // 1월부터 12월까지의 데이터
+        var backgroundColors = new List<string>();
+        var labels = new List<string>();
+        var values = new List<double>();
 
-        for (int i = 1; i <= 12; i++)
+        for (var month = 1; month <= 12; month++)
         {
-            labels.Add($"{i}");
+            labels.Add(month.ToString());
             backgroundColors.Add(ColorUtil.RandomColorString());
-            //values.Add(i);
         }
 
-        var sortedList = await UploadRepositoryReference.GetMonthlyCreateCountAsync();
-        for (int i = 1; i <= 12; i++)
+        var monthlyCreateCounts = await UploadRepositoryReference.GetMonthlyCreateCountAsync();
+
+        for (var month = 1; month <= 12; month++)
         {
-            values.Add(sortedList[i]);                
+            values.Add(monthlyCreateCounts.TryGetValue(month, out var count) ? count : 0);
         }
 
-        _barChartConfig.Data.Labels.AddRange(labels.ToArray());
+        _barChartConfig.Data.Labels.AddRange(labels);
 
         _barDataSet = new BarDataset<DoubleWrapper>
         {
