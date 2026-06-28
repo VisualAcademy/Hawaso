@@ -13,9 +13,17 @@ namespace Hawaso.Web.Components.Pages.VendorPages.Models
 
         public TenantPermanentDelete GetUserNotCached()
         {
+            var connectionString = _configuration.GetConnectionString("TenantDbConnection");
+
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException(
+                    "Connection string 'TenantDbConnection' is not configured.");
+            }
+
             return new TenantPermanentDelete
             {
-                ConnectionString = _configuration.GetConnectionString("TenantDbConnection")
+                ConnectionString = connectionString
             };
         }
     }
