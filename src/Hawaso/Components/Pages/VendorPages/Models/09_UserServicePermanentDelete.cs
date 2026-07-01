@@ -1,28 +1,27 @@
-﻿namespace Hawaso.Web.Components.Pages.VendorPages.Models
+﻿namespace Hawaso.Web.Components.Pages.VendorPages.Models;
+
+public class UserServicePermanentDelete : IUserServicePermanentDelete
 {
-    public class UserServicePermanentDelete : IUserServicePermanentDelete
+    private readonly IConfiguration _configuration;
+
+    public UserServicePermanentDelete(IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
+        _configuration = configuration;
+    }
 
-        public UserServicePermanentDelete(IConfiguration configuration)
+    public TenantPermanentDelete GetUserNotCached()
+    {
+        var connectionString = _configuration.GetConnectionString("TenantDbConnection");
+
+        if (string.IsNullOrWhiteSpace(connectionString))
         {
-            _configuration = configuration;
+            throw new InvalidOperationException(
+                "Connection string 'TenantDbConnection' is not configured.");
         }
 
-        public TenantPermanentDelete GetUserNotCached()
+        return new TenantPermanentDelete
         {
-            var connectionString = _configuration.GetConnectionString("TenantDbConnection");
-
-            if (string.IsNullOrWhiteSpace(connectionString))
-            {
-                throw new InvalidOperationException(
-                    "Connection string 'TenantDbConnection' is not configured.");
-            }
-
-            return new TenantPermanentDelete
-            {
-                ConnectionString = connectionString
-            };
-        }
+            ConnectionString = connectionString
+        };
     }
 }
