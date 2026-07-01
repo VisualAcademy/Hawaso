@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace Hawaso.Web.Components.Pages.VendorPages.Models
+﻿namespace Hawaso.Web.Components.Pages.VendorPages.Models
 {
     public class UserServicePermanentDelete : IUserServicePermanentDelete
     {
