@@ -1,11 +1,22 @@
-﻿namespace Hawaso.Infrastructures;
+﻿#nullable enable
+
+using Microsoft.Data.SqlClient;
+using System;
+using System.Collections.Generic;
+
+namespace Hawaso.Infrastructures;
 
 public class TenantSchemaEnhancerCreateMemosTable
 {
-    private string _masterConnectionString;
+    private readonly string _masterConnectionString;
 
     public TenantSchemaEnhancerCreateMemosTable(string masterConnectionString)
     {
+        if (string.IsNullOrWhiteSpace(masterConnectionString))
+        {
+            throw new ArgumentException("Master connection string cannot be null or whitespace.", nameof(masterConnectionString));
+        }
+
         _masterConnectionString = masterConnectionString;
     }
 
@@ -13,30 +24,40 @@ public class TenantSchemaEnhancerCreateMemosTable
     {
         List<string> tenantConnectionStrings = GetTenantConnectionStrings();
 
-        foreach (string connStr in tenantConnectionStrings)
+        foreach (string connectionString in tenantConnectionStrings)
         {
-            CreateMemosTableIfNotExists(connStr);
+            CreateMemosTableIfNotExists(connectionString);
         }
     }
 
     private List<string> GetTenantConnectionStrings()
     {
-        List<string> result = new List<string>();
+        List<string> result = new();
 
-        using (SqlConnection connection = new SqlConnection(_masterConnectionString))
+        using SqlConnection connection = new(_masterConnectionString);
+        connection.Open();
+
+        using SqlCommand command = new(
+            "SELECT ConnectionString FROM dbo.Tenants WHERE ConnectionString IS NOT NULL",
+            connection);
+
+        using SqlDataReader reader = command.ExecuteReader();
+
+        int connectionStringOrdinal = reader.GetOrdinal("ConnectionString");
+
+        while (reader.Read())
         {
-            connection.Open();
-
-            SqlCommand cmd = new SqlCommand("SELECT ConnectionString FROM dbo.Tenants", connection);
-            using (SqlDataReader reader = cmd.ExecuteReader())
+            if (reader.IsDBNull(connectionStringOrdinal))
             {
-                while (reader.Read())
-                {
-                    result.Add(reader["ConnectionString"].ToString());
-                }
+                continue;
             }
 
-            connection.Close();
+            string connectionString = reader.GetString(connectionStringOrdinal);
+
+            if (!string.IsNullOrWhiteSpace(connectionString))
+            {
+                result.Add(connectionString);
+            }
         }
 
         return result;
@@ -44,64 +65,67 @@ public class TenantSchemaEnhancerCreateMemosTable
 
     private void CreateMemosTableIfNotExists(string connectionString)
     {
-        using (SqlConnection connection = new SqlConnection(connectionString))
+        if (string.IsNullOrWhiteSpace(connectionString))
         {
-            connection.Open();
-
-            SqlCommand cmdCheck = new SqlCommand(@"
-                    SELECT COUNT(*) 
-                    FROM INFORMATION_SCHEMA.TABLES 
-                    WHERE TABLE_SCHEMA = 'dbo' 
-                    AND TABLE_NAME = 'Memos'", connection);
-
-            int tableCount = (int)cmdCheck.ExecuteScalar();
-
-            if (tableCount == 0)
-            {
-                SqlCommand cmdCreateTable = new SqlCommand(@"
-                        CREATE TABLE [dbo].[Memos](
-                            Id BIGINT IDENTITY(1,1) PRIMARY KEY,
-                            ParentId BigInt Null,
-                            ParentKey NVarChar(255) Null,
-                            CreatedBy NVarChar(255) Null,
-                            Created DATETIMEOFFSET Default(GetDate()) Null,
-                            ModifiedBy NVarChar(255) Null,
-                            Modified DATETIMEOFFSET Null,
-                            Name NVarChar(255) Not Null,
-                            PostDate DateTime Default GetDate() Not Null,
-                            PostIp NVarChar(15) Null,
-                            Title NVarChar(150) Not Null,
-                            Content NText Not Null,
-                            Category NVarChar(20) Default('Free') Null,
-                            Email NVarChar(100) Null,
-                            Password NVarChar(255) Null,
-                            ReadCount Int Default 0,
-                            Encoding NVarChar(20) Not Null,
-                            Homepage NVarChar(100) Null,
-                            ModifyDate DateTime Null,
-                            ModifyIp NVarChar(15) Null,
-                            CommentCount Int Default 0,
-                            IsPinned Bit Default 0 Null,
-                            FileName NVarChar(255) Null,
-                            FileSize Int Default 0,
-                            DownCount Int Default 0,
-                            Ref Int Not Null,
-                            Step Int Not Null Default 0,
-                            RefOrder Int Not Null Default 0,
-                            AnswerNum Int Not Null Default 0,
-                            ParentNum Int Not Null Default 0,
-                            Num Int Null,
-                            UserId Int Null,
-                            CategoryId Int Null Default 0,
-                            BoardId Int Null Default 0,
-                            ApplicationId Int Null Default 0
-                        )", connection);
-
-                cmdCreateTable.ExecuteNonQuery();
-            }
-
-            connection.Close();
+            return;
         }
+
+        using SqlConnection connection = new(connectionString);
+        connection.Open();
+
+        using SqlCommand commandCheck = new(@"
+SELECT COUNT(*)
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA = 'dbo'
+AND TABLE_NAME = 'Memos';", connection);
+
+        int tableCount = Convert.ToInt32(commandCheck.ExecuteScalar() ?? 0);
+
+        if (tableCount > 0)
+        {
+            return;
+        }
+
+        using SqlCommand commandCreateTable = new(@"
+CREATE TABLE [dbo].[Memos](
+    Id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    ParentId BIGINT NULL,
+    ParentKey NVARCHAR(255) NULL,
+    CreatedBy NVARCHAR(255) NULL,
+    Created DATETIMEOFFSET DEFAULT(GETDATE()) NULL,
+    ModifiedBy NVARCHAR(255) NULL,
+    Modified DATETIMEOFFSET NULL,
+    Name NVARCHAR(255) NOT NULL,
+    PostDate DATETIME DEFAULT GETDATE() NOT NULL,
+    PostIp NVARCHAR(15) NULL,
+    Title NVARCHAR(150) NOT NULL,
+    Content NTEXT NOT NULL,
+    Category NVARCHAR(20) DEFAULT('Free') NULL,
+    Email NVARCHAR(100) NULL,
+    Password NVARCHAR(255) NULL,
+    ReadCount INT DEFAULT 0,
+    Encoding NVARCHAR(20) NOT NULL,
+    Homepage NVARCHAR(100) NULL,
+    ModifyDate DATETIME NULL,
+    ModifyIp NVARCHAR(15) NULL,
+    CommentCount INT DEFAULT 0,
+    IsPinned BIT DEFAULT 0 NULL,
+    FileName NVARCHAR(255) NULL,
+    FileSize INT DEFAULT 0,
+    DownCount INT DEFAULT 0,
+    Ref INT NOT NULL,
+    Step INT NOT NULL DEFAULT 0,
+    RefOrder INT NOT NULL DEFAULT 0,
+    AnswerNum INT NOT NULL DEFAULT 0,
+    ParentNum INT NOT NULL DEFAULT 0,
+    Num INT NULL,
+    UserId INT NULL,
+    CategoryId INT NULL DEFAULT 0,
+    BoardId INT NULL DEFAULT 0,
+    ApplicationId INT NULL DEFAULT 0
+);", connection);
+
+        commandCreateTable.ExecuteNonQuery();
     }
 }
 
