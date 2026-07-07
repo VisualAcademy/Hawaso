@@ -1,42 +1,57 @@
 ﻿using DotNetSaleCore.Models;
 using Microsoft.AspNetCore.Components;
+using System.Threading.Tasks;
 
 namespace Hawaso.Pages.Categories.Components;
 
 public partial class CategoryEditorForm
 {
     [Parameter]
-    public RenderFragment EditorFormTitle { get; set; } = default!;
+    public RenderFragment? EditorFormTitle { get; set; }
 
     [Parameter]
-    public Category Model { get; set; } = default!;
+    public Category Model { get; set; } = new Category();
 
     [Parameter]
-    public Action SaveOrUpdated { get; set; } = default!; // EventCallback<bool> 
+    public EventCallback SaveOrUpdated { get; set; }
 
     [Parameter]
-    public EventCallback<bool> ChangeCallback { get; set; }
+    public EventCallback ChangeCallback { get; set; }
 
     [Inject]
     public ICategoryRepository CategoryRepositoryAsync { get; set; } = default!;
 
     public bool IsShow { get; set; }
 
-    public void Show() => IsShow = true;
+    public void Show()
+    {
+        IsShow = true;
+    }
 
-    public void Close() => IsShow = false;
+    public void Close()
+    {
+        IsShow = false;
+    }
 
-    protected async void btnSaveOrUpdate_Click()
+    protected async Task btnSaveOrUpdate_ClickAsync()
     {
         if (Model.CategoryId == 0)
         {
             await CategoryRepositoryAsync.AddAsync(Model);
-            SaveOrUpdated?.Invoke();
+
+            if (SaveOrUpdated.HasDelegate)
+            {
+                await SaveOrUpdated.InvokeAsync();
+            }
         }
         else
         {
             await CategoryRepositoryAsync.EditAsync(Model);
-            await ChangeCallback.InvokeAsync(true);
+
+            if (ChangeCallback.HasDelegate)
+            {
+                await ChangeCallback.InvokeAsync();
+            }
         }
 
         IsShow = false;

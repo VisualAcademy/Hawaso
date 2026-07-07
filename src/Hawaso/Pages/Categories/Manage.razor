@@ -1,25 +1,33 @@
 ﻿@page "/Categories"
 @page "/Categories/Manage"
 
-@*@attribute [AllowAnonymous]*@
-@*@attribute [Authorize]*@
 @attribute [Authorize(Roles = "Administrators")]
 
 @using Hawaso.Pages.Categories.Components
 
 <h3>Manage</h3>
 
-<div>
-    <input type="button" value="Create(Modal)" class="btn btn-primary" data-toggle="modal"
-           data-target="#customerEditDialog" @onclick="btnCreate_Click" />
+<div class="mb-2">
+    <input type="button"
+           value="Create(Modal)"
+           class="btn btn-primary"
+           data-toggle="modal"
+           data-target="#customerEditDialog"
+           @onclick="btnCreate_Click" />
 </div>
 
-@if (customers == null)
+@if (isLoading)
 {
     <div>
         <p>
             <MatProgressBar Indeterminate="true"></MatProgressBar>
         </p>
+    </div>
+}
+else if (categories.Count == 0)
+{
+    <div class="alert alert-info">
+        No categories found.
     </div>
 }
 else
@@ -29,41 +37,46 @@ else
             <tr>
                 <th>#</th>
                 <th>Name</th>
-                <AuthorizeView>
-                    <NotAuthorized>
-                        <th colspan="3">Admin</th>
-                    </NotAuthorized>
-                </AuthorizeView>
+                <th colspan="2">Admin</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var customer in customers)
+            @foreach (var category in categories)
             {
                 <tr>
-                    <td>@customer.CategoryId</td>
-                    <td>@customer.CategoryName</td>
-                    <AuthorizeView>
-                        <NotAuthorized>
-                            <td>
-                                <input type="button" value="Edit(Modal)" class="btn btn-primary" data-toggle="modal"
-                                       data-target="#customerEditDialog" @onclick="@(() => EditBy(customer))" />
-                            </td>
-                            <td>
-                                <input type="button" value="Delete(Modal)" class="btn btn-primary" data-toggle="modal"
-                                       data-target="#customerDeleteDialog" @onclick="@(() => DeleteBy(customer))" />
-                            </td>
-                        </NotAuthorized>
-                    </AuthorizeView>
+                    <td>@category.CategoryId</td>
+                    <td>@category.CategoryName</td>
+                    <td>
+                        <input type="button"
+                               value="Edit(Modal)"
+                               class="btn btn-primary"
+                               data-toggle="modal"
+                               data-target="#customerEditDialog"
+                               @onclick="@(() => EditBy(category))" />
+                    </td>
+                    <td>
+                        <input type="button"
+                               value="Delete(Modal)"
+                               class="btn btn-primary"
+                               data-toggle="modal"
+                               data-target="#customerDeleteDialog"
+                               @onclick="@(() => DeleteBy(category))" />
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
 }
 
-<DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPagerComponent>
+<DulPagerComponent Model="pager" PageIndexChanged="PageIndexChangedAsync"></DulPagerComponent>
 
-<CategoryEditorForm @ref="CategoryEditorForm" Model="Category" SaveOrUpdated="SaveOrUpdated" ChangeCallback="SaveOrUpdated">
+<CategoryEditorForm @ref="categoryEditorForm"
+                    Model="Category"
+                    SaveOrUpdated="SaveOrUpdatedAsync"
+                    ChangeCallback="SaveOrUpdatedAsync">
     <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
 </CategoryEditorForm>
 
-<CategoryDeleteDialog @ref="CategoryDeleteDialog" OnClick="btnDelete_Click"></CategoryDeleteDialog>
+<CategoryDeleteDialog @ref="categoryDeleteDialog"
+                      OnClick="btnDelete_ClickAsync">
+</CategoryDeleteDialog>
