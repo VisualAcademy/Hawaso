@@ -8,38 +8,54 @@
 <div class="row">
     <div class="col-md-8 offset-md-2">
         <EditForm Model="Model" OnValidSubmit="FormSubmit">
-            <DataAnnotationsValidator></DataAnnotationsValidator>
-            <ValidationSummary></ValidationSummary>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
             <div class="form-group">
                 <label for="txtName">Name</label>
-                <InputText id="txtName" class="form-control" placeholder="Enter Name" @bind-Value="@Model.Name"></InputText>
-                <ValidationMessage For="@(() => Model.Name)" class="form-text text-muted"></ValidationMessage>
+                <InputText id="txtName"
+                           class="form-control"
+                           placeholder="Enter Name"
+                           @bind-Value="Model.Name" />
+                <ValidationMessage For="@(() => Model.Name)" class="form-text text-muted" />
             </div>
+
             <div class="form-group">
                 <label for="txtTitle">Title</label>
-                <InputText id="txtTitle" class="form-control" placeholder="Enter Title" @bind-Value="@Model.Title"></InputText>
-                <ValidationMessage For="@(() => Model.Title)" class="form-text text-muted"></ValidationMessage>
+                <InputText id="txtTitle"
+                           class="form-control"
+                           placeholder="Enter Title"
+                           @bind-Value="Model.Title" />
+                <ValidationMessage For="@(() => Model.Title)" class="form-text text-muted" />
             </div>
+
             <div class="form-group">
                 <label for="txtContent">Content</label>
-                <InputTextArea id="txtContext" class="form-control" placeholder="Enter Content" rows="5" @bind-Value="@Model.Content"></InputTextArea>
-                <ValidationMessage For="@(() => Model.Content)" class="form-text text-muted"></ValidationMessage>
+                <InputTextArea id="txtContent"
+                               class="form-control"
+                               placeholder="Enter Content"
+                               rows="5"
+                               @bind-Value="Model.Content" />
+                <ValidationMessage For="@(() => Model.Content)" class="form-text text-muted" />
             </div>
+
             <div class="form-group">
                 <label for="lstCategory">Parent</label>
-                <InputSelect @bind-Value="@ParentId" class="form-control" id="lstCategory">
+                <InputSelect @bind-Value="ParentId" class="form-control" id="lstCategory">
                     <option value="">--Select Parent--</option>
-                    @foreach (var p in parentIds)
+                    @foreach (var p in ParentIds)
                     {
                         <option value="@p">@p</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="@(() => ParentId)" class="form-text text-muted"></ValidationMessage>
+                <ValidationMessage For="@(() => ParentId)" class="form-text text-muted" />
             </div>
+
             <div class="form-group">
-                <label for="txtTitle">File</label>
-                <BlazorInputFile.InputFile OnChange="HandleSelection"></BlazorInputFile.InputFile>
+                <label for="fileUpload">File</label>
+                <BlazorInputFile.InputFile id="fileUpload" OnChange="HandleSelection" />
             </div>
+
             <div class="form-group">
                 <button type="submit" class="btn btn-primary">Submit</button>
                 <a href="/Replys" class="btn btn-secondary">List</a>
