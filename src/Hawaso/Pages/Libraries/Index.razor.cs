@@ -14,7 +14,7 @@ namespace Hawaso.Pages.Libraries
         [Inject]
         public NavigationManager NavigationManagerReference { get; set; }
 
-        protected List<LibraryModel> models;
+        protected List<LibraryModel>? models;
 
         protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase()
         {
@@ -31,7 +31,14 @@ namespace Hawaso.Pages.Libraries
 
         private async Task DisplayData()
         {
-            var articleSet = await UploadRepositoryAsyncReference.GetArticles<int>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, 0);
+            var articleSet = await UploadRepositoryAsyncReference.GetArticles<int>(
+                pager.PageIndex,
+                pager.PageSize,
+                "",
+                this.searchQuery,
+                this.sortOrder,
+                0);
+
             pager.RecordCount = articleSet.TotalCount;
             models = articleSet.Items.ToList();
 
