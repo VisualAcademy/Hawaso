@@ -9,10 +9,10 @@ namespace Hawaso.Pages.Libraries
     public partial class Index
     {
         [Inject]
-        public ILibraryRepository UploadRepositoryAsyncReference { get; set; }
+        public ILibraryRepository UploadRepositoryAsyncReference { get; set; } = default!;
 
         [Inject]
-        public NavigationManager NavigationManagerReference { get; set; }
+        public NavigationManager NavigationManagerReference { get; set; } = default!;
 
         protected List<LibraryModel>? models;
 
