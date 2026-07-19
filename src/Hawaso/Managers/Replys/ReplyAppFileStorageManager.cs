@@ -10,70 +10,94 @@ namespace ReplyApp.Managers;
 
 public class ReplyAppFileStorageManager : IFileStorageManager
 {
-    private readonly IWebHostEnvironment _environment;
-    private readonly string _containerName;
     private readonly string _folderPath;
 
     public ReplyAppFileStorageManager(IWebHostEnvironment environment)
     {
-        _environment = environment;
-        _containerName = "files";
-        _folderPath = Path.Combine(_environment.WebRootPath, _containerName);
+        ArgumentNullException.ThrowIfNull(environment);
+
+        var webRootPath = environment.WebRootPath
+            ?? Path.Combine(environment.ContentRootPath, "wwwroot");
+
+        _folderPath = Path.Combine(webRootPath, "files");
     }
 
-    public async Task<bool> DeleteAsync(string fileName, string folderPath)
+    public Task<bool> DeleteAsync(string fileName, string folderPath)
     {
         var fullPath = Path.Combine(_folderPath, folderPath, fileName);
 
-        if (File.Exists(fullPath))
+        if (!File.Exists(fullPath))
         {
-            File.Delete(fullPath);
-            return await Task.FromResult(true);
+            return Task.FromResult(false);
         }
 
-        return await Task.FromResult(false);
+        File.Delete(fullPath);
+
+        return Task.FromResult(true);
     }
 
-    public async Task<byte[]> DownloadAsync(string fileName, string folderPath)
+    public async Task<byte[]> DownloadAsync(
+        string fileName,
+        string folderPath)
     {
         var fullPath = Path.Combine(_folderPath, folderPath, fileName);
 
-        if (File.Exists(fullPath))
+        if (!File.Exists(fullPath))
         {
-            return await File.ReadAllBytesAsync(fullPath);
+            throw new FileNotFoundException(
+                $"The requested file was not found: {fileName}",
+                fullPath);
         }
 
-        return null;
+        return await File.ReadAllBytesAsync(fullPath);
     }
 
-    public string GetFolderPath(string ownerType, string ownerId, string fileType)
+    public string GetFolderPath(
+        string ownerType,
+        string ownerId,
+        string fileType)
     {
         throw new NotImplementedException();
     }
 
-    public string GetFolderPath(string ownerType, long ownerId, string fileType)
+    public string GetFolderPath(
+        string ownerType,
+        long ownerId,
+        string fileType)
     {
         throw new NotImplementedException();
     }
 
-    public string GetFolderPath(string ownerType, int ownerId, string fileType)
+    public string GetFolderPath(
+        string ownerType,
+        int ownerId,
+        string fileType)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath, bool overwrite)
+    public async Task<string> UploadAsync(
+        byte[] bytes,
+        string fileName,
+        string folderPath,
+        bool overwrite)
     {
-        if (bytes == null || bytes.Length == 0)
+        if (bytes is null || bytes.Length == 0)
         {
-            throw new ArgumentException("The file content is empty.", nameof(bytes));
+            throw new ArgumentException(
+                "The file content is empty.",
+                nameof(bytes));
         }
 
         var directoryPath = Path.Combine(_folderPath, folderPath);
+
         EnsureDirectoryExists(directoryPath);
 
         var finalFileName = overwrite
             ? fileName
-            : Dul.FileUtility.GetFileNameWithNumbering(directoryPath, fileName);
+            : Dul.FileUtility.GetFileNameWithNumbering(
+                directoryPath,
+                fileName);
 
         var fullPath = Path.Combine(directoryPath, finalFileName);
 
@@ -82,40 +106,45 @@ public class ReplyAppFileStorageManager : IFileStorageManager
         return finalFileName;
     }
 
-    public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath, bool overwrite)
+    public async Task<string> UploadAsync(
+        Stream stream,
+        string fileName,
+        string folderPath,
+        bool overwrite)
     {
-        if (stream == null)
-        {
-            throw new ArgumentNullException(nameof(stream));
-        }
+        ArgumentNullException.ThrowIfNull(stream);
 
         var directoryPath = Path.Combine(_folderPath, folderPath);
+
         EnsureDirectoryExists(directoryPath);
 
         var finalFileName = overwrite
             ? fileName
-            : Dul.FileUtility.GetFileNameWithNumbering(directoryPath, fileName);
+            : Dul.FileUtility.GetFileNameWithNumbering(
+                directoryPath,
+                fileName);
 
         var fullPath = Path.Combine(directoryPath, finalFileName);
 
-        using (var fileStream = new FileStream(fullPath, FileMode.Create, FileAccess.Write, FileShare.None))
-        {
-            await stream.CopyToAsync(fileStream);
-        }
+        await using var fileStream = new FileStream(
+            fullPath,
+            FileMode.Create,
+            FileAccess.Write,
+            FileShare.None);
+
+        await stream.CopyToAsync(fileStream);
 
         return finalFileName;
     }
 
     private static void EnsureDirectoryExists(string directoryPath)
     {
-        if (!Directory.Exists(directoryPath))
-        {
-            Directory.CreateDirectory(directoryPath);
-        }
+        Directory.CreateDirectory(directoryPath);
     }
 }
 
 #region ReplyAppBlobStorageManager
+
 public class ReplyAppBlobStorageManager : IFileStorageManager
 {
     private readonly BlobServiceClient _blobServiceClient;
@@ -123,146 +152,251 @@ public class ReplyAppBlobStorageManager : IFileStorageManager
 
     public ReplyAppBlobStorageManager(IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("BlobConnection");
+        ArgumentNullException.ThrowIfNull(configuration);
 
-        if (string.IsNullOrWhiteSpace(connectionString))
-        {
-            var storageAccount = configuration["AppKeys:AzureStorageAccount"];
-            var storageKey = configuration["AppKeys:AzureStorageAccessKey"];
-            var endpointSuffix = configuration["AppKeys:AzureStorageEndpointSuffix"] ?? "core.windows.net";
+        var connectionString =
+            GetBlobStorageConnectionString(configuration);
 
-            connectionString =
-                $"DefaultEndpointsProtocol=https;" +
-                $"AccountName={storageAccount};" +
-                $"AccountKey={storageKey};" +
-                $"EndpointSuffix={endpointSuffix}";
-        }
+        _blobServiceClient =
+            new BlobServiceClient(connectionString);
 
-        _blobServiceClient = new BlobServiceClient(connectionString);
         _containerName = "files";
     }
 
-    public async Task<bool> DeleteAsync(string fileName, string folderPath)
+    public async Task<bool> DeleteAsync(
+        string fileName,
+        string folderPath)
     {
-        var containerClient = await GetContainerClientAsync();
-        var blobName = BuildBlobName(folderPath, fileName);
-        var blobClient = containerClient.GetBlobClient(blobName);
+        var containerClient =
+            await GetContainerClientAsync();
 
-        if (await blobClient.ExistsAsync())
-        {
-            await blobClient.DeleteAsync();
-            return true;
-        }
+        var blobName =
+            BuildBlobName(folderPath, fileName);
 
-        return false;
+        var blobClient =
+            containerClient.GetBlobClient(blobName);
+
+        var response =
+            await blobClient.DeleteIfExistsAsync();
+
+        return response.Value;
     }
 
-    public async Task<byte[]> DownloadAsync(string fileName, string folderPath)
+    public async Task<byte[]> DownloadAsync(
+        string fileName,
+        string folderPath)
     {
-        var containerClient = await GetContainerClientAsync();
-        var blobName = BuildBlobName(folderPath, fileName);
-        var blobClient = containerClient.GetBlobClient(blobName);
+        var containerClient =
+            await GetContainerClientAsync();
 
-        if (await blobClient.ExistsAsync())
+        var blobName =
+            BuildBlobName(folderPath, fileName);
+
+        var blobClient =
+            containerClient.GetBlobClient(blobName);
+
+        if (!await blobClient.ExistsAsync())
         {
-            var response = await blobClient.DownloadAsync();
-
-            using (var ms = new MemoryStream())
-            {
-                await response.Value.Content.CopyToAsync(ms);
-                return ms.ToArray();
-            }
+            throw new FileNotFoundException(
+                $"The requested blob was not found: {blobName}",
+                blobName);
         }
 
-        return null;
+        var response =
+            await blobClient.DownloadAsync();
+
+        await using var memoryStream =
+            new MemoryStream();
+
+        await response.Value.Content.CopyToAsync(memoryStream);
+
+        return memoryStream.ToArray();
     }
 
-    public string GetFolderPath(string ownerType, string ownerId, string fileType)
+    public string GetFolderPath(
+        string ownerType,
+        string ownerId,
+        string fileType)
     {
         throw new NotImplementedException();
     }
 
-    public string GetFolderPath(string ownerType, long ownerId, string fileType)
+    public string GetFolderPath(
+        string ownerType,
+        long ownerId,
+        string fileType)
     {
         throw new NotImplementedException();
     }
 
-    public string GetFolderPath(string ownerType, int ownerId, string fileType)
+    public string GetFolderPath(
+        string ownerType,
+        int ownerId,
+        string fileType)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath, bool overwrite)
+    public async Task<string> UploadAsync(
+        byte[] bytes,
+        string fileName,
+        string folderPath,
+        bool overwrite)
     {
-        if (bytes == null || bytes.Length == 0)
+        if (bytes is null || bytes.Length == 0)
         {
-            throw new ArgumentException("The file content is empty.", nameof(bytes));
+            throw new ArgumentException(
+                "The file content is empty.",
+                nameof(bytes));
         }
 
-        var containerClient = await GetContainerClientAsync();
+        var containerClient =
+            await GetContainerClientAsync();
+
         var finalFileName = overwrite
             ? fileName
-            : await GetUniqueBlobFileNameAsync(containerClient, folderPath, fileName);
+            : await GetUniqueBlobFileNameAsync(
+                containerClient,
+                folderPath,
+                fileName);
 
-        var blobName = BuildBlobName(folderPath, finalFileName);
-        var blobClient = containerClient.GetBlobClient(blobName);
+        var blobName =
+            BuildBlobName(folderPath, finalFileName);
 
-        using (var ms = new MemoryStream(bytes))
-        {
-            await blobClient.UploadAsync(ms, overwrite: true);
-        }
+        var blobClient =
+            containerClient.GetBlobClient(blobName);
+
+        await using var memoryStream =
+            new MemoryStream(bytes);
+
+        await blobClient.UploadAsync(
+            memoryStream,
+            overwrite: true);
 
         return finalFileName;
     }
 
-    public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath, bool overwrite)
+    public async Task<string> UploadAsync(
+        Stream stream,
+        string fileName,
+        string folderPath,
+        bool overwrite)
     {
-        if (stream == null)
-        {
-            throw new ArgumentNullException(nameof(stream));
-        }
+        ArgumentNullException.ThrowIfNull(stream);
 
-        using (var ms = new MemoryStream())
-        {
-            await stream.CopyToAsync(ms);
-            return await UploadAsync(ms.ToArray(), fileName, folderPath, overwrite);
-        }
+        await using var memoryStream =
+            new MemoryStream();
+
+        await stream.CopyToAsync(memoryStream);
+
+        return await UploadAsync(
+            memoryStream.ToArray(),
+            fileName,
+            folderPath,
+            overwrite);
     }
 
-    private async Task<BlobContainerClient> GetContainerClientAsync()
+    private async Task<BlobContainerClient>
+        GetContainerClientAsync()
     {
-        var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
+        var containerClient =
+            _blobServiceClient.GetBlobContainerClient(
+                _containerName);
+
         await containerClient.CreateIfNotExistsAsync();
+
         return containerClient;
     }
 
-    private static string BuildBlobName(string folderPath, string fileName)
+    private static string BuildBlobName(
+        string folderPath,
+        string fileName)
     {
-        var normalizedFolder = (folderPath ?? string.Empty).Trim().Trim('/', '\\');
+        var normalizedFolder = folderPath
+            .Trim()
+            .Trim('/', '\\');
+
         return string.IsNullOrWhiteSpace(normalizedFolder)
             ? fileName
             : $"{normalizedFolder}/{fileName}";
     }
 
-    private async Task<string> GetUniqueBlobFileNameAsync(BlobContainerClient containerClient, string folderPath, string fileName)
+    private static string GetBlobStorageConnectionString(
+        IConfiguration configuration)
     {
-        string extension = Path.GetExtension(fileName);
-        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
-        int count = 1;
+        var connectionString =
+            configuration.GetConnectionString(
+                "BlobConnection");
 
-        string candidateFileName = fileName;
-
-        while (await containerClient.GetBlobClient(BuildBlobName(folderPath, candidateFileName)).ExistsAsync())
+        if (!string.IsNullOrWhiteSpace(connectionString))
         {
-            candidateFileName = $"{fileNameWithoutExtension}({count++}){extension}";
+            return connectionString;
+        }
+
+        var storageAccount =
+            configuration["AppKeys:AzureStorageAccount"];
+
+        var storageKey =
+            configuration["AppKeys:AzureStorageAccessKey"];
+
+        var endpointSuffix =
+            configuration["AppKeys:AzureStorageEndpointSuffix"]
+            ?? "core.windows.net";
+
+        if (string.IsNullOrWhiteSpace(storageAccount))
+        {
+            throw new InvalidOperationException(
+                "Azure Storage account name is not configured.");
+        }
+
+        if (string.IsNullOrWhiteSpace(storageKey))
+        {
+            throw new InvalidOperationException(
+                "Azure Storage access key is not configured.");
+        }
+
+        return
+            $"DefaultEndpointsProtocol=https;" +
+            $"AccountName={storageAccount};" +
+            $"AccountKey={storageKey};" +
+            $"EndpointSuffix={endpointSuffix}";
+    }
+
+    private async Task<string> GetUniqueBlobFileNameAsync(
+        BlobContainerClient containerClient,
+        string folderPath,
+        string fileName)
+    {
+        var extension =
+            Path.GetExtension(fileName);
+
+        var fileNameWithoutExtension =
+            Path.GetFileNameWithoutExtension(fileName);
+
+        var candidateFileName =
+            fileName;
+
+        var count = 1;
+
+        while (await containerClient
+            .GetBlobClient(
+                BuildBlobName(
+                    folderPath,
+                    candidateFileName))
+            .ExistsAsync())
+        {
+            candidateFileName =
+                $"{fileNameWithoutExtension}({count++}){extension}";
         }
 
         return candidateFileName;
     }
 }
+
 #endregion
 
 #region ReplyAppHybridStorageManager
+
 /// <summary>
 /// 마이그레이션 기간 동안
 /// - 업로드: Local + Blob 동시 저장
@@ -272,7 +406,6 @@ public class ReplyAppBlobStorageManager : IFileStorageManager
 /// </summary>
 public class ReplyAppHybridStorageManager : IFileStorageManager
 {
-    private readonly IWebHostEnvironment _environment;
     private readonly BlobServiceClient _blobServiceClient;
     private readonly string _containerName;
     private readonly string _folderPath;
@@ -281,165 +414,297 @@ public class ReplyAppHybridStorageManager : IFileStorageManager
         IWebHostEnvironment environment,
         IConfiguration configuration)
     {
-        _environment = environment;
-        _folderPath = Path.Combine(_environment.WebRootPath, "files");
+        ArgumentNullException.ThrowIfNull(environment);
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        var webRootPath = environment.WebRootPath
+            ?? Path.Combine(
+                environment.ContentRootPath,
+                "wwwroot");
+
+        _folderPath =
+            Path.Combine(webRootPath, "files");
+
         _containerName = "files";
 
-        var connectionString = configuration.GetConnectionString("BlobConnection");
+        var connectionString =
+            GetBlobStorageConnectionString(configuration);
 
-        if (string.IsNullOrWhiteSpace(connectionString))
-        {
-            var storageAccount = configuration["AppKeys:AzureStorageAccount"];
-            var storageKey = configuration["AppKeys:AzureStorageAccessKey"];
-            var endpointSuffix = configuration["AppKeys:AzureStorageEndpointSuffix"] ?? "core.windows.net";
-
-            connectionString =
-                $"DefaultEndpointsProtocol=https;" +
-                $"AccountName={storageAccount};" +
-                $"AccountKey={storageKey};" +
-                $"EndpointSuffix={endpointSuffix}";
-        }
-
-        _blobServiceClient = new BlobServiceClient(connectionString);
+        _blobServiceClient =
+            new BlobServiceClient(connectionString);
     }
 
-    public async Task<bool> DeleteAsync(string fileName, string folderPath)
+    public async Task<bool> DeleteAsync(
+        string fileName,
+        string folderPath)
     {
-        bool deleted = false;
+        var deleted = false;
 
-        var localFilePath = Path.Combine(_folderPath, folderPath, fileName);
+        var localFilePath =
+            Path.Combine(
+                _folderPath,
+                folderPath,
+                fileName);
+
         if (File.Exists(localFilePath))
         {
             File.Delete(localFilePath);
             deleted = true;
         }
 
-        var containerClient = await GetContainerClientAsync();
-        var blobName = BuildBlobName(folderPath, fileName);
-        var blobClient = containerClient.GetBlobClient(blobName);
+        var containerClient =
+            await GetContainerClientAsync();
 
-        if (await blobClient.ExistsAsync())
+        var blobName =
+            BuildBlobName(folderPath, fileName);
+
+        var blobClient =
+            containerClient.GetBlobClient(blobName);
+
+        var blobDeleteResponse =
+            await blobClient.DeleteIfExistsAsync();
+
+        if (blobDeleteResponse.Value)
         {
-            await blobClient.DeleteAsync();
             deleted = true;
         }
 
         return deleted;
     }
 
-    public async Task<byte[]> DownloadAsync(string fileName, string folderPath)
+    public async Task<byte[]> DownloadAsync(
+        string fileName,
+        string folderPath)
     {
-        var containerClient = await GetContainerClientAsync();
-        var blobName = BuildBlobName(folderPath, fileName);
-        var blobClient = containerClient.GetBlobClient(blobName);
+        var containerClient =
+            await GetContainerClientAsync();
+
+        var blobName =
+            BuildBlobName(folderPath, fileName);
+
+        var blobClient =
+            containerClient.GetBlobClient(blobName);
 
         if (await blobClient.ExistsAsync())
         {
-            var response = await blobClient.DownloadAsync();
-            using (var ms = new MemoryStream())
-            {
-                await response.Value.Content.CopyToAsync(ms);
-                return ms.ToArray();
-            }
+            var response =
+                await blobClient.DownloadAsync();
+
+            await using var memoryStream =
+                new MemoryStream();
+
+            await response.Value.Content.CopyToAsync(
+                memoryStream);
+
+            return memoryStream.ToArray();
         }
 
-        var localFilePath = Path.Combine(_folderPath, folderPath, fileName);
+        var localFilePath =
+            Path.Combine(
+                _folderPath,
+                folderPath,
+                fileName);
+
         if (File.Exists(localFilePath))
         {
-            return await File.ReadAllBytesAsync(localFilePath);
+            return await File.ReadAllBytesAsync(
+                localFilePath);
         }
 
-        return null;
+        throw new FileNotFoundException(
+            $"The requested file was not found in Blob Storage or local storage: {fileName}",
+            localFilePath);
     }
 
-    public string GetFolderPath(string ownerType, string ownerId, string fileType)
+    public string GetFolderPath(
+        string ownerType,
+        string ownerId,
+        string fileType)
     {
         throw new NotImplementedException();
     }
 
-    public string GetFolderPath(string ownerType, long ownerId, string fileType)
+    public string GetFolderPath(
+        string ownerType,
+        long ownerId,
+        string fileType)
     {
         throw new NotImplementedException();
     }
 
-    public string GetFolderPath(string ownerType, int ownerId, string fileType)
+    public string GetFolderPath(
+        string ownerType,
+        int ownerId,
+        string fileType)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<string> UploadAsync(byte[] bytes, string fileName, string folderPath, bool overwrite)
+    public async Task<string> UploadAsync(
+        byte[] bytes,
+        string fileName,
+        string folderPath,
+        bool overwrite)
     {
-        if (bytes == null || bytes.Length == 0)
+        if (bytes is null || bytes.Length == 0)
         {
-            throw new ArgumentException("The file content is empty.", nameof(bytes));
+            throw new ArgumentException(
+                "The file content is empty.",
+                nameof(bytes));
         }
 
-        var containerClient = await GetContainerClientAsync();
+        var containerClient =
+            await GetContainerClientAsync();
 
         var finalFileName = overwrite
             ? fileName
-            : await GetUniqueFileNameAcrossLocalAndBlobAsync(containerClient, folderPath, fileName);
+            : await GetUniqueFileNameAcrossLocalAndBlobAsync(
+                containerClient,
+                folderPath,
+                fileName);
 
-        var localDirectory = Path.Combine(_folderPath, folderPath);
+        var localDirectory =
+            Path.Combine(_folderPath, folderPath);
+
         EnsureDirectoryExists(localDirectory);
 
-        var localFilePath = Path.Combine(localDirectory, finalFileName);
-        await File.WriteAllBytesAsync(localFilePath, bytes);
+        var localFilePath =
+            Path.Combine(
+                localDirectory,
+                finalFileName);
 
-        var blobName = BuildBlobName(folderPath, finalFileName);
-        var blobClient = containerClient.GetBlobClient(blobName);
+        await File.WriteAllBytesAsync(
+            localFilePath,
+            bytes);
 
-        using (var ms = new MemoryStream(bytes))
-        {
-            await blobClient.UploadAsync(ms, overwrite: true);
-        }
+        var blobName =
+            BuildBlobName(
+                folderPath,
+                finalFileName);
+
+        var blobClient =
+            containerClient.GetBlobClient(blobName);
+
+        await using var memoryStream =
+            new MemoryStream(bytes);
+
+        await blobClient.UploadAsync(
+            memoryStream,
+            overwrite: true);
 
         return finalFileName;
     }
 
-    public async Task<string> UploadAsync(Stream stream, string fileName, string folderPath, bool overwrite)
+    public async Task<string> UploadAsync(
+        Stream stream,
+        string fileName,
+        string folderPath,
+        bool overwrite)
     {
-        if (stream == null)
-        {
-            throw new ArgumentNullException(nameof(stream));
-        }
+        ArgumentNullException.ThrowIfNull(stream);
 
-        using (var ms = new MemoryStream())
-        {
-            await stream.CopyToAsync(ms);
-            return await UploadAsync(ms.ToArray(), fileName, folderPath, overwrite);
-        }
+        await using var memoryStream =
+            new MemoryStream();
+
+        await stream.CopyToAsync(memoryStream);
+
+        return await UploadAsync(
+            memoryStream.ToArray(),
+            fileName,
+            folderPath,
+            overwrite);
     }
 
-    private async Task<BlobContainerClient> GetContainerClientAsync()
+    private async Task<BlobContainerClient>
+        GetContainerClientAsync()
     {
-        var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
+        var containerClient =
+            _blobServiceClient.GetBlobContainerClient(
+                _containerName);
+
         await containerClient.CreateIfNotExistsAsync();
+
         return containerClient;
     }
 
-    private static string BuildBlobName(string folderPath, string fileName)
+    private static string BuildBlobName(
+        string folderPath,
+        string fileName)
     {
-        var normalizedFolder = (folderPath ?? string.Empty).Trim().Trim('/', '\\');
+        var normalizedFolder = folderPath
+            .Trim()
+            .Trim('/', '\\');
+
         return string.IsNullOrWhiteSpace(normalizedFolder)
             ? fileName
             : $"{normalizedFolder}/{fileName}";
     }
 
-    private async Task<string> GetUniqueFileNameAcrossLocalAndBlobAsync(
-        BlobContainerClient containerClient,
-        string folderPath,
-        string fileName)
+    private static string GetBlobStorageConnectionString(
+        IConfiguration configuration)
     {
-        string extension = Path.GetExtension(fileName);
-        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+        var connectionString =
+            configuration.GetConnectionString(
+                "BlobConnection");
 
-        string candidate = fileName;
-        int count = 1;
-
-        while (await ExistsInLocalOrBlobAsync(containerClient, folderPath, candidate))
+        if (!string.IsNullOrWhiteSpace(connectionString))
         {
-            candidate = $"{fileNameWithoutExtension}({count++}){extension}";
+            return connectionString;
+        }
+
+        var storageAccount =
+            configuration["AppKeys:AzureStorageAccount"];
+
+        var storageKey =
+            configuration["AppKeys:AzureStorageAccessKey"];
+
+        var endpointSuffix =
+            configuration["AppKeys:AzureStorageEndpointSuffix"]
+            ?? "core.windows.net";
+
+        if (string.IsNullOrWhiteSpace(storageAccount))
+        {
+            throw new InvalidOperationException(
+                "Azure Storage account name is not configured.");
+        }
+
+        if (string.IsNullOrWhiteSpace(storageKey))
+        {
+            throw new InvalidOperationException(
+                "Azure Storage access key is not configured.");
+        }
+
+        return
+            $"DefaultEndpointsProtocol=https;" +
+            $"AccountName={storageAccount};" +
+            $"AccountKey={storageKey};" +
+            $"EndpointSuffix={endpointSuffix}";
+    }
+
+    private async Task<string>
+        GetUniqueFileNameAcrossLocalAndBlobAsync(
+            BlobContainerClient containerClient,
+            string folderPath,
+            string fileName)
+    {
+        var extension =
+            Path.GetExtension(fileName);
+
+        var fileNameWithoutExtension =
+            Path.GetFileNameWithoutExtension(fileName);
+
+        var candidate =
+            fileName;
+
+        var count = 1;
+
+        while (await ExistsInLocalOrBlobAsync(
+            containerClient,
+            folderPath,
+            candidate))
+        {
+            candidate =
+                $"{fileNameWithoutExtension}({count++}){extension}";
         }
 
         return candidate;
@@ -450,24 +715,31 @@ public class ReplyAppHybridStorageManager : IFileStorageManager
         string folderPath,
         string fileName)
     {
-        var localPath = Path.Combine(_folderPath, folderPath, fileName);
+        var localPath =
+            Path.Combine(
+                _folderPath,
+                folderPath,
+                fileName);
+
         if (File.Exists(localPath))
         {
             return true;
         }
 
-        var blobName = BuildBlobName(folderPath, fileName);
-        var blobClient = containerClient.GetBlobClient(blobName);
+        var blobName =
+            BuildBlobName(folderPath, fileName);
+
+        var blobClient =
+            containerClient.GetBlobClient(blobName);
 
         return await blobClient.ExistsAsync();
     }
 
-    private static void EnsureDirectoryExists(string directoryPath)
+    private static void EnsureDirectoryExists(
+        string directoryPath)
     {
-        if (!Directory.Exists(directoryPath))
-        {
-            Directory.CreateDirectory(directoryPath);
-        }
+        Directory.CreateDirectory(directoryPath);
     }
 }
+
 #endregion
