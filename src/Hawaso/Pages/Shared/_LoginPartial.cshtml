@@ -1,44 +1,62 @@
 ﻿@using Hawaso.Data
 @using Microsoft.AspNetCore.Identity
+
 @inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
 
 @*
-    // 현재 사용자가 로그인했는지 확인하는 명령어
+    현재 사용자가 로그인했는지 확인하는 예제:
+
     SignInManager.IsSignedIn(User)
 *@
 
-@using System.Security.Claims
-
 @{
-    // 최고 관리자 권한 체크 
-    bool isAdmin = false;
-    if (User.Identity.IsAuthenticated)
-    {
-        isAdmin = User.IsInRole("Administrators");
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    }
+    // 최고 관리자 권한 체크
+    var isAdmin =
+        User.Identity?.IsAuthenticated == true &&
+        User.IsInRole("Administrators");
 }
 
 <ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a  class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
-    </li>
-    <li class="nav-item">
-        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post" >
-            <button  type="submit" class="nav-link btn btn-link">Logout</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <li class="nav-item">
+            <a class="nav-link"
+               asp-area="Identity"
+               asp-page="/Account/Manage/Index"
+               title="Manage">
+                Hello @User.Identity?.Name!
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <form class="form-inline"
+                  asp-area="Identity"
+                  asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Page("/", new { area = "" })"
+                  method="post">
+                <button type="submit"
+                        class="nav-link btn btn-link">
+                    Logout
+                </button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link"
+               asp-area="Identity"
+               asp-page="/Account/Register">
+                Register
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link"
+               asp-area="Identity"
+               asp-page="/Account/Login">
+                Login
+            </a>
+        </li>
+    }
 </ul>
