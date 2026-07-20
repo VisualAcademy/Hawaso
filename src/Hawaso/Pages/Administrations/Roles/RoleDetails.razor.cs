@@ -9,32 +9,46 @@ namespace Hawaso.Pages.Administrations.Roles;
 public partial class RoleDetails
 {
     [Parameter]
-    public string Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     [Inject]
-    public RoleManager<ApplicationRole> RoleManager { get; set; }
+    public RoleManager<ApplicationRole> RoleManager { get; set; } = default!;
 
     [Inject]
-    public NavigationManager NavigationManagerRef { get; set; }
+    public NavigationManager NavigationManagerRef { get; set; } = default!;
 
     [Inject]
-    public IJSRuntime JSRuntime { get; set; }
+    public IJSRuntime JSRuntime { get; set; } = default!;
 
     #region Properties
-    private ApplicationRole Model = new ApplicationRole();  
+
+    private ApplicationRole? Model { get; set; }
+
     #endregion
 
     protected override async Task OnInitializedAsync()
     {
+        if (string.IsNullOrWhiteSpace(Id))
+        {
+            Model = null;
+            return;
+        }
+
         Model = await RoleManager.FindByIdAsync(Id);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && Model == null)
+        if (!firstRender || Model is not null)
         {
-            await JSRuntime.InvokeVoidAsync("alert", "잘못된 요청입니다.");
-            NavigationManagerRef.NavigateTo("/Administrations/Roles");
+            return;
         }
+
+        await JSRuntime.InvokeVoidAsync(
+            "alert",
+            "잘못된 요청입니다.");
+
+        NavigationManagerRef.NavigateTo(
+            "/Administrations/Roles");
     }
 }
