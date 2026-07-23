@@ -1,5 +1,8 @@
 ﻿using BlazorInputFile;
 using Microsoft.AspNetCore.Components;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using VisualAcademy.Models.Replys;
 
 namespace Hawaso.Pages.Uploads;
@@ -7,52 +10,65 @@ namespace Hawaso.Pages.Uploads;
 public partial class Create
 {
     #region Injectors
+
     [Inject]
     public IUploadRepository UploadRepositoryAsyncReference { get; set; }
+        = default!;
 
     [Inject]
     public NavigationManager NavigationManagerReference { get; set; }
-    #endregion
-
-    #region Properties
-    public Upload Model { get; set; }
-
-    public string ParentId { get; set; }
-    #endregion
-    
-    protected int[] parentIds = { 1, 2, 3 };
-
-    protected async void FormSubmit()
-    {
-        int.TryParse(ParentId, out int parentId);
-        Model.ParentId = parentId;
-
-        #region 파일 업로드 관련 추가 코드 영역
-        if (selectedFiles != null && selectedFiles.Length > 0)
-        {
-            // 파일 업로드
-            var file = selectedFiles.FirstOrDefault();
-            var fileName = "";
-            int fileSize = 0;
-            if (file != null)
-            {
-                fileName = file.Name;
-                fileSize = Convert.ToInt32(file.Size);
-
-                fileName = await FileStorageManager.UploadAsync(file.Data, file.Name, "", true);
-
-                Model.FileName = fileName;
-                Model.FileSize = fileSize;
-            } 
-        }
-        #endregion
-
-        await UploadRepositoryAsyncReference.AddAsync(Model);
-        NavigationManagerReference.NavigateTo("/Uploads");
-    }
+        = default!;
 
     [Inject]
     public IFileStorageManager FileStorageManager { get; set; }
-    private IFileListEntry[] selectedFiles;
-    protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
+        = default!;
+
+    #endregion
+
+    #region Properties
+
+    public Upload Model { get; set; } = new();
+
+    public string ParentId { get; set; } = string.Empty;
+
+    #endregion
+
+    protected int[] parentIds = [1, 2, 3];
+
+    private IFileListEntry[] selectedFiles =
+        Array.Empty<IFileListEntry>();
+
+    protected async Task FormSubmit()
+    {
+        int.TryParse(ParentId, out var parentId);
+
+        Model.ParentId = parentId;
+
+        #region 파일 업로드 관련 추가 코드 영역
+
+        var file = selectedFiles.FirstOrDefault();
+
+        if (file is not null)
+        {
+            var uploadedFileName = await FileStorageManager.UploadAsync(
+                file.Data,
+                file.Name,
+                string.Empty,
+                overwrite: true);
+
+            Model.FileName = uploadedFileName;
+            Model.FileSize = Convert.ToInt32(file.Size);
+        }
+
+        #endregion
+
+        await UploadRepositoryAsyncReference.AddAsync(Model);
+
+        NavigationManagerReference.NavigateTo("/Uploads");
+    }
+
+    protected void HandleSelection(IFileListEntry[] files)
+    {
+        selectedFiles = files ?? Array.Empty<IFileListEntry>();
+    }
 }
