@@ -1,7 +1,10 @@
-﻿using Azunt.EmployeeManagement;
+﻿using Azunt.AttachmentManagement;
+using Azunt.EmployeeManagement;
 using Azunt.Endpoints;
 using Azunt.FileManagement;
 using Azunt.Infrastructures;
+using Azunt.Initializers;
+using Azunt.InstructionManagement;
 using Azunt.Models.Enums;
 using Azunt.NoteManagement;
 using Azunt.ReasonManagement;
@@ -54,7 +57,6 @@ using VisualAcademy.Components.Pages.ApplicantsTransfers;
 using VisualAcademy.Models.BannedTypes;
 using VisualAcademy.Models.Departments;
 using VisualAcademy.Models.Replys;
-using Azunt.InstructionManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -407,8 +409,41 @@ builder.Services.AddDbContext<Azunt.Data.LogsDbContext>(opt =>
 
 builder.Services.AddScoped<IPhotoLogService, InMemoryPhotoLogService>();
 
+// ---------------------------------------------------------
+// Azunt.AttachmentManagement
+//
+// Dapper mode is recommended for the first DotNetNote exercise
+// because it does not need to share the existing application DbContext.
+// ---------------------------------------------------------
+builder.Services.AddDependencyInjectionContainerForAttachmentApp(
+    connectionString,
+    AttachmentServicesRegistrationExtensions.RepositoryMode.Dapper);
+
 var app = builder.Build();
 
+// ---------------------------------------------------------
+// Install or enhance dbo.Attachments before accepting requests
+// ---------------------------------------------------------
+var initializeSchema =
+    app.Configuration.GetValue<bool>(
+        "AttachmentManagement:InitializeSchemaOnStartup");
+
+if (initializeSchema)
+{
+    await using var scope = app.Services.CreateAsyncScope();
+
+    var attachmentsTableBuilder =
+        scope.ServiceProvider
+            .GetRequiredService<AttachmentsTableBuilder>();
+
+    var ensureIndexes =
+        app.Configuration.GetValue<bool>(
+            "AttachmentManagement:EnsureIndexes");
+
+    await attachmentsTableBuilder.EnsureAsync(
+        connectionString,
+        ensureIndexes);
+}
 
 using (var scope = app.Services.CreateScope())
 {
