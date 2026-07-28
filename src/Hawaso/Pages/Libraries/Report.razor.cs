@@ -10,86 +10,88 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using VisualAcademy.Models.Libraries;
 
-namespace Hawaso.Pages.Libraries
+namespace Hawaso.Pages.Libraries;
+
+public partial class Report
 {
-    public partial class Report
+    [Inject]
+    public ILibraryRepository UploadRepositoryReference { get; set; }
+        = default!;
+
+    private BarConfig _barChartConfig = new();
+
+    protected override async Task OnInitializedAsync()
     {
-        [Inject]
-        public ILibraryRepository UploadRepositoryReference { get; set; }
-
-        private BarConfig _barChartConfig;
-        private BarDataset<DoubleWrapper> _barDataSet;
-
-        protected override async Task OnInitializedAsync()
+        _barChartConfig = new BarConfig
         {
-            _barChartConfig = new BarConfig
+            Options = new BarOptions
             {
-                Options = new BarOptions
+                Legend =
                 {
-                    Legend =
+                    Display = false
+                },
+                Title = new OptionsTitle
+                {
+                    Display = true,
+                    Text = $"지난 1년동안의 {nameof(UploadApp)} 글 수"
+                },
+                Scales = new BarScales
+                {
+                    XAxes = new List<CartesianAxis>
                     {
-                        Display = false
-                    },
-                    Title = new OptionsTitle
-                    {
-                        Display = true,
-                        Text = $"지난 1년동안의 {nameof(UploadApp)} 글 수"
-                    },
-                    Scales = new BarScales
-                    {
-                        XAxes = new List<CartesianAxis>
+                        new BarCategoryAxis
                         {
-                            new BarCategoryAxis
-                            {
-                                BarPercentage = 0.5,
-                                BarThickness = BarThickness.Flex
-                            }
-                        },
-                        YAxes = new List<CartesianAxis>
-                        {
-                            new BarLinearCartesianAxis
-                            {
-                                Ticks = new LinearCartesianTicks
-                                {
-                                    BeginAtZero = true
-                                }
-                            }
+                            BarPercentage = 0.5,
+                            BarThickness = BarThickness.Flex
                         }
                     },
-                    Responsive = true
-                }
-            };
-
-            List<string> backgroundColors = new List<string>(); // 배경색: 랜덤
-            List<string> labels = new List<string>(); // 1월부터 12월까지
-            List<double> values = new List<double>(); // 1월부터 12월까지의 데이터
-
-            for (int i = 1; i <= 12; i++)
-            {
-                labels.Add($"{i}");
-                backgroundColors.Add(ColorUtil.RandomColorString());
+                    YAxes = new List<CartesianAxis>
+                    {
+                        new BarLinearCartesianAxis
+                        {
+                            Ticks = new LinearCartesianTicks
+                            {
+                                BeginAtZero = true
+                            }
+                        }
+                    }
+                },
+                Responsive = true
             }
+        };
 
-            var sortedList = await UploadRepositoryReference.GetMonthlyCreateCountAsync();
-            for (int i = 1; i <= 12; i++)
-            {
-                values.Add(sortedList[i]);
-            }
+        var backgroundColors = new List<string>();
+        var labels = new List<string>();
+        var values = new List<double>();
 
-            _barChartConfig.Data.Labels.AddRange(labels.ToArray());
-
-            _barDataSet = new BarDataset<DoubleWrapper>
-            {
-                BackgroundColor = backgroundColors.ToArray(),
-                BorderWidth = 0,
-                HoverBackgroundColor = ColorUtil.RandomColorString(),
-                HoverBorderColor = ColorUtil.RandomColorString(),
-                HoverBorderWidth = 1,
-                BorderColor = "#ffffff"
-            };
-
-            _barDataSet.AddRange(values.Wrap());
-            _barChartConfig.Data.Datasets.Add(_barDataSet);
+        for (var month = 1; month <= 12; month++)
+        {
+            labels.Add(month.ToString());
+            backgroundColors.Add(ColorUtil.RandomColorString());
         }
+
+        var sortedList =
+            await UploadRepositoryReference.GetMonthlyCreateCountAsync();
+
+        for (var month = 1; month <= 12; month++)
+        {
+            values.Add(sortedList[month]);
+        }
+
+        _barChartConfig.Data.Labels.AddRange(labels.ToArray());
+
+        var barDataSet = new BarDataset<DoubleWrapper>
+        {
+            BackgroundColor = backgroundColors.ToArray(),
+            BorderWidth = 0,
+            HoverBackgroundColor = ColorUtil.RandomColorString(),
+            HoverBorderColor = ColorUtil.RandomColorString(),
+            HoverBorderWidth = 1,
+            BorderColor = "#ffffff"
+        };
+
+        barDataSet.AddRange(values.Wrap());
+
+        _barChartConfig.Data.Datasets.Add(barDataSet);
     }
 }
