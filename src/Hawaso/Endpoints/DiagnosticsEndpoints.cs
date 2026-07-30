@@ -1,11 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;   // MapGet 확장 메서드
-using Microsoft.AspNetCore.Http;      // Results.*
-using Microsoft.AspNetCore.Routing;   // IEndpointRouteBuilder
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading;
-
-namespace Azunt.Endpoints;
+﻿namespace Azunt.Endpoints;
 
 public static class DiagnosticsEndpoints
 {
