@@ -1,31 +1,49 @@
 ﻿@page "/Customers/Manage"
+
 @using Hawaso.Pages.Customers.Components
-@*@attribute [AllowAnonymous]*@
+
 @attribute [Authorize(Roles = "Administrators")]
 
 <h3>Manage</h3>
 
 <div>
-    <a href="/Customers/Create" class="btn btn-primary">Create</a>
+    <a href="/Customers/Create"
+       class="btn btn-primary">
+        Create
+    </a>
+
     <AuthorizeView>
         <Authorized>
         </Authorized>
         <NotAuthorized>
-            <a href="/Customers" class="btn btn-primary">List</a>
+            <a href="/Customers"
+               class="btn btn-primary">
+                List
+            </a>
         </NotAuthorized>
     </AuthorizeView>
+
     <AuthorizeView Roles="Administrators, Managers">
-        <a href="/Customers" class="btn btn-primary">List</a>
+        <a href="/Customers"
+           class="btn btn-primary">
+            List
+        </a>
     </AuthorizeView>
-    <input type="button" value="Create(Modal)" class="btn btn-primary" data-toggle="modal"
-           data-target="#customerEditDialog" @onclick="btnCreate_Click" />
+
+    <input type="button"
+           value="Create(Modal)"
+           class="btn btn-primary"
+           data-toggle="modal"
+           data-target="#customerEditDialog"
+           @onclick="btnCreate_Click" />
 </div>
 
-@if (customers == null)
+@if (customers is null)
 {
     <div>
         <p>
-            <MatProgressBar Indeterminate="true"></MatProgressBar>
+            <MatProgressBar Indeterminate="true">
+            </MatProgressBar>
         </p>
     </div>
 }
@@ -39,6 +57,7 @@ else
                 <th>Created</th>
                 <th>Gender</th>
                 <th>Action</th>
+
                 <AuthorizeView>
                     <Authorized>
                         <th colspan="3">Admin</th>
@@ -46,36 +65,75 @@ else
                 </AuthorizeView>
             </tr>
         </thead>
+
         <tbody>
             @foreach (var customer in customers)
             {
                 <tr>
-                    <td>@customer.CustomerId</td>
-                    <td @onclick="@(() => btnCustomerName_Click(customer.CustomerId))">
+                    <td>
+                        @customer.CustomerId
+                    </td>
+
+                    <td @onclick="@(() =>
+                                                    btnCustomerName_Click(customer.CustomerId))"
+                        style="cursor: pointer;">
                         <a href="/Customers/Details/@customer.CustomerId">
                             @customer.CustomerName
                         </a>
                     </td>
-                    <td>@customer.Created?.ToShortTimeString()</td>
-                    <td>@(customer.Gender == "Male" ? "남자" : "여자")</td>
+
                     <td>
-                        <a href="/Customers/Details/@customer.CustomerId" class="btn btn-light">Details</a>
-                        <a href="/Customers/Edit/@customer.CustomerId" class="btn btn-light">Edit</a>
-                        <a href="/Customers/Delete/@customer.CustomerId" class="btn btn-light">Delete</a>
+                        @customer.Created?.ToShortTimeString()
                     </td>
+
+                    <td>
+                        @(customer.Gender == "Male" ? "남자" : "여자")
+                    </td>
+
+                    <td>
+                        <a href="/Customers/Details/@customer.CustomerId"
+                           class="btn btn-light">
+                            Details
+                        </a>
+
+                        <a href="/Customers/Edit/@customer.CustomerId"
+                           class="btn btn-light">
+                            Edit
+                        </a>
+
+                        <a href="/Customers/Delete/@customer.CustomerId"
+                           class="btn btn-light">
+                            Delete
+                        </a>
+                    </td>
+
                     <AuthorizeView>
                         <Authorized>
                             <td>
-                                <input type="button" value="Edit(Modal)" class="btn btn-primary" data-toggle="modal"
-                                       data-target="#customerEditDialog" @onclick="@(() => EditBy(customer))" />
+                                <input type="button"
+                                       value="Edit(Modal)"
+                                       class="btn btn-primary"
+                                       data-toggle="modal"
+                                       data-target="#customerEditDialog"
+                                       @onclick="@(() => EditBy(customer))" />
                             </td>
+
                             <td>
-                                <input type="button" value="Delete(Modal)" class="btn btn-primary" data-toggle="modal"
-                                       data-target="#customerDeleteDialog" @onclick="@(() => DeleteBy(customer))" />
+                                <input type="button"
+                                       value="Delete(Modal)"
+                                       class="btn btn-primary"
+                                       data-toggle="modal"
+                                       data-target="#customerDeleteDialog"
+                                       @onclick="@(() => DeleteBy(customer))" />
                             </td>
+
                             <td>
-                                <input type="button" value="Toggle(Modal)" class="btn btn-primary" data-toggle="modal"
-                                       data-target="#customerToggleDialog" @onclick="@(() => ToggleBy(customer))" />
+                                <input type="button"
+                                       value="Toggle(Modal)"
+                                       class="btn btn-primary"
+                                       data-toggle="modal"
+                                       data-target="#customerToggleDialog"
+                                       @onclick="@(() => ToggleBy(customer))" />
                             </td>
                         </Authorized>
                     </AuthorizeView>
@@ -85,31 +143,66 @@ else
     </table>
 }
 
-<DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPagerComponent>
+<DulPagerComponent Model="pager"
+                   PageIndexChanged="PageIndexChanged">
+</DulPagerComponent>
 
-<CustomerEditorForm @ref="CustomerEditorForm" Model="Customer" SaveOrUpdated="SaveOrUpdated" ChangeCallback="SaveOrUpdated">
-    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+<CustomerEditorForm @ref="CustomerEditorForm"
+                    Model="Customer"
+                    SaveOrUpdated="SaveOrUpdated"
+                    ChangeCallback="SaveOrUpdated">
+    <EditorFormTitle>
+        @EditorFormTitle
+    </EditorFormTitle>
 </CustomerEditorForm>
 
-<CustomerDeleteDialog @ref="CustomerDeleteDialog" OnClick="btnDelete_Click"></CustomerDeleteDialog>
+<CustomerDeleteDialog @ref="CustomerDeleteDialog"
+                      OnClick="btnDelete_Click">
+</CustomerDeleteDialog>
 
 @if (IsInlineDialogShow)
 {
-    <div class="modal fade show d-block" tabindex="-1" role="dialog" id="customerToggleDialog">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade show d-block"
+         tabindex="-1"
+         role="dialog"
+         id="customerToggleDialog">
+        <div class="modal-dialog"
+             role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">성별 바꾸기</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose_Click">
-                        <span aria-hidden="true">&times;</span>
+                    <h5 class="modal-title">
+                        성별 바꾸기
+                    </h5>
+
+                    <button type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                            @onclick="btnClose_Click">
+                        <span aria-hidden="true">
+                            &times;
+                        </span>
                     </button>
                 </div>
+
                 <div class="modal-body">
-                    <p>@(Customer.CustomerId)번 고객의 성별을 변경할까요?</p>
+                    <p>
+                        @Customer.CustomerId 번 고객의 성별을 변경할까요?
+                    </p>
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @onclick="btnToggleGender_Click">설정</button>
-                    <button type="button" class="btn btn-secondary" @onclick="btnClose_Click">닫기</button>
+                    <button type="button"
+                            class="btn btn-primary"
+                            @onclick="btnToggleGender_Click">
+                        설정
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            @onclick="btnClose_Click">
+                        닫기
+                    </button>
                 </div>
             </div>
         </div>

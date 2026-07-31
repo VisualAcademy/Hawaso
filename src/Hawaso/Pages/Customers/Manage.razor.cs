@@ -1,10 +1,7 @@
-﻿using Hawaso.Pages.Customers.Components;
-using DotNetSaleCore.Models;
+﻿using DotNetSaleCore.Models;
 using DulPager;
+using Hawaso.Pages.Customers.Components;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Hawaso.Pages.Customers;
 
@@ -12,11 +9,13 @@ public partial class Manage
 {
     [Inject]
     public ICustomerRepository CustomerRepositoryAsync { get; set; }
+        = default!;
 
     [Inject]
     public NavigationManager NavigationManager { get; set; }
+        = default!;
 
-    private DulPagerBase pager = new DulPagerBase()
+    private readonly DulPagerBase pager = new()
     {
         PageNumber = 1,
         PageIndex = 0,
@@ -24,51 +23,63 @@ public partial class Manage
         PagerButtonCount = 5
     };
 
-    private List<Customer> customers;
+    // 데이터가 로드되기 전에는 null 상태를 사용합니다.
+    private List<Customer>? customers;
 
     public string EditorFormTitle { get; set; } = "ADD";
 
-    public Customer Customer { get; set; } = new Customer();
+    public Customer Customer { get; set; } = new();
 
-    public CustomerEditorForm CustomerEditorForm { get; set; }
+    // @ref는 컴포넌트가 렌더링된 이후 할당됩니다.
+    public CustomerEditorForm? CustomerEditorForm { get; set; }
 
-    public CustomerDeleteDialog CustomerDeleteDialog { get; set; }
+    public CustomerDeleteDialog? CustomerDeleteDialog { get; set; }
 
     public bool IsInlineDialogShow { get; set; }
 
-    protected override async Task OnInitializedAsync() => await DisplayData();
+    protected override async Task OnInitializedAsync()
+    {
+        await DisplayData();
+    }
 
     private async Task DisplayData()
     {
-        //await Task.Delay(3000);
-        var articleSet = await CustomerRepositoryAsync.GetAllAsync(pager.PageIndex, pager.PageSize);
+        var articleSet =
+            await CustomerRepositoryAsync.GetAllAsync(
+                pager.PageIndex,
+                pager.PageSize);
+
         pager.RecordCount = articleSet.TotalRecords;
         customers = articleSet.Records.ToList();
     }
 
-    private async void PageIndexChanged(int pageIndex)
+    private async Task PageIndexChanged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
         pager.PageNumber = pageIndex + 1;
 
         await DisplayData();
-
-        StateHasChanged();
     }
 
-    private void btnCustomerName_Click(int customerId) => NavigationManager.NavigateTo($"/Customers/Details/{customerId}");
+    private void btnCustomerName_Click(int customerId)
+    {
+        NavigationManager.NavigateTo(
+            $"/Customers/Details/{customerId}");
+    }
 
     protected void btnCreate_Click()
     {
         EditorFormTitle = "ADD";
         Customer = new Customer();
 
-        CustomerEditorForm.Show(); 
+        CustomerEditorForm?.Show();
     }
 
+    // CustomerEditorForm의 콜백 형식이 void 반환을 요구하므로
+    // async void를 사용합니다.
     protected async void SaveOrUpdated()
     {
-        CustomerEditorForm.Close();
+        CustomerEditorForm?.Close();
 
         await DisplayData();
 
@@ -78,24 +89,28 @@ public partial class Manage
     protected void EditBy(Customer customer)
     {
         EditorFormTitle = "EDIT";
-        Customer = customer; 
+        Customer = customer;
 
-        CustomerEditorForm.Show();
+        CustomerEditorForm?.Show();
     }
 
     protected void DeleteBy(Customer customer)
     {
         Customer = customer;
-        CustomerDeleteDialog.Show();
+
+        CustomerDeleteDialog?.Show();
     }
 
+    // CustomerDeleteDialog의 OnClick이 void 콜백일 가능성을 고려하여
+    // 기존 콜백 형식을 유지합니다.
     protected async void btnDelete_Click()
     {
-        await CustomerRepositoryAsync.DeleteAsync(Customer.CustomerId);
+        await CustomerRepositoryAsync.DeleteAsync(
+            Customer.CustomerId);
 
-        CustomerDeleteDialog.Close();
+        CustomerDeleteDialog?.Close();
 
-        Customer = new Customer(); 
+        Customer = new Customer();
 
         await DisplayData();
 
@@ -105,24 +120,24 @@ public partial class Manage
     protected void ToggleBy(Customer customer)
     {
         Customer = customer;
-
         IsInlineDialogShow = true;
     }
 
-    protected async void btnToggleGender_Click()
+    protected async Task btnToggleGender_Click()
     {
-        Customer.Gender = (Customer.Gender == "Male" ? "Female" : "Male");
-        await CustomerRepositoryAsync.EditAsync(Customer);
+        Customer.Gender = Customer.Gender == "Male"
+            ? "Female"
+            : "Male";
 
+        await CustomerRepositoryAsync.EditAsync(Customer);
         await DisplayData();
 
         IsInlineDialogShow = false;
-        StateHasChanged();
     }
 
     protected void btnClose_Click()
     {
         IsInlineDialogShow = false;
-        Customer = new Customer(); 
+        Customer = new Customer();
     }
 }
