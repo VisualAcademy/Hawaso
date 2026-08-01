@@ -1,7 +1,6 @@
 ﻿@page "/Manufacturers"
+
 @using Hawaso.Models
-@inject IManufacturerRepository repository
-@inject IJSRuntime JS
 @using Dul.Web
 
 @* Open XML SDK *@
@@ -9,27 +8,29 @@
 @using DocumentFormat.OpenXml.Packaging
 @using DocumentFormat.OpenXml.Spreadsheet
 
+@inject IManufacturerRepository repository
+@inject IJSRuntime JS
+@inject IToastService toastService
+
 @attribute [AllowAnonymous]
 @attribute [Authorize(Roles = "Administrators")]
-
-@inject IToastService toastService
 
 <PageTitle>제조사 리스트 | Hawaso</PageTitle>
 
 <div class="container-fluid">
     <div class="animated fadeIn">
-
         <div class="card">
-
             <div class="card-body">
 
                 <h3>Manufacturer List</h3>
 
                 <p>제조사 목록을 관리합니다.</p>
 
-                @if (manufacturers == null)
+                @if (manufacturers is null)
                 {
-                    <p><em>Loading...</em></p>
+                    <p>
+                        <em>Loading...</em>
+                    </p>
                 }
                 else
                 {
@@ -37,31 +38,63 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th class="text-nowrap text-center">ID</th>
-                                    <th class="text-nowrap text-center">Name</th>
-                                    <th class="text-nowrap text-center">Manufacturer Code</th>
-                                    <th class="text-nowrap text-center">Comment</th>
-                                    <th class="text-nowrap text-center">Edit</th>
-                                    <th class="text-nowrap text-center">Delete</th>
+                                    <th class="text-nowrap text-center">
+                                        ID
+                                    </th>
+                                    <th class="text-nowrap text-center">
+                                        Name
+                                    </th>
+                                    <th class="text-nowrap text-center">
+                                        Manufacturer Code
+                                    </th>
+                                    <th class="text-nowrap text-center">
+                                        Comment
+                                    </th>
+                                    <th class="text-nowrap text-center">
+                                        Edit
+                                    </th>
+                                    <th class="text-nowrap text-center">
+                                        Delete
+                                    </th>
                                 </tr>
                             </thead>
+
                             <tbody>
-                                @foreach (var manufacturer in manufacturers)
+                                @foreach (var item in manufacturers)
                                 {
                                     <tr>
-                                        <td class="text-nowrap text-center">@manufacturer.Id</td>
-                                        <td class="text-nowrap text-center">@manufacturer.Name</td>
-                                        <td class="text-nowrap text-center">@manufacturer.ManufacturerCode</td>
-                                        <td class="text-nowrap text-center">@manufacturer.Comment</td>
                                         <td class="text-nowrap text-center">
-                                            <input type="button" value="Edit" class="btn btn-primary"
-                                                   data-toggle="modal" data-target="#manufacturerEditorDialog"
-                                                   @onclick="(() => EditBy(manufacturer))" />
+                                            @item.Id
                                         </td>
+
                                         <td class="text-nowrap text-center">
-                                            <input type="button" value="Delete" class="btn btn-danger"
-                                                   @onclick="(() => DeleteBy(manufacturer))"
-                                                   data-toggle="modal" data-target="#manufacturerDeleteDialog" />
+                                            @item.Name
+                                        </td>
+
+                                        <td class="text-nowrap text-center">
+                                            @item.ManufacturerCode
+                                        </td>
+
+                                        <td class="text-nowrap text-center">
+                                            @item.Comment
+                                        </td>
+
+                                        <td class="text-nowrap text-center">
+                                            <input type="button"
+                                                   value="Edit"
+                                                   class="btn btn-primary"
+                                                   data-toggle="modal"
+                                                   data-target="#manufacturerEditorDialog"
+                                                   @onclick="@(() => EditBy(item))" />
+                                        </td>
+
+                                        <td class="text-nowrap text-center">
+                                            <input type="button"
+                                                   value="Delete"
+                                                   class="btn btn-danger"
+                                                   data-toggle="modal"
+                                                   data-target="#manufacturerDeleteDialog"
+                                                   @onclick="@(() => DeleteBy(item))" />
                                         </td>
                                     </tr>
                                 }
@@ -70,20 +103,33 @@
                     </div>
                 }
 
-                <ManufacturerPager Model="pager" PageIndexChanged="PageIndexChanged"></ManufacturerPager>
+                <ManufacturerPager Model="pager"
+                                   PageIndexChanged="PageIndexChanged">
+                </ManufacturerPager>
 
                 <div>
-                    <input type="button" value="Add"
-                           data-toggle="modal" data-target="#manufacturerEditorDialog"
-                           class="btn btn-primary" @onclick="(() => btnCreate_Click())" />
+                    <input type="button"
+                           value="Add"
+                           class="btn btn-primary"
+                           data-toggle="modal"
+                           data-target="#manufacturerEditorDialog"
+                           @onclick="btnCreate_Click" />
 
-                    <button class="btn btn-primary pull-right" @onclick="DownloadFile">Download</button>
+                    <button type="button"
+                            class="btn btn-primary pull-right"
+                            @onclick="DownloadFile">
+                        Download
+                    </button>
                 </div>
 
-                <ManufacturerDeleteDialog OnClick="btnDelete_Click"></ManufacturerDeleteDialog>
+                <ManufacturerDeleteDialog OnClick="btnDelete_Click">
+                </ManufacturerDeleteDialog>
 
-                <ManufacturerEditorForm EditorModel="@manufacturer" SaveOrUpdated="@SaveOrUpdated">
-                    <EditorFormTitle>@editorFormTitle</EditorFormTitle>
+                <ManufacturerEditorForm EditorModel="manufacturer"
+                                        SaveOrUpdated="SaveOrUpdated">
+                    <EditorFormTitle>
+                        @editorFormTitle
+                    </EditorFormTitle>
                 </ManufacturerEditorForm>
 
             </div>
@@ -92,7 +138,7 @@
 </div>
 
 @code {
-    private PagerBase pager = new PagerBase()
+    private readonly PagerBase pager = new()
     {
         PageNumber = 1,
         PageIndex = 0,
@@ -100,162 +146,239 @@
         PagerButtonCount = 5
     };
 
-    private string editorFormTitle = "";
-    private List<Manufacturer> manufacturers;
-    private Manufacturer manufacturer = new Manufacturer(); // 선택한 항목 관리
+    private string editorFormTitle = string.Empty;
+
+    // 데이터 로딩 전에는 null 상태를 사용합니다.
+    private List<Manufacturer>? manufacturers;
+
+    // 현재 선택된 제조사입니다.
+    private Manufacturer manufacturer = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        var pagingData = await repository.GetAllByPageAsync(
+            pager.PageIndex,
+            pager.PageSize);
+
+        pager.RecordCount = pagingData.TotalRecords;
+        manufacturers = pagingData.Records.ToList();
+    }
 
     protected void btnCreate_Click()
     {
         editorFormTitle = "Create";
-        manufacturer = new Manufacturer(); // 모델 클리어
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        var pagingData = await repository.GetAllByPageAsync(pager.PageIndex, pager.PageSize);
-        pager.RecordCount = pagingData.TotalRecords;
-        manufacturers = pagingData.Records.ToList();
+        manufacturer = new Manufacturer();
     }
 
     protected async Task btnDelete_Click()
     {
-        await repository.DeleteManufacturerAsync(manufacturer.Id); // 삭제
-        await JS.InvokeAsync<object>("closeModal", "manufacturerDeleteDialog");
-        var pagingData = await repository.GetAllByPageAsync(pager.PageIndex, pager.PageSize);
-        pager.RecordCount = pagingData.TotalRecords;
-        manufacturers = pagingData.Records.ToList();
-        manufacturer = new Manufacturer(); // 선택 항목 초기화
+        await repository.DeleteManufacturerAsync(manufacturer.Id);
+
+        await JS.InvokeAsync<object>(
+            "closeModal",
+            "manufacturerDeleteDialog");
+
+        manufacturer = new Manufacturer();
+
+        await LoadDataAsync();
 
         toastService.ShowError("삭제되었습니다.");
     }
 
-    private void DeleteBy(Manufacturer manu)
+    private void DeleteBy(Manufacturer selectedManufacturer)
     {
-        manufacturer = manu;
+        manufacturer = selectedManufacturer;
     }
 
-    private void EditBy(Manufacturer manu)
+    private void EditBy(Manufacturer selectedManufacturer)
     {
         editorFormTitle = "Edit";
-        manufacturer = manu;
+        manufacturer = selectedManufacturer;
     }
 
-    // 등록 또는 수정 후 현재 페이지 다시 로드
+    // ManufacturerEditorForm의 콜백 형식과 호환되도록
+    // async void를 유지합니다.
     private async void SaveOrUpdated()
     {
-        var pagingData = await repository.GetAllByPageAsync(pager.PageIndex, pager.PageSize);
-        pager.RecordCount = pagingData.TotalRecords;
-        manufacturers = pagingData.Records.ToList();
+        await LoadDataAsync();
 
         StateHasChanged();
     }
 
-    // 페이저 버튼 클릭 콜백 메서드
+    // ManufacturerPager의 콜백 형식과 호환되도록
+    // async void를 유지합니다.
     private async void PageIndexChanged(int pageIndex)
     {
         pager.PageIndex = pageIndex;
-        pager.PageNumber = (pageIndex + 1);
+        pager.PageNumber = pageIndex + 1;
 
-        var pagingData = await repository.GetAllByPageAsync(pager.PageIndex, pager.PageSize);
-        manufacturers = pagingData.Records.ToList();
+        await LoadDataAsync();
 
-        StateHasChanged(); // 현재 컴포넌트 재로드
+        StateHasChanged();
     }
 
     // ===== Excel (OpenXML) =====
+
     private void DownloadFile()
     {
         if (manufacturers is null || manufacturers.Count == 0)
         {
-            toastService?.ShowWarning("내려받을 데이터가 없습니다.");
+            toastService.ShowWarning("내려받을 데이터가 없습니다.");
             return;
         }
 
         byte[] bytes;
-        using (var ms = new MemoryStream())
+
+        using (var memoryStream = new MemoryStream())
         {
-            using (var doc = SpreadsheetDocument.Create(ms, SpreadsheetDocumentType.Workbook, true))
+            using (var document = SpreadsheetDocument.Create(
+                memoryStream,
+                SpreadsheetDocumentType.Workbook,
+                true))
             {
-                var wbPart = doc.AddWorkbookPart();
-                wbPart.Workbook = new Workbook();
+                var workbookPart = document.AddWorkbookPart();
+                workbookPart.Workbook = new Workbook();
 
-                var wsPart = wbPart.AddNewPart<WorksheetPart>();
+                var worksheetPart =
+                    workbookPart.AddNewPart<WorksheetPart>();
+
                 var sheetData = new SheetData();
-                wsPart.Worksheet = new Worksheet(sheetData);
 
-                var sheets = wbPart.Workbook.AppendChild(new Sheets());
-                sheets.Append(new Sheet
-                {
-                    Id = wbPart.GetIdOfPart(wsPart),
-                    SheetId = 1U,
-                    Name = "Manufacturers"
-                });
+                worksheetPart.Worksheet =
+                    new Worksheet(sheetData);
+
+                var sheets =
+                    workbookPart.Workbook.AppendChild(new Sheets());
+
+                sheets.Append(
+                    new Sheet
+                    {
+                        Id = workbookPart.GetIdOfPart(worksheetPart),
+                        SheetId = 1U,
+                        Name = "Manufacturers"
+                    });
 
                 // Header
-                uint headerRowIndex = 1;
-                var headerRow = new Row { RowIndex = headerRowIndex };
+                const uint headerRowIndex = 1;
+
+                var headerRow =
+                    new Row
+                    {
+                        RowIndex = headerRowIndex
+                    };
+
                 sheetData.Append(headerRow);
 
-                string[] headers = { "Id", "Name", "ManufacturerCode", "Comment" };
-                for (int i = 0; i < headers.Length; i++)
+                string[] headers =
                 {
-                    headerRow.Append(TextCell(Ref(i + 1, (int)headerRowIndex), headers[i]));
+                    "Id",
+                    "Name",
+                    "ManufacturerCode",
+                    "Comment"
+                };
+
+                for (var index = 0;
+                     index < headers.Length;
+                     index++)
+                {
+                    headerRow.Append(
+                        TextCell(
+                            Ref(
+                                index + 1,
+                                (int)headerRowIndex),
+                            headers[index]));
                 }
 
                 // Data
                 uint rowIndex = 2;
-                foreach (var m in manufacturers)
+
+                foreach (var item in manufacturers)
                 {
-                    var row = new Row { RowIndex = rowIndex };
+                    var row =
+                        new Row
+                        {
+                            RowIndex = rowIndex
+                        };
+
                     sheetData.Append(row);
 
                     var values = new[]
                     {
-                        m.Id.ToString(),
-                        m.Name ?? string.Empty,
-                        m.ManufacturerCode ?? string.Empty,
-                        m.Comment ?? string.Empty
+                        item.Id.ToString(),
+                        item.Name ?? string.Empty,
+                        item.ManufacturerCode ?? string.Empty,
+                        item.Comment ?? string.Empty
                     };
 
-                    for (int i = 0; i < values.Length; i++)
+                    for (var index = 0;
+                         index < values.Length;
+                         index++)
                     {
-                        row.Append(TextCell(Ref(i + 1, (int)rowIndex), values[i]));
+                        row.Append(
+                            TextCell(
+                                Ref(
+                                    index + 1,
+                                    (int)rowIndex),
+                                values[index]));
                     }
 
                     rowIndex++;
                 }
 
-                wsPart.Worksheet.Save();
-                wbPart.Workbook.Save();
+                worksheetPart.Worksheet.Save();
+                workbookPart.Workbook.Save();
             }
 
-            bytes = ms.ToArray();
+            bytes = memoryStream.ToArray();
         }
 
-        FileUtil.SaveAs(JS, $"{DateTime.Now:yyyyMMddhhmmss}_Manufacturers.xlsx", bytes);
+        FileUtil.SaveAs(
+            JS,
+            $"{DateTime.Now:yyyyMMddHHmmss}_Manufacturers.xlsx",
+            bytes);
     }
 
-    // OpenXML helpers
-    private static Cell TextCell(string cellRef, string text) =>
-        new Cell
+    private static Cell TextCell(
+        string cellReference,
+        string text)
+    {
+        return new Cell
         {
-            CellReference = cellRef,
+            CellReference = cellReference,
             DataType = CellValues.String,
-            CellValue = new CellValue(text ?? string.Empty)
+            CellValue = new CellValue(
+                text ?? string.Empty)
         };
+    }
 
-    private static string Ref(int col1Based, int row) => $"{ColName(col1Based)}{row}";
+    private static string Ref(
+        int columnIndex,
+        int rowIndex)
+    {
+        return $"{ColName(columnIndex)}{rowIndex}";
+    }
 
     private static string ColName(int index)
     {
-        var dividend = index; // 1 -> A
-        string col = string.Empty;
+        var dividend = index;
+        var columnName = string.Empty;
+
         while (dividend > 0)
         {
             var modulo = (dividend - 1) % 26;
-            col = (char)('A' + modulo) + col;
-            dividend = (dividend - modulo) / 26;
+
+            columnName =
+                (char)('A' + modulo) + columnName;
+
+            dividend =
+                (dividend - modulo) / 26;
         }
-        return col;
+
+        return columnName;
     }
 }
