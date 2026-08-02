@@ -6,94 +6,125 @@ namespace VisualAcademy.Pages.Memos;
 public partial class Edit
 {
     #region Fields
+
     /// <summary>
     /// 첨부 파일 리스트 보관
     /// </summary>
-    private IFileListEntry[] selectedFiles;
+    private IFileListEntry[] selectedFiles =
+        Array.Empty<IFileListEntry>();
 
     /// <summary>
     /// 부모(카테고리) 리스트가 저장될 임시 변수
     /// </summary>
     protected int[] parentIds = { 1, 2, 3 };
+
     #endregion
 
     #region Parameters
+
     [Parameter]
     public int Id { get; set; }
+
     #endregion
 
     #region Injectors
+
     [Inject]
     public IMemoRepository RepositoryReference { get; set; }
+        = default!;
 
     [Inject]
     public NavigationManager Nav { get; set; }
+        = default!;
 
     [Inject]
     public IMemoFileStorageManager FileStorageManagerInjector { get; set; }
+        = default!;
+
     #endregion
 
     #region Properties
-    //protected Memo Model = new Memo();
-    public Memo Model { get; set; } = new Memo();
 
-    public string ParentId { get; set; } = "";
+    public Memo Model { get; set; } = new();
 
-    //protected string Content = "";
-    public string Content { get; set; } = "";
+    public string ParentId { get; set; } = string.Empty;
+
+    public string Content { get; set; } = string.Empty;
+
     #endregion
 
     #region Lifecycle Methods
+
     /// <summary>
     /// 페이지 초기화 이벤트 처리기
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
         Model = await RepositoryReference.GetByIdAsync(Id);
-        Content = Dul.HtmlUtility.EncodeWithTabAndSpace(Model.Content);
+
+        Content = Dul.HtmlUtility.EncodeWithTabAndSpace(
+            Model.Content);
+
         ParentId = Model.ParentId.ToString();
     }
+
     #endregion
 
     #region Event Handlers
+
     /// <summary>
     /// 수정 버튼 이벤트 처리기
     /// </summary>
-    protected async void FormSubmit()
+    protected async Task FormSubmit()
     {
-        int.TryParse(ParentId, out int parentId);
+        int.TryParse(
+            ParentId,
+            out var parentId);
+
         Model.ParentId = parentId;
 
         #region 파일 업로드 관련 추가 코드 영역
-        if (selectedFiles != null && selectedFiles.Length > 0)
+
+        if (selectedFiles.Length > 0)
         {
-            // 파일 업로드
             var file = selectedFiles.FirstOrDefault();
-            int fileSize = 0;
-            if (file != null)
+
+            if (file is not null)
             {
-                string fileName = file.Name;
-                fileSize = Convert.ToInt32(file.Size);
+                var fileSize = Convert.ToInt32(file.Size);
 
-                // 첨부 파일 삭제 
-                await FileStorageManagerInjector.DeleteAsync(Model.FileName, "Memos");
+                // 기존 첨부 파일 삭제
+                await FileStorageManagerInjector.DeleteAsync(
+                    Model.FileName,
+                    "Memos");
 
-                // 다시 업로드
-                fileName = await FileStorageManagerInjector.UploadAsync(file.Data, file.Name, "", true);
+                // 새 첨부 파일 업로드
+                var fileName =
+                    await FileStorageManagerInjector.UploadAsync(
+                        file.Data,
+                        file.Name,
+                        string.Empty,
+                        true);
 
                 Model.FileName = fileName;
                 Model.FileSize = fileSize;
             }
         }
+
         #endregion
 
         await RepositoryReference.EditAsync(Model);
+
         Nav.NavigateTo("/Memos");
     }
 
     /// <summary>
     /// 파일 선택 이벤트 처리기
     /// </summary>
-    protected void HandleSelection(IFileListEntry[] files) => this.selectedFiles = files;
+    protected void HandleSelection(IFileListEntry[] files)
+    {
+        selectedFiles = files ?? Array.Empty<IFileListEntry>();
+    }
+
     #endregion
 }
