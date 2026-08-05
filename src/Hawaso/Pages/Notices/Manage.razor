@@ -1,7 +1,7 @@
 ﻿@page "/Notices/Manage"
 
-@*// 최고 관리자 그룹(역할)에 포함된 사용자만 공지사항 관리*@
-@attribute [Authorize(Roles = "Administrators")] 
+@* 최고 관리자 그룹에 포함된 사용자만 공지사항 관리 *@
+@attribute [Authorize(Roles = "Administrators")]
 
 <PageTitle>공지사항 리스트</PageTitle>
 
@@ -9,30 +9,46 @@
 
 <div class="row">
     <div class="col-md-12">
-        <a href="/Notices/Create" class="btn btn-primary">Create</a>
+        <a href="/Notices/Create"
+           class="btn btn-primary">
+            Create
+        </a>
+
         <AuthorizeView>
             <Authorized>
             </Authorized>
+
             <NotAuthorized>
-                <a href="/Notices/Index" class="btn btn-primary">List</a>
-                <input type="button" name="btnCreate" value="Create with Modal"
+                <a href="/Notices/Index"
+                   class="btn btn-primary">
+                    List
+                </a>
+
+                <input type="button"
+                       name="btnCreate"
+                       value="Create with Modal"
                        class="btn btn-primary"
                        @onclick="ShowEditorForm" />
             </NotAuthorized>
         </AuthorizeView>
+
         <AuthorizeView Roles="Administrators, Managers">
-            <a href="/Notices/Index" class="btn btn-primary">List</a>
+            <a href="/Notices/Index"
+               class="btn btn-primary">
+                List
+            </a>
         </AuthorizeView>
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-12">
-        @if (models == null)
+        @if (isLoading)
         {
             <div>
                 <p>
-                    <MatProgressBar Indeterminate="true"></MatProgressBar>
+                    <MatProgressBar Indeterminate="true">
+                    </MatProgressBar>
                 </p>
             </div>
         }
@@ -49,51 +65,97 @@
                         <th>Admin</th>
                     </tr>
                 </thead>
-                @if (models.Count == 0)
-                {
-                    <tbody>
-                        <tr>
-                            <td colspan="4" class="text-center">
-                                <p>데이터가 없습니다.</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                }
+
                 <tbody>
-                    @foreach (var m in models)
+                    @if (models.Count == 0)
                     {
                         <tr>
-                            <td>@m.Id</td>
-                            <td @onclick="@(() => NameClick(m.Id))">
-                                <a href="/Notices/Details/@m.Id">
-                                    @m.Name
-                                </a>
-                            </td>
-                            <td>@m.Created?.ToShortTimeString()</td>
-                            <td>
-                                @(m.IsPinned == true ? "공지" : "")
-                            </td>
-                            <td>
-                                <a href="/Notices/Details/@m.Id" class="btn btn-light">Details</a>
-                                <a href="/Notices/Edit/@m.Id" class="btn btn-light">Edit</a>
-                                <a href="/Notices/Delete/@m.Id" class="btn btn-light">Delete</a>
-                            </td>
-                            <td>
-                                <input type="button" name="btnEdit" value="Edit with Modal" class="btn btn-primary" @onclick="(() => EditBy(m))" />
-                                <input type="button" name="btnDelete" value="Delete with Modal" class="btn btn-primary" @onclick="(() => DeleteBy(m))" />
-                                <input type="button" name="btnToggle" value="Toggle with Modal" class="btn btn-primary" @onclick="(() => ToggleBy(m))" />
+                            <td colspan="6"
+                                class="text-center">
+                                <p class="mb-0">
+                                    데이터가 없습니다.
+                                </p>
                             </td>
                         </tr>
+                    }
+                    else
+                    {
+                        @foreach (var m in models)
+                        {
+                            <tr>
+                                <td>
+                                    @m.Id
+                                </td>
+
+                                <td @onclick="() => NameClick(m.Id)">
+                                    <a href="/Notices/Details/@m.Id">
+                                        @m.Name
+                                    </a>
+                                </td>
+
+                                <td>
+                                    @m.Created?.ToShortTimeString()
+                                </td>
+
+                                <td>
+                                    @(m.IsPinned == true ? "공지" : "")
+                                </td>
+
+                                <td>
+                                    <a href="/Notices/Details/@m.Id"
+                                       class="btn btn-light">
+                                        Details
+                                    </a>
+
+                                    <a href="/Notices/Edit/@m.Id"
+                                       class="btn btn-light">
+                                        Edit
+                                    </a>
+
+                                    <a href="/Notices/Delete/@m.Id"
+                                       class="btn btn-light">
+                                        Delete
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <input type="button"
+                                           name="btnEdit"
+                                           value="Edit with Modal"
+                                           class="btn btn-primary"
+                                           @onclick="() => EditBy(m)" />
+
+                                    <input type="button"
+                                           name="btnDelete"
+                                           value="Delete with Modal"
+                                           class="btn btn-primary"
+                                           @onclick="() => DeleteBy(m)" />
+
+                                    <input type="button"
+                                           name="btnToggle"
+                                           value="Toggle with Modal"
+                                           class="btn btn-primary"
+                                           @onclick="() => ToggleBy(m)" />
+                                </td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
         }
     </div>
+
     <div class="col-md-12">
-        <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+        <DulPager.DulPagerComponent Model="pager"
+                                    PageIndexChanged="PageIndexChanged">
+        </DulPager.DulPagerComponent>
     </div>
+
     <div class="col-md-12">
-        <Azunt.Components.Search.SearchBox placeholder="Search Notices..." SearchQueryChanged="Search" Engine="Azunt.Components.Search.SearchBox.DebounceEngine.Cts"></Azunt.Components.Search.SearchBox>
+        <Azunt.Components.Search.SearchBox placeholder="Search Notices..."
+                                           SearchQueryChanged="Search"
+                                           Engine="Azunt.Components.Search.SearchBox.DebounceEngine.Cts">
+        </Azunt.Components.Search.SearchBox>
     </div>
 </div>
 
@@ -101,7 +163,10 @@
                                             Model="model"
                                             CreateCallback="CreateOrEdit"
                                             EditCallback="CreateOrEdit">
-    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+
+    <EditorFormTitle>
+        @EditorFormTitle
+    </EditorFormTitle>
 </Hawaso.Pages.Notices.Components.EditorForm>
 
 <Hawaso.Pages.Notices.Components.DeleteDialog @ref="DeleteDialogReference"
@@ -110,21 +175,48 @@
 
 @if (IsInlineDialogShow)
 {
-    <div class="modal fade show d-block" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade show d-block"
+         tabindex="-1"
+         role="dialog">
+
+        <div class="modal-dialog"
+             role="document">
+
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">공지글로 올리기</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
-                        <span aria-hidden="true">&times;</span>
+                    <h5 class="modal-title">
+                        공지 설정 변경
+                    </h5>
+
+                    <button type="button"
+                            class="close"
+                            aria-label="Close"
+                            @onclick="ToggleClose">
+
+                        <span aria-hidden="true">
+                            &times;
+                        </span>
                     </button>
                 </div>
+
                 <div class="modal-body">
-                    <p>@(model.Id)번 글을 공지글로 설정할까요?</p>
+                    <p>
+                        @(model.Id)번 글의 공지 설정을 변경할까요?
+                    </p>
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @onclick="ToggleClick">설정</button>
-                    <button type="button" class="btn btn-secondary" @onclick="ToggleClose">닫기</button>
+                    <button type="button"
+                            class="btn btn-primary"
+                            @onclick="ToggleClick">
+                        설정
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            @onclick="ToggleClose">
+                        닫기
+                    </button>
                 </div>
             </div>
         </div>
