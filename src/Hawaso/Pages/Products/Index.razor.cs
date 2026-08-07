@@ -1,9 +1,6 @@
 ﻿using DotNetSaleCore.Models;
 using DulPager;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Hawaso.Pages.Products
 {
