@@ -7,10 +7,10 @@ namespace Hawaso.Pages.Products
     public partial class Index
     {
         [Inject]
-        public IProductRepositoryAsync ProductRepositoryAsync { get; set; }
+        public IProductRepositoryAsync ProductRepositoryAsync { get; set; } = default!;
 
         [Inject]
-        public NavigationManager NavigationManager { get; set; }
+        public NavigationManager NavigationManager { get; set; } = default!;
 
         private DulPagerBase pager = new DulPagerBase()
         {
@@ -20,7 +20,7 @@ namespace Hawaso.Pages.Products
             PagerButtonCount = 5
         };
 
-        private List<Product> Products; 
+        private List<Product> Products = new();
 
         protected override async Task OnInitializedAsync()
         {
@@ -29,7 +29,10 @@ namespace Hawaso.Pages.Products
 
         private async Task DisplayData()
         {
-            var articleSet = await ProductRepositoryAsync.GetAllAsync(pager.PageIndex, pager.PageSize);
+            var articleSet = await ProductRepositoryAsync.GetAllAsync(
+                pager.PageIndex,
+                pager.PageSize);
+
             pager.RecordCount = articleSet.TotalRecords;
             Products = articleSet.Records.ToList();
         }
