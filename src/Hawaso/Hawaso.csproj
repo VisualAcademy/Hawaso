@@ -13,7 +13,7 @@
         <PackageReference Include="Azunt.InstructionManagement" Version="1.0.0" />
         <PackageReference Include="NuGet.Packaging" Version="7.6.0" />
         <PackageReference Include="NuGet.Protocol" Version="7.6.0" />
-        
+
         <PackageReference Include="Azunt" Version="1.2.3" />
         <PackageReference Include="Azunt.ApplicantTypeManagement" Version="1.0.0" />
         <PackageReference Include="Azunt.AppointmentTypeManagement" Version="1.0.4" />
@@ -43,6 +43,7 @@
         <PackageReference Include="Azunt.TechnicianManagement" Version="1.0.1" />
         <PackageReference Include="Azunt.TenantManagement" Version="1.0.5" />
         <PackageReference Include="Azunt.TenantSettingManagement" Version="1.0.5" />
+
         <PackageReference Include="Azure.Identity" Version="1.21.0" />
         <PackageReference Include="Azure.Storage.Blobs" Version="12.29.1" />
         <PackageReference Include="Blazored.Toast" Version="4.2.1" />
@@ -55,29 +56,43 @@
         <PackageReference Include="Dul.NoticeApp.Models" Version="1.0.2" />
         <PackageReference Include="DulPager" Version="1.0.2" />
         <PackageReference Include="MatBlazor" Version="2.10.0" />
+
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.10" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.10" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.10" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
+
+        <!-- NU1903: Microsoft.OpenApi 보안 취약점 해결 -->
+        <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
+
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.10" />
+
+        <!-- NU1903: SQLitePCLRaw.lib.e_sqlite3 2.1.11 취약점 해결 -->
+        <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.12" />
+
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.10" />
+
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.10">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        
+
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.14.4" />
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.DataGrid.EntityFrameworkAdapter" Version="4.14.4" />
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.14.4" />
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.14.4" />
+
         <PackageReference Include="Microsoft.Identity.Web" Version="4.14.2" />
         <PackageReference Include="Microsoft.SemanticKernel" Version="1.78.0" />
         <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
+
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+
         <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
         <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="10.0.0" />
         <PackageReference Include="Stripe.net" Version="52.2.0" />
         <PackageReference Include="Twilio" Version="7.14.9" />
+
         <PackageReference Include="VisualAcademy.Models.Archives" Version="3.0.2" />
         <PackageReference Include="VisualAcademy.Models.BriefingLogs" Version="1.0.4" />
         <PackageReference Include="VisualAcademy.Models.Departments" Version="8.0.2" />
@@ -85,8 +100,6 @@
         <PackageReference Include="VisualAcademy.Models.Notes" Version="6.0.1" />
         <PackageReference Include="VisualAcademy.Models.Replys" Version="1.0.1" />
         <PackageReference Include="VisualAcademy.Models.Uploads" Version="1.0.1" />
-
-        
     </ItemGroup>
 
     <ItemGroup>
