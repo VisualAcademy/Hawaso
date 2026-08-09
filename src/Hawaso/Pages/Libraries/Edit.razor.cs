@@ -6,68 +6,112 @@ namespace Hawaso.Pages.Libraries;
 
 public partial class Edit
 {
+    #region Parameters
+
     [Parameter]
     public int Id { get; set; }
 
-    [Inject]
-    public ILibraryRepository UploadRepositoryAsyncReference { get; set; }
+    #endregion
+
+    #region Injectors
 
     [Inject]
-    public NavigationManager NavigationManagerReference { get; set; }
+    public ILibraryRepository UploadRepositoryAsyncReference { get; set; } = default!;
 
-    protected LibraryModel model = new LibraryModel();
+    [Inject]
+    public NavigationManager NavigationManagerReference { get; set; } = default!;
 
-    public string ParentId { get; set; }
+    [Inject]
+    public ILibraryFileStorageManager FileStorageManager { get; set; } = default!;
+
+    #endregion
+
+    #region Fields
+
+    protected LibraryModel model = new();
 
     protected int[] parentIds = { 1, 2, 3 };
 
-    protected string content = "";
+    protected string content = string.Empty;
+
+    private IFileListEntry[] selectedFiles = Array.Empty<IFileListEntry>();
+
+    #endregion
+
+    #region Properties
+
+    public string ParentId { get; set; } = string.Empty;
+
+    #endregion
+
+    #region Lifecycle Methods
 
     protected override async Task OnInitializedAsync()
     {
-        model = await UploadRepositoryAsyncReference.GetByIdAsync(Id);
-        content = Dul.HtmlUtility.EncodeWithTabAndSpace(model.Content);
-        ParentId = model.ParentId.ToString();
+        model = await UploadRepositoryAsyncReference.GetByIdAsync(Id)
+            ?? throw new InvalidOperationException(
+                $"Library with Id {Id} was not found.");
+
+        content = Dul.HtmlUtility.EncodeWithTabAndSpace(
+            model.Content ?? string.Empty);
+
+        ParentId = model.ParentId?.ToString() ?? string.Empty;
     }
 
-    protected async void FormSubmit()
+    #endregion
+
+    #region Event Handlers
+
+    protected async Task FormSubmit()
     {
         int.TryParse(ParentId, out int parentId);
         model.ParentId = parentId;
 
         #region 파일 업로드 관련 추가 코드 영역
-        if (selectedFiles != null && selectedFiles.Length > 0)
+
+        if (selectedFiles.Length > 0)
         {
-            // 파일 업로드
             var file = selectedFiles.FirstOrDefault();
-            var fileName = "";
-            int fileSize = 0;
+
             if (file != null)
             {
-                fileName = file.Name;
-                fileSize = Convert.ToInt32(file.Size);
+                var fileSize = Convert.ToInt32(file.Size);
 
-                // 첨부 파일 삭제 
-                await FileStorageManager.DeleteAsync(model.FileName, "Libraries");
+                // 기존 첨부 파일 삭제
+                if (!string.IsNullOrWhiteSpace(model.FileName))
+                {
+                    await FileStorageManager.DeleteAsync(
+                        model.FileName,
+                        "Libraries");
+                }
 
-                // 다시 업로드
-                fileName = await FileStorageManager.UploadAsync(file.Data, file.Name, "", true);
+                // 새 파일 업로드
+                var fileName = await FileStorageManager.UploadAsync(
+                    file.Data,
+                    file.Name,
+                    "",
+                    true);
 
                 model.FileName = fileName;
                 model.FileSize = fileSize;
             }
         }
+
         #endregion
 
         await UploadRepositoryAsyncReference.EditAsync(model);
+
         NavigationManagerReference.NavigateTo("/Libraries");
     }
 
-    [Inject]
-    public ILibraryFileStorageManager FileStorageManager { get; set; }
-    private IFileListEntry[] selectedFiles;
+    #endregion
+
+    #region Features - FileUpload
+
     protected void HandleSelection(IFileListEntry[] files)
     {
-        this.selectedFiles = files;
+        selectedFiles = files;
     }
+
+    #endregion
 }
