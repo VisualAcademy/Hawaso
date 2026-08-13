@@ -1,6 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
-using System.Data;
 
 namespace Hawaso.Infrastructures.Tenants
 {
@@ -17,10 +16,10 @@ namespace Hawaso.Infrastructures.Tenants
         {
             List<string> tenantConnectionStrings = GetTenantConnectionStrings();
 
-            foreach (string connStr in tenantConnectionStrings)
+            foreach (string connectionString in tenantConnectionStrings)
             {
-                CreateTableIfNotExists(connStr);
-                InsertDefaultValuesIfEmpty(connStr);
+                CreateTableIfNotExists(connectionString);
+                InsertDefaultValuesIfEmpty(connectionString);
             }
         }
 
@@ -31,12 +30,30 @@ namespace Hawaso.Infrastructures.Tenants
             using var connection = new SqlConnection(_masterConnectionString);
             connection.Open();
 
-            var cmd = new SqlCommand("SELECT ConnectionString FROM dbo.Tenants", connection);
-            using var reader = cmd.ExecuteReader();
+            const string sql = """
+                SELECT ConnectionString
+                FROM dbo.Tenants
+                WHERE ConnectionString IS NOT NULL
+                """;
+
+            using var command = new SqlCommand(sql, connection);
+            using var reader = command.ExecuteReader();
+
+            int connectionStringOrdinal = reader.GetOrdinal("ConnectionString");
 
             while (reader.Read())
             {
-                result.Add(reader["ConnectionString"].ToString());
+                if (reader.IsDBNull(connectionStringOrdinal))
+                {
+                    continue;
+                }
+
+                string connectionString = reader.GetString(connectionStringOrdinal);
+
+                if (!string.IsNullOrWhiteSpace(connectionString))
+                {
+                    result.Add(connectionString);
+                }
             }
 
             return result;
@@ -47,26 +64,38 @@ namespace Hawaso.Infrastructures.Tenants
             using var connection = new SqlConnection(connectionString);
             connection.Open();
 
-            var checkCmd = new SqlCommand(@"
-                SELECT COUNT(*) 
-                FROM INFORMATION_SCHEMA.TABLES 
-                WHERE TABLE_SCHEMA = 'dbo' 
-                AND TABLE_NAME = 'CustomFieldTitles'", connection);
+            const string checkSql = """
+                SELECT COUNT(*)
+                FROM INFORMATION_SCHEMA.TABLES
+                WHERE TABLE_SCHEMA = 'dbo'
+                    AND TABLE_NAME = 'CustomFieldTitles'
+                """;
 
-            int count = (int)checkCmd.ExecuteScalar();
-            if (count > 0) return;
+            using var checkCommand = new SqlCommand(checkSql, connection);
 
-            var createCmd = new SqlCommand(@"
-                CREATE TABLE [dbo].[CustomFieldTitles](
+            int count = Convert.ToInt32(checkCommand.ExecuteScalar());
+
+            if (count > 0)
+            {
+                return;
+            }
+
+            const string createSql = """
+                CREATE TABLE [dbo].[CustomFieldTitles]
+                (
                     [ID] bigint IDENTITY(1,1) NOT NULL PRIMARY KEY,
                     [Type] nvarchar(50) NOT NULL,
                     [Field] nvarchar(max) NOT NULL,
                     [Title] nvarchar(max) NULL,
                     [Visible] bit NOT NULL DEFAULT(0),
                     [Searchable] bit NOT NULL DEFAULT(0)
-                ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]", connection);
+                )
+                ON [PRIMARY]
+                TEXTIMAGE_ON [PRIMARY]
+                """;
 
-            createCmd.ExecuteNonQuery();
+            using var createCommand = new SqlCommand(createSql, connection);
+            createCommand.ExecuteNonQuery();
         }
 
         private void InsertDefaultValuesIfEmpty(string connectionString)
@@ -74,13 +103,30 @@ namespace Hawaso.Infrastructures.Tenants
             using var connection = new SqlConnection(connectionString);
             connection.Open();
 
-            var countCmd = new SqlCommand("SELECT COUNT(*) FROM dbo.CustomFieldTitles", connection);
-            int rowCount = (int)countCmd.ExecuteScalar();
-            if (rowCount > 0) return;
+            const string countSql = """
+                SELECT COUNT(*)
+                FROM dbo.CustomFieldTitles
+                """;
 
-            var insertCmd = new SqlCommand(@"
-                INSERT INTO dbo.CustomFieldTitles ([Type], [Field], [Title], [Visible], [Searchable])
-                VALUES 
+            using var countCommand = new SqlCommand(countSql, connection);
+
+            int rowCount = Convert.ToInt32(countCommand.ExecuteScalar());
+
+            if (rowCount > 0)
+            {
+                return;
+            }
+
+            const string insertSql = """
+                INSERT INTO dbo.CustomFieldTitles
+                (
+                    [Type],
+                    [Field],
+                    [Title],
+                    [Visible],
+                    [Searchable]
+                )
+                VALUES
                     ('EmployeeProfile', 'Custom1', NULL, 0, 0),
                     ('EmployeeProfile', 'Custom2', NULL, 0, 0),
                     ('EmployeeProfile', 'Custom3', NULL, 0, 0),
@@ -92,9 +138,11 @@ namespace Hawaso.Infrastructures.Tenants
                     ('StateLicense', 'Custom3', NULL, 0, 0),
                     ('StateLicense', 'Custom4', NULL, 0, 0),
                     ('StateLicense', 'Custom5', NULL, 0, 0),
-                    ('StateLicense', 'Custom6', NULL, 0, 0)", connection);
+                    ('StateLicense', 'Custom6', NULL, 0, 0)
+                """;
 
-            insertCmd.ExecuteNonQuery();
+            using var insertCommand = new SqlCommand(insertSql, connection);
+            insertCommand.ExecuteNonQuery();
         }
     }
 }
