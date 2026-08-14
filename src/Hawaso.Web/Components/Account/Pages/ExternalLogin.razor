@@ -19,11 +19,12 @@
 <PageTitle>Register</PageTitle>
 
 <StatusMessage Message="@message" />
+
 <h1>Register</h1>
 <h2>Associate your @ProviderDisplayName account.</h2>
 <hr />
 
-<div  class="alert alert-info">
+<div class="alert alert-info">
     You've successfully authenticated with <strong>@ProviderDisplayName</strong>.
     Please enter an email address for this site below and click the Register button to finish
     logging in.
@@ -31,15 +32,35 @@
 
 <div class="row">
     <div class="col-md-4">
-        <EditForm Model="Input" OnValidSubmit="OnValidSubmitAsync" FormName="confirmation" method="post">
+        <EditForm Model="FormInput"
+                  OnValidSubmit="OnValidSubmitAsync"
+                  FormName="confirmation"
+                  method="post">
+
             <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
+
+            <ValidationSummary class="text-danger"
+                               role="alert" />
+
             <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" id="Input.Email" class="form-control" autocomplete="email" placeholder="Please enter your email." />
-                <label for="Input.Email" class="form-label">Email</label>
-                <ValidationMessage For="() => Input.Email" />
+                <InputText @bind-Value="FormInput.Email"
+                           id="Input.Email"
+                           class="form-control"
+                           autocomplete="email"
+                           placeholder="Please enter your email." />
+
+                <label for="Input.Email"
+                       class="form-label">
+                    Email
+                </label>
+
+                <ValidationMessage For="() => FormInput.Email" />
             </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+
+            <button type="submit"
+                    class="w-100 btn btn-lg btn-primary">
+                Register
+            </button>
         </EditForm>
     </div>
 </div>
@@ -54,7 +75,7 @@
     private HttpContext HttpContext { get; set; } = default!;
 
     [SupplyParameterFromForm]
-    private InputModel Input { get; set; } = new();
+    private InputModel? Input { get; set; }
 
     [SupplyParameterFromQuery]
     private string? RemoteError { get; set; }
@@ -65,19 +86,41 @@
     [SupplyParameterFromQuery]
     private string? Action { get; set; }
 
-    private string? ProviderDisplayName => externalLoginInfo?.ProviderDisplayName;
+    private string? ProviderDisplayName =>
+        externalLoginInfo?.ProviderDisplayName;
+
+    private InputModel FormInput =>
+        Input
+        ?? throw new InvalidOperationException(
+            "The external login form input model has not been initialized.");
 
     protected override async Task OnInitializedAsync()
     {
+        // BL0008:
+        // SupplyParameterFromForm properties shouldn't use a non-default
+        // property initializer because form posts can overwrite them with null.
+        Input ??= new InputModel();
+
         if (RemoteError is not null)
         {
-            RedirectManager.RedirectToWithStatus("Account/Login", $"Error from external provider: {RemoteError}", HttpContext);
+            RedirectManager.RedirectToWithStatus(
+                "Account/Login",
+                $"Error from external provider: {RemoteError}",
+                HttpContext);
+
+            return;
         }
 
         var info = await SignInManager.GetExternalLoginInfoAsync();
+
         if (info is null)
         {
-            RedirectManager.RedirectToWithStatus("Account/Login", "Error loading external login information.", HttpContext);
+            RedirectManager.RedirectToWithStatus(
+                "Account/Login",
+                "Error loading external login information.",
+                HttpContext);
+
+            return;
         }
 
         externalLoginInfo = info;
@@ -90,8 +133,7 @@
                 return;
             }
 
-            // We should only reach this page via the login callback, so redirect back to
-            // the login page if we get here some other way.
+            // We should only reach this page through the external login callback.
             RedirectManager.RedirectTo("Account/Login");
         }
     }
@@ -100,10 +142,16 @@
     {
         if (externalLoginInfo is null)
         {
-            RedirectManager.RedirectToWithStatus("Account/Login", "Error loading external login information.", HttpContext);
+            RedirectManager.RedirectToWithStatus(
+                "Account/Login",
+                "Error loading external login information.",
+                HttpContext);
+
+            return;
         }
 
-        // Sign in the user with this external login provider if the user already has a login.
+        // Sign in the user if an account is already associated
+        // with this external login provider.
         var result = await SignInManager.ExternalLoginSignInAsync(
             externalLoginInfo.LoginProvider,
             externalLoginInfo.ProviderKey,
@@ -116,17 +164,25 @@
                 "{Name} logged in with {LoginProvider} provider.",
                 externalLoginInfo.Principal.Identity?.Name,
                 externalLoginInfo.LoginProvider);
+
             RedirectManager.RedirectTo(ReturnUrl);
-        }
-        else if (result.IsLockedOut)
-        {
-            RedirectManager.RedirectTo("Account/Lockout");
+            return;
         }
 
-        // If the user does not have an account, then ask the user to create an account.
-        if (externalLoginInfo.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
+        if (result.IsLockedOut)
         {
-            Input.Email = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email) ?? "";
+            RedirectManager.RedirectTo("Account/Lockout");
+            return;
+        }
+
+        // If the external provider supplies an email address,
+        // prepopulate the registration form.
+        if (externalLoginInfo.Principal.HasClaim(
+                claim => claim.Type == ClaimTypes.Email))
+        {
+            FormInput.Email =
+                externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email)
+                ?? string.Empty;
         }
     }
 
@@ -134,47 +190,96 @@
     {
         if (externalLoginInfo is null)
         {
-            RedirectManager.RedirectToWithStatus("Account/Login", "Error loading external login information during confirmation.", HttpContext);
+            RedirectManager.RedirectToWithStatus(
+                "Account/Login",
+                "Error loading external login information during confirmation.",
+                HttpContext);
+
+            return;
         }
 
         var emailStore = GetEmailStore();
         var user = CreateUser();
+        var email = FormInput.Email;
 
-        await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-        await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+        await UserStore.SetUserNameAsync(
+            user,
+            email,
+            CancellationToken.None);
+
+        await emailStore.SetEmailAsync(
+            user,
+            email,
+            CancellationToken.None);
 
         var result = await UserManager.CreateAsync(user);
+
         if (result.Succeeded)
         {
-            result = await UserManager.AddLoginAsync(user, externalLoginInfo);
+            result = await UserManager.AddLoginAsync(
+                user,
+                externalLoginInfo);
+
             if (result.Succeeded)
             {
-                Logger.LogInformation("User created an account using {Name} provider.", externalLoginInfo.LoginProvider);
+                Logger.LogInformation(
+                    "User created an account using {LoginProvider} provider.",
+                    externalLoginInfo.LoginProvider);
 
-                var userId = await UserManager.GetUserIdAsync(user);
-                var code = await UserManager.GenerateEmailConfirmationTokenAsync(user);
-                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                var userId =
+                    await UserManager.GetUserIdAsync(user);
 
-                var callbackUrl = NavigationManager.GetUriWithQueryParameters(
-                    NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
-                    new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code });
-                await EmailSender.SendConfirmationLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
+                var code =
+                    await UserManager.GenerateEmailConfirmationTokenAsync(user);
 
-                // If account confirmation is required, we need to show the link if we don't have a real email sender
+                code = WebEncoders.Base64UrlEncode(
+                    Encoding.UTF8.GetBytes(code));
+
+                var callbackUrl =
+                    NavigationManager.GetUriWithQueryParameters(
+                        NavigationManager
+                            .ToAbsoluteUri("Account/ConfirmEmail")
+                            .AbsoluteUri,
+                        new Dictionary<string, object?>
+                        {
+                            ["userId"] = userId,
+                            ["code"] = code
+                        });
+
+                await EmailSender.SendConfirmationLinkAsync(
+                    user,
+                    email,
+                    HtmlEncoder.Default.Encode(callbackUrl));
+
+                // If confirmed accounts are required, redirect
+                // the user to the registration confirmation page.
                 if (UserManager.Options.SignIn.RequireConfirmedAccount)
                 {
-                    RedirectManager.RedirectTo("Account/RegisterConfirmation", new() { ["email"] = Input.Email });
+                    RedirectManager.RedirectTo(
+                        "Account/RegisterConfirmation",
+                        new Dictionary<string, object?>
+                        {
+                            ["email"] = email
+                        });
+
+                    return;
                 }
 
-                await SignInManager.SignInAsync(user, isPersistent: false, externalLoginInfo.LoginProvider);
+                await SignInManager.SignInAsync(
+                    user,
+                    isPersistent: false,
+                    externalLoginInfo.LoginProvider);
+
                 RedirectManager.RedirectTo(ReturnUrl);
+                return;
             }
         }
 
-        message = $"Error: {string.Join(",", result.Errors.Select(error => error.Description))}";
+        message =
+            $"Error: {string.Join(", ", result.Errors.Select(error => error.Description))}";
     }
 
-    private ApplicationUser CreateUser()
+    private static ApplicationUser CreateUser()
     {
         try
         {
@@ -182,8 +287,10 @@
         }
         catch
         {
-            throw new InvalidOperationException($"Can't create an instance of '{nameof(ApplicationUser)}'. " +
-                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class and has a parameterless constructor");
+            throw new InvalidOperationException(
+                $"Can't create an instance of '{nameof(ApplicationUser)}'. " +
+                $"Ensure that '{nameof(ApplicationUser)}' is not an abstract class " +
+                "and has a parameterless constructor.");
         }
     }
 
@@ -191,8 +298,10 @@
     {
         if (!UserManager.SupportsUserEmail)
         {
-            throw new NotSupportedException("The default UI requires a user store with email support.");
+            throw new NotSupportedException(
+                "The default UI requires a user store with email support.");
         }
+
         return (IUserEmailStore<ApplicationUser>)UserStore;
     }
 
@@ -200,6 +309,6 @@
     {
         [Required]
         [EmailAddress]
-        public string Email { get; set; } = "";
+        public string Email { get; set; } = string.Empty;
     }
 }
