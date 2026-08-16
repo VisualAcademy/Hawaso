@@ -1,107 +1,105 @@
 ﻿using Microsoft.AspNetCore.Components;
 
-namespace Hawaso.Pages.Uploads
+namespace Hawaso.Pages.Uploads;
+
+public partial class Index
 {
-    public partial class Index
+    [Inject]
+    public IUploadRepository UploadRepositoryAsyncReference { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager NavigationManagerReference { get; set; } = default!;
+
+    protected List<Upload>? models;
+
+    protected DulPager.DulPagerBase pager = new()
     {
-        [Inject]
-        public IUploadRepository UploadRepositoryAsyncReference { get; set; }
+        PageNumber = 1,
+        PageIndex = 0,
+        PageSize = 10,
+        PagerButtonCount = 5
+    };
 
-        [Inject]
-        public NavigationManager NavigationManagerReference { get; set; }
+    private string searchQuery = string.Empty;
+    private string sortOrder = string.Empty;
 
-        protected List<Upload> models;
+    protected override async Task OnInitializedAsync()
+    {
+        await DisplayData();
+    }
 
-        protected DulPager.DulPagerBase pager = new DulPager.DulPagerBase() 
-        { 
-            PageNumber = 1,
-            PageIndex = 0,
-            PageSize = 10,
-            PagerButtonCount = 5
+    private async Task DisplayData()
+    {
+        var articleSet = await UploadRepositoryAsyncReference.GetArticles<int>(
+            pager.PageIndex,
+            pager.PageSize,
+            string.Empty,
+            searchQuery,
+            sortOrder,
+            0);
+
+        pager.RecordCount = articleSet.TotalCount;
+        models = articleSet.Items.ToList();
+    }
+
+    protected void NameClick(int id)
+    {
+        NavigationManagerReference.NavigateTo($"/Uploads/Details/{id}");
+    }
+
+    protected async Task PageIndexChanged(int pageIndex)
+    {
+        pager.PageIndex = pageIndex;
+        pager.PageNumber = pageIndex + 1;
+
+        await DisplayData();
+    }
+
+    #region Search
+
+    protected async Task Search(string query)
+    {
+        pager.PageIndex = 0;
+        pager.PageNumber = 1;
+
+        searchQuery = query;
+
+        await DisplayData();
+    }
+
+    #endregion
+
+    #region Sorting
+
+    protected async Task SortByName()
+    {
+        sortOrder = sortOrder switch
+        {
+            "" => "Name",
+            "Name" => "NameDesc",
+            _ => ""
         };
 
-        protected override async Task OnInitializedAsync()
-        {
-            await DisplayData();
-        }
+        pager.PageIndex = 0;
+        pager.PageNumber = 1;
 
-        private async Task DisplayData()
-        {
-            var articleSet = await UploadRepositoryAsyncReference.GetArticles<int>(pager.PageIndex, pager.PageSize, "", this.searchQuery, this.sortOrder, 0);
-            pager.RecordCount = articleSet.TotalCount;
-            models = articleSet.Items.ToList();
-
-            StateHasChanged();
-        }
-
-        protected void NameClick(int id)
-        {
-            NavigationManagerReference.NavigateTo($"/Uploads/Details/{id}");
-        }
-
-        protected async void PageIndexChanged(int pageIndex)
-        {
-            pager.PageIndex = pageIndex;
-            pager.PageNumber = pageIndex + 1;
-
-            await DisplayData();
-
-            StateHasChanged();
-        }
-
-        #region Search
-        private string searchQuery = "";
-
-        protected async void Search(string query)
-        {
-            pager.PageIndex = 0;
-
-            this.searchQuery = query;
-
-            await DisplayData();
-
-            StateHasChanged();
-        } 
-        #endregion
-
-        #region Sorting
-        private string sortOrder = "";
-
-        protected async void SortByName()
-        {
-            if (sortOrder == "")
-            {
-                sortOrder = "Name";
-            }
-            else if (sortOrder == "Name")
-            {
-                sortOrder = "NameDesc";
-            }
-            else
-            {
-                sortOrder = "";
-            }
-
-            await DisplayData();
-        }
-
-        protected async void SortByTitle()
-        {
-            if (sortOrder == "")
-            {
-                sortOrder = "Title";
-            }
-            else if (sortOrder == "Title")
-            {
-                sortOrder = "TitleDesc";
-            }
-            else
-            {
-                sortOrder = "";
-            }
-
-            await DisplayData();
-        } 
-        #endregion
+        await DisplayData();
     }
+
+    protected async Task SortByTitle()
+    {
+        sortOrder = sortOrder switch
+        {
+            "" => "Title",
+            "Title" => "TitleDesc",
+            _ => ""
+        };
+
+        pager.PageIndex = 0;
+        pager.PageNumber = 1;
+
+        await DisplayData();
+    }
+
+    #endregion
 }
