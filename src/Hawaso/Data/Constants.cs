@@ -1,6 +1,5 @@
-﻿namespace Hawaso.Data
+﻿namespace Hawaso.Data;
+
+public class Constants
 {
-    public class Constants
-    {
-    }
 }
