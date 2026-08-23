@@ -1,5 +1,4 @@
 ﻿using Azunt.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Azunt.Data
 {
