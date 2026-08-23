@@ -1,5 +1,4 @@
 ﻿using Azunt.ValueObjects;
-using Microsoft.EntityFrameworkCore;
 
 namespace Hawaso.Domain.ValueObjects;
 
