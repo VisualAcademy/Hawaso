@@ -1,9 +1,5 @@
 ﻿#nullable enable
 
-using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
-
 namespace Hawaso.Infrastructures;
 
 public class TenantSchemaEnhancerCreateMemosTable
