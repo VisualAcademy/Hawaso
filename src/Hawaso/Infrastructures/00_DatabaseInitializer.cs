@@ -1,8 +1,6 @@
 ﻿using Azunt.Web.Infrastructures._Initializers;
 using Azunt.Web.Infrastructures.Initializers;
 using Hawaso.Infrastructures.Initializers;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Azunt.Infrastructures;
 
