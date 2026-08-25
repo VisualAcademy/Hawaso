@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-
-namespace Hawaso.Apis.Products
+﻿namespace Hawaso.Apis.Products
 {
     public class ProductsController : Controller
     {
