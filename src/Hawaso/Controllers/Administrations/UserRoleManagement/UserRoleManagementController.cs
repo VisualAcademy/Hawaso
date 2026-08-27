@@ -1,10 +1,9 @@
-﻿namespace Hawaso.Controllers.Administrations.UserRoleManagement
+﻿namespace Hawaso.Controllers.Administrations.UserRoleManagement;
+
+public class UserRoleManagementController : Controller
 {
-    public class UserRoleManagementController : Controller
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
     }
 }
