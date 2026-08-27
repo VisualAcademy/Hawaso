@@ -62,7 +62,10 @@ namespace Zero.Models
                 }
             }
 
-            return null;
+            // The existing storage contract uses null to mean "file not found".
+            // ILibraryFileStorageManager exposes Task<byte[]> as non-nullable, so acknowledge
+            // the legacy behavior explicitly without changing runtime semantics.
+            return null!;
         }
 
         public string GetFolderPath(string ownerType, string ownerId, string fileType)
@@ -164,17 +167,17 @@ namespace Zero.Models
             _folderPath = Path.Combine(_environment.WebRootPath, _containerName);
         }
 
-        public async Task<bool> DeleteAsync(string fileName, string folderPath = "Libraries")
+        public Task<bool> DeleteAsync(string fileName, string folderPath = "Libraries")
         {
             var fullPath = Path.Combine(_folderPath, folderPath, fileName);
 
             if (File.Exists(fullPath))
             {
                 File.Delete(fullPath);
-                return await Task.FromResult(true);
+                return Task.FromResult(true);
             }
 
-            return await Task.FromResult(false);
+            return Task.FromResult(false);
         }
 
         public async Task<byte[]> DownloadAsync(string fileName, string folderPath = "Libraries")
@@ -186,7 +189,10 @@ namespace Zero.Models
                 return await File.ReadAllBytesAsync(fullPath);
             }
 
-            return null;
+            // The existing storage contract uses null to mean "file not found".
+            // ILibraryFileStorageManager exposes Task<byte[]> as non-nullable, so acknowledge
+            // the legacy behavior explicitly without changing runtime semantics.
+            return null!;
         }
 
         public string GetFolderPath(string ownerType, string ownerId, string fileType)
@@ -342,7 +348,10 @@ namespace Zero.Models
                 return await File.ReadAllBytesAsync(localFilePath);
             }
 
-            return null;
+            // The existing storage contract uses null to mean "file not found".
+            // ILibraryFileStorageManager exposes Task<byte[]> as non-nullable, so acknowledge
+            // the legacy behavior explicitly without changing runtime semantics.
+            return null!;
         }
 
         public string GetFolderPath(string ownerType, string ownerId, string fileType)
