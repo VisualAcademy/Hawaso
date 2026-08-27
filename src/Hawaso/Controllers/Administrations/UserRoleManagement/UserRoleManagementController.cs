@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace Hawaso.Controllers.Administrations.UserRoleManagement
+﻿namespace Hawaso.Controllers.Administrations.UserRoleManagement
 {
     public class UserRoleManagementController : Controller
     {
