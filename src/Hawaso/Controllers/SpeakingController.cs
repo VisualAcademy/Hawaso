@@ -1,10 +1,9 @@
-﻿namespace Hawaso.Controllers
+﻿namespace Hawaso.Controllers;
+
+public class SpeakingController : Controller
 {
-    public class SpeakingController : Controller
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
     }
 }
