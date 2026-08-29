@@ -10,7 +10,7 @@ public partial class Department
     public int Id { get; set; }
 
     [Display(Name = "Department")]
-    public string Dept { get; set; }
+    public string Dept { get; set; } = string.Empty;
 
     public bool Active { get; set; }
 }
