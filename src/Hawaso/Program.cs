@@ -1,4 +1,5 @@
 ﻿using Azunt.AttachmentManagement;
+using Azunt.BundleManagement;
 using Azunt.EmployeeManagement;
 using Azunt.Endpoints;
 using Azunt.FileManagement;
@@ -420,6 +421,15 @@ builder.Services.AddDependencyInjectionContainerForAttachmentApp(
     AttachmentServicesRegistrationExtensions.RepositoryMode.Dapper);
 
 var app = builder.Build();
+
+// Install Bundles table before accepting requests
+await using (var bundleSchemaScope = app.Services.CreateAsyncScope())
+{
+    var bundlesTableBuilder =
+        bundleSchemaScope.ServiceProvider.GetRequiredService<BundlesTableBuilder>();
+
+    await bundlesTableBuilder.EnsureAsync(connectionString);
+}
 
 // ---------------------------------------------------------
 // Install or enhance dbo.Attachments before accepting requests
