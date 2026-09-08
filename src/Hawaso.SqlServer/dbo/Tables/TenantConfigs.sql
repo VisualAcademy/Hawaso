@@ -1,0 +1,6 @@
+﻿CREATE TABLE [dbo].[TenantConfigs]
+(
+	[ID] BIGINT NOT NULL PRIMARY KEY IDENTITY, 
+	[Key] VARCHAR(30) NULL,
+    [Value] NVARCHAR(250) NOT NULL
+)
