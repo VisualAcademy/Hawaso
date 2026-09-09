@@ -14,11 +14,20 @@ namespace Hawaso.Pages.Notices
 {
     public partial class Report
     {
-        [Inject]
-        public INoticeRepository NoticeRepositoryReference { get; set; }
+        #region Injectors
 
-        private BarConfig _barChartConfig;
-        private BarDataset<DoubleWrapper> _barDataSet;
+        [Inject]
+        public INoticeRepository NoticeRepositoryReference { get; set; } = default!;
+
+        #endregion
+
+        #region Fields
+
+        private BarConfig _barChartConfig = new();
+
+        #endregion
+
+        #region Lifecycle Methods
 
         protected override async Task OnInitializedAsync()
         {
@@ -60,26 +69,29 @@ namespace Hawaso.Pages.Notices
                 }
             };
 
-            List<string> backgroundColors = new List<string>(); // 배경색: 랜덤
-            List<string> labels = new List<string>(); // 1월부터 12월까지
-            List<double> values = new List<double>(); // 1월부터 12월까지의 데이터
+            var backgroundColors = new List<string>();
+            var labels = new List<string>();
+            var values = new List<double>();
 
+            // 1월부터 12월까지 라벨 및 배경색 구성
             for (int i = 1; i <= 12; i++)
             {
                 labels.Add($"{i}");
                 backgroundColors.Add(ColorUtil.RandomColorString());
-                //values.Add(i);
             }
 
-            var sortedList = await NoticeRepositoryReference.GetMonthlyCreateCountAsync();
+            // 월별 공지사항 등록 건수 조회
+            var sortedList =
+                await NoticeRepositoryReference.GetMonthlyCreateCountAsync();
+
             for (int i = 1; i <= 12; i++)
             {
-                values.Add(sortedList[i]);                
+                values.Add(sortedList[i]);
             }
 
             _barChartConfig.Data.Labels.AddRange(labels.ToArray());
 
-            _barDataSet = new BarDataset<DoubleWrapper>
+            var barDataSet = new BarDataset<DoubleWrapper>
             {
                 BackgroundColor = backgroundColors.ToArray(),
                 BorderWidth = 0,
@@ -89,8 +101,11 @@ namespace Hawaso.Pages.Notices
                 BorderColor = "#ffffff"
             };
 
-            _barDataSet.AddRange(values.Wrap());
-            _barChartConfig.Data.Datasets.Add(_barDataSet);
+            barDataSet.AddRange(values.Wrap());
+
+            _barChartConfig.Data.Datasets.Add(barDataSet);
         }
+
+        #endregion
     }
 }
