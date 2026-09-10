@@ -14,13 +14,21 @@ namespace Hawaso.Pages.Replys
 {
     public partial class Report
     {
-        [Inject]
-        public IReplyRepository RepositoryReference { get; set; }
+        #region Injectors
 
-        private BarConfig _barChartConfig;
-        private BarDataset<DoubleWrapper> _barDataSet;
+        [Inject]
+        public IReplyRepository RepositoryReference { get; set; } = default!;
+
+        #endregion
+
+        #region Fields
+
+        private BarConfig _barChartConfig = new();
+
+        #endregion
 
         #region Lifecycle Methods
+
         /// <summary>
         /// 페이지 초기화 이벤트 처리기
         /// </summary>
@@ -37,7 +45,7 @@ namespace Hawaso.Pages.Replys
                     Title = new OptionsTitle
                     {
                         Display = true,
-                        Text = $"지난 1년동안의 글 수"
+                        Text = "지난 1년동안의 글 수"
                     },
                     Scales = new BarScales
                     {
@@ -64,18 +72,21 @@ namespace Hawaso.Pages.Replys
                 }
             };
 
-            List<string> backgroundColors = new List<string>(); // 배경색: 랜덤
-            List<string> labels = new List<string>(); // 1월부터 12월까지
-            List<double> values = new List<double>(); // 1월부터 12월까지의 데이터
+            var backgroundColors = new List<string>();
+            var labels = new List<string>();
+            var values = new List<double>();
 
+            // 1월부터 12월까지 라벨 및 배경색 구성
             for (int i = 1; i <= 12; i++)
             {
                 labels.Add($"{i}");
                 backgroundColors.Add(ColorUtil.RandomColorString());
-                //values.Add(i);
             }
 
-            var sortedList = await RepositoryReference.GetMonthlyCreateCountAsync();
+            // 월별 글 등록 건수 조회
+            var sortedList =
+                await RepositoryReference.GetMonthlyCreateCountAsync();
+
             for (int i = 1; i <= 12; i++)
             {
                 values.Add(sortedList[i]);
@@ -83,7 +94,7 @@ namespace Hawaso.Pages.Replys
 
             _barChartConfig.Data.Labels.AddRange(labels.ToArray());
 
-            _barDataSet = new BarDataset<DoubleWrapper>
+            var barDataSet = new BarDataset<DoubleWrapper>
             {
                 BackgroundColor = backgroundColors.ToArray(),
                 BorderWidth = 0,
@@ -93,9 +104,11 @@ namespace Hawaso.Pages.Replys
                 BorderColor = "#ffffff"
             };
 
-            _barDataSet.AddRange(values.Wrap());
-            _barChartConfig.Data.Datasets.Add(_barDataSet);
-        } 
+            barDataSet.AddRange(values.Wrap());
+
+            _barChartConfig.Data.Datasets.Add(barDataSet);
+        }
+
         #endregion
     }
 }
