@@ -420,6 +420,8 @@ builder.Services.AddDependencyInjectionContainerForAttachmentApp(
     connectionString,
     AttachmentServicesRegistrationExtensions.RepositoryMode.Dapper);
 
+builder.Services.AddTransient<BundlesTableBuilder>();
+
 var app = builder.Build();
 
 // Install Bundles table before accepting requests
