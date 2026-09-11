@@ -1,5 +1,259 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@using Azunt.Models.UserRoleViewModels
+@model List<UserRoleListViewModel>
 @{
+    ViewData["Title"] = "User Roles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var search = ViewBag.Search as string ?? string.Empty;
+    var currentPage = (int)ViewBag.Page;
+    var pageSize = (int)ViewBag.PageSize;
+    var totalCount = (int)ViewBag.TotalCount;
+    var totalPages = (int)ViewBag.TotalPages;
+    var startItem = (int)ViewBag.StartItem;
+    var endItem = (int)ViewBag.EndItem;
+
+    var firstVisiblePage = Math.Max(1, currentPage - 2);
+    var lastVisiblePage = Math.Min(totalPages, currentPage + 2);
+
+    var returnUrl = Url.Action(
+        "Index",
+        "UserRoleManagement",
+        new
+        {
+            search,
+            page = currentPage,
+            pageSize
+        });
 }
+
+<h3>User Roles</h3>
+<p>
+    View and manage the roles assigned to each user in the system.
+    Administrators have full access and should manage roles with caution.
+</p>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" action="/Administrations/UserRoleManagement">
+            <div class="row align-items-end">
+                <div class="col-md-7 mb-2">
+                    <label for="userRoleSearch" class="form-label">
+                        Search
+                    </label>
+                    <input id="userRoleSearch"
+                           name="search"
+                           value="@search"
+                           class="form-control"
+                           placeholder="Name, email, username, or role" />
+                </div>
+
+                <div class="col-md-2 mb-2">
+                    <label for="pageSize" class="form-label">
+                        Rows
+                    </label>
+                    <select id="pageSize"
+                            name="pageSize"
+                            class="form-control">
+                        @foreach (var size in new[] { 10, 25, 50, 100 })
+                        {
+                            if (size == pageSize)
+                            {
+                                <option value="@size" selected>
+                                    @size
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@size">
+                                    @size
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3 mb-2">
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Search
+                    </button>
+                    <a href="/Administrations/UserRoleManagement"
+                       class="btn btn-secondary">
+                        Clear
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <div class="text-muted small">
+        @if (totalCount == 0)
+        {
+            <span>No users found.</span>
+        }
+        else
+        {
+            <span>
+                Showing @startItem-@endItem of @totalCount users.
+            </span>
+        }
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Roles</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr>
+                    <td colspan="5"
+                        class="text-center text-muted py-4">
+                        No users match the current search.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td>@user.Email</td>
+                        <td>@string.Join(", ", user.Roles)</td>
+                        <td>
+                            <a class="btn btn-primary"
+                               asp-controller="UserRoleManagement"
+                               asp-action="Manage"
+                               asp-route-userId="@user.UserId"
+                               asp-route-returnUrl="@returnUrl">
+                                Manage Roles
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (totalPages > 1)
+{
+    <nav aria-label="User role pagination">
+        <ul class="pagination">
+            <li class="page-item @(currentPage <= 1 ? "disabled" : string.Empty)">
+                @if (currentPage <= 1)
+                {
+                    <span class="page-link">First</span>
+                }
+                else
+                {
+                    <a class="page-link"
+                       asp-controller="UserRoleManagement"
+                       asp-action="Index"
+                       asp-route-search="@search"
+                       asp-route-page="1"
+                       asp-route-pageSize="@pageSize">
+                        First
+                    </a>
+                }
+            </li>
+
+            <li class="page-item @(currentPage <= 1 ? "disabled" : string.Empty)">
+                @if (currentPage <= 1)
+                {
+                    <span class="page-link">Previous</span>
+                }
+                else
+                {
+                    <a class="page-link"
+                       asp-controller="UserRoleManagement"
+                       asp-action="Index"
+                       asp-route-search="@search"
+                       asp-route-page="@(currentPage - 1)"
+                       asp-route-pageSize="@pageSize">
+                        Previous
+                    </a>
+                }
+            </li>
+
+            @for (
+                var pageNumber = firstVisiblePage;
+                pageNumber <= lastVisiblePage;
+                pageNumber++)
+            {
+                <li class="page-item @(pageNumber == currentPage ? "active" : string.Empty)">
+                    @if (pageNumber == currentPage)
+                    {
+                        <span class="page-link">
+                            @pageNumber
+                        </span>
+                    }
+                    else
+                    {
+                        <a class="page-link"
+                           asp-controller="UserRoleManagement"
+                           asp-action="Index"
+                           asp-route-search="@search"
+                           asp-route-page="@pageNumber"
+                           asp-route-pageSize="@pageSize">
+                            @pageNumber
+                        </a>
+                    }
+                </li>
+            }
+
+            <li class="page-item @(currentPage >= totalPages ? "disabled" : string.Empty)">
+                @if (currentPage >= totalPages)
+                {
+                    <span class="page-link">Next</span>
+                }
+                else
+                {
+                    <a class="page-link"
+                       asp-controller="UserRoleManagement"
+                       asp-action="Index"
+                       asp-route-search="@search"
+                       asp-route-page="@(currentPage + 1)"
+                       asp-route-pageSize="@pageSize">
+                        Next
+                    </a>
+                }
+            </li>
+
+            <li class="page-item @(currentPage >= totalPages ? "disabled" : string.Empty)">
+                @if (currentPage >= totalPages)
+                {
+                    <span class="page-link">Last</span>
+                }
+                else
+                {
+                    <a class="page-link"
+                       asp-controller="UserRoleManagement"
+                       asp-action="Index"
+                       asp-route-search="@search"
+                       asp-route-page="@totalPages"
+                       asp-route-pageSize="@pageSize">
+                        Last
+                    </a>
+                }
+            </li>
+        </ul>
+    </nav>
+}
+
+<a href="/Administrations/Users"
+   class="btn btn-success">
+    New User
+</a>
