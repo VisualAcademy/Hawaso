@@ -197,6 +197,7 @@
     <Build Include="dbo\Tables\EmployeeEmploymentAuditRecords.sql" />
     <Build Include="dbo\Tables\Instructions.sql" />
     <Build Include="dbo\Tables\TenantConfigs.sql" />
+    <Build Include="dbo\Tables\InventoryCategories.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Scripts\Employee_FormData_References_Extract.sql" />
