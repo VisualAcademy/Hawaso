@@ -199,6 +199,8 @@
     <Build Include="dbo\Tables\TenantConfigs.sql" />
     <Build Include="dbo\Tables\InventoryCategories.sql" />
     <Build Include="dbo\Tables\InventoryItems.sql" />
+    <Build Include="dbo\Tables\InventoryStocks.sql" />
+    <Build Include="dbo\Tables\Warehouses.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Scripts\Employee_FormData_References_Extract.sql" />
