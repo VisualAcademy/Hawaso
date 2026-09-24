@@ -203,6 +203,8 @@
     <Build Include="dbo\Tables\Warehouses.sql" />
     <Build Include="dbo\Tables\WarehouseLocations.sql" />
     <Build Include="dbo\Tables\InventoryTransactions.sql" />
+    <Build Include="dbo\Tables\InventoryCountItems.sql" />
+    <Build Include="dbo\Tables\InventoryCountSessions.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Scripts\Employee_FormData_References_Extract.sql" />
