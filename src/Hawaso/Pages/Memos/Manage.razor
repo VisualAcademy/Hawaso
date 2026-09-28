@@ -9,50 +9,112 @@
 
 <PageTitle>게시판 리스트 | Hawaso</PageTitle>
 
-<h3>Memo Manage <a href="/Memos/Create"><span class="oi oi-plus align-baseline"></span></a>&nbsp; 
-    <span class="oi oi-plus text-primary align-baseline" @onclick="ShowEditorForm" style="cursor: pointer;"></span></h3>
+<h3>
+    Memo Manage
+    <a href="/Memos/Create">
+        <span class="oi oi-plus align-baseline"></span>
+    </a>&nbsp;
+    <span class="oi oi-plus text-primary align-baseline"
+          @onclick="ShowEditorForm"
+          style="cursor: pointer;"></span>
+</h3>
 
 <div class="row">
     <div class="col-md-4">
-        <FluentButton OnClick="ShowEditorForm" Appearance="Appearance.Accent" Style="width: 150px;">
-            <FluentIcon Value="@(new Icons.Regular.Size32.Add())" Color="Color.Lightweight" Slot="start"/>
+
+        <FluentButton OnClick="ShowEditorForm"
+                      Appearance="ButtonAppearance.Primary"
+                      Style="width: 150px;">
+            <FluentIcon Value="@(new Icons.Regular.Size32.Add())"
+                        Color="Color.Lightweight"
+                        Slot="start" />
             Create
         </FluentButton>
-        <FluentAnchor Href="/Memos/Import"  Appearance="Appearance.Accent" Style="width: 150px;">
-            <FluentIcon Value="@(new Icons.Regular.Size32.ArrowUp())" Color="Color.Lightweight" Slot="start" />
+
+        <FluentAnchor Href="/Memos/Import"
+                      Appearance="Appearance.Accent"
+                      Style="width: 150px;">
+            <FluentIcon Value="@(new Icons.Regular.Size32.ArrowUp())"
+                        Color="Color.Lightweight"
+                        Slot="start" />
             Excel Upload
-        </FluentAnchor>    
+        </FluentAnchor>
+
     </div>
+
     <div class="col-md-8">
-        
     </div>
 </div>
 
 <div class="row mb-1">
     <div class="col-md-12">
+
         <AuthorizeView>
             <Authorized>
             </Authorized>
+
             <NotAuthorized>
-                <a href="/Memos/Create" class="btn btn-sm btn-primary">Create</a>
-                <a href="/Memos/Index" class="btn btn-sm btn-primary">List</a>
-                <input type="button" name="btnCreate" value="Create with Modal" class="btn btn-sm btn-primary" @onclick="ShowEditorForm" />
+                <a href="/Memos/Create"
+                   class="btn btn-sm btn-primary">
+                    Create
+                </a>
+
+                <a href="/Memos/Index"
+                   class="btn btn-sm btn-primary">
+                    List
+                </a>
+
+                <input type="button"
+                       name="btnCreate"
+                       value="Create with Modal"
+                       class="btn btn-sm btn-primary"
+                       @onclick="ShowEditorForm" />
             </NotAuthorized>
         </AuthorizeView>
+
         <AuthorizeView Roles="Administrators, Managers">
-            <a href="/Memos/Create" class="btn btn-sm btn-primary">Create</a>
-            <input type="button" name="btnCreate" value="Create with Modal" class="btn btn-sm btn-primary" @onclick="ShowEditorForm" />
-            <a href="/Memos/Index" class="btn btn-sm btn-primary">List</a>
-            <input type="button" class="btn btn-sm btn-primary" value="Excel Export With Web API" @onclick="DownloadExcelWithWebApi" />
-            <input type="button" class="btn btn-sm btn-primary" value="Excel Export" @onclick="DownloadExcel" />
-            <button onclick="location.href = '/MemoDownload/ExcelDown';" class="btn btn-sm btn-primary">Excel Export</button>
+
+            <a href="/Memos/Create"
+               class="btn btn-sm btn-primary">
+                Create
+            </a>
+
+            <input type="button"
+                   name="btnCreate"
+                   value="Create with Modal"
+                   class="btn btn-sm btn-primary"
+                   @onclick="ShowEditorForm" />
+
+            <a href="/Memos/Index"
+               class="btn btn-sm btn-primary">
+                List
+            </a>
+
+            <input type="button"
+                   class="btn btn-sm btn-primary"
+                   value="Excel Export With Web API"
+                   @onclick="DownloadExcelWithWebApi" />
+
+            <input type="button"
+                   class="btn btn-sm btn-primary"
+                   value="Excel Export"
+                   @onclick="DownloadExcel" />
+
+            <button onclick="location.href = '/MemoDownload/ExcelDown';"
+                    class="btn btn-sm btn-primary">
+                Excel Export
+            </button>
+
         </AuthorizeView>
+
     </div>
 </div>
 
 <div class="row">
+
     <div class="col-md-12">
-        @if (Models == null) // null 예외 처리 
+
+        @if (Models == null)
         {
             <div>
                 <p>
@@ -64,7 +126,9 @@
         else
         {
             <div class="table-responsive">
+
                 <table class="table table-bordered table-hover">
+
                     <colgroup>
                         <col style="width: 50px;" />
                         <col style="width: 300px;" />
@@ -75,35 +139,91 @@
                         <col style="width: auto;" />
                         <col style="width: 250px;" />
                     </colgroup>
+
                     <thead class="thead-light">
                         <tr>
-                            <th class="text-center">ID</th>
-                            <th class="text-center text-nowrap" @onclick="@(() => SortByTitle())" style="cursor: pointer;">Title 
-                                    <Azunt.Components.Sorting.SortOrderArrow SortColumn="Title" SortOrder="@sortOrder"></Azunt.Components.Sorting.SortOrderArrow></th>
-                            <th class="text-center text-nowrap" @onclick="@(() => SortByName())">Name 
-                                    <Azunt.Components.Sorting.SortOrderArrow SortColumn="Name" SortOrder="@sortOrder"></Azunt.Components.Sorting.SortOrderArrow></th>
-                            <th class="text-center text-nowrap" @onclick="@(() => SortByCreate())">Create <VisualAcademy.Pages.Memos.Components.SortOrderArrow SortColumn="Create" SortOrder="@sortOrder"></VisualAcademy.Pages.Memos.Components.SortOrderArrow></th>
-                            <th class="text-center text-nowrap">Read</th>
-                            <th class="text-center text-nowrap">Actions</th>
-                            <th class="text-center text-nowrap">&nbsp;</th>
-                            <th class="text-center text-nowrap">Admin</th>
+
+                            <th class="text-center">
+                                ID
+                            </th>
+
+                            <th class="text-center text-nowrap"
+                                @onclick="@(() => SortByTitle())"
+                                style="cursor: pointer;">
+
+                                Title
+
+                                <Azunt.Components.Sorting.SortOrderArrow
+                                    SortColumn="Title"
+                                    SortOrder="@sortOrder">
+                                </Azunt.Components.Sorting.SortOrderArrow>
+
+                            </th>
+
+                            <th class="text-center text-nowrap"
+                                @onclick="@(() => SortByName())">
+
+                                Name
+
+                                <Azunt.Components.Sorting.SortOrderArrow
+                                    SortColumn="Name"
+                                    SortOrder="@sortOrder">
+                                </Azunt.Components.Sorting.SortOrderArrow>
+
+                            </th>
+
+                            <th class="text-center text-nowrap"
+                                @onclick="@(() => SortByCreate())">
+
+                                Create
+
+                                <VisualAcademy.Pages.Memos.Components.SortOrderArrow
+                                    SortColumn="Create"
+                                    SortOrder="@sortOrder">
+                                </VisualAcademy.Pages.Memos.Components.SortOrderArrow>
+
+                            </th>
+
+                            <th class="text-center text-nowrap">
+                                Read
+                            </th>
+
+                            <th class="text-center text-nowrap">
+                                Actions
+                            </th>
+
+                            <th class="text-center text-nowrap">
+                                &nbsp;
+                            </th>
+
+                            <th class="text-center text-nowrap">
+                                Admin
+                            </th>
+
                         </tr>
                     </thead>
+
                     @if (Models.Count == 0)
                     {
                         <tbody>
                             <tr>
-                                <td colspan="8" class="text-center">
+                                <td colspan="8"
+                                    class="text-center">
                                     <p>No Data.</p>
                                 </td>
                             </tr>
                         </tbody>
                     }
+
                     <tbody>
+
                         @foreach (var m in Models)
                         {
                             <tr>
-                                <td class="text-center" style="font-size: xx-small;">
+
+                                <td class="text-center"
+                                    style="font-size: xx-small;">
+
                                     @if (m.Step == 0)
                                     {
                                         @m.Id
@@ -112,11 +232,20 @@
                                     {
                                         <text>&nbsp;</text>
                                     }
+
                                 </td>
-                                <td style="cursor: pointer;" @onclick="@(_ => NameClick(m.Id))">
-                                    <span class="btn-link text-nowrap">@m.Title</span>
+
+                                <td style="cursor: pointer;"
+                                    @onclick="@(_ => NameClick(m.Id))">
+
+                                    <span class="btn-link text-nowrap">
+                                        @m.Title
+                                    </span>
+
                                 </td>
+
                                 <td>
+
                                     @if (m.Name != null)
                                     {
                                         @(Dul.StringLibrary.CutStringUnicode(m.Name, 17))
@@ -125,92 +254,241 @@
                                     {
                                         <text>(Unknown)</text>
                                     }
+
                                 </td>
+
                                 <td class="text-center text-nowrap small">
+
                                     @(Dul.DateTimeUtility.ShowTimeOrDate(m.Created))
+
                                 </td>
+
                                 <td class="text-center small">
+
                                     @m.ReadCount
+
                                 </td>
+
                                 <td class="small text-center">
-                                    <a href="/Memos/Details/@m.Id" class="btn btn-sm btn-light">Details</a>
-                                    <a href="/Memos/Edit/@m.Id" class="btn btn-sm btn-light" disabled="@IsReadOnly">Edit</a>
-                                    <a href="/Memos/Delete/@m.Id" class="btn btn-sm btn-light" disabled="@IsReadOnly">Del</a>
+
+                                    <a href="/Memos/Details/@m.Id"
+                                       class="btn btn-sm btn-light">
+                                        Details
+                                    </a>
+
+                                    <a href="/Memos/Edit/@m.Id"
+                                       class="btn btn-sm btn-light"
+                                       disabled="@IsReadOnly">
+                                        Edit
+                                    </a>
+
+                                    <a href="/Memos/Delete/@m.Id"
+                                       class="btn btn-sm btn-light"
+                                       disabled="@IsReadOnly">
+                                        Del
+                                    </a>
+
                                 </td>
-                                <td>&nbsp;</td>
+
+                                <td>
+                                    &nbsp;
+                                </td>
+
                                 <td class="text-center">
-                                    <input type="button" name="btnEdit" value="Edit" class="btn btn-sm btn-primary" @onclick="(() => EditBy(m))" disabled="@IsReadOnly" />
-                                    <input type="button" name="btnDelete" value="Del" class="btn btn-sm btn-danger" @onclick="(() => DeleteBy(m))" disabled="@IsReadOnly" />
-                                    <input type="button" name="btnToggle" value="Toggle" class="btn btn-sm btn-primary" @onclick="(() => ToggleBy(m))" />
+
+                                    <input type="button"
+                                           name="btnEdit"
+                                           value="Edit"
+                                           class="btn btn-sm btn-primary"
+                                           @onclick="(() => EditBy(m))"
+                                           disabled="@IsReadOnly" />
+
+                                    <input type="button"
+                                           name="btnDelete"
+                                           value="Del"
+                                           class="btn btn-sm btn-danger"
+                                           @onclick="(() => DeleteBy(m))"
+                                           disabled="@IsReadOnly" />
+
+                                    <input type="button"
+                                           name="btnToggle"
+                                           value="Toggle"
+                                           class="btn btn-sm btn-primary"
+                                           @onclick="(() => ToggleBy(m))" />
+
                                     @if (m.FileSize > 0)
                                     {
-                                        <input type="button" name="btnDownload" value="Dn" class="btn btn-sm btn-primary" @onclick="(() => DownloadBy(m))" />
-                                        <a href="/MemoDownload/FileDown/@m.Id" class="btn btn-sm btn-primary" download="@m.FileName">Dn</a>
-                                        <button onclick="location.href = '/MemoDownload/FileDown/@m.Id';" class="btn btn-sm btn-primary">Dn</button>
+                                        <input type="button"
+                                               name="btnDownload"
+                                               value="Dn"
+                                               class="btn btn-sm btn-primary"
+                                               @onclick="(() => DownloadBy(m))" />
+
+                                        <a href="/MemoDownload/FileDown/@m.Id"
+                                           class="btn btn-sm btn-primary"
+                                           download="@m.FileName">
+                                            Dn
+                                        </a>
+
+                                        <button onclick="location.href = '/MemoDownload/FileDown/@m.Id';"
+                                                class="btn btn-sm btn-primary">
+                                            Dn
+                                        </button>
                                     }
+
                                     <hr />
-                                    <button type="button" class="btn btn-primary" @onclick="@(() => OpenPreview(m.Id))">
+
+                                    <button type="button"
+                                            class="btn btn-primary"
+                                            @onclick="@(() => OpenPreview(m.Id))">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button type="button" class="btn btn-success" @onclick="(() => EditBy(m))">
+
+                                    <button type="button"
+                                            class="btn btn-success"
+                                            @onclick="(() => EditBy(m))">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button type="button" class="btn btn-danger" @onclick="(() => DeleteBy(m))">
+
+                                    <button type="button"
+                                            class="btn btn-danger"
+                                            @onclick="(() => DeleteBy(m))">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
+
                                     @if (m.FileSize > 0)
                                     {
-                                        <button type="button" class="btn btn-info" onclick="location.href = '/IncidentAttachmentDownload/FileDown/@m.Id';" style="margin-left: 3px;">
+                                        <button type="button"
+                                                class="btn btn-info"
+                                                onclick="location.href = '/IncidentAttachmentDownload/FileDown/@m.Id';"
+                                                style="margin-left: 3px;">
                                             <i class="fas fa-download"></i>
                                         </button>
 
-                                        @((MarkupString)Dul.BoardLibrary.DownloadType(m.FileName, m.FileName))
+                                        @((MarkupString)Dul.BoardLibrary.DownloadType(
+                                            m.FileName,
+                                            m.FileName))
                                     }
+
                                 </td>
+
                             </tr>
                         }
+
                     </tbody>
+
                 </table>
+
             </div>
         }
+
     </div>
+
     <div class="col-md-12">
-        <DulPager.DulPagerComponent Model="pager" PageIndexChanged="PageIndexChanged"></DulPager.DulPagerComponent>
+
+        <DulPager.DulPagerComponent
+            Model="pager"
+            PageIndexChanged="PageIndexChanged">
+        </DulPager.DulPagerComponent>
+
     </div>
+
     <div class="col-md-12">
-        <Azunt.Components.Search.SearchBox placeholder="Search Memos..." SearchQueryChanged="Search" Engine="Azunt.Components.Search.SearchBox.DebounceEngine.Cts"></Azunt.Components.Search.SearchBox>
+
+        <Azunt.Components.Search.SearchBox
+            placeholder="Search Memos..."
+            SearchQueryChanged="Search"
+            Engine="Azunt.Components.Search.SearchBox.DebounceEngine.Cts">
+        </Azunt.Components.Search.SearchBox>
+
     </div>
+
 </div>
 
-@*입력 또는 수정 폼 모달 다이얼로그*@
-<VisualAcademy.Pages.Memos.Components.ModalForm @ref="EditorFormReference" ModelSender="Model" CreateCallback="CreateOrEdit" EditCallback="CreateOrEdit">
-    <EditorFormTitle>@EditorFormTitle</EditorFormTitle>
+@* 입력 또는 수정 폼 모달 다이얼로그 *@
+
+<VisualAcademy.Pages.Memos.Components.ModalForm
+    @ref="EditorFormReference"
+    ModelSender="Model"
+    CreateCallback="CreateOrEdit"
+    EditCallback="CreateOrEdit">
+
+    <EditorFormTitle>
+        @EditorFormTitle
+    </EditorFormTitle>
+
 </VisualAcademy.Pages.Memos.Components.ModalForm>
 
-@*삭제 폼 모달 다이얼로그*@
-<VisualAcademy.Pages.Memos.Components.DeleteDialog @ref="DeleteDialogReference" OnClickCallback="DeleteClick">
+
+@* 삭제 폼 모달 다이얼로그 *@
+
+<VisualAcademy.Pages.Memos.Components.DeleteDialog
+    @ref="DeleteDialogReference"
+    OnClickCallback="DeleteClick">
 </VisualAcademy.Pages.Memos.Components.DeleteDialog>
+
 
 @if (IsInlineDialogShow)
 {
-    <div class="modal fade show d-block" tabindex="-1" role="dialog" data-nosnippet>
-        <div class="modal-dialog" role="document">
+    <div class="modal fade show d-block"
+         tabindex="-1"
+         role="dialog"
+         data-nosnippet>
+
+        <div class="modal-dialog"
+             role="document">
+
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h5 class="modal-title">Toggle</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ToggleClose">
-                        <span aria-hidden="true">&times;</span>
+
+                    <h5 class="modal-title">
+                        Toggle
+                    </h5>
+
+                    <button type="button"
+                            class="close"
+                            data-dismiss="modal"
+                            aria-label="Close"
+                            @onclick="ToggleClose">
+
+                        <span aria-hidden="true">
+                            &times;
+                        </span>
+
                     </button>
+
                 </div>
+
                 <div class="modal-body">
-                    <p>Do you want to toggle post #@(Model.Id)?</p>
+
+                    <p>
+                        Do you want to toggle post #@(Model.Id)?
+                    </p>
+
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @onclick="ToggleClick">Toggle</button>
-                    <button type="button" class="btn btn-secondary" @onclick="ToggleClose">Close</button>
+
+                    <button type="button"
+                            class="btn btn-primary"
+                            @onclick="ToggleClick">
+                        Toggle
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            @onclick="ToggleClose">
+                        Close
+                    </button>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
     <div class="modal-backdrop show"></div>
 }
