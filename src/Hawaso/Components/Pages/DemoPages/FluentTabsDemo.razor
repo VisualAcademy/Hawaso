@@ -6,33 +6,49 @@
 
 <FluentTabs>
     <FluentTab Id="attachment">
-        <Header>            
-            <h4><FluentIcon Value="@(new Icons.Regular.Size24.Attach())" /> Attachment</h4>
-        </Header>
-        <Content>
+        <HeaderTemplate>
+            <h4>
+                <FluentIcon Value="@(new Icons.Regular.Size24.Attach())" />
+                Attachment
+            </h4>
+        </HeaderTemplate>
+
+        <ChildContent>
             <FluentCard Height="500px">
                 Attachment List 1
             </FluentCard>
-        </Content>
+        </ChildContent>
     </FluentTab>
+
     <FluentTab Id="software-install">
-        <Header>
-            <h4><FluentIcon Value="@(new Icons.Regular.Size24.AppGeneric())" Color="@Color.Success" /> Software Install</h4>
-        </Header>
-        <Content>
+        <HeaderTemplate>
+            <h4>
+                <FluentIcon Value="@(new Icons.Regular.Size24.AppGeneric())"
+                            Color="@Color.Success" />
+                Software Install
+            </h4>
+        </HeaderTemplate>
+
+        <ChildContent>
             <FluentCard Height="500px">
                 Attachment List 2
             </FluentCard>
-        </Content>
+        </ChildContent>
     </FluentTab>
+
     <FluentTab Id="hardware-history">
-        <Header>
-            <h4><FluentIcon Value="@(new Icons.Regular.Size24.History())" Color="@Color.Error" /> History</h4>
-        </Header>
-        <Content>
+        <HeaderTemplate>
+            <h4>
+                <FluentIcon Value="@(new Icons.Regular.Size24.History())"
+                            Color="@Color.Error" />
+                History
+            </h4>
+        </HeaderTemplate>
+
+        <ChildContent>
             <FluentCard Height="500px">
                 Attachment List 2
             </FluentCard>
-        </Content>
+        </ChildContent>
     </FluentTab>
 </FluentTabs>
