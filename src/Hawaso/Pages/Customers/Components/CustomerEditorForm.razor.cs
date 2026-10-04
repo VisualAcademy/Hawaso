@@ -6,30 +6,33 @@ namespace Hawaso.Pages.Customers.Components;
 public partial class CustomerEditorForm
 {
     [Parameter]
-    public RenderFragment EditorFormTitle { get; set; }
+    public RenderFragment? EditorFormTitle { get; set; }
 
     [Parameter]
-    public Customer Model { get; set; }
+    [EditorRequired]
+    public Customer Model { get; set; } = default!;
 
-    public Customer ModelEdit { get; set; }
+    public Customer ModelEdit { get; set; } = new();
 
-    // 넘어온 Model 값을 수정 전용 ModelEdit에 담기 
+    // 넘어온 Model 값을 수정 전용 ModelEdit에 담기
     protected override void OnParametersSet()
     {
-        ModelEdit = new Customer(); 
-        ModelEdit.CustomerId = Model.CustomerId;
-        ModelEdit.CustomerName = Model.CustomerName;
-        ModelEdit.EmailAddress = Model.EmailAddress; 
+        ModelEdit = new Customer
+        {
+            CustomerId = Model.CustomerId,
+            CustomerName = Model.CustomerName,
+            EmailAddress = Model.EmailAddress
+        };
     }
 
     [Parameter]
-    public Action SaveOrUpdated { get; set; } // EventCallback<bool> 
+    public Action? SaveOrUpdated { get; set; } // EventCallback<bool>
 
     [Parameter]
     public EventCallback<bool> ChangeCallback { get; set; }
 
     [Inject]
-    public ICustomerRepository CustomerRepositoryAsync { get; set; }
+    public ICustomerRepository CustomerRepositoryAsync { get; set; } = default!;
 
     public bool IsShow { get; set; }
 
@@ -37,7 +40,7 @@ public partial class CustomerEditorForm
 
     public void Close() => IsShow = false;
 
-    protected async void btnSaveOrUpdate_Click()
+    protected async Task btnSaveOrUpdate_Click()
     {
         // 변경 내용 저장
         Model.CustomerName = ModelEdit.CustomerName;
@@ -46,13 +49,14 @@ public partial class CustomerEditorForm
         if (Model.CustomerId == 0)
         {
             await CustomerRepositoryAsync.AddAsync(Model);
-            SaveOrUpdated?.Invoke(); 
+            SaveOrUpdated?.Invoke();
         }
         else
         {
-            await CustomerRepositoryAsync.EditAsync(Model); 
+            await CustomerRepositoryAsync.EditAsync(Model);
             await ChangeCallback.InvokeAsync(true);
         }
+
         IsShow = false;
     }
 }
