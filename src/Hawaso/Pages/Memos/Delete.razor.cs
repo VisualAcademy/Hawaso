@@ -16,16 +16,16 @@ public partial class Delete
 
     #region Injectors
     [Inject]
-    public IJSRuntime JSRuntimeInjector { get; set; }
+    public IJSRuntime JSRuntimeInjector { get; set; } = default!;
 
     [Inject]
-    public NavigationManager Nav { get; set; }
+    public NavigationManager Nav { get; set; } = default!;
 
     [Inject]
-    public IMemoRepository RepositoryReference { get; set; }
+    public IMemoRepository RepositoryReference { get; set; } = default!;
 
     [Inject]
-    public IMemoFileStorageManager FileStorageManagerReference { get; set; }
+    public IMemoFileStorageManager FileStorageManagerReference { get; set; } = default!;
     #endregion
 
     #region Properties
@@ -46,28 +46,32 @@ public partial class Delete
     #endregion
 
     #region Event Handlers
-
     /// <summary>
     /// 삭제 버튼 클릭 이벤트 처리기
     /// </summary>
-    protected async void DeleteClick()
+    protected async Task DeleteClick()
     {
-        bool isDelete = await JSRuntimeInjector.InvokeAsync<bool>("confirm", $"Are you sure you want to delete it?");
+        bool isDelete = await JSRuntimeInjector.InvokeAsync<bool>(
+            "confirm",
+            "Are you sure you want to delete it?");
 
         if (isDelete)
         {
             if (!string.IsNullOrEmpty(Model?.FileName))
             {
-                // 첨부 파일 삭제 
+                // 첨부 파일 삭제
                 await FileStorageManagerReference.DeleteAsync(Model.FileName, "");
             }
 
-            await RepositoryReference.DeleteAsync(Id); // 삭제
-            Nav.NavigateTo(MemoListPage); // 리스트 페이지로 이동
+            // 데이터 삭제
+            await RepositoryReference.DeleteAsync(Id);
+
+            // 리스트 페이지로 이동
+            Nav.NavigateTo(MemoListPage);
         }
         else
         {
-            await JSRuntimeInjector.InvokeAsync<object>("alert", "Canceled.");
+            await JSRuntimeInjector.InvokeVoidAsync("alert", "Canceled.");
         }
     }
     #endregion
