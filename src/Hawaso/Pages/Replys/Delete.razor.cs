@@ -14,16 +14,16 @@ namespace Hawaso.Pages.Replys
 
         #region Injectors
         [Inject]
-        public IJSRuntime JSRuntimeInjector { get; set; }
+        public IJSRuntime JSRuntimeInjector { get; set; } = default!;
 
         [Inject]
-        public NavigationManager Nav { get; set; } 
+        public NavigationManager Nav { get; set; } = default!;
 
         [Inject]
-        public IReplyRepository RepositoryReference { get; set; }
+        public IReplyRepository RepositoryReference { get; set; } = default!;
 
         [Inject]
-        public IFileStorageManager FileStorageManagerReference { get; set; }
+        public IFileStorageManager FileStorageManagerReference { get; set; } = default!;
         #endregion
 
         #region Properties
@@ -40,34 +40,40 @@ namespace Hawaso.Pages.Replys
         {
             Model = await RepositoryReference.GetByIdAsync(Id);
             Content = Dul.HtmlUtility.EncodeWithTabAndSpace(Model.Content);
-        } 
+        }
         #endregion
 
         #region Event Handlers
-
         /// <summary>
         /// 삭제 버튼 클릭 이벤트 처리기
         /// </summary>
-        protected async void DeleteClick()
+        protected async Task DeleteClick()
         {
-            bool isDelete = await JSRuntimeInjector.InvokeAsync<bool>("confirm", $"{Id}번 글을 정말로 삭제하시겠습니까?");
+            bool isDelete = await JSRuntimeInjector.InvokeAsync<bool>(
+                "confirm",
+                $"{Id}번 글을 정말로 삭제하시겠습니까?");
 
             if (isDelete)
             {
                 if (!string.IsNullOrEmpty(Model?.FileName))
                 {
-                    // 첨부 파일 삭제 
-                    await FileStorageManagerReference.DeleteAsync(Model.FileName, "");
+                    // 첨부 파일 삭제
+                    await FileStorageManagerReference.DeleteAsync(
+                        Model.FileName, "");
                 }
 
-                await RepositoryReference.DeleteAsync(Id); // 삭제
-                Nav.NavigateTo("/Replys"); // 리스트 페이지로 이동
+                // 데이터 삭제
+                await RepositoryReference.DeleteAsync(Id);
+
+                // 리스트 페이지로 이동
+                Nav.NavigateTo("/Replys");
             }
             else
             {
-                await JSRuntimeInjector.InvokeAsync<object>("alert", "취소되었습니다.");
+                await JSRuntimeInjector.InvokeVoidAsync(
+                    "alert", "취소되었습니다.");
             }
-        } 
+        }
         #endregion
     }
 }
