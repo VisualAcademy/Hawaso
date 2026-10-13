@@ -11,13 +11,13 @@ public partial class Delete
     public int Id { get; set; }
 
     [Inject]
-    public INoticeRepository NoticeRepositoryAsyncReference { get; set; }
+    public INoticeRepository NoticeRepositoryAsyncReference { get; set; } = default!;
 
     [Inject]
-    public IJSRuntime JSRuntime { get; set; }
+    public IJSRuntime JSRuntime { get; set; } = default!;
 
     [Inject]
-    public NavigationManager NavigationManagerReference { get; set; }
+    public NavigationManager NavigationManagerReference { get; set; } = default!;
 
     protected Notice model = new Notice();
 
@@ -29,18 +29,25 @@ public partial class Delete
         content = Dul.HtmlUtility.EncodeWithTabAndSpace(model.Content);
     }
 
-    protected async void DeleteClick()
+    protected async Task DeleteClick()
     {
-        bool isDelete = await JSRuntime.InvokeAsync<bool>("confirm", $"{Id}번 글을 정말로 삭제하시겠습니까?");
+        bool isDelete = await JSRuntime.InvokeAsync<bool>(
+            "confirm",
+            $"{Id}번 글을 정말로 삭제하시겠습니까?");
 
         if (isDelete)
         {
-            await NoticeRepositoryAsyncReference.DeleteAsync(Id); // 삭제
-            NavigationManagerReference.NavigateTo("/Notices"); // 리스트 페이지로 이동
+            // 데이터 삭제
+            await NoticeRepositoryAsyncReference.DeleteAsync(Id);
+
+            // 리스트 페이지로 이동
+            NavigationManagerReference.NavigateTo("/Notices");
         }
         else
         {
-            await JSRuntime.InvokeAsync<object>("alert", "취소되었습니다.");
+            await JSRuntime.InvokeVoidAsync(
+                "alert",
+                "취소되었습니다.");
         }
     }
 }
