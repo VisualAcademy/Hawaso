@@ -10,7 +10,7 @@ namespace Hawaso.Pages.Notices
         public int Id { get; set; }
 
         [Inject]
-        public INoticeRepository NoticeRepositoryAsyncReference { get; set; }
+        public INoticeRepository NoticeRepositoryAsyncReference { get; set; } = default!; 
 
         [Inject]
         public NavigationManager NavigationManagerReference { get; set; }
