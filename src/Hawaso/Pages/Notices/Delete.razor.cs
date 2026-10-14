@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using NoticeApp.Models;
-using System.Threading.Tasks;
 
 namespace Hawaso.Pages.Notices;
 
