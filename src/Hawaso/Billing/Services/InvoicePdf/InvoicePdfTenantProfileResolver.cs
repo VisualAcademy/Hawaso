@@ -1,6 +1,5 @@
-﻿namespace Hawaso.Billing.Services.InvoicePdf
+﻿namespace Hawaso.Billing.Services.InvoicePdf;
+
+public class InvoicePdfTenantProfileResolver
 {
-    public class InvoicePdfTenantProfileResolver
-    {
-    }
 }
