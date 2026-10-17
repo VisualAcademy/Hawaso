@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿
+using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
 using Zero.Models;
 
@@ -10,7 +11,7 @@ public partial class Details
     public int Id { get; set; }
 
     [Inject]
-    public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; }
+    public IBriefingLogRepository UploadRepositoryAsyncReference { get; set; } = default!;
 
     protected BriefingLog model = new BriefingLog();
 
