@@ -23,7 +23,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
-        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.3.1" />
     </ItemGroup>
 
     <ItemGroup>
