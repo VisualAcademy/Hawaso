@@ -1,6 +1,5 @@
-﻿namespace Hawaso.Components.EmployeeSummary
+﻿namespace Hawaso.Components.EmployeeSummary;
+
+public class RecentEmployeeSummaryItem
 {
-    public class RecentEmployeeSummaryItem
-    {
-    }
 }
