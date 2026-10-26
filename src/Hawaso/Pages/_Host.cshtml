@@ -1,12 +1,16 @@
 ﻿@page "/Dashboard"
 @namespace Hawaso.Pages
 @using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = null;
 
     // User.Identity는 인증되지 않은 요청에서 null일 수 있으므로 안전하게 처리합니다.
     var displayName = User.Identity?.Name ?? "Guest";
+    // Reuse the authorization policy from Program.cs for the navigation link.
+    var canViewAppLogs = (await AuthorizationService.AuthorizeAsync(User, "GlobalAdministrators")).Succeeded;
 }
 
 <!DOCTYPE html>
@@ -197,6 +201,14 @@
                     </div>
 
                     <div class="sb-sidenav-menu-heading">Administrations</div>
+                    @if (canViewAppLogs)
+                    {
+                        <a class="nav-link" href="/AppLogs">
+                            <div class="sb-nav-link-icon"><i class="fas fa-file-alt" aria-hidden="true"></i></div>
+                            App Logs (Serilog)
+                        </a>
+                    }
+
 
 
 

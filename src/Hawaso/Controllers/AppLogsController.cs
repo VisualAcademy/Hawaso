@@ -1,12 +1,17 @@
 ﻿using Azunt.Data;
 using Azunt.Models;
 using Azunt.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
 namespace Azunt.Controllers
 {
+    // Serilog exception details are sensitive. Enforce authorization at the endpoint,
+    // not just by hiding the navigation link.
+    [Authorize(Policy = "GlobalAdministrators")]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class AppLogsController : Controller
     {
         private readonly LogsDbContext _db;
