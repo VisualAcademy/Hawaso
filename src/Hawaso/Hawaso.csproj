@@ -64,9 +64,6 @@
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.14" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
 
-        <!-- NU1903: Microsoft.OpenApi 보안 취약점 해결 -->
-        <PackageReference Include="Microsoft.OpenApi" Version="3.11.0" />
-
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.14" />
 
         <!-- NU1903: SQLitePCLRaw.lib.e_sqlite3 2.1.11 취약점 해결 -->
