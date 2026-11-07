@@ -207,6 +207,7 @@
     <Build Include="dbo\Tables\InventoryCountSessions.sql" />
     <Build Include="dbo\Tables\MachinesMedias.sql" />
     <Build Include="dbo\Tables\InventoryDispositionBatches.sql" />
+    <Build Include="dbo\Tables\InvoiceRecipients.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dbo\Scripts\Employee_FormData_References_Extract.sql" />
