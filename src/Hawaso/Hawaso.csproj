@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFramework>net11.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -13,8 +13,8 @@
         <PackageReference Include="Azunt.BundleManagement" Version="1.1.0" />
         <PackageReference Include="Azunt.InstructionManagement" Version="1.0.0" />
         <PackageReference Include="Microsoft.Playwright" Version="1.64.1" />
-        <PackageReference Include="NuGet.Packaging" Version="7.9.0" />
-        <PackageReference Include="NuGet.Protocol" Version="7.9.0" />
+        <PackageReference Include="NuGet.Packaging" Version="8.0.0" />
+        <PackageReference Include="NuGet.Protocol" Version="8.0.0" />
 
         <PackageReference Include="Azunt" Version="1.2.4" />
         <PackageReference Include="Azunt.ApplicantTypeManagement" Version="1.0.0" />
@@ -59,19 +59,19 @@
         <PackageReference Include="DulPager" Version="1.0.2" />
         <PackageReference Include="MatBlazor" Version="2.10.0" />
 
-        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.14" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.14" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.14" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="11.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="11.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="11.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0" />
 
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.14" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="11.0.0" />
 
         <!-- NU1903: SQLitePCLRaw.lib.e_sqlite3 2.1.11 취약점 해결 -->
         <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.5" />
 
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.14" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="11.0.0" />
 
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.14">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="11.0.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -82,8 +82,8 @@
         <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="5.0.1" />
 
         <PackageReference Include="Microsoft.Identity.Web" Version="4.18.0" />
-        <PackageReference Include="Microsoft.SemanticKernel" Version="1.81.0" />
-        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
+        <PackageReference Include="Microsoft.SemanticKernel" Version="1.82.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.3" />
 
         <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 
