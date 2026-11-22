@@ -69,7 +69,7 @@
         event.preventDefault();
         event.stopPropagation();
         toggleAppLauncher();
-      });
+      }, { signal });
 
       document.addEventListener('click', event => {
         const placeholderLink = event.target.closest?.('[data-placeholder-link]');
@@ -193,7 +193,7 @@
       }
 
       function directChildren(node) {
-        return Array.from(node.children).find(x => x.classList?.contains('dashboard-nav-children')) ?? null;
+        return Array.from(node.children).find(x => x.classList?.contains('az-dashboard-nav-children')) ?? null;
       }
 
       function syncSourceNode(key, expanded, origin) {
@@ -378,7 +378,7 @@
       }
 
       function cssEscape(value) {
-        return window.CSS?.escape ? CSS.escape(value) : value.replace(/[^a-zA-Z0-9_-]/g, '\\$&');
+        return window.CSS?.escape ? window.CSS.escape(value) : value.replace(/[^a-zA-Z0-9_-]/g, '\\$&');
       }
   };
 

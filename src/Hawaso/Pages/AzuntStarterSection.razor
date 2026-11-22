@@ -1,0 +1,74 @@
+@page "/dashboard/resources"
+@page "/dashboard/resources/app-services"
+@page "/dashboard/resources/databases"
+@page "/dashboard/resources/storage"
+@page "/dashboard/management"
+@page "/dashboard/management/identity"
+@page "/dashboard/management/identity/users"
+@page "/dashboard/management/identity/roles"
+@page "/dashboard/management/tenants"
+@page "/dashboard/monitoring"
+@page "/dashboard/monitoring/activity"
+@page "/dashboard/monitoring/health"
+@attribute [Authorize]
+@inject NavigationManager Navigation
+
+<div class="az-hawaso-dashboard-home">
+    <div class="az-portal-breadcrumb">Dashboard <span>/</span> @Current.Title</div>
+    <span class="az-hawaso-dashboard-kicker">AZUNT STARTER · UI EXAMPLE</span>
+    <h1 class="az-hawaso-dashboard-heading">@Current.Title</h1>
+    <p class="az-hawaso-dashboard-lead">@Current.Description</p>
+
+    <section class="az-hawaso-dashboard-tiles" aria-label="Example sections">
+        @foreach (var highlight in Current.Highlights)
+        {
+            <article class="az-hawaso-dashboard-tile">
+                <strong>@highlight</strong>
+                <span>AzuntSiteStarter 메뉴 및 화면 레이아웃 예시</span>
+            </article>
+        }
+    </section>
+
+    <div class="az-hawaso-dashboard-info">
+        이 페이지는 AzuntSiteStarter의 탐색과 디자인을 확인하기 위한 UI 예제입니다.
+        실제 리소스, 사용자, 테넌트, 상태 또는 감사 데이터를 조회하거나 변경하지 않습니다.
+        Hawaso의 기존 업무 기능은 왼쪽 HAWASO 메뉴에서 이용할 수 있습니다.
+    </div>
+    <nav class="az-hawaso-dashboard-links" aria-label="Useful navigation">
+        <a href="/Dashboard">Hawaso Dashboard</a>
+        <a href="/DotNetNote">Board</a>
+        <a href="/Customers">Customers</a>
+        <a href="/Identity/Account/Manage">Account</a>
+    </nav>
+</div>
+
+@code {
+    private sealed record StarterSection(string Title, string Description, string[] Highlights);
+
+    private static readonly Dictionary<string, StarterSection> Sections = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["/dashboard/resources"] = new("Resources", "리소스 영역의 메뉴 구조를 확인하는 UI 예제입니다.", ["App services", "Databases", "Storage"]),
+        ["/dashboard/resources/app-services"] = new("App services", "애플리케이션 서비스 영역의 예제 레이아웃입니다.", ["Web applications", "Deployment slots", "Runtime configuration"]),
+        ["/dashboard/resources/databases"] = new("Databases", "데이터베이스 관련 메뉴의 예제 레이아웃입니다.", ["SQL resources", "Connection health", "Backups"]),
+        ["/dashboard/resources/storage"] = new("Storage", "스토리지 관련 메뉴의 예제 레이아웃입니다.", ["Blob containers", "Files", "Usage"]),
+        ["/dashboard/management"] = new("Management", "관리 기능을 위한 메뉴 구조 예제입니다.", ["Identity", "Tenants", "Policies"]),
+        ["/dashboard/management/identity"] = new("Identity", "Identity 관련 메뉴의 예제 레이아웃입니다.", ["Users", "Roles", "Access policies"]),
+        ["/dashboard/management/identity/users"] = new("Users", "사용자 관리 UI 구성을 위한 예제 페이지입니다.", ["User list", "Invitations", "Access review"]),
+        ["/dashboard/management/identity/roles"] = new("Roles", "역할 및 권한 UI 구성을 위한 예제 페이지입니다.", ["Role list", "Assignments", "Permissions"]),
+        ["/dashboard/management/tenants"] = new("Tenants", "테넌트 관리 UI 구성을 위한 예제 페이지입니다.", ["Tenant list", "Subscriptions", "Configuration"]),
+        ["/dashboard/monitoring"] = new("Monitoring", "모니터링 영역의 메뉴 구조를 확인하는 예제입니다.", ["Activity log", "Service health", "Alerts"]),
+        ["/dashboard/monitoring/activity"] = new("Activity log", "활동 기록 화면 구성을 위한 예제입니다.", ["Recent operations", "Audit trail", "Filters"]),
+        ["/dashboard/monitoring/health"] = new("Service health", "서비스 상태 화면 구성을 위한 예제입니다.", ["Availability", "Incidents", "Maintenance"])
+    };
+
+    private StarterSection Current
+    {
+        get
+        {
+            var path = new Uri(Navigation.Uri).AbsolutePath.TrimEnd('/');
+            return Sections.TryGetValue(path, out var section)
+                ? section
+                : new StarterSection("Azunt Starter", "메뉴 예제 화면입니다.", []);
+        }
+    }
+}

@@ -19,7 +19,9 @@
            data-nav-primary-link
            href="@Model.Href"
            aria-current="@(Model.IsCurrent ? "page" : null)"
-           title="@Model.Text">
+           aria-disabled="@(Model.Href == "#" ? "true" : null)"
+           data-placeholder-link="@(Model.Href == "#" ? "true" : null)"
+           title="@(Model.Href == "#" ? "Hawaso에 연결된 페이지가 없는 Starter 메뉴" : Model.Text)">
             <span class="az-dashboard-nav-link-inner">
                 <span class="az-dashboard-nav-icon" aria-hidden="true">
                     <svg viewBox="0 0 20 20" focusable="false">

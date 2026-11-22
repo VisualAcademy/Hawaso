@@ -58,8 +58,8 @@ public static class DashboardNavigationCatalog
             new("activity", "Activity log", "activity", "/dashboard/monitoring/activity"),
             new("health", "Service health", "health", "/dashboard/monitoring/health")
         ], Group: "AZUNT MANAGEMENT"),
-        new("documentation", "Documentation", "docs", "/docs/", Group: "AZUNT LINKS"),
-        new("protected-docs", "Protected docs", "shield", "/docs/private/", Group: "AZUNT LINKS"),
+        new("documentation", "Documentation", "docs", "#", Group: "AZUNT LINKS"),
+        new("protected-docs", "Protected docs", "shield", "#", Group: "AZUNT LINKS"),
         new("account", "Account", "account", "/Identity/Account/Manage", Group: "AZUNT LINKS"),
         new("hawaso-dashboard", "Dashboard", "dashboard", "/Dashboard", Group: "HAWASO · CORE"),
         new("hawaso-demo", "데모", "docs", "/CodeSnippets/CurrentUserData1", [

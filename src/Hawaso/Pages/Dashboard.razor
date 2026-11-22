@@ -1,9 +1,49 @@
-﻿@page "/Dashboard"
-
+@page "/Dashboard"
 @attribute [Authorize]
 
-<h3>Dashboard</h3>
+<div class="az-hawaso-dashboard-home">
+    <div class="az-portal-breadcrumb">Hawaso <span>/</span> Dashboard</div>
+    <span class="az-hawaso-dashboard-kicker">HAWASO PORTAL</span>
+    <h1 class="az-hawaso-dashboard-heading">Dashboard</h1>
+    <p class="az-hawaso-dashboard-lead">
+        Hawaso의 기존 기능을 Azunt 대시보드에서 이용할 수 있습니다.
+        왼쪽 메뉴를 펼치거나 검색하여 원하는 페이지로 이동하세요.
+    </p>
 
-@code {
-
-}
+    <div class="az-hawaso-dashboard-tiles">
+        <a class="az-hawaso-dashboard-tile" href="/DotNetNote">
+            <strong>게시판</strong>
+            <span>DotNetNote 게시판 및 관련 관리 화면</span>
+            <small>게시판 열기 →</small>
+        </a>
+        <a class="az-hawaso-dashboard-tile" href="/Customers">
+            <strong>Customers</strong>
+            <span>기존 Hawaso 고객 관리 화면</span>
+            <small>고객 관리 →</small>
+        </a>
+        <a class="az-hawaso-dashboard-tile" href="/Products">
+            <strong>DotNetSale</strong>
+            <span>상품 및 카테고리 관련 기능</span>
+            <small>상품 보기 →</small>
+        </a>
+        <a class="az-hawaso-dashboard-tile" href="/Counter">
+            <strong>Counter</strong>
+            <span>Blazor Counter 데모</span>
+            <small>데모 열기 →</small>
+        </a>
+        <a class="az-hawaso-dashboard-tile" href="/Administrations/Roles/RoleList">
+            <strong>Users &amp; Roles</strong>
+            <span>기존 역할 관리 화면</span>
+            <small>역할 관리 →</small>
+        </a>
+        <a class="az-hawaso-dashboard-tile" href="/dashboard/resources">
+            <strong>Azunt UI 예제</strong>
+            <span>AzuntSiteStarter의 리소스·관리·모니터링 메뉴 구조</span>
+            <small>예제 보기 →</small>
+        </a>
+    </div>
+    <div class="az-hawaso-dashboard-info">
+        AzuntSiteStarter의 리소스·관리·모니터링 화면은 UI 예제입니다.
+        실제 Hawaso 운영 데이터는 연결하지 않았으며, 기존 업무 메뉴와 기능은 별도로 유지됩니다.
+    </div>
+</div>

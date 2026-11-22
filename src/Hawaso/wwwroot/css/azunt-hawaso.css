@@ -34,3 +34,87 @@
 #blazor-error-ui .dismiss { cursor: pointer; position: absolute; right: 14px; top: 10px; }
 @media(max-width: 900px) { .az-hawaso-card-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media(max-width: 620px) { .az-hawaso-card-grid { grid-template-columns: 1fr; } .az-hawaso-section { padding-block: 44px; } }
+
+
+/* Hawaso's Blazor component libraries load generic anchor rules.
+   Scope the dashboard chrome so those rules cannot recolor the sidebar. */
+body.az-dashboard-body #portalSidebar .az-dashboard-nav .az-dashboard-nav-link,
+body.az-dashboard-body #portalSidebar .az-dashboard-nav .az-dashboard-nav-link:link,
+body.az-dashboard-body #portalSidebar .az-dashboard-nav .az-dashboard-nav-link:visited {
+  color: #edf4fb !important;
+  text-decoration: none !important;
+}
+body.az-dashboard-body #portalSidebar .az-dashboard-nav .az-dashboard-nav-link:hover,
+body.az-dashboard-body #portalSidebar .az-dashboard-nav .az-dashboard-nav-link:focus-visible,
+body.az-dashboard-body #portalSidebar .az-dashboard-nav .az-dashboard-nav-link.az-is-current {
+  color: #fff !important;
+  text-decoration: none !important;
+}
+body.az-dashboard-body #portalSidebar .az-dashboard-nav .az-dashboard-nav-link:focus-visible,
+body.az-dashboard-body #portalSidebar .az-dashboard-nav .az-dashboard-nav-toggle:focus-visible {
+  outline: 2px solid #8cc8f6;
+  outline-offset: -2px;
+}
+body.az-dashboard-body #portalSidebar .az-dashboard-nav-section-label { color: #e8f2fd; }
+body.az-dashboard-body #portalSidebar .az-dashboard-nav-toggle { color: #b5c8d8; }
+body.az-dashboard-body #portalSidebar .az-dashboard-nav-toggle:hover { color: #fff; }
+body.az-dashboard-body #portalSidebar .az-dashboard-nav-icon { color: #9fb9ce; }
+body.az-dashboard-body .az-portal-sidebar a.az-portal-sidebar-fixed-link,
+body.az-dashboard-body .az-portal-sidebar a.az-portal-sidebar-fixed-link:visited {
+  color: #fff;
+  text-decoration: none;
+}
+body.az-dashboard-body #portalSidebar .az-dashboard-nav-link[aria-disabled="true"] {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+/* Dashboard home and UI-only Starter sections; no fictitious operational KPIs. */
+.az-hawaso-dashboard-home { max-width: 1200px; }
+.az-hawaso-dashboard-heading { margin: 0 0 10px; font-size: clamp(24px, 2.2vw, 30px); font-weight: 750; color: #182b46; }
+.az-hawaso-dashboard-lead { max-width: 780px; color: #61728a; font-size: 14px; line-height: 1.75; margin: 0 0 22px; }
+.az-hawaso-dashboard-kicker { display: inline-block; color: #0067b8; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .09em; margin: 0 0 10px; }
+.az-hawaso-dashboard-tiles { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; margin: 20px 0 24px; }
+.az-hawaso-dashboard-tile { display: flex; min-height: 140px; flex-direction: column; gap: 10px; padding: 23px; background: #fff; border: 1px solid #dce4ee; border-radius: 8px; box-shadow: 0 1px 3px rgba(18,42,78,.025); text-decoration: none !important; }
+a.az-hawaso-dashboard-tile:hover { border-color: #9ec8eb; box-shadow: 0 5px 15px rgba(19,73,123,.09); }
+.az-hawaso-dashboard-tile strong { font-size: 16px; color: #152c47; }
+.az-hawaso-dashboard-tile span { font-size: 13px; color: #61728a; line-height: 1.6; }
+.az-hawaso-dashboard-tile small { margin-top: auto; color: #0067b8; font-size: 12px; font-weight: 750; }
+.az-hawaso-dashboard-info { background: #f8fbff; border: 1px solid #cee2f4; border-radius: 8px; padding: 18px 22px; color: #445c77; line-height: 1.7; font-size: 13px; }
+.az-hawaso-dashboard-links { display: flex; flex-wrap: wrap; gap: 12px; margin: 18px 0; }
+.az-hawaso-dashboard-links a { color: #0067b8; text-decoration: none; font-size: 13px; font-weight: 700; }
+.az-hawaso-dashboard-links a:hover { text-decoration: underline; }
+@media (max-width: 850px) { .az-hawaso-dashboard-tiles { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 560px) { .az-hawaso-dashboard-tiles { grid-template-columns: 1fr; } }
+
+body.az-dashboard-body .az-portal-app-item.az-is-unavailable,
+body.az-dashboard-body .az-portal-app-quick-links .az-is-unavailable {
+  opacity: .45;
+  cursor: not-allowed;
+}
+body.az-dashboard-body .az-portal-app-item.az-is-unavailable:hover {
+  background: transparent;
+}
+body.az-dashboard-body .az-portal-app-quick-links .az-is-unavailable {
+  display: block;
+  padding: 11px 12px;
+  font-size: 12px;
+  color: #ced9e3;
+}
+
+/* Keep the header brand and app links consistent with the Starter theme. */
+body.az-dashboard-body .az-portal-topbar a.az-portal-brand,
+body.az-dashboard-body .az-portal-topbar a.az-portal-brand:visited {
+  color: #51677f !important;
+  text-decoration: none !important;
+}
+body.az-dashboard-body .az-portal-topbar .az-portal-shortcuts a,
+body.az-dashboard-body .az-portal-topbar .az-portal-actions a:not(.az-avatar) {
+  color: #617085;
+  text-decoration: none;
+}
+body.az-dashboard-body .az-portal-app-menu a.az-portal-app-item,
+body.az-dashboard-body .az-portal-app-menu a.az-portal-app-item:visited {
+  color: #f4f4f4;
+  text-decoration: none !important;
+}

@@ -17,15 +17,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hawaso · Dashboard</title>
   <link rel="stylesheet" href="~/css/bootstrap/bootstrap.min.css" />
-  <link rel="stylesheet" href="~/css/azunt-core.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/azunt-dashboard.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/css/azunt-hawaso.css" asp-append-version="true" />
 
   <base href="~/" />
   <link rel="stylesheet" href="_content/MatBlazor/dist/matBlazor.css" />
   <link rel="stylesheet" href="_content/ChartJs.Blazor/ChartJSBlazor.css" />
   <link rel="stylesheet" href="_content/Blazored.Toast/blazored-toast.min.css" />
   <link rel="stylesheet" href="~/css/open-iconic/font/css/open-iconic-bootstrap.min.css" />
+  @* Keep Azunt shell styles after Bootstrap, MatBlazor and other library styles. *@
+  <link rel="stylesheet" href="~/css/azunt-core.css" asp-append-version="true" />
+  <link rel="stylesheet" href="~/css/azunt-dashboard.css" asp-append-version="true" />
+  <link rel="stylesheet" href="~/css/azunt-hawaso.css" asp-append-version="true" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
   <script src="_content/MatBlazor/dist/matBlazor.js"></script>
   <script src="_content/ChartJs.Blazor/moment-with-locales.min.js"></script>
@@ -89,18 +90,18 @@
         <span class="az-portal-app-icon az-app-icon-resources"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#resources"></use></svg></span>
         <span>Resources</span>
       </a>
-      <a class="az-portal-app-item" href="/courses">
+      <span class="az-portal-app-item az-is-unavailable" aria-disabled="true" title="AzuntSiteStarter 예제 메뉴 · Hawaso에서 미구현">
         <span class="az-portal-app-icon az-app-icon-courses"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#courses"></use></svg></span>
         <span>Courses</span>
-      </a>
-      <a class="az-portal-app-item" href="/docs/">
+      </span>
+      <span class="az-portal-app-item az-is-unavailable" aria-disabled="true" title="AzuntSiteStarter 예제 메뉴 · Hawaso에서 미구현">
         <span class="az-portal-app-icon az-app-icon-docs"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#docs"></use></svg></span>
         <span>Documentation</span>
-      </a>
-      <a class="az-portal-app-item" href="/docs/private/">
+      </span>
+      <span class="az-portal-app-item az-is-unavailable" aria-disabled="true" title="AzuntSiteStarter 예제 메뉴 · Hawaso에서 미구현">
         <span class="az-portal-app-icon az-app-icon-protected"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#shield"></use></svg></span>
         <span>Protected docs</span>
-      </a>
+      </span>
       <a class="az-portal-app-item" href="/Identity/Account/Manage">
         <span class="az-portal-app-icon az-app-icon-account"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#account"></use></svg></span>
         <span>Account</span>
@@ -109,10 +110,10 @@
         <span class="az-portal-app-icon az-app-icon-products"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#products"></use></svg></span>
         <span>Products</span>
       </a>
-      <a class="az-portal-app-item" href="/pricing">
+      <span class="az-portal-app-item az-is-unavailable" aria-disabled="true" title="AzuntSiteStarter 예제 메뉴 · Hawaso에서 미구현">
         <span class="az-portal-app-icon az-app-icon-pricing"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#pricing"></use></svg></span>
         <span>Pricing</span>
-      </a>
+      </span>
       <a class="az-portal-app-item" href="/DotNetNote">
         <span class="az-portal-app-icon az-app-icon-docs"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#docs"></use></svg></span>
         <span>Hawaso Board</span>
@@ -126,8 +127,8 @@
     <div class="az-portal-app-menu-divider"></div>
     <div class="az-portal-app-quick-links">
       <a href="/dashboard/resources">Browse resources <span aria-hidden="true">→</span></a>
-      <a href="/courses/aspnet-core">Browse courses <span aria-hidden="true">→</span></a>
-      <a href="/docs/getting-started/site-structure">Getting started <span aria-hidden="true">→</span></a>
+      <span class="az-is-unavailable" title="Hawaso에서 미구현">Browse courses</span>
+      <span class="az-is-unavailable" title="Hawaso에서 미구현">Getting started</span>
       <a href="/Identity/Account/Manage">Profile and account <span aria-hidden="true">→</span></a>
     </div>
   </section>
