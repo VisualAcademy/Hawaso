@@ -1,257 +1,72 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "Hawaso · ASP.NET Core & Blazor";
 }
-
-@if (DateTime.Now.Second % 2 == 0)
-{
-    <header>
-        @await Component.InvokeAsync("AzCarousel")
-    </header>
-}
-else
-{
-    <header>
-        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-            <ol class="carousel-indicators">
-                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-            </ol>
-            <div class="carousel-inner" role="listbox">
-                <!-- Slide One -->
-                <div class="carousel-item active" style="background-image: url('https://images.pexels.com/photos/1103970/pexels-photo-1103970.jpeg?auto=compress&cs=tinysrgb&w=1600')">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h3>Blazor Server Part 1</h3>
-                        <p>회사 홈페이지와 관리자 페이지를 Blazor로 만드는 실전 웹개발 과정</p>
-                        <a class="btn btn-primary" href="http://www.devlec.com/?_pageVariable=courseDetail&code=PT001TB4369&method=S&relation=PT001TB4369_BlazorServer" target="_blank">강의 보기</a>
-                    </div>
-                </div>
-                <!-- Slide Two -->
-                <div class="carousel-item" style="background-image: url('https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=1600')">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h3>Blazor 게시판 프로젝트 Part 2</h3>
-                        <p>공지사항, 자료실, 답변형 게시판을 Blazor로 직접 구현해보세요</p>
-                        <a class="btn btn-primary" href="http://www.devlec.com/?_pageVariable=courseDetail&code=PT001TB4370&method=S&relation=PT001TB4370_BlazorServerPart2" target="_blank">강의 보기</a>
-                    </div>
-                </div>
-                <!-- Slide Three -->
-                <div class="carousel-item" style="background-image: url('https://images.pexels.com/photos/414612/pexels-photo-414612.jpeg?auto=compress&cs=tinysrgb&w=1600')">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h3>Blazor 실전 프로젝트 Part 3</h3>
-                        <p>hawaso.com 사이트를 직접 구현하며 실무 핵심 기능을 익히는 강의</p>
-                        <a class="btn btn-primary" href="http://www.devlec.com/?_pageVariable=courseDetail&code=PT001TB4371&method=S&relation=PT001TB4371_BlazorProject" target="_blank">강의 보기</a>
-                    </div>
-                </div>
+<section class="az-hero-section">
+    <div class="az-shell-width az-hero-grid">
+        <div class="az-hero-copy">
+            <span class="az-hero-kicker">ASP.NET Core 11 · Blazor</span>
+            <h1>Learn, build, and manage with Hawaso.</h1>
+            <p>ASP.NET Core와 Blazor로 구현한 실전 웹 애플리케이션. 강의, 게시판, 관리 기능을 하나의 사이트에서 살펴보세요.</p>
+            <div class="az-hero-actions">
+                <a class="az-button az-button-primary az-button-large" href="/Dashboard">Open dashboard</a>
+                <a class="az-button az-button-outline az-button-large" href="/DotNetNote">Board</a>
+                <a class="az-button az-button-outline az-button-large" href="/About">About Hawaso</a>
             </div>
-            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
+            <p class="az-hawaso-hero-note">Hawaso on <a href="https://github.com/VisualAcademy/Hawaso" target="_blank" rel="noopener noreferrer">GitHub</a> · .NET 11</p>
         </div>
-    </header>
-}
-
-<!-- Page Content -->
-<div class="container">
-
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <h4>Hawaso 프로젝트 GitHub</h4>
-            <ul style="list-style: none;">
-                <li>
-                    <a href="https://github.com/VisualAcademy/Hawaso.V3X" target="_blank">.NET Core V3.X 버전 소스</a>
-                </li>
-                <li>
-                    <a href="https://github.com/VisualAcademy/Hawaso.V50" target="_blank">.NET V5.0 버전 소스</a>
-                </li>
-                <li>
-                    <a href="https://github.com/VisualAcademy/Hawaso" target="_blank">.NET V8.0 버전 소스(현재 버전)</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-
-    <h1 class="my-4">하와소 사이트 방문을 환영합니다.</h1>
- 
-
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card shadow-sm border-0">
-                <div class="card-body d-flex align-items-center">
-                    <div class="me-3" style="font-size:32px;">🎒</div>
-                    <div>
-                        <h4 class="card-title mb-1">
-                            <span class="badge bg-success me-1">NEW</span>
-                            <a href="https://memoengine.com/bags/dotnet-edc-whats-in-my-bag/"
-                               class="text-decoration-none">
-                                찐 .NET 개발자 EDC – What's in My Bag
-                            </a>
-                        </h4>
-                        <p class="card-text text-muted mb-0">
-                            20년 넘게 .NET과 함께 걸어온 개발자가 실제로 매일 들고 다녔던,
-                            역사와 철학이 담긴 진짜 EDC 가방 이야기입니다.
-                        </p>
-                    </div>
+        <div class="az-cloud-visual" aria-hidden="true">
+            <div class="az-visual-toolbar"><span></span><span></span><span></span><strong>Hawaso</strong></div>
+            <div class="az-visual-body">
+                <div class="az-visual-sidebar"></div>
+                <div class="az-visual-canvas">
+                    <div class="az-visual-heading"></div>
+                    <div class="az-visual-card-row"><i></i><i></i><i></i></div>
+                    <div class="az-visual-chart"><b></b><b></b><b></b><b></b><b></b><b></b></div>
                 </div>
             </div>
         </div>
     </div>
-
-
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <partial name="~/Views/Home/_CountDown.cshtml" />
+</section>
+<section class="az-trust-strip">
+    <div class="az-shell-width"><span>ASP.NET Core 11</span><span>Blazor Server</span><span>DotNetNote</span><span>Azure-ready</span></div>
+</section>
+<section class="az-hawaso-section az-shell-width">
+    <div class="az-section-heading"><span class="az-eyebrow">Explore Hawaso</span><h2>서비스와 학습 자료를 한곳에서.</h2></div>
+    <div class="az-hawaso-card-grid">
+        <article class="az-hawaso-card az-hawaso-card--featured"><h3>Dashboard</h3><p>Blazor 기반 업무 관리 화면과 전체 기능 메뉴를 만나보세요.</p><a href="/Dashboard">대시보드 열기 →</a></article>
+        <article class="az-hawaso-card"><h3>DotNetNote · Board</h3><p>공지사항과 자료실 등 다양한 게시판 관련 기능을 확인할 수 있습니다.</p><a href="/DotNetNote">게시판 열기 →</a></article>
+        <article class="az-hawaso-card"><h3>About</h3><p>Hawaso 프로젝트 소개와 ASP.NET Core 개발 내용을 살펴보세요.</p><a href="/About">자세히 보기 →</a></article>
+    </div>
+</section>
+<section class="az-hawaso-section az-hawaso-section--muted">
+    <div class="az-shell-width">
+        <div class="az-section-heading"><span class="az-eyebrow">Learning</span><h2>Blazor 실전 개발 강의</h2></div>
+        <div class="az-hawaso-card-grid">
+            <article class="az-hawaso-card"><h3>Blazor Server Part 1</h3><p>회사 홈페이지와 관리자 페이지를 Blazor로 만드는 실전 웹개발 과정.</p><a href="http://www.devlec.com/?_pageVariable=courseDetail&amp;code=PT001TB4369&amp;method=S&amp;relation=PT001TB4369_BlazorServer" target="_blank" rel="noopener noreferrer">강의 보기 →</a></article>
+            <article class="az-hawaso-card"><h3>Blazor 게시판 프로젝트 Part 2</h3><p>공지사항, 자료실, 답변형 게시판 등을 직접 구현하는 과정.</p><a href="http://www.devlec.com/?_pageVariable=courseDetail&amp;code=PT001TB4370&amp;method=S&amp;relation=PT001TB4370_BlazorServerPart2" target="_blank" rel="noopener noreferrer">강의 보기 →</a></article>
+            <article class="az-hawaso-card"><h3>Blazor 실전 프로젝트 Part 3</h3><p>Hawaso 웹사이트를 직접 개발하며 핵심 기능을 학습하는 과정.</p><a href="http://www.devlec.com/?_pageVariable=courseDetail&amp;code=PT001TB4371&amp;method=S&amp;relation=PT001TB4371_BlazorProject" target="_blank" rel="noopener noreferrer">강의 보기 →</a></article>
         </div>
     </div>
-
-
-    <!-- Marketing Icons Section -->
-    <div class="row">
-        <div class="col-lg-4 mb-4">
-            <div class="card h-100">
-                <h4 class="card-header">데브렉</h4>
-                <div class="card-body">
-                    <p class="card-text">프로그래밍 관련 학습의 모든 정보는 데브렉 사이트를 참고하세요.</p>
-                </div>
-                <div class="card-footer">
-                    <a href="http://www.devlec.com" class="btn btn-primary">Learn More</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 mb-4">
-            <div class="card h-100">
-                <h4 class="card-header">비주얼아카데미</h4>
-                <div class="card-body">
-                    <p class="card-text">박용준 강사가 진행하는 닷넷 관련 주요 강의는 비주얼아카데미 유튜브 채널을 참고하세요.</p>
-                </div>
-                <div class="card-footer">
-                    <a href="https://youtube.com/VisualAcademy" class="btn btn-primary">Learn More</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 mb-4">
-            <div class="card h-100">
-                <h4 class="card-header">자바캠퍼스</h4>
-                <div class="card-body">
-                    <p class="card-text">박용준 강사가 진행하는 자바 관련 주요 강의는 자바캠퍼스 유튜브 채널을 참고하세요.</p>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn btn-primary">Learn More</a>
-                </div>
-            </div>
-        </div>
+</section>
+<section class="az-hawaso-carousel-wrap az-shell-width" aria-label="Blazor course highlights">
+    @await Component.InvokeAsync("AzCarousel")
+</section>
+<section class="az-hawaso-section az-shell-width">
+    <div class="az-section-heading"><span class="az-eyebrow">Community &amp; resources</span><h2>다양한 개발 자료와 커뮤니티</h2></div>
+    <div class="az-hawaso-card-grid">
+        <article class="az-hawaso-card"><h3>데브렉</h3><p>프로그래밍 강의와 다양한 개발 학습 자료를 확인하세요.</p><a href="https://www.devlec.com" target="_blank" rel="noopener noreferrer">DevLec 방문 →</a></article>
+        <article class="az-hawaso-card"><h3>비주얼아카데미</h3><p>.NET 강의와 실전 개발 콘텐츠를 YouTube에서 만나보세요.</p><a href="https://youtube.com/VisualAcademy" target="_blank" rel="noopener noreferrer">YouTube 방문 →</a></article>
+        <article class="az-hawaso-card"><h3>자바캠퍼스</h3><p>Java 관련 학습 자료 및 강의 콘텐츠를 소개합니다.</p><a href="/About">Hawaso에서 더 알아보기 →</a></article>
     </div>
-    <!-- /.row -->
-    <!-- Portfolio Section -->
-    <h2>Portfolio Heading</h2>
-
-    <div class="row">
-        <div class="col-lg-4 col-sm-6 portfolio-item">
-            <div class="card h-100">
-                <a href="#"><img class="card-img-top" src="http://placeimg.com/700/400/any" alt=""></a>
-                <div class="card-body">
-                    <h4 class="card-title">
-                        <a href="#">Project One</a>
-                    </h4>
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur eum quasi sapiente nesciunt? Voluptatibus sit, repellat sequi itaque deserunt, dolores in, nesciunt, illum tempora ex quae? Nihil, dolorem!</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-sm-6 portfolio-item">
-            <div class="card h-100">
-                <a href="#"><img class="card-img-top" src="http://placeimg.com/700/400/any" alt=""></a>
-                <div class="card-body">
-                    <h4 class="card-title">
-                        <a href="#">Project Two</a>
-                    </h4>
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-sm-6 portfolio-item">
-            <div class="card h-100">
-                <a href="#"><img class="card-img-top" src="http://placeimg.com/700/400/any" alt=""></a>
-                <div class="card-body">
-                    <h4 class="card-title">
-                        <a href="#">Project Three</a>
-                    </h4>
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos quisquam, error quod sed cumque, odio distinctio velit nostrum temporibus necessitatibus et facere atque iure perspiciatis mollitia recusandae vero vel quam!</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-sm-6 portfolio-item">
-            <div class="card h-100">
-                <a href="#"><img class="card-img-top" src="http://placeimg.com/700/400/any" alt=""></a>
-                <div class="card-body">
-                    <h4 class="card-title">
-                        <a href="#">Project Four</a>
-                    </h4>
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-sm-6 portfolio-item">
-            <div class="card h-100">
-                <a href="#"><img class="card-img-top" src="http://placeimg.com/700/400/any" alt=""></a>
-                <div class="card-body">
-                    <h4 class="card-title">
-                        <a href="#">Project Five</a>
-                    </h4>
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra euismod odio, gravida pellentesque urna varius vitae.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-sm-6 portfolio-item">
-            <div class="card h-100">
-                <a href="#"><img class="card-img-top" src="http://placeimg.com/700/400/any" alt=""></a>
-                <div class="card-body">
-                    <h4 class="card-title">
-                        <a href="#">Project Six</a>
-                    </h4>
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque earum nostrum suscipit ducimus nihil provident, perferendis rem illo, voluptate atque, sit eius in voluptates, nemo repellat fugiat excepturi! Nemo, esse.</p>
-                </div>
-            </div>
-        </div>
+    <div class="az-hawaso-link-row">
+        <a class="az-button az-button-outline" href="https://github.com/VisualAcademy/Hawaso.V3X" target="_blank" rel="noopener noreferrer">Hawaso V3.X</a>
+        <a class="az-button az-button-outline" href="https://github.com/VisualAcademy/Hawaso.V50" target="_blank" rel="noopener noreferrer">Hawaso V5.0</a>
+        <a class="az-button az-button-primary" href="https://github.com/VisualAcademy/Hawaso" target="_blank" rel="noopener noreferrer">Hawaso GitHub</a>
     </div>
-    <!-- /.row -->
-    <!-- Features Section -->
-    <div class="row">
-        <div class="col-lg-6">
-            <h2>Modern Business Features</h2>
-            <p>The Modern Business template by Start Bootstrap includes:</p>
-            <ul>
-                <li>
-                    <strong>Bootstrap v4</strong>
-                </li>
-                <li>jQuery</li>
-                <li>Font Awesome</li>
-                <li>Working contact form with validation</li>
-                <li>Unstyled page elements for easy customization</li>
-            </ul>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis, omnis doloremque non cum id reprehenderit, quisquam totam aspernatur tempora minima unde aliquid ea culpa sunt. Reiciendis quia dolorum ducimus unde.</p>
-        </div>
-        <div class="col-lg-6">
-            <img class="img-fluid rounded" src="https://placehold.it/700x450" alt="">
-        </div>
+</section>
+<section class="az-hawaso-section az-shell-width">
+    <div class="az-hawaso-note"><strong>🎒 찐 .NET 개발자 EDC – What's in My Bag</strong>
+        <p>20년 넘게 .NET과 함께 걸어온 개발자의 실제 장비와 개발 이야기를 소개합니다.
+        <a href="https://memoengine.com/bags/dotnet-edc-whats-in-my-bag/" target="_blank" rel="noopener noreferrer">게시글 읽기 →</a></p>
     </div>
-    <!-- /.row -->
-
-    <hr>
-
-    <!-- Call to Action Section -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestias, expedita, saepe, vero rerum deleniti beatae veniam harum neque nemo praesentium cum alias asperiores commodi.</p>
-        </div>
-        <div class="col-md-4">
-            <a class="btn btn-lg btn-secondary btn-block" href="#">Call to Action</a>
-        </div>
-    </div>
-
-</div>
-<!-- /.container -->
+</section>

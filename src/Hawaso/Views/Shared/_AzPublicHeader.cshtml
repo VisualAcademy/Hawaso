@@ -1,0 +1,379 @@
+<header class="az-site-header" data-az-header>
+  <svg class="az-icon-sprite" aria-hidden="true" focusable="false">
+    <symbol id="az-i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8 4.8-2.2Z"></path></symbol>
+    <symbol id="az-i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"></path><path d="m3 12 9 5 9-5"></path><path d="m3 16 9 5 9-5"></path></symbol>
+    <symbol id="az-i-window" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18M7 6.5h.01M10 6.5h.01"></path></symbol>
+    <symbol id="az-i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z"></path><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5v-16Z"></path></symbol>
+    <symbol id="az-i-code" viewBox="0 0 24 24"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 4l-4 16"></path></symbol>
+    <symbol id="az-i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></symbol>
+    <symbol id="az-i-gauge" viewBox="0 0 24 24"><path d="M4.3 18a9 9 0 1 1 15.4 0"></path><path d="m12 13 4-4"></path><path d="M12 18h.01"></path></symbol>
+    <symbol id="az-i-shield" viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-3Z"></path><path d="m9 12 2 2 4-4"></path></symbol>
+    <symbol id="az-i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></symbol>
+    <symbol id="az-i-rocket" viewBox="0 0 24 24"><path d="M14 5c3.5-2 6-2 7-2-0 1-.1 3.5-2 7l-5.5 5.5-5-5L14 5Z"></path><path d="m9 9-4 1-2 2 5 1M15 15l-1 4-2 2-1-5"></path><path d="M7 17c-1.6.3-3 1.7-3 3 1.3 0 2.7-1.4 3-3Z"></path></symbol>
+    <symbol id="az-i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M9 7V4h6v3M3 12h18M10 12v2h4v-2"></path></symbol>
+    <symbol id="az-i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path></symbol>
+    <symbol id="az-i-terminal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="m7 9 3 3-3 3M12 16h5"></path></symbol>
+    <symbol id="az-i-life" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="4"></circle><path d="m5.6 5.6 3.6 3.6M14.8 14.8l3.6 3.6M18.4 5.6l-3.6 3.6M9.2 14.8l-3.6 3.6"></path></symbol>
+    <symbol id="az-i-handshake" viewBox="0 0 24 24"><path d="m8 12 3-3c1-1 2.2-1 3.2-.2l4.3 3.4"></path><path d="m3 9 4-4 4 3-5 6-3-5ZM21 9l-4-4-3 2"></path><path d="m7 14 5 5c1 1 2.5 1 3.5 0l3-3c.8-.8.8-2.2 0-3"></path></symbol>
+    <symbol id="az-i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></symbol>
+    <symbol id="az-i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"></path></symbol>
+    <symbol id="az-i-chevron" viewBox="0 0 24 24"><path d="m8 10 4 4 4-4"></path></symbol>
+    <symbol id="az-i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></symbol>
+    <symbol id="az-i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"></path></symbol>
+    <symbol id="az-i-back" viewBox="0 0 24 24"><path d="M19 12H5M10 7l-5 5 5 5"></path></symbol>
+  </svg>
+
+  <div class="az-header-shell az-shell-width">
+    <button class="az-mobile-toggle" type="button" aria-label="Open navigation" aria-controls="az-primary-nav" aria-expanded="false" data-az-nav-toggle>
+      <svg class="az-icon az-icon-menu"><use href="#az-i-menu"></use></svg>
+      <svg class="az-icon az-icon-close"><use href="#az-i-close"></use></svg>
+    </button>
+
+    <a class="az-brand az-header-brand" href="/" aria-label="Hawaso home">
+      <span class="az-brand-mark">H</span>
+      <span class="az-brand-name">Hawaso</span>
+    </a>
+
+    <nav class="az-primary-nav" id="az-primary-nav" aria-label="Primary navigation" data-az-primary-nav>
+      <ul class="az-nav-list">
+        <li class="az-nav-item" data-az-menu-item>
+          <button class="az-top-link az-top-button" type="button" aria-expanded="false" aria-controls="az-menu-explore" data-az-menu-trigger>
+            Explore <svg class="az-chevron"><use href="#az-i-chevron"></use></svg>
+          </button>
+          <section class="az-mega az-mega--explore" id="az-menu-explore" aria-label="Explore Azunt" data-az-menu-panel hidden>
+            <div class="az-mobile-panel-heading">
+              <button type="button" class="az-back-button" data-az-menu-back><svg class="az-icon"><use href="#az-i-back"></use></svg> Back</button>
+              <strong>Explore Azunt</strong>
+            </div>
+            <div class="az-mega-inner az-explore-grid">
+              <div class="az-menu-section">
+                <span class="az-menu-kicker">Start here</span>
+                <h2>Everything you need to build, document, and operate one ASP.NET Core site.</h2>
+                <p>Azunt Site Starter combines polished public pages, learning content, documentation, authenticated operations, and account experiences in one maintainable solution.</p>
+                <a class="az-inline-arrow" href="/products">Explore the platform <svg><use href="#az-i-arrow"></use></svg></a>
+              </div>
+              <div class="az-link-stack">
+                <a class="az-menu-card" href="/products"><span class="az-menu-icon"><svg><use href="#az-i-layers"></use></svg></span><span><strong>Platform overview</strong><small>See the reusable site areas and shells.</small></span></a>
+                <a class="az-menu-card" href="/dashboard"><span class="az-menu-icon"><svg><use href="#az-i-gauge"></use></svg></span><span><strong>Cloud-style dashboard</strong><small>Manage resources, identity, and activity.</small></span></a>
+                <a class="az-menu-card" href="/docs/"><span class="az-menu-icon"><svg><use href="#az-i-book"></use></svg></span><span><strong>Documentation</strong><small>Read DocFX guides and implementation notes.</small></span></a>
+              </div>
+              <aside class="az-spotlight-card">
+                <span class="az-spotlight-badge"><svg><use href="#az-i-rocket"></use></svg> Starter solution</span>
+                <h3>Ship a professional foundation, then customize only what makes your product unique.</h3>
+                <p>ASP.NET Core 10, identity, documentation, content, and dashboard patterns are already organized for you.</p>
+                <a href="/Identity/Account/Register">Create an account <svg><use href="#az-i-arrow"></use></svg></a>
+              </aside>
+            </div>
+          </section>
+        </li>
+
+        <li class="az-nav-item" data-az-menu-item>
+          <button class="az-top-link az-top-button" type="button" aria-expanded="false" aria-controls="az-menu-products" data-az-menu-trigger>
+            Products <svg class="az-chevron"><use href="#az-i-chevron"></use></svg>
+          </button>
+          <section class="az-mega az-mega--tabs" id="az-menu-products" aria-label="Products" data-az-menu-panel hidden>
+            <div class="az-mobile-panel-heading">
+              <button type="button" class="az-back-button" data-az-menu-back><svg class="az-icon"><use href="#az-i-back"></use></svg> Back</button>
+              <strong>Products</strong>
+            </div>
+            <div class="az-mega-inner">
+              <div class="az-mega-heading-row">
+                <div><span class="az-menu-kicker">Product areas</span><h2>One starter. Multiple polished experiences.</h2></div>
+                <a class="az-view-all" href="/products">View all products <svg><use href="#az-i-arrow"></use></svg></a>
+              </div>
+              <div class="az-tab-layout" data-az-tabs>
+                <div class="az-tab-list" role="tablist" aria-label="Product categories">
+                  <button type="button" class="az-tab-button az-is-active" id="az-products-platform-tab" role="tab" aria-controls="az-products-platform" aria-selected="true">Platform</button>
+                  <button type="button" class="az-tab-button" id="az-products-content-tab" role="tab" aria-controls="az-products-content" aria-selected="false" tabindex="-1">Content & learning</button>
+                  <button type="button" class="az-tab-button" id="az-products-operations-tab" role="tab" aria-controls="az-products-operations" aria-selected="false" tabindex="-1">Operations</button>
+                  <button type="button" class="az-tab-button" id="az-products-identity-tab" role="tab" aria-controls="az-products-identity" aria-selected="false" tabindex="-1">Identity</button>
+                </div>
+                <div class="az-tab-panels">
+                  <div class="az-tab-panel" id="az-products-platform" role="tabpanel" aria-labelledby="az-products-platform-tab">
+                    <div class="az-product-grid">
+                      <a class="az-product-card" href="/products"><span class="az-product-icon"><svg><use href="#az-i-window"></use></svg></span><span><strong>Application Platform</strong><small>Public pages, shared layouts, controllers, and reusable site structure.</small></span></a>
+                      <a class="az-product-card" href="/"><span class="az-product-icon"><svg><use href="#az-i-compass"></use></svg></span><span><strong>Landing Experience</strong><small>Responsive marketing shell with commercial-grade navigation and CTAs.</small></span></a>
+                      <a class="az-product-card" href="/pricing"><span class="az-product-icon"><svg><use href="#az-i-chart"></use></svg></span><span><strong>Pricing Pages</strong><small>Ready-to-customize product and commercial presentation patterns.</small></span></a>
+                    </div>
+                  </div>
+                  <div class="az-tab-panel" id="az-products-content" role="tabpanel" aria-labelledby="az-products-content-tab" hidden>
+                    <div class="az-product-grid">
+                      <a class="az-product-card" href="/courses"><span class="az-product-icon"><svg><use href="#az-i-book"></use></svg></span><span><strong>Course Library</strong><small>Markdown-backed learning pages inside the public experience.</small></span></a>
+                      <a class="az-product-card" href="/resources"><span class="az-product-icon"><svg><use href="#az-i-layers"></use></svg></span><span><strong>Resource Center</strong><small>Curated technical content rendered through MVC routes.</small></span></a>
+                      <a class="az-product-card" href="/docs/"><span class="az-product-icon"><svg><use href="#az-i-code"></use></svg></span><span><strong>Developer Docs</strong><small>DocFX-powered guides, code examples, and reference content.</small></span></a>
+                    </div>
+                  </div>
+                  <div class="az-tab-panel" id="az-products-operations" role="tabpanel" aria-labelledby="az-products-operations-tab" hidden>
+                    <div class="az-product-grid">
+                      <a class="az-product-card" href="/dashboard"><span class="az-product-icon"><svg><use href="#az-i-gauge"></use></svg></span><span><strong>Operations Dashboard</strong><small>Authenticated workspace with compact rail and nested navigation.</small></span></a>
+                      <a class="az-product-card" href="/dashboard/resources"><span class="az-product-icon"><svg><use href="#az-i-grid"></use></svg></span><span><strong>Resource Management</strong><small>Organize app services, databases, storage, and related inventory.</small></span></a>
+                      <a class="az-product-card" href="/dashboard/monitoring"><span class="az-product-icon"><svg><use href="#az-i-chart"></use></svg></span><span><strong>Monitoring</strong><small>Surface activity, service health, and operational history.</small></span></a>
+                    </div>
+                  </div>
+                  <div class="az-tab-panel" id="az-products-identity" role="tabpanel" aria-labelledby="az-products-identity-tab" hidden>
+                    <div class="az-product-grid">
+                      <a class="az-product-card" href="/Identity/Account/Login"><span class="az-product-icon"><svg><use href="#az-i-shield"></use></svg></span><span><strong>Authentication</strong><small>Sign-in and protected-route experience built on ASP.NET Core Identity.</small></span></a>
+                      <a class="az-product-card" href="/Identity/Account/Manage"><span class="az-product-icon"><svg><use href="#az-i-user"></use></svg></span><span><strong>Account Profile</strong><small>Dedicated account shell for signed-in user experiences.</small></span></a>
+                      <a class="az-product-card" href="/Identity/Account/Register"><span class="az-product-icon"><svg><use href="#az-i-rocket"></use></svg></span><span><strong>Registration</strong><small>A clean starting point for onboarding and conversion flows.</small></span></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </li>
+
+        <li class="az-nav-item" data-az-menu-item>
+          <button class="az-top-link az-top-button" type="button" aria-expanded="false" aria-controls="az-menu-solutions" data-az-menu-trigger>
+            Solutions <svg class="az-chevron"><use href="#az-i-chevron"></use></svg>
+          </button>
+          <section class="az-mega az-mega--tabs" id="az-menu-solutions" aria-label="Solutions" data-az-menu-panel hidden>
+            <div class="az-mobile-panel-heading">
+              <button type="button" class="az-back-button" data-az-menu-back><svg class="az-icon"><use href="#az-i-back"></use></svg> Back</button>
+              <strong>Solutions</strong>
+            </div>
+            <div class="az-mega-inner">
+              <div class="az-mega-heading-row">
+                <div><span class="az-menu-kicker">Solutions</span><h2>Start from a proven pattern, not an empty project.</h2></div>
+                <a class="az-view-all" href="/products">Explore solution building blocks <svg><use href="#az-i-arrow"></use></svg></a>
+              </div>
+              <div class="az-tab-layout" data-az-tabs>
+                <div class="az-tab-list" role="tablist" aria-label="Solution categories">
+                  <button type="button" class="az-tab-button az-is-active" id="az-solutions-usecases-tab" role="tab" aria-controls="az-solutions-usecases" aria-selected="true">Use cases</button>
+                  <button type="button" class="az-tab-button" id="az-solutions-teams-tab" role="tab" aria-controls="az-solutions-teams" aria-selected="false" tabindex="-1">Teams</button>
+                  <button type="button" class="az-tab-button" id="az-solutions-architecture-tab" role="tab" aria-controls="az-solutions-architecture" aria-selected="false" tabindex="-1">Architecture</button>
+                </div>
+                <div class="az-tab-panels">
+                  <div class="az-tab-panel" id="az-solutions-usecases" role="tabpanel" aria-labelledby="az-solutions-usecases-tab">
+                    <div class="az-solution-grid">
+                      <a href="/products"><span class="az-menu-icon"><svg><use href="#az-i-rocket"></use></svg></span><span><strong>SaaS starter</strong><small>Launch a branded product shell with public, account, and operations experiences.</small></span></a>
+                      <a href="/dashboard"><span class="az-menu-icon"><svg><use href="#az-i-briefcase"></use></svg></span><span><strong>Internal portal</strong><small>Use secure dashboard patterns for administrative and line-of-business tools.</small></span></a>
+                      <a href="/docs/"><span class="az-menu-icon"><svg><use href="#az-i-code"></use></svg></span><span><strong>Developer portal</strong><small>Combine documentation, code, resources, and authenticated content.</small></span></a>
+                      <a href="/courses"><span class="az-menu-icon"><svg><use href="#az-i-book"></use></svg></span><span><strong>Learning hub</strong><small>Publish structured course and training content without a separate app.</small></span></a>
+                    </div>
+                  </div>
+                  <div class="az-tab-panel" id="az-solutions-teams" role="tabpanel" aria-labelledby="az-solutions-teams-tab" hidden>
+                    <div class="az-solution-grid">
+                      <a href="/products"><span class="az-menu-icon"><svg><use href="#az-i-layers"></use></svg></span><span><strong>Product teams</strong><small>Standardize layouts, navigation, and product presentation across features.</small></span></a>
+                      <a href="/docs/"><span class="az-menu-icon"><svg><use href="#az-i-terminal"></use></svg></span><span><strong>Engineering teams</strong><small>Keep implementation guidance and runnable samples next to the product.</small></span></a>
+                      <a href="/dashboard/monitoring"><span class="az-menu-icon"><svg><use href="#az-i-gauge"></use></svg></span><span><strong>Operations teams</strong><small>Give authenticated users a focused space for resources and health.</small></span></a>
+                      <a href="/courses"><span class="az-menu-icon"><svg><use href="#az-i-book"></use></svg></span><span><strong>Training teams</strong><small>Turn Markdown content into a consistent branded learning experience.</small></span></a>
+                    </div>
+                  </div>
+                  <div class="az-tab-panel" id="az-solutions-architecture" role="tabpanel" aria-labelledby="az-solutions-architecture-tab" hidden>
+                    <div class="az-solution-grid">
+                      <a href="/"><span class="az-menu-icon"><svg><use href="#az-i-window"></use></svg></span><span><strong>Public + application shell</strong><small>Share one host and design system while keeping area layouts independent.</small></span></a>
+                      <a href="/dashboard"><span class="az-menu-icon"><svg><use href="#az-i-shield"></use></svg></span><span><strong>Secure administration</strong><small>Protect dashboard and private content behind authorization boundaries.</small></span></a>
+                      <a href="/resources/site-structure"><span class="az-menu-icon"><svg><use href="#az-i-grid"></use></svg></span><span><strong>Clear source boundaries</strong><small>Keep MVC, DocFX, Markdown, and account concerns organized by purpose.</small></span></a>
+                      <a href="/resources/authentication"><span class="az-menu-icon"><svg><use href="#az-i-user"></use></svg></span><span><strong>Identity-ready foundation</strong><small>Extend the starter authentication flow into your own membership model.</small></span></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </li>
+
+        <li class="az-nav-item az-nav-item--compact" data-az-menu-item>
+          <button class="az-top-link az-top-button" type="button" aria-expanded="false" aria-controls="az-menu-pricing" data-az-menu-trigger>
+            Pricing <svg class="az-chevron"><use href="#az-i-chevron"></use></svg>
+          </button>
+          <section class="az-mega az-mega--compact" id="az-menu-pricing" aria-label="Pricing" data-az-menu-panel hidden>
+            <div class="az-mobile-panel-heading">
+              <button type="button" class="az-back-button" data-az-menu-back><svg class="az-icon"><use href="#az-i-back"></use></svg> Back</button>
+              <strong>Pricing</strong>
+            </div>
+            <div class="az-mega-inner az-compact-grid">
+              <div>
+                <span class="az-menu-kicker">Choose your path</span>
+                <h2>Prototype freely. Add your commercial model when the product is ready.</h2>
+                <p>Use the included pricing page as a polished starting point for plans, editions, or service packages.</p>
+                <a class="az-inline-arrow" href="/pricing">View pricing <svg><use href="#az-i-arrow"></use></svg></a>
+              </div>
+              <div class="az-compact-links">
+                <a href="/pricing"><span class="az-menu-icon"><svg><use href="#az-i-chart"></use></svg></span><span><strong>Plans & editions</strong><small>Present commercial options clearly.</small></span></a>
+                <a href="/Identity/Account/Register"><span class="az-menu-icon"><svg><use href="#az-i-rocket"></use></svg></span><span><strong>Start free</strong><small>Use registration as your onboarding entry point.</small></span></a>
+                <a href="/dashboard"><span class="az-menu-icon"><svg><use href="#az-i-gauge"></use></svg></span><span><strong>Open dashboard</strong><small>See the signed-in product experience.</small></span></a>
+              </div>
+            </div>
+          </section>
+        </li>
+
+        <li class="az-nav-item az-nav-item--compact" data-az-menu-item>
+          <button class="az-top-link az-top-button" type="button" aria-expanded="false" aria-controls="az-menu-partners" data-az-menu-trigger>
+            Ecosystem <svg class="az-chevron"><use href="#az-i-chevron"></use></svg>
+          </button>
+          <section class="az-mega az-mega--compact" id="az-menu-partners" aria-label="Azunt ecosystem" data-az-menu-panel hidden>
+            <div class="az-mobile-panel-heading">
+              <button type="button" class="az-back-button" data-az-menu-back><svg class="az-icon"><use href="#az-i-back"></use></svg> Back</button>
+              <strong>Ecosystem</strong>
+            </div>
+            <div class="az-mega-inner az-compact-grid">
+              <div>
+                <span class="az-menu-kicker">Build on open standards</span>
+                <h2>ASP.NET Core, Markdown, DocFX, and familiar web conventions.</h2>
+                <p>Azunt Starter is intentionally composed from technologies your team can own, replace, and extend.</p>
+                <a class="az-inline-arrow" href="/docs/">Read the developer docs <svg><use href="#az-i-arrow"></use></svg></a>
+              </div>
+              <div class="az-compact-links">
+                <a href="/docs/"><span class="az-menu-icon"><svg><use href="#az-i-handshake"></use></svg></span><span><strong>Integration-ready</strong><small>Extend the starter with your services and modules.</small></span></a>
+                <a href="/resources"><span class="az-menu-icon"><svg><use href="#az-i-code"></use></svg></span><span><strong>Technical resources</strong><small>Reuse practical implementation guidance.</small></span></a>
+                <a href="/courses"><span class="az-menu-icon"><svg><use href="#az-i-book"></use></svg></span><span><strong>Learning content</strong><small>Keep training close to the solution.</small></span></a>
+              </div>
+            </div>
+          </section>
+        </li>
+
+        <li class="az-nav-item" data-az-menu-item>
+          <button class="az-top-link az-top-button" type="button" aria-expanded="false" aria-controls="az-menu-resources" data-az-menu-trigger>
+            Resources <svg class="az-chevron"><use href="#az-i-chevron"></use></svg>
+          </button>
+          <section class="az-mega az-mega--resources" id="az-menu-resources" aria-label="Resources" data-az-menu-panel hidden>
+            <div class="az-mobile-panel-heading">
+              <button type="button" class="az-back-button" data-az-menu-back><svg class="az-icon"><use href="#az-i-back"></use></svg> Back</button>
+              <strong>Resources</strong>
+            </div>
+            <div class="az-mega-inner">
+              <div class="az-mega-heading-row">
+                <div><span class="az-menu-kicker">Resources</span><h2>Move from evaluation to implementation faster.</h2></div>
+                <a class="az-view-all" href="/resources">Browse resource center <svg><use href="#az-i-arrow"></use></svg></a>
+              </div>
+              <div class="az-resource-columns">
+                <div><span class="az-resource-heading"><svg><use href="#az-i-book"></use></svg> Learn</span><a href="/courses"><strong>Courses</strong><small>Structured learning and examples</small></a><a href="/resources"><strong>Resource library</strong><small>Curated public technical content</small></a></div>
+                <div><span class="az-resource-heading"><svg><use href="#az-i-code"></use></svg> Build</span><a href="/docs/"><strong>Documentation</strong><small>DocFX guides and code reference</small></a><a href="/resources/routing"><strong>Routing guide</strong><small>MVC and site route patterns</small></a></div>
+                <div><span class="az-resource-heading"><svg><use href="#az-i-gauge"></use></svg> Operate</span><a href="/dashboard"><strong>Dashboard</strong><small>Authenticated management shell</small></a><a href="/dashboard/monitoring"><strong>Service health</strong><small>Operational status and activity</small></a></div>
+                <div><span class="az-resource-heading"><svg><use href="#az-i-life"></use></svg> Account</span><a href="/Identity/Account/Login"><strong>Sign in</strong><small>Access protected experiences</small></a><a href="/Identity/Account/Register"><strong>Create account</strong><small>Try the complete onboarding flow</small></a></div>
+              </div>
+            </div>
+          </section>
+        </li>
+
+        <li class="az-nav-item az-nav-item--company" data-az-menu-item>
+          <button class="az-top-link az-top-button" type="button" aria-expanded="false" aria-controls="az-menu-company" data-az-menu-trigger>
+            Company <svg class="az-chevron"><use href="#az-i-chevron"></use></svg>
+          </button>
+          <section class="az-mega az-mega--company" id="az-menu-company" aria-label="Company" data-az-menu-panel hidden>
+            <div class="az-mobile-panel-heading">
+              <button type="button" class="az-back-button" data-az-menu-back><svg class="az-icon"><use href="#az-i-back"></use></svg> Back</button>
+              <strong>Company</strong>
+            </div>
+            <div class="az-mega-inner az-company-grid">
+              <div class="az-company-intro">
+                <span class="az-menu-kicker">Azunt</span>
+                <h2>A clean foundation for sites that need to grow beyond a landing page.</h2>
+                <p>Use the starter as a reference architecture, a commercial product shell, or the base for your next internal platform.</p>
+              </div>
+              <div class="az-company-links">
+                <a href="/"><strong>About Azunt Starter</strong><small>See the complete experience</small><svg><use href="#az-i-arrow"></use></svg></a>
+                <a href="/products"><strong>Architecture</strong><small>Explore the product areas</small><svg><use href="#az-i-arrow"></use></svg></a>
+                <a href="/resources/site-structure"><strong>Site structure</strong><small>Understand source boundaries</small><svg><use href="#az-i-arrow"></use></svg></a>
+                <a href="/pricing"><strong>Commercialize</strong><small>Start from the pricing shell</small><svg><use href="#az-i-arrow"></use></svg></a>
+              </div>
+            </div>
+          </section>
+        </li>
+
+        <li class="az-nav-item az-nav-item--dropdown" data-az-menu-item>
+          <button class="az-top-link az-top-button" type="button" aria-expanded="false" aria-controls="az-menu-more" data-az-menu-trigger>
+            More <svg class="az-chevron"><use href="#az-i-chevron"></use></svg>
+          </button>
+          <section class="az-dropdown" id="az-menu-more" aria-label="More" data-az-menu-panel hidden>
+            <div class="az-mobile-panel-heading">
+              <button type="button" class="az-back-button" data-az-menu-back><svg class="az-icon"><use href="#az-i-back"></use></svg> Back</button>
+              <strong>More</strong>
+            </div>
+            <ul class="az-dropdown-list">
+              <li>
+                <a class="az-dropdown-link" href="/docs/">
+                  <span><strong>Getting started</strong><small>Setup, structure, and implementation guides</small></span>
+                </a>
+              </li>
+              <li class="az-dropdown-nested">
+                <details data-az-dropdown-nested>
+                  <summary class="az-dropdown-link az-dropdown-summary">
+                    <span><strong>Templates</strong><small>Ready-to-adapt site experiences</small></span>
+                    <svg class="az-dropdown-arrow" aria-hidden="true"><use href="#az-i-chevron"></use></svg>
+                  </summary>
+                  <ul class="az-dropdown-submenu">
+                    <li><a href="/"><strong>Landing (Container)</strong><small>Classic centered landing layout</small></a></li>
+                    <li><a href="/samples/mvc/landing-fluid"><strong>Landing (Fluid)</strong><small>Full-width responsive landing layout</small></a></li>
+                    <li><a href="/products"><strong>Product pages</strong><small>Product and feature presentation</small></a></li>
+                    <li><a href="/dashboard"><strong>Dashboard</strong><small>Authenticated operations workspace</small></a></li>
+                    <li><a href="/docs/"><strong>Documentation</strong><small>Developer-focused content shell</small></a></li>
+                  </ul>
+                </details>
+              </li>
+              <li class="az-dropdown-nested">
+                <details data-az-dropdown-nested>
+                  <summary class="az-dropdown-link az-dropdown-summary">
+                    <span><strong>Examples</strong><small>Common starter content patterns</small></span>
+                    <svg class="az-dropdown-arrow" aria-hidden="true"><use href="#az-i-chevron"></use></svg>
+                  </summary>
+                  <ul class="az-dropdown-submenu">
+                    <li><a href="/courses"><strong>Courses</strong><small>Structured learning content</small></a></li>
+                    <li><a href="/resources"><strong>Resource center</strong><small>Curated technical resources</small></a></li>
+                    <li><a href="/resources/routing"><strong>Routing guide</strong><small>MVC route examples</small></a></li>
+                  </ul>
+                </details>
+              </li>
+              <li>
+                <a class="az-dropdown-link" href="/pricing">
+                  <span><strong>Plans &amp; pricing</strong><small>Commercial page starter</small></span>
+                </a>
+              </li>
+            </ul>
+          </section>
+        </li>
+        @* Original Hawaso public links; the Azunt Starter navigation above is retained. *@
+        <li class="az-nav-item az-nav-item--dropdown" data-az-menu-item>
+          <button class="az-top-link az-top-button" type="button" aria-expanded="false" aria-controls="az-menu-hawaso" data-az-menu-trigger>
+            Hawaso <svg class="az-chevron"><use href="#az-i-chevron"></use></svg>
+          </button>
+          <section class="az-dropdown" id="az-menu-hawaso" aria-label="Hawaso" data-az-menu-panel hidden>
+            <div class="az-mobile-panel-heading">
+              <button class="az-back-button" type="button" data-az-menu-back><svg class="az-icon"><use href="#az-i-back"></use></svg> Back</button>
+              <strong>Hawaso</strong>
+            </div>
+            <ul class="az-dropdown-list">
+              <li><a class="az-dropdown-link" href="/Home"><span><strong>Home</strong><small>Hawaso landing</small></span></a></li>
+              <li><a class="az-dropdown-link" href="/About"><span><strong>About</strong><small>About Hawaso</small></span></a></li>
+              <li><a class="az-dropdown-link" href="/DotNetNote"><span><strong>Board</strong><small>DotNetNote board</small></span></a></li>
+              <li><a class="az-dropdown-link" href="/Dashboard"><span><strong>Dashboard</strong><small>Blazor application</small></span></a></li>
+              <li><a class="az-dropdown-link" href="/Identity/Account/Register"><span><strong>Register</strong><small>Create an account</small></span></a></li>
+              <li><a class="az-dropdown-link" href="/Identity/Account/Login"><span><strong>Login</strong><small>Sign in to Hawaso</small></span></a></li>
+            </ul>
+          </section>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="az-header-actions">
+      <span class="az-hawaso-legacy-app" title="Related sites">@await Html.PartialAsync("~/Views/Shared/_dul-dropdown.cshtml")</span>
+      <a class="az-icon-action" href="/docs/" aria-label="Documentation" title="Documentation"><svg class="az-icon"><use href="#az-i-code"></use></svg></a>
+      @if (User.Identity?.IsAuthenticated == true)
+      {
+        <a class="az-account-link" href="/Identity/Account/Manage"><span class="az-account-avatar" aria-hidden="true"><svg><use href="#az-i-user"></use></svg></span><span class="az-account-text">@User.Identity.Name</span></a>
+        <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/Home" class="az-signout-form">
+          @Html.AntiForgeryToken()
+          <button class="az-header-quiet" type="submit">Sign out</button>
+        </form>
+      }
+      else
+      {
+        <div class="az-signin-menu" data-az-action-menu>
+          <button class="az-header-quiet az-signin-trigger" type="button" aria-expanded="false" aria-controls="az-signin-dropdown" data-az-action-trigger>
+            Sign in <svg class="az-signin-chevron"><use href="#az-i-chevron"></use></svg>
+          </button>
+          <div class="az-action-dropdown" id="az-signin-dropdown" data-az-action-panel hidden>
+            <div class="az-action-dropdown-title">Account</div>
+            <a href="/Identity/Account/Login"><strong>Sign in</strong><small>Access your Hawaso account</small></a>
+            <a href="/Identity/Account/Register"><strong>Create account</strong><small>Set up a new account</small></a>
+            <a href="/dashboard"><strong>Open dashboard</strong><small>Go to the authenticated workspace</small></a>
+          </div>
+        </div>
+        <a class="az-header-cta" href="/Identity/Account/Register">Start free <svg><use href="#az-i-arrow"></use></svg></a>
+      }
+    </div>
+  </div>
+  <div class="az-menu-scrim" data-az-menu-scrim></div>
+</header>

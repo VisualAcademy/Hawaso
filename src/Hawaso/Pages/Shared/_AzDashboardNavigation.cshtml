@@ -1,0 +1,22 @@
+@model Hawaso.Models.AzuntDashboard.DashboardNavigationViewModel
+@{
+    string? currentGroup = null;
+}
+
+<nav class="az-dashboard-nav" aria-label="Dashboard navigation">
+    <ul class="az-dashboard-nav-root">
+        @foreach (var item in Model.Items)
+        {
+            if (!string.Equals(currentGroup, item.Group, StringComparison.Ordinal))
+            {
+                currentGroup = item.Group;
+                if (!string.IsNullOrWhiteSpace(currentGroup))
+                {
+                    <li class="az-dashboard-nav-section-label" aria-hidden="true">@currentGroup</li>
+                }
+            }
+
+            @await Html.PartialAsync("~/Pages/Shared/_AzDashboardNavNode.cshtml", item)
+        }
+    </ul>
+</nav>

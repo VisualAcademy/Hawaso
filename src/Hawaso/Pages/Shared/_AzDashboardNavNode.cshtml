@@ -1,0 +1,58 @@
+@model Hawaso.Models.AzuntDashboard.DashboardNavigationNodeViewModel
+@{
+    var hasChildren = Model.Children.Count > 0;
+    var expandedClass = Model.IsExpanded ? " az-is-expanded" : string.Empty;
+    var currentClass = Model.IsCurrent ? " az-is-current" : string.Empty;
+    var activeBranchClass = Model.ContainsCurrent ? " az-is-active-branch" : string.Empty;
+    var childrenId = $"dashboard-nav-{Model.Key}-children";
+}
+
+<li class="az-dashboard-nav-node@expandedClass@activeBranchClass"
+    data-nav-node
+    data-nav-key="@Model.Key"
+    data-nav-depth="@Model.Depth"
+    data-nav-has-children="@hasChildren.ToString().ToLowerInvariant()"
+    data-active-branch="@Model.ContainsCurrent.ToString().ToLowerInvariant()"
+    style="--nav-depth:@Model.Depth">
+    <div class="az-dashboard-nav-row">
+        <a class="az-dashboard-nav-link@currentClass"
+           data-nav-primary-link
+           href="@Model.Href"
+           aria-current="@(Model.IsCurrent ? "page" : null)"
+           title="@Model.Text">
+            <span class="az-dashboard-nav-link-inner">
+                <span class="az-dashboard-nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 20 20" focusable="false">
+                        <use href="/images/dashboard-icons.svg#@Model.Icon"></use>
+                    </svg>
+                </span>
+                <span class="az-dashboard-nav-text">@Model.Text</span>
+            </span>
+        </a>
+
+        @if (hasChildren)
+        {
+            <button class="az-dashboard-nav-toggle"
+                    type="button"
+                    data-nav-toggle
+                    data-nav-key="@Model.Key"
+                    aria-controls="@childrenId"
+                    aria-expanded="@Model.IsExpanded.ToString().ToLowerInvariant()"
+                    aria-label="@(Model.IsExpanded ? "Collapse" : "Expand") @Model.Text">
+                <svg class="az-dashboard-nav-chevron" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                    <path d="M7.6 4.8 12.8 10l-5.2 5.2" />
+                </svg>
+            </button>
+        }
+    </div>
+
+    @if (hasChildren)
+    {
+        <ul id="@childrenId" class="az-dashboard-nav-children@(Model.IsExpanded ? string.Empty : " az-is-collapsed")">
+            @foreach (var child in Model.Children)
+            {
+                @await Html.PartialAsync("~/Pages/Shared/_AzDashboardNavNode.cshtml", child)
+            }
+        </ul>
+    }
+</li>

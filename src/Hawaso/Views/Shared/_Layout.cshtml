@@ -1,106 +1,29 @@
-﻿@inject Azunt.Services.Terminology.ITerminologyService T
-
+@inject Azunt.Services.Terminology.ITerminologyService T
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - @T.Get("ProductName")</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="~/templates/landing/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="~/templates/landing/css/modern-business.css" rel="stylesheet">
-
-    <link href="~/css/memoengine.pager.css" rel="stylesheet" />
-    <link href="~/css/dul/dul-dropdown.css" rel="stylesheet" />
-    <link href="~/css/open-iconic/font/css/open-iconic-bootstrap.min.css" rel="stylesheet" />
-
+    <link rel="stylesheet" href="~/templates/landing/vendor/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/azunt-core.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/azunt-landing.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/azunt-hawaso.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/memoengine.pager.css" />
+    <link rel="stylesheet" href="~/css/dul/dul-dropdown.css" />
+    <link rel="stylesheet" href="~/css/open-iconic/font/css/open-iconic-bootstrap.min.css" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container">
-            <span class="navbar-brand d-flex align-items-center gap-3" style="cursor: pointer;">
-                @await Html.PartialAsync("_dul-dropdown")
-                <a class="navbar-brand" href="/Home">Hawaso</a>
-            </span>
-            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/About">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/DotNetNote">Board</a>
-                    </li>
-                    @*<li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPortfolio" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Portfolio
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownPortfolio">
-                                <a class="dropdown-item" href="portfolio-1-col.html">1 Column Portfolio</a>
-                                <a class="dropdown-item" href="portfolio-2-col.html">2 Column Portfolio</a>
-                                <a class="dropdown-item" href="portfolio-3-col.html">3 Column Portfolio</a>
-                                <a class="dropdown-item" href="portfolio-4-col.html">4 Column Portfolio</a>
-                                <a class="dropdown-item" href="portfolio-item.html">Single Portfolio Item</a>
-                            </div>
-                        </li>*@
-                    <partial name="~/Views/Shared/_LoginPartial.cshtml" />
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    @RenderBody()
-
-@* 
-    <div class="container text-center">
-
-        <iframe src="https://coupa.ng/cehHou" width="120" height="240" frameborder="0" scrolling="no" referrerpolicy="unsafe-url"></iframe>
-
-    </div>
- *@
-
-    <!-- Footer -->
-    <footer class="py-5 bg-dark">
-        <div class="container">
-            <p class="m-0 text-center text-white">Copyright &copy; @DateTime.Now.Year Hawaso. All rights reserved.</p>
-            <p class="m-0 text-center text-white">Powered by @System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription</p>
-        </div>
-        <!-- /.container -->
-
-        <div class="container">
-            <p class="m-0 text-center text-white">
-                <a href="https://startbootstrap.com/" class="text-white small">
-                    Bootstrap Template by Start Bootstrap
-                </a>
-            </p>
-        </div>
-
-        <div class="container text-center">
-            호스팅 서비스 제공: Microsoft Azure
-        </div>
-
-    </footer>
-
-    <!-- Bootstrap core JavaScript -->
+<body class="az-public-body" data-az-shell="landing" data-az-shell-mode="mvc">
+    @await Html.PartialAsync("~/Views/Shared/_AzPublicHeader.cshtml")
+    <main id="az-public-main">@RenderBody()</main>
+    @await Html.PartialAsync("~/Views/Shared/_AzPublicFooter.cshtml")
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/dul/dul-dropdown.js"></script>
-    @RenderSection("Scripts", required: false)
-
-
-
-
+    <script src="~/js/azunt-landing.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
     <script src="~/js/az-auth-ping.js"></script>
-
-
-
-
 </body>
 </html>

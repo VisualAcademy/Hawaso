@@ -1,0 +1,36 @@
+:root {
+  --az-blue: #0067b8;
+  --az-blue-dark: #00579c;
+  --az-ink: #17213c;
+  --az-muted: #5c667a;
+  --az-line: #d9e0ea;
+  --az-soft: #f4f7fb;
+  --az-white: #ffffff;
+  --az-shadow: 0 16px 40px rgba(19, 43, 78, .12);
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: var(--az-ink);
+  background: var(--az-white);
+}
+* { box-sizing: border-box; }
+html { min-height: 100%; }
+body { margin: 0; min-height: 100%; }
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; }
+.az-shell-width { width: min(1180px, calc(100% - 40px)); margin-inline: auto; }
+.az-brand { display: inline-flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+.az-brand-mark { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 7px; color: white; background: linear-gradient(135deg, #0078d4, #4f9cf9); box-shadow: 0 5px 15px rgba(0,103,184,.25); font-weight: 800; }
+.az-brand-mark.az-small { width: 25px; height: 25px; font-size: 14px; border-radius: 5px; }
+.az-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 18px; border: 1px solid transparent; border-radius: 6px; font-weight: 650; cursor: pointer; transition: .18s ease; }
+.az-button:hover { transform: translateY(-1px); }
+.az-button-primary { color: white; background: var(--az-blue); border-color: var(--az-blue); }
+.az-button-primary:hover { background: var(--az-blue-dark); }
+.az-button-outline { color: var(--az-blue); background: transparent; border-color: #9cb5cc; }
+.az-button-quiet { background: white; border-color: var(--az-line); }
+.az-button-large { min-height: 48px; padding-inline: 22px; }
+.az-button-full { width: 100%; }
+.az-text-action { color: var(--az-blue); font-weight: 600; }
+.az-eyebrow { display: block; margin-bottom: 10px; color: var(--az-blue); font-size: 12px; text-transform: uppercase; letter-spacing: .13em; font-weight: 800; }
+.az-eyebrow.az-light { color: #9ad3ff; }
+.az-lead { color: var(--az-muted); font-size: 20px; line-height: 1.7; max-width: 800px; }
+code, pre { font-family: "Cascadia Code", Consolas, monospace; }
+@media (max-width: 760px) { .az-shell-width { width: min(100% - 28px, 1180px); } }

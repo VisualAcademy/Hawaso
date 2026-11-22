@@ -1,448 +1,222 @@
-﻿@page "/Dashboard"
+@page "/Dashboard"
 @namespace Hawaso.Pages
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Authorization
+@using Hawaso.Models.AzuntDashboard
 @inject IAuthorizationService AuthorizationService
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = null;
-
-    // User.Identity는 인증되지 않은 요청에서 null일 수 있으므로 안전하게 처리합니다.
-    var displayName = User.Identity?.Name ?? "Guest";
-    // Reuse the authorization policy from Program.cs for the navigation link.
     var canViewAppLogs = (await AuthorizationService.AuthorizeAsync(User, "GlobalAdministrators")).Succeeded;
+    var dashboardNavigation = DashboardNavigationCatalog.Build(HttpContext.Request.Path.Value, canViewAppLogs);
 }
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hawaso</title>
-    <base href="~/" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hawaso · Dashboard</title>
+  <link rel="stylesheet" href="~/css/bootstrap/bootstrap.min.css" />
+  <link rel="stylesheet" href="~/css/azunt-core.css" asp-append-version="true" />
+  <link rel="stylesheet" href="~/css/azunt-dashboard.css" asp-append-version="true" />
+  <link rel="stylesheet" href="~/css/azunt-hawaso.css" asp-append-version="true" />
 
-
-    @*environment 태그 헬퍼 사용 예제*@
-    <environment names="Development">
-        @*개발 환경에서는 전체 버전의 jQuery와 Bootstrap 사용*@
-        <link rel="stylesheet" href="css/bootstrap/bootstrap.css" />
-    </environment>
-    <environment names="Production">
-        @*운영 환경에서는 최소 버전의 jQuery와 Bootstrap 사용*@
-        <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    </environment>
-
-
-    <link href="~/templates/dashboard/css/styles.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
-
-    <style>
-            input, button, textarea, a, select, div {
-                border-radius: 0 !important;
-            }
-    </style>
-
-    @* MatBlazor *@
-    <script src="_content/MatBlazor/dist/matBlazor.js"></script>
-    <link href="_content/MatBlazor/dist/matBlazor.css" rel="stylesheet" />
-
-    <!-- Reference the included moment.js javascript file. -->
-    <script src="_content/ChartJs.Blazor/moment-with-locales.min.js" type="text/javascript" language="javascript"></script>
-    <!-- Reference the included ChartJs javascript file. -->
-    <script src="_content/ChartJs.Blazor/Chart.min.js" type="text/javascript" language="javascript"></script>
-    <!-- This is the glue between the C# code and the ChartJs charts -->
-    <script src="_content/ChartJs.Blazor/ChartJsBlazorInterop.js" type="text/javascript" language="javascript"></script>
-    <!-- Some styling -->
-    <link rel="stylesheet" href="_content/ChartJs.Blazor/ChartJSBlazor.css" />
-
-    @*BlazorInputFile 컴포넌트 관련 자바스크립트 직접 포함*@
-    <script src="/inputfile.js"></script>
-    <script src="/saveAsFile.js"></script>
-
-    <link href="_content/Blazored.Toast/blazored-toast.min.css" rel="stylesheet" />
-    <link href="~/css/open-iconic/font/css/open-iconic-bootstrap.min.css" rel="stylesheet" />
-
-    <script src="~/js/site.js"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/azunt@1.1.1/src/azunt.js?t=now"></script>
-
-    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+  <base href="~/" />
+  <link rel="stylesheet" href="_content/MatBlazor/dist/matBlazor.css" />
+  <link rel="stylesheet" href="_content/ChartJs.Blazor/ChartJSBlazor.css" />
+  <link rel="stylesheet" href="_content/Blazored.Toast/blazored-toast.min.css" />
+  <link rel="stylesheet" href="~/css/open-iconic/font/css/open-iconic-bootstrap.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
+  <script src="_content/MatBlazor/dist/matBlazor.js"></script>
+  <script src="_content/ChartJs.Blazor/moment-with-locales.min.js"></script>
+  <script src="_content/ChartJs.Blazor/Chart.min.js"></script>
+  <script src="_content/ChartJs.Blazor/ChartJsBlazorInterop.js"></script>
+  <script src="/inputfile.js"></script>
+  <script src="/saveAsFile.js"></script>
+  <script src="~/js/site.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/azunt@1.1.1/src/azunt.js?t=now"></script>
+  <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
-<body class="sb-nav-fixed">
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand" href="/Dashboard">Hawaso</a><button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#">
-        <i class="fas fa-bars"></i>
-    </button><!-- Navbar Search-->
-    <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-        <div class="input-group">
-            <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
-            <div class="input-group-append">
-                <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
-            </div>
-        </div>
-    </form>
-    <!-- Navbar-->
-    <ul class="navbar-nav ml-auto ml-md-0">
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">Settings</a><a class="dropdown-item" href="#">Activity Log</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="login.html">Logout</a>
-            </div>
-        </li>
-    </ul>
-</nav>
-<div id="layoutSidenav">
-    <div id="layoutSidenav_nav">
-        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-            <div class="sb-sidenav-menu">
-                <div class="nav">
-                    <div class="sb-sidenav-menu-heading">Core</div>
-                    <a class="nav-link" href="/Dashboard" id="lnkDashboard">
-                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                        Dashboard
-                    </a>
-
-
-                    @*데모 3단계 메뉴*@
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSamples" aria-expanded="false" aria-controls="collapseSnippets">
-                        <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                        데모
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="collapseSamples" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionSamples">
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseSamples" aria-expanded="false" aria-controls="pagesCollapseSamples">
-                                섹션 1
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseSamples" aria-labelledby="headingOne" data-parent="#sidenavAccordionSamples">
-                                <nav class="sb-sidenav-menu-nested nav"><a class="nav-link" href="/CodeSnippets/CurrentUserData1">예제 1</a><a class="nav-link" href="/CodeSnippets/CurrentUserData2">예제 2</a><a class="nav-link" href="/CodeSnippets/CurrentUserData3">예제 3</a></nav>
-                            </div>
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseSamples2" aria-expanded="false" aria-controls="pagesCollapseSamples2">
-                                섹션 2
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseSamples2" aria-labelledby="headingOne" data-parent="#sidenavAccordionSamples">
-                                <nav class="sb-sidenav-menu-nested nav"><a class="nav-link" href="/CodeSnippets/CurrentUserData1">예제 1</a><a class="nav-link" href="/CodeSnippets/CurrentUserData2">예제 2</a><a class="nav-link" href="/CodeSnippets/CurrentUserData3">예제 3</a></nav>
-                            </div>
-                        </nav>
-                    </div>
-
-
-                    @*게시판 3단계 메뉴 시작*@
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBoards" aria-expanded="false" aria-controls="collapseBoards">
-                        <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                        게시판
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="collapseBoards" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionSamples">
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseCruds" aria-expanded="false" aria-controls="pagesCollapseCruds">
-                                CRUD
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseCruds" aria-labelledby="headingOne" data-parent="#sidenavAccordionSamples">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="/MachineTypes">MachineTypes</a>
-                                    <a class="nav-link" href="/Manufacturers">Manufacturers</a>
-                                    <a class="nav-link" href="/Departments">Departments</a>
-                                </nav>
-                            </div>
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseBoards" aria-expanded="false" aria-controls="pagesCollapseBoards">
-                                게시판
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseBoards" aria-labelledby="headingOne" data-parent="#sidenavAccordionSamples">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="/Notices">공지사항</a>
-                                    <a class="nav-link" href="/Uploads">자료실</a>
-                                    <a class="nav-link" href="/Libraries">__라이브러리</a>
-                                    <a class="nav-link" href="/BriefingLogs">__브리핑 로그</a>
-
-                                    <a class="nav-link" href="/Replys">답변형</a>
-                                    <a class="nav-link" href="/DotNetNote">완성형(MVC)</a>
-                                    <a class="nav-link" href="/Memos">완성형(Blazor)</a>
-                                    <a class="nav-link" href="/Archives">__아카이브</a>
-                                </nav>
-                            </div>
-                        </nav>
-                    </div>
-                    @*게시판 3단계 메뉴 종료*@
-
-
-                    <a class="nav-link" href="/Counter">
-                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                        Counter
-                    </a>
-                    <a class="nav-link" href="/Customers">
-                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                        Customers
-                    </a>
-                    <a class="nav-link" href="/Home">
-                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                        Landing
-                    </a>
-
-                    <div class="sb-sidenav-menu-heading">Sales</div>
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                        DotNetSale
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="/Categories">Categories</a>
-                            <a class="nav-link" href="/Products">Products</a>
-                            <a class="nav-link" href="/CategoriesProducts">CategoriesProducts</a>
-                            <a class="nav-link" href="/Customers">Customers</a>
-                        </nav>
-                    </div>
-
-                    <div class="sb-sidenav-menu-heading">Administrations</div>
-                    @if (canViewAppLogs)
-                    {
-                        <a class="nav-link" href="/AppLogs">
-                            <div class="sb-nav-link-icon"><i class="fas fa-file-alt" aria-hidden="true"></i></div>
-                            App Logs (Serilog)
-                        </a>
-                    }
-
-
-
-
-                    @*사용자 관리 3단계 메뉴 시작*@
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers" aria-expanded="false" aria-controls="collapseUsers">
-                        <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                        Users &amp; Roles
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="collapseUsers" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionSamples">
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagescollapseUsers" aria-expanded="false" aria-controls="pagesCollapseBoards">
-                                Roles
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagescollapseUsers" aria-labelledby="headingOne" data-parent="#sidenavAccordionSamples">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="/Administrations/Roles/RoleList">Role Manager</a>
-                                </nav>
-                            </div>
-                        </nav>
-                    </div>
-                    @*사용자 관리 3단계 메뉴 종료*@
-
-
-
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayoutsAdministrations" aria-expanded="false" aria-controls="collapseLayoutsAdministrations">
-                        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                        Admin
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-
-                    <div class="collapse" id="collapseLayoutsAdministrations" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="/Departments">Departments</a>
-                        </nav>
-                    </div>
-
-                    <div class="collapse" id="collapseLayoutsAdministrations" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="/Manufacturers">Manufacturers</a>
-                        </nav>
-                    </div>
-
-                    <div class="collapse" id="collapseLayoutsAdministrations" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="/Notices">Notices</a>
-                        </nav>
-                    </div>
-                    <div class="collapse" id="collapseLayoutsAdministrations" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="/Uploads">Uploads</a>
-                        </nav>
-                    </div>
-                    <div class="collapse" id="collapseLayoutsAdministrations" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="/Replys">Replys</a>
-                        </nav>
-                    </div>
-                    <div class="collapse" id="collapseLayoutsAdministrations" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="/MachineTypes">Machine Type</a>
-                        </nav>
-                    </div>
-                    <div class="collapse" id="collapseLayoutsAdministrations" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="/Logins">Logins</a>
-                        </nav>
-                    </div>
-
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSnippets" aria-expanded="false" aria-controls="collapseSnippets">
-                        <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                        Code Snippets
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="collapseSnippets" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionSnippets">
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                접속자 정보
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-parent="#sidenavAccordionSnippets">
-                                <nav class="sb-sidenav-menu-nested nav"><a class="nav-link" href="/CodeSnippets/CurrentUserData1">접속자 정보 얻기 1</a><a class="nav-link" href="/CodeSnippets/CurrentUserData2">접속자 정보 얻기 2</a><a class="nav-link" href="/CodeSnippets/CurrentUserData3">접속자 정보 얻기 3</a></nav>
-                            </div>
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                접속자 정보
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-parent="#sidenavAccordionSnippets">
-                                <nav class="sb-sidenav-menu-nested nav"><a class="nav-link" href="/CodeSnippets/CurrentUserData1">접속자 정보 얻기 1</a><a class="nav-link" href="/CodeSnippets/CurrentUserData2">접속자 정보 얻기 2</a><a class="nav-link" href="/CodeSnippets/CurrentUserData3">접속자 정보 얻기 3</a></nav>
-                            </div>
-                        </nav>
-                    </div>
-
-
-                    <div class="sb-sidenav-menu-heading">Interface</div>
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                        <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                        Layouts
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="layout-static.html">Static Navigation</a>
-                            <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
-                        </nav>
-                    </div>
-
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                        <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                        Pages
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                Authentication
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
-                                <nav class="sb-sidenav-menu-nested nav"><a class="nav-link" href="login.html">Login</a><a class="nav-link" href="register.html">Register</a><a class="nav-link" href="password.html">Forgot Password</a></nav>
-                            </div>
-                            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                Error
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-parent="#sidenavAccordionPages">
-                                <nav class="sb-sidenav-menu-nested nav"><a class="nav-link" href="401.html">401 Page</a><a class="nav-link" href="404.html">404 Page</a><a class="nav-link" href="500.html">500 Page</a></nav>
-                            </div>
-                        </nav>
-                    </div>
-
-                    <div class="sb-sidenav-menu-heading">Addons</div>
-                    <a class="nav-link" href="charts.html">
-                        <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                        Charts
-                    </a><a class="nav-link" href="tables.html">
-                    <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                    Tables
-                </a>
-            </div>
-        </div>
-        <div class="sb-sidenav-footer">
-            <div class="small">Logged in as:</div>
-            <small>@displayName</small>
-        </div>
+<body class="az-dashboard-body" data-az-shell="dashboard" data-az-shell-mode="blazor-server">
+  <header class="az-portal-topbar">
+    <button id="appLauncherToggle"
+            class="az-portal-app-launcher"
+            type="button"
+            aria-label="Open Hawaso apps"
+            aria-controls="appLauncherMenu"
+            aria-expanded="false"
+            title="Apps">
+      <span class="az-portal-waffle" aria-hidden="true">
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+      </span>
+    </button>
+    <a class="az-portal-brand" href="/dashboard"><span class="az-brand-mark az-small">H</span><span>Hawaso Portal</span></a>
+    <button id="sidebarToggle" class="az-portal-hamburger" type="button" aria-label="Hide navigation" title="Hide navigation" aria-expanded="true">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="az-portal-shortcuts" aria-label="Portal shortcuts">
+      <a href="/dashboard">⌂ Dashboard</a>
+      <a href="/DotNetNote">＋ Board</a>
+      <a href="/About">About</a>
     </nav>
-</div>
-<div id="layoutSidenav_content">
-    <main>
-        <div class="container-fluid">
+    <div class="az-portal-actions">
+      <a href="/">Public site</a>
+      <a class="az-avatar" href="/Identity/Account/Manage">@((User.Identity?.Name ?? "U")[0].ToString().ToUpperInvariant())</a>
+    </div>
+  </header>
 
-            <app>
-                <div>
-                    <component type="typeof(App)" render-mode="ServerPrerendered" />
-                </div>
-            </app>
+  <section id="appLauncherMenu" class="az-portal-app-menu" aria-hidden="true" aria-label="Azunt apps">
+    <div class="az-portal-app-menu-header">
+      <div>
+        <strong>Hawaso</strong>
+        <span>Sites and tools</span>
+      </div>
+      <a href="/">Home</a>
+    </div>
 
-        </div>
+    <nav class="az-portal-app-grid" aria-label="Azunt applications">
+      <a class="az-portal-app-item" href="/">
+        <span class="az-portal-app-icon az-app-icon-home"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#home"></use></svg></span>
+        <span>Public site</span>
+      </a>
+      <a class="az-portal-app-item" href="/dashboard">
+        <span class="az-portal-app-icon az-app-icon-dashboard"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#dashboard"></use></svg></span>
+        <span>Dashboard</span>
+      </a>
+      <a class="az-portal-app-item" href="/dashboard/resources">
+        <span class="az-portal-app-icon az-app-icon-resources"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#resources"></use></svg></span>
+        <span>Resources</span>
+      </a>
+      <a class="az-portal-app-item" href="/courses">
+        <span class="az-portal-app-icon az-app-icon-courses"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#courses"></use></svg></span>
+        <span>Courses</span>
+      </a>
+      <a class="az-portal-app-item" href="/docs/">
+        <span class="az-portal-app-icon az-app-icon-docs"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#docs"></use></svg></span>
+        <span>Documentation</span>
+      </a>
+      <a class="az-portal-app-item" href="/docs/private/">
+        <span class="az-portal-app-icon az-app-icon-protected"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#shield"></use></svg></span>
+        <span>Protected docs</span>
+      </a>
+      <a class="az-portal-app-item" href="/Identity/Account/Manage">
+        <span class="az-portal-app-icon az-app-icon-account"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#account"></use></svg></span>
+        <span>Account</span>
+      </a>
+      <a class="az-portal-app-item" href="/products">
+        <span class="az-portal-app-icon az-app-icon-products"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#products"></use></svg></span>
+        <span>Products</span>
+      </a>
+      <a class="az-portal-app-item" href="/pricing">
+        <span class="az-portal-app-icon az-app-icon-pricing"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#pricing"></use></svg></span>
+        <span>Pricing</span>
+      </a>
+      <a class="az-portal-app-item" href="/DotNetNote">
+        <span class="az-portal-app-icon az-app-icon-docs"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#docs"></use></svg></span>
+        <span>Hawaso Board</span>
+      </a>
+      <a class="az-portal-app-item" href="/About">
+        <span class="az-portal-app-icon az-app-icon-home"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#home"></use></svg></span>
+        <span>About Hawaso</span>
+      </a>
+    </nav>
+
+    <div class="az-portal-app-menu-divider"></div>
+    <div class="az-portal-app-quick-links">
+      <a href="/dashboard/resources">Browse resources <span aria-hidden="true">→</span></a>
+      <a href="/courses/aspnet-core">Browse courses <span aria-hidden="true">→</span></a>
+      <a href="/docs/getting-started/site-structure">Getting started <span aria-hidden="true">→</span></a>
+      <a href="/Identity/Account/Manage">Profile and account <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <div class="az-portal-frame">
+    <aside id="portalSidebar" class="az-portal-sidebar">
+      <div class="az-portal-sidebar-tools" role="group" aria-label="Navigation tools">
+        <button id="dashboardNavSearchToggle" class="az-portal-sidebar-tool" type="button"
+                aria-label="Search menus" title="Search menus"
+                aria-controls="dashboardNavSearchPanel" aria-expanded="false">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.6" cy="8.6" r="5.5"/><path d="m13 13 4.4 4.4"/></svg>
+          <span>Search</span>
+        </button>
+        <button id="dashboardNavCollapseAll" class="az-portal-sidebar-tool" type="button"
+                aria-label="Collapse all menu groups" title="Collapse all menu groups">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 15.8h14M3 4.2h14m-11 8.3 4-4 4 4"/></svg>
+          <span>Collapse All</span>
+        </button>
+      </div>
+      <div class="az-portal-sidebar-scroll">
+        @await Html.PartialAsync("~/Pages/Shared/_AzDashboardNavigation.cshtml", dashboardNavigation)
+      </div>
+      <nav class="az-portal-sidebar-fixed-links" aria-label="Quick shortcuts">
+        <a href="/Home" class="az-portal-sidebar-fixed-link az-is-hawaso" title="Hawaso" aria-label="Hawaso">
+          <span class="az-portal-sidebar-fixed-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><use href="/images/dashboard-icons.svg#webapp"></use></svg></span>
+          <span class="az-portal-sidebar-fixed-text">Hawaso</span>
+        </a>
+        <a href="/DotNetNote" class="az-portal-sidebar-fixed-link az-is-dotnetnote" title="DotNetNote" aria-label="DotNetNote">
+          <span class="az-portal-sidebar-fixed-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><use href="/images/dashboard-icons.svg#devops"></use></svg></span>
+          <span class="az-portal-sidebar-fixed-text">DotNetNote</span>
+        </a>
+        <a href="https://youtube.com/VisualAcademy" target="_blank" rel="noopener noreferrer" class="az-portal-sidebar-fixed-link az-is-visualacademy" title="VisualAcademy" aria-label="VisualAcademy">
+          <span class="az-portal-sidebar-fixed-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><use href="/images/dashboard-icons.svg#wireframe"></use></svg></span>
+          <span class="az-portal-sidebar-fixed-text">VisualAcademy</span>
+        </a>
+      </nav>
+      <button id="sidebarFooterToggle" class="az-portal-sidebar-footer-toggle" type="button" aria-label="Collapse navigation" title="Collapse navigation">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.4 4.8 7.2 10l5.2 5.2" /></svg>
+      </button>
+    </aside>
+
+    <div id="dashboardNavFlyout"
+         class="az-dashboard-nav-flyout"
+         aria-hidden="true"
+         aria-label="Dashboard submenu">
+      <div id="dashboardNavFlyoutContent" class="az-dashboard-nav-flyout-content"></div>
+    </div>
+
+    <section id="dashboardNavSearchPanel" class="az-dashboard-nav-search-panel" hidden
+             role="dialog" aria-label="Search dashboard menus">
+      <div class="az-dashboard-nav-search-title">
+        <strong>Search menus</strong>
+        <button type="button" id="dashboardNavSearchClose" aria-label="Close menu search" title="Close">×</button>
+      </div>
+      <label class="az-dashboard-nav-search-label" for="dashboardNavSearchInput">Find a menu</label>
+      <input id="dashboardNavSearchInput" type="search" autocomplete="off" placeholder="Search navigation..." />
+      <div id="dashboardNavSearchResults" class="az-dashboard-nav-search-results" role="status" aria-live="polite"></div>
+    </section>
+
+    <main class="az-portal-content">
+      <div class="az-hawaso-dashboard-content">
+        <app><component type="typeof(App)" render-mode="ServerPrerendered" /></app>
+      </div>
+      <footer class="az-hawaso-dashboard-footer">
+        Copyright &copy; @DateTime.Now.Year Hawaso. All rights reserved.
+        <a href="/Home/Privacy">Privacy Policy</a>
+      </footer>
     </main>
-    <footer class="py-4 bg-light mt-auto">
-        <div class="container-fluid">
-            <div class="d-flex align-items-center justify-content-between small">
-                <div class="text-muted">Copyright &copy; Hawaso @DateTime.Now.Year All rights reserved.</div>
-                <div>
-                    <a href="#">Privacy Policy</a>
-                    &middot;
-                    <a href="#">Terms &amp; Conditions</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-</div>
-</div>
+  </div>
 
-<div id="blazor-error-ui">
-    <environment include="Staging,Production">
-        An error has occurred. This application may no longer respond until reloaded.
-    </environment>
-    <environment include="Development">
-        An unhandled exception has occurred. See browser dev tools for details.
-    </environment>
+  <div id="blazor-error-ui">
+    <environment include="Staging,Production">An error has occurred. Reload the page to continue.</environment>
+    <environment include="Development">An unhandled exception has occurred. See browser dev tools for details.</environment>
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
-</div>
-
-<script src="_framework/blazor.server.js"></script>
-
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-<script src="/templates/dashboard/js/scripts.js"></script>
-<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
-<script src="/templates/dashboard/assets/demo/datatables-demo.js"></script>
-
-<script>
-        // 사이드 메뉴 선택시 해당 메뉴를 active 상태로 변경
-        $(function() {
-            $("#layoutSidenav_nav .sb-sidenav a.nav-link").on("click", function(e) {
-                $(".nav-link").removeClass("active");
-                $(this).addClass("active");
-            });
-            $(".navbar-brand").on("click", function(e) {
-                $(".nav-link").removeClass("active");
-                $("#lnkDashboard").addClass("active");
-            });
-        });
-</script>
-
-@*[3] _Host에 CKEditor CDN 적용*@
-@* <script src="https://cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script> *@
-<script src="~/lib/ckeditor/ckeditor.js"></script>
-<script src="~/js/CkEditorFour.js"></script>
-
-@*<script src="~/lib/jquery.js"></script>
-        <script src="~/lib/dist/js/bootstrap.js"></script>*@
-
-<script>
-        // 넘어온 ID를 갖는 모달 창 닫기
-        function closeModal(modalId) {
-            //console.log("삭제");
-            $("#" + modalId).modal('hide');
-        }
-
-        // 넘어온 ID를 갖는 모달 창 열기
-        function showModal(modalId) {
-            $("#" + modalId).modal('show');
-        }
-</script>
-
-
-
-<script src="~/js/az-auth-ping.js"></script>
-
-
+  </div>
+  <script src="_framework/blazor.server.js"></script>
+  <script src="~/lib/jquery/dist/jquery.min.js"></script>
+  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+  <script src="~/lib/ckeditor/ckeditor.js"></script>
+  <script src="~/js/CkEditorFour.js"></script>
+  <script src="~/js/azunt-dashboard.js" asp-append-version="true"></script>
+  <script src="~/js/az-auth-ping.js"></script>
+  <script>
+    // Legacy Blazor CRUD pages still call these Bootstrap modal helpers.
+    function closeModal(modalId) { window.jQuery && window.jQuery('#' + modalId).modal('hide'); }
+    function showModal(modalId) { window.jQuery && window.jQuery('#' + modalId).modal('show'); }
+  </script>
 </body>
 </html>

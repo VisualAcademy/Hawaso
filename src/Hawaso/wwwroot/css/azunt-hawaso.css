@@ -1,0 +1,36 @@
+/* Hawaso integration of AzuntSiteStarter shells. Keep third-party CSS unchanged. */
+.az-hawaso-hero-note { margin-top: 22px; color: #51627d; font-size: 14px; }
+.az-hawaso-hero-note a { color: #0067b8; font-weight: 700; }
+.az-hawaso-section { padding-top: 64px; padding-bottom: 64px; }
+.az-hawaso-section .az-section-heading { margin-bottom: 26px; }
+.az-hawaso-section-intro { max-width: 680px; color: #61718c; line-height: 1.75; }
+.az-hawaso-card-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
+.az-hawaso-card { display: flex; flex-direction: column; gap: 12px; padding: 26px; background: #fff; border: 1px solid #dce5f0; border-radius: 10px; min-height: 178px; }
+.az-hawaso-card h3 { margin: 0; font-size: 18px; color: #172a4a; }
+.az-hawaso-card p { margin: 0; color: #62718a; line-height: 1.65; flex: 1; }
+.az-hawaso-card a { color: #0067b8; font-weight: 750; }
+.az-hawaso-card a:hover { text-decoration: underline; }
+.az-hawaso-card--featured { border-color: #9fcbf0; background: #f7fbff; }
+.az-hawaso-link-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.az-hawaso-carousel-wrap { padding: 22px 0 64px; }
+.az-hawaso-carousel-wrap .az-carousel-section { border-radius: 12px; overflow: hidden; }
+.az-hawaso-carousel-wrap .container { max-width: 1180px; }
+.az-hawaso-note { border: 1px solid #cce1f4; background: #f7fbff; padding: 19px 22px; border-radius: 9px; }
+.az-hawaso-note p { margin: 7px 0 0; color: #536880; }
+.az-hawaso-note a { color: #0067b8; font-weight: 650; }
+.az-hawaso-section--muted { background: #f5f8fc; }
+.az-hawaso-legacy-app { display: inline-flex; margin-left: 10px; }
+.az-hawaso-legacy-app .dul-btn { background: #f1f6fc; border-radius: 8px; color: #0a5fa9; }
+.az-hawaso-legacy-app .dul-btn .oi { color: #0067b8 !important; }
+.az-hawaso-dashboard-content { min-height: calc(100vh - 190px); }
+.az-hawaso-dashboard-content > app { display: block; }
+.az-hawaso-dashboard-footer { border-top: 1px solid #dfe6ee; padding: 20px 0; margin-top: 30px; color: #67778f; font-size: 12px; }
+.az-hawaso-dashboard-footer a { color: #0067b8; }
+.az-hawaso-dashboard-footer a:hover { text-decoration: underline; }
+.az-hawaso-dashboard-content .container-fluid { max-width: 100%; }
+.az-hawaso-dashboard-content h3 { margin-top: 0; }
+.az-hawaso-dashboard-content .modal, .az-hawaso-dashboard-content .dropdown-menu { z-index: 1100; }
+#blazor-error-ui { display: none; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 2000; padding: 12px 22px; background: #fff6ce; box-shadow: 0 -2px 8px rgba(0,0,0,.12); }
+#blazor-error-ui .dismiss { cursor: pointer; position: absolute; right: 14px; top: 10px; }
+@media(max-width: 900px) { .az-hawaso-card-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media(max-width: 620px) { .az-hawaso-card-grid { grid-template-columns: 1fr; } .az-hawaso-section { padding-block: 44px; } }
