@@ -28,6 +28,8 @@
   <link rel="stylesheet" href="~/css/azunt-dashboard.css" asp-append-version="true" />
   <link rel="stylesheet" href="~/css/azunt-hawaso.css" asp-append-version="true" />
   <link rel="stylesheet" href="~/css/azunt-dashboard-compat.css" asp-append-version="true" />
+  @* Keep Azunt navigation isolated from legacy button and link styles. *@
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js" crossorigin="anonymous"></script>
   <script src="_content/MatBlazor/dist/matBlazor.js"></script>
   <script src="_content/ChartJs.Blazor/moment-with-locales.min.js"></script>
@@ -38,8 +40,124 @@
   <script src="~/js/site.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/azunt@1.1.1/src/azunt.js?t=now"></script>
   <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+  @* Sidebar color reset is deliberately inline: third-party/legacy rules and
+     missing auxiliary static files must never unstyle the Azunt navigation. *@
+  <meta name="azunt-sidebar-theme" content="20261122-v3-inline" />
+  <style id="azunt-sidebar-critical-style" data-revision="20261122-v3">
+    /*
+     * Azunt portal sidebar critical navigation appearance (2026-11-22).
+     * This rule set is intentionally limited to the sidebar/flyout; it must not
+     * recolor the application content, Blazor controls, or Bootstrap buttons.
+     */
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > :is(a, button, span).az-dashboard-nav-link,
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > a.az-dashboard-nav-link:link,
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > a.az-dashboard-nav-link:visited {
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      display: block !important;
+      box-sizing: border-box !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      min-height: 44px !important;
+      height: auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      outline-offset: -2px;
+      box-shadow: none !important;
+      background: transparent !important;
+      background-image: none !important;
+      color: #e9f0f7 !important;
+      font-family: inherit !important;
+      font-size: 13px !important;
+      font-weight: 400 !important;
+      line-height: 1.25 !important;
+      text-align: left !important;
+      text-decoration: none !important;
+      text-shadow: none !important;
+      text-transform: none !important;
+      white-space: nowrap !important;
+      cursor: pointer;
+    }
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > :is(a, button, span).az-dashboard-nav-link .az-dashboard-nav-link-inner {
+      display: grid !important;
+      grid-template-columns: 22px minmax(0, 1fr) !important;
+      align-items: center !important;
+      width: 100% !important;
+      min-height: 44px !important;
+      text-align: left !important;
+      text-decoration: none !important;
+    }
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > :is(a, button, span).az-dashboard-nav-link .az-dashboard-nav-text {
+      color: inherit !important;
+      text-decoration: none !important;
+    }
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-node.az-is-active-branch > .az-dashboard-nav-row > .az-dashboard-nav-link:not(.az-is-current) {
+      background: #384148 !important;
+    }
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > :is(a, button, span).az-dashboard-nav-link:hover,
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > :is(a, button, span).az-dashboard-nav-link:focus-visible {
+      background: #3b444b !important;
+      color: #fff !important;
+      text-decoration: none !important;
+    }
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > .az-dashboard-nav-link.az-is-current {
+      background: #46515a !important;
+      color: #fff !important;
+      font-weight: 600 !important;
+    }
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > .az-dashboard-nav-link.az-is-unavailable {
+      background: transparent !important;
+      color: #9baab7 !important;
+      opacity: .58 !important;
+      cursor: not-allowed !important;
+    }
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > button.az-dashboard-nav-toggle {
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      display: grid !important;
+      place-items: center !important;
+      min-height: 44px !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: #afc3d5 !important;
+    }
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > button.az-dashboard-nav-toggle:hover,
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > button.az-dashboard-nav-toggle:focus-visible {
+      background: rgba(255,255,255,.045) !important;
+      color: #fff !important;
+    }
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > :is(a,button).az-dashboard-nav-link:focus-visible,
+    body.az-dashboard-body :is(#portalSidebar, #dashboardNavFlyout) .az-dashboard-nav .az-dashboard-nav-row > button.az-dashboard-nav-toggle:focus-visible {
+      outline: 2px solid #90cafa !important;
+    }
+  </style>
+
+  <script id="azunt-document-navigation-v4">
+    // MVC public pages must leave the Blazor router and request a fresh document.
+    // Capture the click before Blazor's delegated navigation handler runs.
+    (function () {
+      document.addEventListener('click', function (event) {
+        var target = event.target;
+        var link = target && target.closest ? target.closest('a[data-az-document-nav]') : null;
+        if (!link || event.defaultPrevented || event.button !== 0 ||
+            event.ctrlKey || event.metaKey || event.shiftKey || event.altKey ||
+            link.hasAttribute('download') || (link.target && link.target !== '_self')) return;
+        var url = new URL(link.href, document.baseURI);
+        if (url.origin !== window.location.origin || !/^https?:$/.test(url.protocol)) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        window.location.assign(url.href);
+      }, true);
+    }());
+  </script>
 </head>
-<body class="az-dashboard-body" data-az-shell="dashboard" data-az-shell-mode="blazor-server">
+<body data-az-ui-revision="navigation-v4" class="az-dashboard-body" data-az-shell="dashboard" data-az-shell-mode="blazor-server">
   <header class="az-portal-topbar">
     <button id="appLauncherToggle"
             class="az-portal-app-launcher"
@@ -64,7 +182,7 @@
       <a href="/About">About</a>
     </nav>
     <div class="az-portal-actions">
-      <a href="/">Public site</a>
+      <a href="/Home" data-az-document-nav="true">Public site</a>
       <a class="az-avatar" href="/Identity/Account/Manage">@((User.Identity?.Name ?? "U")[0].ToString().ToUpperInvariant())</a>
     </div>
   </header>
@@ -75,11 +193,11 @@
         <strong>Hawaso</strong>
         <span>Sites and tools</span>
       </div>
-      <a href="/">Home</a>
+      <a href="/Home" data-az-document-nav="true">Home</a>
     </div>
 
     <nav class="az-portal-app-grid" aria-label="Azunt applications">
-      <a class="az-portal-app-item" href="/">
+      <a class="az-portal-app-item" href="/Home" data-az-document-nav="true">
         <span class="az-portal-app-icon az-app-icon-home"><svg aria-hidden="true"><use href="/images/dashboard-icons.svg#home"></use></svg></span>
         <span>Public site</span>
       </a>
@@ -153,7 +271,7 @@
         @await Html.PartialAsync("~/Pages/Shared/_AzDashboardNavigation.cshtml", dashboardNavigation)
       </div>
       <nav class="az-portal-sidebar-fixed-links" aria-label="Quick shortcuts">
-        <a href="/Home" class="az-portal-sidebar-fixed-link az-is-hawaso" title="Hawaso" aria-label="Hawaso">
+        <a href="/Home" data-az-document-nav="true" class="az-portal-sidebar-fixed-link az-is-hawaso" title="Hawaso" aria-label="Hawaso">
           <span class="az-portal-sidebar-fixed-icon" aria-hidden="true"><svg viewBox="0 0 20 20"><use href="/images/dashboard-icons.svg#webapp"></use></svg></span>
           <span class="az-portal-sidebar-fixed-text">Hawaso</span>
         </a>

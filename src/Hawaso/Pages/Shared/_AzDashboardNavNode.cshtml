@@ -4,6 +4,9 @@
     var expandedClass = Model.IsExpanded ? " az-is-expanded" : string.Empty;
     var currentClass = Model.IsCurrent ? " az-is-current" : string.Empty;
     var activeBranchClass = Model.ContainsCurrent ? " az-is-active-branch" : string.Empty;
+    // AZUNT-NAV-V4: Inline base theme protects links/buttons from legacy overrides.
+    var navInlineStyle = "background:var(--az-nav-item-bg, transparent) !important; background-image:none !important; color:var(--az-nav-item-fg, #e9f0f7) !important; text-decoration:none !important; border:0 !important; border-radius:0 !important; box-shadow:none !important; -webkit-appearance:none !important; appearance:none !important; text-align:left !important;";
+    var navTextInlineStyle = "color:inherit !important; text-decoration:none !important;";
     var childrenId = $"dashboard-nav-{Model.Key}-children";
 }
 
@@ -18,34 +21,34 @@
         @if (hasChildren)
         {
             @* Original group headers expanded a submenu rather than redirecting to the first child route. *@
-            <button class="az-dashboard-nav-link@currentClass" type="button"
+            <button class="az-dashboard-nav-link@currentClass" style="@navInlineStyle" type="button"
                     data-nav-primary-link data-nav-branch-link
                     aria-expanded="@Model.IsExpanded.ToString().ToLowerInvariant()"
                     aria-controls="@childrenId" title="Expand or collapse @Model.Text">
                 <span class="az-dashboard-nav-link-inner">
                     <span class="az-dashboard-nav-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><use href="/images/dashboard-icons.svg#@Model.Icon"></use></svg></span>
-                    <span class="az-dashboard-nav-text">@Model.Text</span>
+                    <span class="az-dashboard-nav-text" style="@navTextInlineStyle">@Model.Text</span>
                 </span>
             </button>
         }
         else if (Model.IsAvailable)
         {
-            <a class="az-dashboard-nav-link@currentClass" data-nav-primary-link
+            <a class="az-dashboard-nav-link@currentClass" style="@navInlineStyle" data-nav-primary-link
                href="@Model.Href" aria-current="@(Model.IsCurrent ? "page" : null)" title="@Model.Text">
                 <span class="az-dashboard-nav-link-inner">
                     <span class="az-dashboard-nav-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><use href="/images/dashboard-icons.svg#@Model.Icon"></use></svg></span>
-                    <span class="az-dashboard-nav-text">@Model.Text</span>
+                    <span class="az-dashboard-nav-text" style="@navTextInlineStyle">@Model.Text</span>
                 </span>
             </a>
         }
         else
         {
             @* Source contains no page for this legacy link. Do not send people to the Blazor NotFound fallback. *@
-            <span class="az-dashboard-nav-link az-is-unavailable" data-nav-primary-link
+            <span class="az-dashboard-nav-link az-is-unavailable" style="@navInlineStyle" data-nav-primary-link
                   aria-disabled="true" title="Page not implemented in this project: @Model.Href">
                 <span class="az-dashboard-nav-link-inner">
                     <span class="az-dashboard-nav-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><use href="/images/dashboard-icons.svg#@Model.Icon"></use></svg></span>
-                    <span class="az-dashboard-nav-text">@Model.Text</span>
+                    <span class="az-dashboard-nav-text" style="@navTextInlineStyle">@Model.Text</span>
                 </span>
             </span>
         }
