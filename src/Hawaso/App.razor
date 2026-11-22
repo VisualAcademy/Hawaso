@@ -1,4 +1,4 @@
-﻿@using Hawaso.Pages
+@using Hawaso.Pages
 @inject NavigationManager NavigationManager
 
 <CascadingAuthenticationState>
@@ -14,8 +14,14 @@
             </AuthorizeRouteView>
         </Found>
         <NotFound>
+            <PageTitle>Page not found</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
-                <p>Sorry, there's nothing at this address.</p>
+                <section class="az-dashboard-missing-route" role="alert">
+                    <span class="az-dashboard-missing-kicker">404 · Page not found</span>
+                    <h1>페이지를 찾을 수 없습니다.</h1>
+                    <p>요청하신 주소에 해당하는 페이지가 현재 프로젝트에 구현되어 있지 않습니다. 기존 기능 메뉴에서 다른 페이지를 선택해 주세요.</p>
+                    <a href="/dashboard">대시보드로 돌아가기</a>
+                </section>
             </LayoutView>
         </NotFound>
     </Router>

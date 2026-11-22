@@ -20,6 +20,7 @@ public sealed class DashboardNavigationNodeViewModel
     public string Text { get; init; } = "";
     public string Icon { get; init; } = "";
     public string Href { get; init; } = "";
+    public bool IsAvailable { get; init; } = true;
     public int Depth { get; init; }
     public bool IsCurrent { get; init; }
     public bool ContainsCurrent { get; init; }
@@ -172,6 +173,7 @@ public static class DashboardNavigationCatalog
             Text = item.Text,
             Icon = item.Icon,
             Href = item.Href,
+            IsAvailable = IsPageAvailable(item.Href),
             Depth = depth,
             IsCurrent = isCurrent,
             ContainsCurrent = containsCurrent,
@@ -180,6 +182,10 @@ public static class DashboardNavigationCatalog
             Children = children
         };
     }
+
+    // Hawaso's real menu endpoints are preserved; only decorative Starter links are disabled.
+    private static bool IsPageAvailable(string href) =>
+        !string.IsNullOrWhiteSpace(href) && href != "#";
 
     private static string Normalize(string? path)
     {

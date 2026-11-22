@@ -1,0 +1,64 @@
+/* Azunt portal chrome isolation. Loaded after existing Blazor, Bootstrap and app styles. */
+body.az-dashboard-body #portalSidebar :is(a,button,span).az-dashboard-nav-link,
+body.az-dashboard-body #portalSidebar :is(a,button,span).az-dashboard-nav-link:link,
+body.az-dashboard-body #portalSidebar :is(a,button,span).az-dashboard-nav-link:visited,
+body.az-dashboard-body #dashboardNavFlyout :is(a,button,span).az-dashboard-nav-link,
+body.az-dashboard-body #dashboardNavFlyout :is(a,button,span).az-dashboard-nav-link:link,
+body.az-dashboard-body #dashboardNavFlyout :is(a,button,span).az-dashboard-nav-link:visited {
+  color: #eef4fb !important;
+  text-decoration: none !important;
+  font-family: inherit;
+  font-weight: 400;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+body.az-dashboard-body #portalSidebar :is(a,button).az-dashboard-nav-link:hover,
+body.az-dashboard-body #portalSidebar :is(a,button).az-dashboard-nav-link.az-is-current,
+body.az-dashboard-body #dashboardNavFlyout :is(a,button).az-dashboard-nav-link:hover {
+  color: #fff !important;
+  text-decoration: none !important;
+}
+body.az-dashboard-body #portalSidebar button.az-dashboard-nav-link,
+body.az-dashboard-body #dashboardNavFlyout button.az-dashboard-nav-link {
+  appearance: none; border: 0; border-radius: 0; background: transparent;
+  padding: 0; margin: 0; outline-offset: -2px;
+}
+body.az-dashboard-body #portalSidebar button.az-dashboard-nav-link.az-is-current,
+body.az-dashboard-body #portalSidebar button.az-dashboard-nav-link:hover,
+body.az-dashboard-body #dashboardNavFlyout button.az-dashboard-nav-link:hover {
+  background: var(--portal-sidebar-hover);
+}
+body.az-dashboard-body #portalSidebar .az-dashboard-nav-node.az-is-active-branch > .az-dashboard-nav-row > button.az-dashboard-nav-link {
+  background: #384148;
+}
+body.az-dashboard-body #portalSidebar .az-dashboard-nav-link.az-is-unavailable,
+body.az-dashboard-body #dashboardNavFlyout .az-dashboard-nav-link.az-is-unavailable {
+  color: #9baab7 !important; opacity: .58; cursor: not-allowed !important;
+  text-decoration: none !important;
+}
+body.az-dashboard-body #portalSidebar .az-dashboard-nav-link.az-is-unavailable:hover { background: transparent; }
+body.az-dashboard-body #portalSidebar a.az-portal-sidebar-fixed-link,
+body.az-dashboard-body #portalSidebar a.az-portal-sidebar-fixed-link:link,
+body.az-dashboard-body #portalSidebar a.az-portal-sidebar-fixed-link:visited {
+  color: #fff !important; text-decoration: none !important;
+}
+body.az-dashboard-body .az-portal-topbar a.az-portal-brand,
+body.az-dashboard-body .az-portal-topbar a.az-portal-brand:visited,
+body.az-dashboard-body .az-portal-topbar .az-portal-shortcuts a,
+body.az-dashboard-body .az-portal-topbar .az-portal-actions a,
+body.az-dashboard-body .az-portal-app-menu a {
+  text-decoration: none !important;
+}
+body.az-dashboard-body #portalSidebar .az-dashboard-nav-icon { color: #9fb9ce; }
+body.az-dashboard-body #portalSidebar .az-dashboard-nav-section-label { color: #e8f2fd; }
+body.az-dashboard-body #portalSidebar button.az-dashboard-nav-toggle { color: #b5c8d8; }
+body.az-dashboard-body #portalSidebar button.az-dashboard-nav-toggle:hover { color: #fff; }
+
+/* For an explicitly entered URL which is not backed by a controller or Blazor route. */
+.az-dashboard-missing-route { max-width: 820px; margin: 18px auto; padding: 30px; background: #fff; border: 1px solid #dce5ee; border-radius: 9px; }
+.az-dashboard-missing-route h1 { font-size: 24px; color: #1b314e; margin: 8px 0 14px; }
+.az-dashboard-missing-route p { color: #65748a; font-size: 14px; line-height: 1.7; }
+.az-dashboard-missing-kicker { color: #a35c19; font-weight: 750; font-size: 12px; }
+.az-dashboard-missing-route a { display: inline-block; margin-top: 14px; padding: 10px 16px; background: #086ac1; color: #fff; border-radius: 5px; text-decoration: none; }
+.az-dashboard-missing-route a:hover { background: #00569d; color: #fff; }

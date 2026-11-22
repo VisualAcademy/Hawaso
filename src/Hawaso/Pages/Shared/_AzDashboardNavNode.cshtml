@@ -15,35 +15,48 @@
     data-active-branch="@Model.ContainsCurrent.ToString().ToLowerInvariant()"
     style="--nav-depth:@Model.Depth">
     <div class="az-dashboard-nav-row">
-        <a class="az-dashboard-nav-link@currentClass"
-           data-nav-primary-link
-           href="@Model.Href"
-           aria-current="@(Model.IsCurrent ? "page" : null)"
-           aria-disabled="@(Model.Href == "#" ? "true" : null)"
-           data-placeholder-link="@(Model.Href == "#" ? "true" : null)"
-           title="@(Model.Href == "#" ? "Hawaso에 연결된 페이지가 없는 Starter 메뉴" : Model.Text)">
-            <span class="az-dashboard-nav-link-inner">
-                <span class="az-dashboard-nav-icon" aria-hidden="true">
-                    <svg viewBox="0 0 20 20" focusable="false">
-                        <use href="/images/dashboard-icons.svg#@Model.Icon"></use>
-                    </svg>
+        @if (hasChildren)
+        {
+            @* Original group headers expanded a submenu rather than redirecting to the first child route. *@
+            <button class="az-dashboard-nav-link@currentClass" type="button"
+                    data-nav-primary-link data-nav-branch-link
+                    aria-expanded="@Model.IsExpanded.ToString().ToLowerInvariant()"
+                    aria-controls="@childrenId" title="Expand or collapse @Model.Text">
+                <span class="az-dashboard-nav-link-inner">
+                    <span class="az-dashboard-nav-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><use href="/images/dashboard-icons.svg#@Model.Icon"></use></svg></span>
+                    <span class="az-dashboard-nav-text">@Model.Text</span>
                 </span>
-                <span class="az-dashboard-nav-text">@Model.Text</span>
+            </button>
+        }
+        else if (Model.IsAvailable)
+        {
+            <a class="az-dashboard-nav-link@currentClass" data-nav-primary-link
+               href="@Model.Href" aria-current="@(Model.IsCurrent ? "page" : null)" title="@Model.Text">
+                <span class="az-dashboard-nav-link-inner">
+                    <span class="az-dashboard-nav-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><use href="/images/dashboard-icons.svg#@Model.Icon"></use></svg></span>
+                    <span class="az-dashboard-nav-text">@Model.Text</span>
+                </span>
+            </a>
+        }
+        else
+        {
+            @* Source contains no page for this legacy link. Do not send people to the Blazor NotFound fallback. *@
+            <span class="az-dashboard-nav-link az-is-unavailable" data-nav-primary-link
+                  aria-disabled="true" title="Page not implemented in this project: @Model.Href">
+                <span class="az-dashboard-nav-link-inner">
+                    <span class="az-dashboard-nav-icon" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><use href="/images/dashboard-icons.svg#@Model.Icon"></use></svg></span>
+                    <span class="az-dashboard-nav-text">@Model.Text</span>
+                </span>
             </span>
-        </a>
+        }
 
         @if (hasChildren)
         {
-            <button class="az-dashboard-nav-toggle"
-                    type="button"
-                    data-nav-toggle
-                    data-nav-key="@Model.Key"
-                    aria-controls="@childrenId"
+            <button class="az-dashboard-nav-toggle" type="button" data-nav-toggle
+                    data-nav-key="@Model.Key" aria-controls="@childrenId"
                     aria-expanded="@Model.IsExpanded.ToString().ToLowerInvariant()"
                     aria-label="@(Model.IsExpanded ? "Collapse" : "Expand") @Model.Text">
-                <svg class="az-dashboard-nav-chevron" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                    <path d="M7.6 4.8 12.8 10l-5.2 5.2" />
-                </svg>
+                <svg class="az-dashboard-nav-chevron" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M7.6 4.8 12.8 10l-5.2 5.2" /></svg>
             </button>
         }
     </div>

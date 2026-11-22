@@ -92,15 +92,18 @@
           return;
         }
 
-        const link = event.target.closest?.('[data-nav-primary-link]');
-        if (link && sidebar?.contains(link) && isCompactMode() && !isSidebarHidden()) {
-          const node = link.closest('[data-nav-node]');
-          if (node?.dataset.navDepth === '0' && node.dataset.navHasChildren === 'true') {
-            event.preventDefault();
-            event.stopPropagation();
-            openFlyout(node, link);
-            return;
+        const branch = event.target.closest?.('[data-nav-branch-link]');
+        if (branch && (sidebar?.contains(branch) || flyout?.contains(branch))) {
+          event.preventDefault();
+          event.stopPropagation();
+          const node = branch.closest('[data-nav-node]');
+          if (node && sidebar?.contains(branch) && isCompactMode() && !isSidebarHidden() && node.dataset.navDepth === '0') {
+            openFlyout(node, branch);
+          } else {
+            const toggleButton = node?.querySelector(':scope > .az-dashboard-nav-row > [data-nav-toggle]');
+            if (toggleButton) toggleNode(toggleButton);
           }
+          return;
         }
 
         if (flyout?.classList.contains('az-is-open') && !flyout.contains(event.target) && !sidebar?.contains(event.target)) {
@@ -190,6 +193,8 @@
         node.classList.toggle('az-is-expanded', expanded);
         children.classList.toggle('az-is-collapsed', !expanded);
         button.setAttribute('aria-expanded', String(expanded));
+        const branchButton = node.querySelector(':scope > .az-dashboard-nav-row > [data-nav-branch-link]');
+        branchButton?.setAttribute('aria-expanded', String(expanded));
       }
 
       function directChildren(node) {
